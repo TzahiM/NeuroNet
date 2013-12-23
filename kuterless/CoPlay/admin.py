@@ -1,4 +1,5 @@
-from CoPlay.models import Discussion, Response, Attendant
+from CoPlay.models import Discussion, Response, Attendant, Action, Vote, \
+    Decision
 from django.contrib import admin
 
 # Register your models here.
@@ -17,7 +18,21 @@ class AttendantAdmin(admin.ModelAdmin):
     ordering = ['name']
     search_fields = ['name']
 
-admin.site.register(Discussion, DiscussionAdmin)
-admin.site.register(Response, ResponseAdmin)
+class ActionAdmin(admin.ModelAdmin):
+    list_display = ( 'responsible', 'GoalDescription')
+
+class VoteAdmin(admin.ModelAdmin):
+    list_display = ( 'Voater', 'Value')
+
+class DecisionAdmin(admin.ModelAdmin):
+    list_display = ( 'TextBody','create_date')
+
+
 admin.site.register(Attendant, AttendantAdmin)
+
+admin.site.register(Response, ResponseAdmin)
+admin.site.register(Action, ActionAdmin)
+admin.site.register(Decision, DecisionAdmin)
+admin.site.register(Vote, VoteAdmin)
+admin.site.register(Discussion, DiscussionAdmin)
 
