@@ -1,4 +1,4 @@
-from CoPlay.models import Discussion, Response, Attendant, Action, Vote, \
+from CoPlay.models import Discussion, Response, Action, Vote, \
     Decision
 from django.contrib import admin
 
@@ -14,9 +14,6 @@ class ResponseAdmin(admin.ModelAdmin):
     ordering = ['ResponseType', 'create_date']
     search_fields = ['ResponseType']
 
-class AttendantAdmin(admin.ModelAdmin):
-    ordering = ['name']
-    search_fields = ['name']
 
 class ActionAdmin(admin.ModelAdmin):
     list_display = ( 'responsible', 'GoalDescription')
@@ -28,7 +25,6 @@ class DecisionAdmin(admin.ModelAdmin):
     list_display = ( 'TextBody','create_date')
 
 
-admin.site.register(Attendant, AttendantAdmin)
 
 admin.site.register(Response, ResponseAdmin)
 admin.site.register(Action, ActionAdmin)
