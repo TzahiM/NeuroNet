@@ -43,14 +43,12 @@ class LikeLevel(object):
     GOOD = 3
     MEDIUM = 2
     BAD = 1
-    NOT_DEFINED = 0
     level = (
                (EXCELLENT, 'Excellent Idea'),
                (VERY_GOOD, 'I realy like it'),
                (GOOD, 'Not Bad'),
                (MEDIUM, 'Not Sure'),
               (BAD, 'Bad Idea'),
-              (NOT_DEFINED, 'Please Choose'),              
               )
     
     
@@ -58,13 +56,48 @@ class Decision(models.Model):
     discussion = models.ForeignKey(Discussion)
     TextBody = models.CharField( max_length=200, validators=[MaxLengthValidator],editable =False)
     create_date = models.DateTimeField('date created', auto_now_add=True )
-
+    Value = models.IntegerField( default = 0)
+    
     def __unicode__(self):
         return self.id
+    def get_number_of_votes(self):
+        return self.vote_set.count()
+    
     def print_content(self):
-        print 'Decide:', self.TextBody, 'create_date', self.create_date 
-    
-    
+        print 'Decide:', self.TextBody, 'create_date', self.create_date, 'value', self.Value
+        votes = self.vote_set.all()
+        for vote in votes:
+            vote.print_content()
+            
+    def vote(self, Voater, Value):
+        if (self.vote_set.filter( Voater= Voater).count() == 0):
+            new_vote = Vote(  decision = self, Voater= Voater, Value = Value)
+            new_vote.save()
+            self.Value += Value
+        else:
+            current_vote = self.vote_set.get( Voater= Voater)
+            self.Value -= current_vote.Value
+            current_vote.Value = Value
+            self.Value += current_vote.Value
+            current_vote.save()
+            
+        self.save()
+"""       
+        votes_for_user = self.vote_set.filter( Voater= Voater).count()
+        if votes_for_user == 0:
+            print 'already', votes_for_user
+            
+        if self.votes_set.filter( Voater = Voater)
+             
+        
+        votes_for_user = self.vote_set.filter( Voater= Voater).count()
+        if votes_for_user != 0:
+            print 'already', votes_for_user
+
+        new_vote = Vote(  decision = self, Voater= Voater, Value = Value)
+        new_vote.save()
+        self.save()
+"""    
     
     
     
@@ -73,12 +106,13 @@ class Vote(models.Model):
     Voater = models.ForeignKey(User)
     create_date = models.DateTimeField('date created', auto_now_add=True )
     update_date = models.DateTimeField('last-modifie', auto_now =True )
-    Value = models.IntegerField( default=LikeLevel.NOT_DEFINED, choices =LikeLevel.level, null=True,
+    Value = models.IntegerField( choices =LikeLevel.level, null=True,
                                      blank=True, db_index=True)
 
     def __unicode__(self):
         return self.id
-    
+    def print_content(self):
+        print 'voater', self.Voater_id, 'value', self.Value
 
 class Action(models.Model):
     discussion = models.ForeignKey(Discussion)
