@@ -20,6 +20,11 @@ class Discussion(models.Model):
         response.save()
         self.save()
 
+    def add_decision(self, TextBody):
+        decision = Decision(discussion = self , TextBody = TextBody)
+        decision.save()
+        self.save()
+
     def print_content(self):
         print 'Owner', self.Owner.username
         print 'Title:', self.Title
@@ -27,6 +32,9 @@ class Discussion(models.Model):
         responses = self.response_set.all()
         for response in responses:
             response.print_content()
+        decisions = self.decision_set.all()
+        for decision in decisions:
+            decision.print_content()
 
 
 class LikeLevel(object):
@@ -53,6 +61,9 @@ class Decision(models.Model):
 
     def __unicode__(self):
         return self.id
+    def print_content(self):
+        print 'Decide:', self.TextBody, 'create_date', self.create_date 
+    
     
     
     
