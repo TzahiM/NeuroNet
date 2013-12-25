@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.validators import MaxLengthValidator
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 
@@ -25,6 +26,14 @@ class Discussion(models.Model):
         decision.save()
         self.save()
 
+    def add_action(self, responsible, GoalDescription, target_date):
+        action  = Action(discussion = self , responsible = responsible, 
+                         GoalDescription = GoalDescription, 
+                         target_date = target_date)
+        action.save()
+        self.save()
+
+   
     def print_content(self):
         print 'Owner', self.Owner.username
         print 'Title:', self.Title
@@ -35,7 +44,10 @@ class Discussion(models.Model):
         decisions = self.decision_set.all()
         for decision in decisions:
             decision.print_content()
-
+        actions = self.action_set.all()
+        for action in actions:
+            action.print_content()
+            
 
 class LikeLevel(object):
     EXCELLENT= 5
@@ -115,14 +127,55 @@ class Vote(models.Model):
         print 'voater', self.Voater_id, 'value', self.Value
 
 class Action(models.Model):
+    STARTED = 'S'
+    CLOSED = 'C'
+    MISSED = 'M'
+    STATUS_CHOICES = (
+        (STARTED, 'Started'),
+        (CLOSED, 'Closed'),
+        (MISSED, 'Missed'),
+    )
+    
     discussion = models.ForeignKey(Discussion)
     responsible = models.ForeignKey(User)
-    GoalDescription = models.CharField(  max_length=200)
-    target_date = models.DateTimeField('Should be completed untill')
-    closing_date = models.DateTimeField('Achived at',blank = True,  null = True)
+    GoalDescription = models.CharField(  max_length=200, editable = False)
+    target_date = models.DateTimeField('Should be completed untill', editable = False)
+    closing_date = models.DateTimeField('Achived at',blank = True,  null = True, default = None)
     StatusDescription = models.TextField(blank=True, null = True)
+    status = models.CharField(max_length=1,
+                                      choices=STATUS_CHOICES,
+                                      default=STARTED)
+    create_date = models.DateTimeField('date created', auto_now_add=True )
+    update_date = models.DateTimeField('last-modifie', auto_now =True )
+    
     def __unicode__(self):
         return self.id
+    def print_content(self):
+        print 'status:', self.get_status(), 'GoalDescription:', self.GoalDescription, 'target_date:', self.target_date, 'closing_date:', self.closing_date, self.StatusDescription 
+    def update_status_description(self, StatusDescription):
+        self.StatusDescription = StatusDescription
+        self.save()
+    def close(self):
+        self.closing_date = timezone.now()
+        self.save()
+    def get_time_until_target(self):
+        return  self.target_date - timezone.now
+    def refresh_status(self):
+        if ( self.closing_date == None):
+            if (self.get_time_until_target() > 0):
+                self.status = self.STARTED
+            else:
+                self.status = self.MISSED
+        else:
+            if ( self.closing_date <= self.target_date):
+                self.status = self.CLOSED
+            else:
+                self.status = self.MISSED
+        self.save()
+    def get_status(self):
+        self.refresh_status()
+        return self.status
+        
 
 class Witness(models.Model):
     responsible = models.ForeignKey(User)
