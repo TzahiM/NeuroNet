@@ -3,12 +3,13 @@ from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils import timezone
 
+
 # Create your models here.
 
     
 
 class Discussion(models.Model):
-    Owner = models.ForeignKey(User)
+    Owner = models.ForeignKey(User, editable = False)
     Title = models.CharField( unique = True, max_length=200)
     Description = models.CharField(blank = True, null = True, max_length=600, validators=[MaxLengthValidator])
     create_date = models.DateTimeField('date created', auto_now_add=True )
@@ -26,10 +27,10 @@ class Discussion(models.Model):
         decision.save()
         self.save()
 
-    def add_action(self, responsible, GoalDescription, target_date):
+    def add_action(self, responsible, GoalDescription, input_target_date):
         action  = Action(discussion = self , responsible = responsible, 
                          GoalDescription = GoalDescription, 
-                         target_date = target_date)
+                         target_date =  input_target_date)
         action.save()
         self.save()
 
@@ -139,8 +140,8 @@ class Action(models.Model):
     discussion = models.ForeignKey(Discussion)
     responsible = models.ForeignKey(User)
     GoalDescription = models.CharField(  max_length=200, editable = False)
-    target_date = models.DateTimeField('Should be completed untill', editable = False)
-    closing_date = models.DateTimeField('Achived at',blank = True,  null = True, default = None)
+    target_date = models.DateTimeField('Should be completed untill')
+    closing_date = models.DateTimeField('Achived at',blank = True,  null = True, default = 0)
     StatusDescription = models.TextField(blank=True, null = True)
     status = models.CharField(max_length=1,
                                       choices=STATUS_CHOICES,
@@ -151,21 +152,34 @@ class Action(models.Model):
     def __unicode__(self):
         return self.id
     def print_content(self):
-        print 'status:', self.get_status(), 'GoalDescription:', self.GoalDescription, 'target_date:', self.target_date, 'closing_date:', self.closing_date, self.StatusDescription 
+        print 'create', self.create_date, 'update', self.update_date, 'status:', self.get_status(), 'GoalDescription:', self.GoalDescription, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closing_date, self.StatusDescription 
     def update_status_description(self, StatusDescription):
         self.StatusDescription = StatusDescription
         self.save()
     def close(self):
-        self.closing_date = timezone.now()
-        self.save()
+        if (self.status == self.STARTED):
+            self.closing_date = timezone.now()
+            self.save()
+            self.refresh_status()
+        
     def get_time_until_target(self):
-        return  self.target_date - timezone.now
+        self.refresh_status()
+        if ( self.status == self.STARTED):
+            now =  timezone.make_aware(timezone.now(), timezone.get_current_timezone())
+            return  self.target_date - now
+        return 0
     def refresh_status(self):
-        if ( self.closing_date == None):
-            if (self.get_time_until_target() > 0):
-                self.status = self.STARTED
-            else:
-                self.status = self.MISSED
+        if (self.status == self.CLOSED):
+            return
+        if (self.status == self.MISSED):
+            return
+            
+        if ( self.status == self.STARTED):
+            default_timezone = timezone.get_default_timezone()
+            
+            if (timezone.make_aware(self.target_date, default_timezone) < timezone.make_aware(timezone.now(), default_timezone)):
+                return
+            self.status = self.MISSED
         else:
             if ( self.closing_date <= self.target_date):
                 self.status = self.CLOSED
