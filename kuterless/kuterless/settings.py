@@ -39,17 +39,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.sites',
-#    'south',
-#    'django_notify',
-#    'mptt',
-#    'sekizai',  
-#    'sorl.thumbnail',
-#    'wiki',
-#    'wiki.plugins.attachments',
-#    'wiki.plugins.notifications',
-#    'wiki.plugins.images',
-#    'wiki.plugins.macros',   
-    'CoPlay',
+    'south',
+    'django_extensions',
+    'coplay',
 )
 
 MIDDLEWARE_CLASSES = (
