@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils import timezone
+import datetime
 
 
 # Create your models here.
@@ -26,6 +27,7 @@ class Discussion(models.Model):
         decision = Decision(discussion = self , TextBody = TextBody)
         decision.save()
         self.save()
+        return decision
 
     def add_action(self, responsible, GoalDescription, input_target_date):
         action  = Action(discussion = self , responsible = responsible, 
@@ -33,6 +35,7 @@ class Discussion(models.Model):
                          target_date =  input_target_date)
         action.save()
         self.save()
+        return action
 
    
     def print_content(self):
@@ -72,7 +75,7 @@ class Decision(models.Model):
     Value = models.IntegerField( default = 0)
     
     def __unicode__(self):
-        return self.id
+        return "" + self.id
     def get_number_of_votes(self):
         return self.vote_set.count()
     
@@ -127,6 +130,19 @@ class Vote(models.Model):
     def print_content(self):
         print 'voater', self.Voater_id, 'value', self.Value
 
+"""
+class Test(models.Model):
+#    goal_desc = models.CharField(  max_length=200)
+    target_date = models.DateTimeField('Target date' )
+#    closing_date = models.DateTimeField('Achived at',blank = True,  null = True, default = 0)
+    closing_date = models.DateTimeField('Achived at')    
+    StatusDescription = models.TextField(blank=True, null = True)
+    create_date = models.DateTimeField('date created', auto_now_add=True )
+    update_date = models.DateTimeField('last-modifie', auto_now =True )
+    def __unicode__(self):
+        return self.id
+"""
+
 class Action(models.Model):
     STARTED = 'S'
     CLOSED = 'C'
@@ -140,8 +156,8 @@ class Action(models.Model):
     discussion = models.ForeignKey(Discussion)
     responsible = models.ForeignKey(User)
     GoalDescription = models.CharField(  max_length=200, editable = False)
-    target_date = models.DateTimeField('Should be completed untill')
-    closing_date = models.DateTimeField('Achived at',blank = True,  null = True, default = 0)
+    target_date = models.DateTimeField('Target date')
+    closing_date = models.DateTimeField('Achived at')
     StatusDescription = models.TextField(blank=True, null = True)
     status = models.CharField(max_length=1,
                                       choices=STATUS_CHOICES,
@@ -150,23 +166,24 @@ class Action(models.Model):
     update_date = models.DateTimeField('last-modifie', auto_now =True )
     
     def __unicode__(self):
-        return self.id
+        return "" + self.id
     def print_content(self):
-        print 'create', self.create_date, 'update', self.update_date, 'status:', self.get_status(), 'GoalDescription:', self.GoalDescription, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closing_date, self.StatusDescription 
+        print 'create', self.create_date, 'update', self.update_date, 'status:', self.get_status(), 'now', timezone.now(), 'GoalDescription:', self.GoalDescription, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closing_date, self.StatusDescription 
     def update_status_description(self, StatusDescription):
         self.StatusDescription = StatusDescription
         self.save()
     def close(self):
+        self.refresh_status()
         if (self.status == self.STARTED):
-            self.closing_date = timezone.now()
+            self.status = self.CLOSED
+            self.closing_date = timezone.now() 
             self.save()
-            self.refresh_status()
+
         
     def get_time_until_target(self):
         self.refresh_status()
         if ( self.status == self.STARTED):
-            now =  timezone.make_aware(timezone.now(), timezone.get_current_timezone())
-            return  self.target_date - now
+            return  self.target_date - timezone.now() 
         return 0
     def refresh_status(self):
         if (self.status == self.CLOSED):
@@ -174,27 +191,14 @@ class Action(models.Model):
         if (self.status == self.MISSED):
             return
             
-        if ( self.status == self.STARTED):
-            default_timezone = timezone.get_default_timezone()
-            
-            if (timezone.make_aware(self.target_date, default_timezone) < timezone.make_aware(timezone.now(), default_timezone)):
-                return
+        if (self.target_date < timezone.now() ):
             self.status = self.MISSED
-        else:
-            if ( self.closing_date <= self.target_date):
-                self.status = self.CLOSED
-            else:
-                self.status = self.MISSED
-        self.save()
+            self.save()
+            
     def get_status(self):
         self.refresh_status()
         return self.status
         
-
-class Witness(models.Model):
-    responsible = models.ForeignKey(User)
-    action = models.ForeignKey(Action)
-
 class Response(models.Model):
     RESPONSE_TYPES  = (
         ('E','Encourage'  ),
