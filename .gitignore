@@ -36,3 +36,4 @@ Thumbs.db
 #ignore python
 *.pyc
 .project
+*.pyc
