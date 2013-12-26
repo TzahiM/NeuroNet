@@ -193,8 +193,9 @@ class Task(models.Model):
         self.refresh_status()
         if (self.status == self.STARTED):
             self.status = self.CLOSED
-            self.closing_date = timezone.now() 
+            self.closed_at = timezone.now() 
             self.save()
+            
 
         
     def get_time_until_target(self):
@@ -219,4 +220,3 @@ class Task(models.Model):
         
     def print_content(self):
         print 'create', self.created_at, 'update', self.updated_at, 'status:', self.get_status(), 'now', timezone.now(), 'GoalDescription:', self.goal_description, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closed_at, self.status_description 
-        
