@@ -1,5 +1,6 @@
 from coplay.models import Discussion
 from django.http.response import HttpResponse
+from django.utils import timezone
 from django.views import generic
 from django.views.generic.edit import CreateView
 
@@ -10,8 +11,12 @@ def root(request):
 
 class IndexView(generic.ListView):
     model = Discussion
-    template_name = 'coplay/index.html'
-    context_object_name = 'latest_discussion_list'
+    template_name = 'coplay/discussion_list.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        context['now'] = timezone.now()
+        return context    
 
 
 class DetailView(generic.DetailView):
