@@ -3,15 +3,15 @@ from django.conf.urls import patterns, url
 
 
 urlpatterns = patterns('',
-    url(r'^$', views.root, name='coplay_root'),
+    url(r'root/$', views.root, name='coplay_root'),
 #/list
     url(r'list/$', views.IndexView.as_view(), name='discussions_list'),
 #/add
-    url(r'add/$', views.DiscussionAddView.as_view(), name='add_discussion'),
+    url(r'add/$', views.discussions_add, name='discussions_add'),
 #pk (of discussion)/details
-    url(r'^(?P<pk>\d+)/details/$', views.DetailView.as_view(), name='discussion_details'),
+    url(r'^(?P<pk>\d+)/details/$', views.discussion_details, name='discussion_details'),
 #pk (of discussion)/feedback_for
-    url(r'^(?P<pk>\d+)/feedback/$', views.DetailView.as_view(), name='add_feedback'),
+    url(r'^(?P<pk>\d+)/feedback/$', views.add_feedback, name='add_feedback'),
 #pk (of discussion)/update_goals
     url(r'^(?P<pk>\d+)/update_goals/$', views.update_discussion, name='update_goals'),
 #pk (of discussion)/add_decision

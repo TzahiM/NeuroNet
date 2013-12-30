@@ -3,10 +3,12 @@
 {% block content %}
 	<h1>Discussions</h1>
 	<ul>
-	{% for discussion in object_list %}
-	    <li>{{ discussion.updated_at|date }} - {{ discussion.title }} by {{ discussion.owner.username }}</li>
+	{% for discussion in latest_discussion_list %}
+	    <li>{{ discussion.updated_at|date }} - {{ discussion.title }} by {{ discussion.owner.username }} <a href="{{ discussion.get_absolute_url }}">ל</a></li>
 	{% empty %}
 	    <li>No discussion yet.</li>
 	{% endfor %}
 	</ul>
 {% endblock %}
+
+

@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils import timezone
@@ -16,13 +17,17 @@ class Discussion(models.Model):
 
     def __unicode__(self):
         return self.id
-    
+
+    def get_absolute_url(self):   
+        return( reverse('coplay:discussion_details', kwargs={'pk': str(self.id)}) )
+        
     def update_description(self, description):
         self.description = description
         self.save()
 
     def add_feedback(self, user, feedbabk_type, content):
         feedback = Feedback(discussion = self ,user = user, feedbabk_type = feedbabk_type, content = content )
+        feedback.clean()
         feedback.save()
         self.save()
         return feedback
@@ -30,6 +35,7 @@ class Discussion(models.Model):
 
     def add_decision(self, content):
         decision = Decision(parent = self , content = content)
+        decision.clean()
         decision.save()
         self.save()
         return decision
@@ -40,6 +46,7 @@ class Discussion(models.Model):
         task  = Task(parent = self , responsible = responsible, 
                          goal_description = goal_description, 
                          target_date =  target_date)
+        task.clean()
         task.save()
         self.save()
         return task
