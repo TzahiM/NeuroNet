@@ -2,6 +2,55 @@
 
 {% block content %}
 
-    
+<h1>{{ discussion.title }}</h1>
+<p><b> {{ discussion.owner.username }}</b> Need your help</p>
+{% if discussion.description %}
+    <h2>In achiving</h2> 
+    {{ discussion.description|linebreaks }}
+{% else %}
+    <p>No further description.</p>
+{% endif %}
+    <h3>Encourage</h3>
+<ul>
+{% for feedback in list_encourage %}
+ 		<li>{{ feedback.user.username }}:"{{ feedback.content }}" {{ feedback.created_at | time }}</li>
+{% endfor %}
+</ul>
+    <h3>Cooperation</h3>
+<ul>
+{% for feedback in list_cooperation %}
+ 		<li>{{ feedback.user.username }}:"{{ feedback.content }}" {{ feedback.created_at | time }}</li>
+{% endfor %}
+</ul>
+    <h3>Intuition</h3>
+<ul>
+{% for feedback in list_intuition %}
+ 		<li>{{ feedback.user.username }}:"{{ feedback.content }}" {{ feedback.created_at | time }}</li>
+{% endfor %}
+</ul>
+    <h3>Advice</h3>
+<ul>
+{% for feedback in list_advice %}
+ 		<li>{{ feedback.user.username }}:"{{ feedback.content }}" {{ feedback.created_at | time }}</li>
+{% endfor %}
+</ul>
+
+    <h2>Decision</h2>
+<ul>
+{% for decision in list_decision %}
+ 		<li>{{ decision.content }} {{decision.get_number_of_votes}} votes. sum of {{decision.get_vote_sum}}   {{ decision.created_at | time }}</li>
+{% endfor %}
+</ul>
+
+    <h2>Tasks</h2>
+<ul>
+{% for task in list_tasks %}
+ 		<li>{{ task.responsible.username }} shall achive {{task.goal_description}} untill {{task.target_date | date}} {{ task.get_status }}</li>
+{% endfor %}
+</ul>
+
+
+
+
 {% endblock %}
 

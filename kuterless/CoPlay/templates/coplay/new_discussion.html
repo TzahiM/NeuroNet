@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<form action= "{% url 'coplay:discussions_add' %}" method="post">{% csrf_token %}
+	<form action= "{% url 'coplay:add_discussion' %}" method="post">{% csrf_token %}
 	{% for field in form %}
         <div class="fieldWrapper">
             {{ field.errors }}

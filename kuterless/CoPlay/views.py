@@ -1,5 +1,5 @@
 from coplay import models
-from coplay.models import Discussion
+from coplay.models import Discussion, Feedback
 from django import forms
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -27,11 +27,27 @@ def discussion_details(request, pk):
         discussion = Discussion.objects.get(id=int(pk))
     except Discussion.DoesNotExist:
         return HttpResponseRedirect(reverse('coplay_root'))
-    return render(request, 'coplay/discussion_detail.html', {'discussion': discussion })
+    
+    list_encourage   =discussion.feedback_set.all().filter( feedbabk_type = Feedback.ENCOURAGE  ).order_by( "-created_at")
+    list_cooperation =discussion.feedback_set.all().filter( feedbabk_type = Feedback.COOPERATION).order_by( "-created_at")
+    list_intuition   =discussion.feedback_set.all().filter( feedbabk_type = Feedback.INTUITION  ).order_by( "-created_at")
+    list_advice      =discussion.feedback_set.all().filter( feedbabk_type = Feedback.ADVICE     ).order_by( "-created_at")
+    list_decision   =discussion.decision_set.all().order_by( "-created_at") 
+    list_tasks       =discussion.task_set.all().order_by( "-created_at") 
+    
+    
+    
+    
+    return render(request, 'coplay/discussion_detail.html', 
+         {  'discussion'      :  discussion     ,      
+            'list_encourage'  : list_encourage  ,   
+            'list_cooperation': list_cooperation, 
+            'list_intuition'  : list_intuition  ,
+            'list_advice'     : list_advice     ,
+            'list_decision'   : list_decision   ,
+            'list_tasks'      : list_tasks        })
 
 
-def discussions_add_form(request):
-    return render(request, 'coplay/discussion_form.html', )
 
 
 class NewDiscussionForm(forms.Form):
@@ -39,7 +55,7 @@ class NewDiscussionForm(forms.Form):
     description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea)
     
 
-def discussions_add(request):
+def add_discussion(request):
     if request.method == 'POST': # If the form has been submitted...
         form = NewDiscussionForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass

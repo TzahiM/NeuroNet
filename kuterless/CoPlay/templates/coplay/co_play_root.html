@@ -2,7 +2,12 @@
 
 {% block content %}
 
-<a href="/coplay/add">New discussion</a><br><br><br><br><br><br>
-<a href="/coplay/list">Join an existing discussion</a>    
+
+
+<a class="btn btn-success" href="{% url 'coplay:add_discussion' %}">New discussion</a><br><br><br><br><br><br>
+
+
+
+<a class="btn btn-success" href="{% url 'coplay:discussions_list' %}">Join an existing discussion</a>    
 {% endblock %}
 

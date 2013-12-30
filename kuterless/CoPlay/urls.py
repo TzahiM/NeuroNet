@@ -7,7 +7,7 @@ urlpatterns = patterns('',
 #/list
     url(r'list/$', views.IndexView.as_view(), name='discussions_list'),
 #/add
-    url(r'add/$', views.discussions_add, name='discussions_add'),
+    url(r'add/$', views.add_discussion, name='add_discussion'),
 #pk (of discussion)/details
     url(r'^(?P<pk>\d+)/details/$', views.discussion_details, name='discussion_details'),
 #pk (of discussion)/feedback_for
