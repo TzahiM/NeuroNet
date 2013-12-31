@@ -35,7 +35,7 @@ class AddDecisionForm(forms.Form):
 
 
 class VoteForm(forms.Form):
-    value = forms.ChoiceField( choices=LikeLevel.level)
+    value = forms.ChoiceField(widget = forms.RadioSelect,  choices=LikeLevel.level)
 
 
 def discussion_details(request, pk):
