@@ -1,5 +1,5 @@
 from coplay import models
-from coplay.models import Discussion, Feedback
+from coplay.models import Discussion, Feedback, LikeLevel, Decision
 from django import forms
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -28,7 +28,15 @@ class AddFeedbackForm(forms.Form):
 
 class UpdateDiscussionForm(forms.Form):
     description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+ 
     
+class AddDecisionForm(forms.Form):
+    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+
+
+class VoteForm(forms.Form):
+    value = forms.ChoiceField( choices=LikeLevel.level)
+
 
 def discussion_details(request, pk):
     try:
@@ -46,6 +54,11 @@ def discussion_details(request, pk):
      
     feedback_form =AddFeedbackForm()
     description_form = UpdateDiscussionForm()
+    add_decision_form = AddDecisionForm()
+    
+    request_user = User.objects.first()
+    vote_form = VoteForm()
+    
     
     return render(request, 'coplay/discussion_detail.html', 
          {  'discussion'      :  discussion     ,      
@@ -56,7 +69,10 @@ def discussion_details(request, pk):
             'list_decision'   : list_decision   ,
             'list_tasks'      : list_tasks      ,
             'feedback_form'   : feedback_form   ,
-            'description_form': description_form })
+            'description_form': description_form,
+            'add_decision_form': add_decision_form,
+            'request_user'    : request_user    ,
+            'vote_form'       : vote_form       })
 
 
 
@@ -121,11 +137,40 @@ def add_feedback(request, pk):
     return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
     
 def add_decision(request, pk):
-    return HttpResponse("add_decision" + pk)
+    if request.method == 'POST': # If the form has been submitted...
+        form = AddDecisionForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data# Process the data in form.cleaned_data
+            try:
+                discussion = Discussion.objects.get(id=int(pk))
+            except Discussion.DoesNotExist:
+                return HttpResponse('Discussion not found')
+            discussion.add_decision( form.cleaned_data['content'] )
+    return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
         
     
 def vote(request, pk):    
-    return HttpResponse("vote" + pk)
+    if request.method == 'POST': # If the form has been submitted...
+        form = VoteForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data# Process the data in form.cleaned_data
+            try:
+                decision = Decision.objects.get(id=int(pk))
+            except Discussion.DoesNotExist:
+                return HttpResponse('Decision not found')
+            user = User.objects.first()
+            decision.vote( user, int(form.cleaned_data['value']) )
+            try:
+                discussion = Discussion.objects.get(id=decision.parent_id)
+            except Discussion.DoesNotExist:
+                return HttpResponse('Discussion not found')
+            return HttpResponseRedirect( discussion.get_absolute_url()) # Redirect after POST
+        return( HttpResponse('Invalid form'))        
+        
+    return( HttpResponse('Forbidden request not via form'))        
+            
+            
+            
 
 def add_task(request, pk):    
     return HttpResponse("add_task" + pk)

@@ -81,6 +81,8 @@ class CoPlayTest(TestCase):
         self.assertEquals(2, Vote.objects.count())
         self.assertEquals(2, des.get_number_of_votes())
         self.assertEquals(4, des.get_vote_sum())
+        self.assertEquals( des.get_vote_value_or_none( self.at2) , LikeLevel.GOOD )
+        self.assertEquals( des.get_vote_value_or_none( self.at3) , None )
         d.print_content()
 
     def test_action(self):    

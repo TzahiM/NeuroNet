@@ -98,10 +98,30 @@
 {% endfor %}
 </ul>
 
+
+{% if add_decision_form %}
+
+<p><strong>You can add a new decision here</strong></p>
+
+<form action= "{% url 'coplay:add_decision' discussion.id %}" method="post">{% csrf_token %}
+	{{add_decision_form}}
+	<input type="submit" value="Post Decision for attendentes grading" />
+</form>
+{% endif %}
+
     <h2>Decision</h2>
 <ul>
 {% for decision in list_decision %}
- 		<li>{{ decision.content|linebreaks }} {{decision.get_number_of_votes}} votes. sum of {{decision.get_vote_sum}}   {{ decision.created_at | time }}</li>
+ 		<li>{{ decision.content|linebreaks }} 
+ 			{{decision.get_number_of_votes}} votes. sum of {{decision.get_vote_sum}}   {{ decision.created_at | time }}
+ 			{% if vote_form %}
+ 				<p><strong>What is your vote?</strong></p>
+				<form action= "{% url 'coplay:vote' decision.id %}" method="post">{% csrf_token %}
+					{{vote_form}}
+					<input type="submit" value="Vote" />
+				</form>
+ 			{% endif %} 			
+		</li>
 {% endfor %}
 </ul>
 

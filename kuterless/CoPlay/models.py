@@ -134,6 +134,13 @@ class Decision(models.Model):
         
     def get_vote_sum(self):
         return(self.value)
+    def get_vote_value_or_none(self, voater):
+        if self.vote_set.filter(voater = voater).count() == 1:
+            vote = self.vote_set.get(voater = voater)
+            return vote.value
+        return None
+        
+        return self.vote_set.count()
     def print_content(self):
         print 'Decide:', self.content, 'created_at', self.created_at, 'value', self.value
         votes = self.vote_set.all()
