@@ -10,6 +10,27 @@
 {% else %}
     <p>No further description.</p>
 {% endif %}
+
+
+{% if feedback_form %}
+
+<p><strong>You can add your feedback here</strong></p>
+
+<form action= "{% url 'coplay:add_feedback' discussion.id %}" method="post">{% csrf_token %}
+	{{feedback_form}}
+	<input type="submit" value="Post Feedback" />
+</form>
+
+{% else %}
+    <p>No feedback_form.</p>
+{% endif %}
+
+
+
+
+
+
+
     <h3>Encourage</h3>
 <ul>
 {% for feedback in list_encourage %}

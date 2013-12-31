@@ -21,6 +21,13 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         return Discussion.objects.order_by('-updated_at')
+    
+    
+
+class AddFeedbackForm(forms.Form):
+    feedbabk_type = forms.ChoiceField( choices=Feedback.FEEDBACK_TYPES)
+    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea)
+    
 
 def discussion_details(request, pk):
     try:
@@ -35,7 +42,7 @@ def discussion_details(request, pk):
     list_decision   =discussion.decision_set.all().order_by( "-created_at") 
     list_tasks       =discussion.task_set.all().order_by( "-created_at") 
     
-    
+    feedback_form =AddFeedbackForm()
     
     
     return render(request, 'coplay/discussion_detail.html', 
@@ -45,7 +52,8 @@ def discussion_details(request, pk):
             'list_intuition'  : list_intuition  ,
             'list_advice'     : list_advice     ,
             'list_decision'   : list_decision   ,
-            'list_tasks'      : list_tasks        })
+            'list_tasks'      : list_tasks      ,
+            'feedback_form'   : feedback_form   })
 
 
 
@@ -86,12 +94,22 @@ def update_discussion(request, pk):
         return HttpResponseRedirect(reverse('coplay_root'))
     
     
+
+
+    
+    
 def add_feedback(request, pk):   
-    try:
-        discussion = Discussion.objects.get(id=int(pk))
-    except Discussion.DoesNotExist:
-        return HttpResponseRedirect(reverse('discussion_details'))
-     
+    if request.method == 'POST': # If the form has been submitted...
+        form = AddFeedbackForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data# Process the data in form.cleaned_data
+            user = User.objects.first()
+            try:
+                discussion = Discussion.objects.get(id=int(pk))
+            except Discussion.DoesNotExist:
+                return HttpResponseRedirect(reverse('discussion_details'))
+            discussion.add_feedback( user,  form.cleaned_data['feedbabk_type'] , form.cleaned_data['content'])
+    return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
     
 def add_decision(request, pk):
     return HttpResponse("add_decision" + pk)
