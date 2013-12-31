@@ -7,6 +7,7 @@
 {% if discussion.description %}
     <h2>In achiving</h2> 
     {{ discussion.description|linebreaks }}
+    <p> Last updated at {{discussion.updated_at| date }} {{discussion.updated_at| time }}</p>
 {% else %}
     <p>No further description.</p>
 {% endif %}
@@ -34,7 +35,17 @@
     <h3>Encourage</h3>
 <ul>
 {% for feedback in list_encourage %}
- 		<li>{{ feedback.user.username }}:"{{ feedback.content }}" {{ feedback.created_at | time }}</li>
+ 		<li>
+{% if feedback.created_at < discussion.updated_at %}
+	<strike>
+
+{% endif %} 			
+ 			{{ feedback.user.username }}:"{{ feedback.content }}" {{ feedback.created_at | time }}
+{% if feedback.created_at < discussion.updated_at %}
+ 	</strike>
+
+{% endif %} 			
+ 		</li>
 {% endfor %}
 </ul>
     <h3>Cooperation</h3>

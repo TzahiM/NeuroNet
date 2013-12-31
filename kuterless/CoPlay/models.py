@@ -29,7 +29,7 @@ class Discussion(models.Model):
         feedback = Feedback(discussion = self ,user = user, feedbabk_type = feedbabk_type, content = content )
         feedback.clean()
         feedback.save()
-        self.save()
+#        self.save()
         return feedback
 
 
