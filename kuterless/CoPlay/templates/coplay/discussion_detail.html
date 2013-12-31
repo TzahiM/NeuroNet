@@ -13,6 +13,16 @@
 {% endif %}
 
 
+{% if description_form %}
+
+<p><strong>You can change your goals and requested help description</strong></p>
+
+<form action= "{% url 'coplay:update_goals' discussion.id %}" method="post">{% csrf_token %}
+	{{description_form}}
+	<input type="submit" value="Post New description" />
+</form>
+{% endif %}
+
 {% if feedback_form %}
 
 <p><strong>You can add your feedback here</strong></p>
@@ -21,16 +31,7 @@
 	{{feedback_form}}
 	<input type="submit" value="Post Feedback" />
 </form>
-
-{% else %}
-    <p>No feedback_form.</p>
 {% endif %}
-
-
-
-
-
-
 
     <h3>Encourage</h3>
 <ul>
@@ -40,7 +41,7 @@
 	<strike>
 
 {% endif %} 			
- 			{{ feedback.user.username }}:"{{ feedback.content }}" {{ feedback.created_at | time }}
+ 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
 {% if feedback.created_at < discussion.updated_at %}
  	</strike>
 
@@ -51,33 +52,63 @@
     <h3>Cooperation</h3>
 <ul>
 {% for feedback in list_cooperation %}
- 		<li>{{ feedback.user.username }}:"{{ feedback.content }}" {{ feedback.created_at | time }}</li>
+ 		<li>
+{% if feedback.created_at < discussion.updated_at %}
+	<strike>
+
+{% endif %} 			
+ 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
+{% if feedback.created_at < discussion.updated_at %}
+ 	</strike>
+
+{% endif %} 			
+ 		</li>
 {% endfor %}
 </ul>
     <h3>Intuition</h3>
 <ul>
 {% for feedback in list_intuition %}
- 		<li>{{ feedback.user.username }}:"{{ feedback.content }}" {{ feedback.created_at | time }}</li>
+ 		<li>
+{% if feedback.created_at < discussion.updated_at %}
+	<strike>
+
+{% endif %} 			
+ 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
+{% if feedback.created_at < discussion.updated_at %}
+ 	</strike>
+
+{% endif %} 			
+ 		</li>
 {% endfor %}
 </ul>
     <h3>Advice</h3>
 <ul>
 {% for feedback in list_advice %}
- 		<li>{{ feedback.user.username }}:"{{ feedback.content }}" {{ feedback.created_at | time }}</li>
+ 		<li>
+{% if feedback.created_at < discussion.updated_at %}
+	<strike>
+
+{% endif %} 			
+ 			{{ feedback.user.username }}:"{{ feedback.content |linebreaks}}" {{ feedback.created_at | time }}
+{% if feedback.created_at < discussion.updated_at %}
+ 	</strike>
+
+{% endif %} 			
+ 		</li>
 {% endfor %}
 </ul>
 
     <h2>Decision</h2>
 <ul>
 {% for decision in list_decision %}
- 		<li>{{ decision.content }} {{decision.get_number_of_votes}} votes. sum of {{decision.get_vote_sum}}   {{ decision.created_at | time }}</li>
+ 		<li>{{ decision.content|linebreaks }} {{decision.get_number_of_votes}} votes. sum of {{decision.get_vote_sum}}   {{ decision.created_at | time }}</li>
 {% endfor %}
 </ul>
 
     <h2>Tasks</h2>
 <ul>
 {% for task in list_tasks %}
- 		<li>{{ task.responsible.username }} shall achive {{task.goal_description}} untill {{task.target_date | date}} {{ task.get_status }}</li>
+ 		<li>{{ task.responsible.username }} shall achive {{task.goal_description|linebreaks}} untill {{task.target_date | date}} {{ task.get_status }}</li>
 {% endfor %}
 </ul>
 

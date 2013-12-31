@@ -22,11 +22,12 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return Discussion.objects.order_by('-updated_at')
     
-    
-
 class AddFeedbackForm(forms.Form):
     feedbabk_type = forms.ChoiceField( choices=Feedback.FEEDBACK_TYPES)
-    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea)
+    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+
+class UpdateDiscussionForm(forms.Form):
+    description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
     
 
 def discussion_details(request, pk):
@@ -42,8 +43,9 @@ def discussion_details(request, pk):
     list_decision   =discussion.decision_set.all().order_by( "-created_at") 
     list_tasks       =discussion.task_set.all().order_by( "-created_at") 
     
+     
     feedback_form =AddFeedbackForm()
-    
+    description_form = UpdateDiscussionForm()
     
     return render(request, 'coplay/discussion_detail.html', 
          {  'discussion'      :  discussion     ,      
@@ -53,7 +55,8 @@ def discussion_details(request, pk):
             'list_advice'     : list_advice     ,
             'list_decision'   : list_decision   ,
             'list_tasks'      : list_tasks      ,
-            'feedback_form'   : feedback_form   })
+            'feedback_form'   : feedback_form   ,
+            'description_form': description_form })
 
 
 
@@ -88,10 +91,16 @@ def add_discussion(request):
 
 
 def update_discussion(request, pk):
-    try:
-        discussion = Discussion.objects.get(id=int(pk))
-    except Discussion.DoesNotExist:
-        return HttpResponseRedirect(reverse('coplay_root'))
+    if request.method == 'POST': # If the form has been submitted...
+        form = UpdateDiscussionForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data# Process the data in form.cleaned_data
+            try:
+                discussion = Discussion.objects.get(id=int(pk))
+            except Discussion.DoesNotExist:
+                return HttpResponse('Discussion not found')
+            discussion.update_description( form.cleaned_data['description'] )
+    return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
     
     
 
@@ -107,7 +116,7 @@ def add_feedback(request, pk):
             try:
                 discussion = Discussion.objects.get(id=int(pk))
             except Discussion.DoesNotExist:
-                return HttpResponseRedirect(reverse('discussion_details'))
+                return HttpResponse('Discussion not found')
             discussion.add_feedback( user,  form.cleaned_data['feedbabk_type'] , form.cleaned_data['content'])
     return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
     
