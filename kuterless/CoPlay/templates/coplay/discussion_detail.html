@@ -18,7 +18,12 @@
 <p><strong>You can change your goals and requested help description</strong></p>
 
 <form action= "{% url 'coplay:update_goals' discussion.id %}" method="post">{% csrf_token %}
-	{{description_form}}
+	{% for field in description_form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+        </div>
+    {% endfor %}
 	<input type="submit" value="Post New description" />
 </form>
 {% endif %}
@@ -28,7 +33,12 @@
 <p><strong>You can add your feedback here</strong></p>
 
 <form action= "{% url 'coplay:add_feedback' discussion.id %}" method="post">{% csrf_token %}
-	{{feedback_form}}
+	{% for field in feedback_form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+        </div>
+    {% endfor %}
 	<input type="submit" value="Post Feedback" />
 </form>
 {% endif %}
@@ -104,7 +114,12 @@
 <p><strong>You can add a new decision here</strong></p>
 
 <form action= "{% url 'coplay:add_decision' discussion.id %}" method="post">{% csrf_token %}
-	{{add_decision_form}}
+	{% for field in add_decision_form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+        </div>
+    {% endfor %}
 	<input type="submit" value="Post Decision for attendentes grading" />
 </form>
 {% endif %}
@@ -117,7 +132,12 @@
  			{% if vote_form %}
  				<p><strong>What is your vote?</strong></p>
 				<form action= "{% url 'coplay:vote' decision.id %}" method="post">{% csrf_token %}
-					{{vote_form}}
+					{% for field in vote_form %}
+				        <div class="fieldWrapper">
+				            {{ field.errors }}
+				            {{ field.label_tag }} {{ field }}
+				        </div>
+				    {% endfor %}
 					<input type="submit" value="Vote" />
 				</form>
  			{% endif %} 			
@@ -125,10 +145,30 @@
 {% endfor %}
 </ul>
 
+
+
+{% if add_task_form %}
+
+<p><strong>Want to do something? Post it here</strong></p>
+
+<form action= "{% url 'coplay:add_task' discussion.id %}" method="post">{% csrf_token %}
+		{% for field in add_task_form %}
+		    <div class="fieldWrapper">
+					{{ field.errors }}
+				{{ field.label_tag }} {{ field }}
+			</div>
+		{% endfor %}
+	<input type="submit" value="Commit for this Task" />
+</form>
+{% endif %}
+
     <h2>Tasks</h2>
 <ul>
 {% for task in list_tasks %}
- 		<li>{{ task.responsible.username }} shall achive {{task.goal_description|linebreaks}} untill {{task.target_date | date}} {{ task.get_status }}</li>
+ 		<li>{{ task.responsible.username }} shall achive {{task.goal_description|linebreaks}}<br> 
+ 			untill {{task.target_date | date}} {{ task.get_status_display }}<br>
+ 			<a href="{{ task.get_absolute_url }}">See more</a> 			
+ 		</li>
 {% endfor %}
 </ul>
 

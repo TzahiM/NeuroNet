@@ -180,11 +180,12 @@ class Task(models.Model):
         (MISSED, 'Missed'),
     )
 
-    parent = models.ForeignKey(Discussion)
+    parent = models.ForeignKey(Discussion, null=True, blank=True)
     responsible = models.ForeignKey(User)
     goal_description = models.TextField(validators=[MaxLengthValidator(MAX_TEXT)])
     target_date = models.DateTimeField()
     closed_at = models.DateTimeField(null=True, blank=True)
+    closed_by = models.ForeignKey(User,  related_name='closed_by', null=True, blank=True)
     status_description = models.TextField(null=True, blank=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=STARTED)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -193,19 +194,33 @@ class Task(models.Model):
     def __unicode__(self):
         return self.content
     
+    
+    def get_absolute_url(self):   
+        return( reverse('coplay:task_details', kwargs={'pk': str(self.id)}) )
+    
+    
     def update_status_description(self, status_description):
+        self.refresh_status()
+        if self.status != self.STARTED:
+            return False        
         self.status_description = status_description
         self.save()
+        return True
 
     def get_status_description(self):
         return self.status_description
         
-    def close(self):
+    def close(self, closing_user):
+        if self.responsible is closing_user:
+            return False
         self.refresh_status()
         if (self.status == self.STARTED):
             self.status = self.CLOSED
-            self.closed_at = timezone.now() 
+            self.closed_at = timezone.now()
+            self.closed_by = closing_user 
             self.save()
+            return True
+        return False
             
 
         
@@ -230,4 +245,4 @@ class Task(models.Model):
         
         
     def print_content(self):
-        print 'create', self.created_at, 'update', self.updated_at, 'status:', self.get_status(), 'now', timezone.now(), 'GoalDescription:', self.goal_description, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closed_at, self.status_description 
+        print 'create', self.created_at, 'update', self.updated_at, 'status:', self.get_status_display(), 'now', timezone.now(), 'GoalDescription:', self.goal_description, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closed_at, self.status_description 

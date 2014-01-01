@@ -1,12 +1,13 @@
 from coplay import models
-from coplay.models import Discussion, Feedback, LikeLevel, Decision
+from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task
 from django import forms
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.forms.extras.widgets import SelectDateWidget
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.utils import timezone
 from django.views import generic
-from django.views.generic.edit import CreateView, UpdateView
 
 # Create your views here.
 def root(request):
@@ -38,6 +39,14 @@ class VoteForm(forms.Form):
     value = forms.ChoiceField(widget = forms.RadioSelect,  choices=LikeLevel.level)
 
 
+class AddTaskForm(forms.Form):
+    goal_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+    target_date =  forms.DateTimeField(widget=SelectDateWidget)
+
+class UpdateTaskForm(forms.Form):
+    status_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+
+
 def discussion_details(request, pk):
     try:
         discussion = Discussion.objects.get(id=int(pk))
@@ -58,6 +67,7 @@ def discussion_details(request, pk):
     
     request_user = User.objects.first()
     vote_form = VoteForm()
+    add_task_form = AddTaskForm()
     
     
     return render(request, 'coplay/discussion_detail.html', 
@@ -72,7 +82,8 @@ def discussion_details(request, pk):
             'description_form': description_form,
             'add_decision_form': add_decision_form,
             'request_user'    : request_user    ,
-            'vote_form'       : vote_form       })
+            'vote_form'       : vote_form       ,
+            'add_task_form'   : add_task_form   })
 
 
 
@@ -173,16 +184,94 @@ def vote(request, pk):
             
 
 def add_task(request, pk):    
-    return HttpResponse("add_task" + pk)
+    if request.method == 'POST': # If the form has been submitted...
+        form = AddTaskForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data# Process the data in form.cleaned_data
+            user = User.objects.first()
+            try:
+                discussion = Discussion.objects.get(id=int(pk))
+            except Discussion.DoesNotExist:
+                return HttpResponse('Discussion not found')
+            target_date = form.cleaned_data['target_date']
+            if target_date <=  timezone.now():
+                response_string= """<p>target date should be in the future<\p>
+                <a href=""" + discussion.get_absolute_url() +'">Back To Discussion</a>'
+                return HttpResponse(response_string)
+            new_task = discussion.add_task( user,  
+                                 form.cleaned_data['goal_description'] ,
+                                 form.cleaned_data['target_date'] )
+            return HttpResponseRedirect(new_task.get_absolute_url()) # Redirect after POST
+
+    return HttpResponseRedirect(reverse ('coplay_root')) # Redirect after POST
+
+class Link():
+    url = ''
+    text = ''
     
-def task_details(request, pk):    
-    return HttpResponse("task_details"  + pk)
+def task_details(request, pk):
+    try:
+        task = Task.objects.get(id=int(pk))
+    except Task.DoesNotExist:
+        error_message = 'Task not found'
+        resirect_links = []
+        resirect_links.append(Link(url = reverse('coplay_root'), text = 'Home'))
+        return render(request, 'coplay/error.html', 
+                      {  'links'      :  resirect_links,
+                         'error_message':error_message})
+        
+        
+    update_task_form = UpdateTaskForm()    
+    
+    allowed_to_close = True
+        
+        
+        
+        
+        
+    return render(request, 'coplay/task_detail.html', 
+                      {  'task'  :  task ,
+                       'update_task_form' : update_task_form,
+                       'allowed_to_close' : allowed_to_close})
     
     
-def update_task_description(request, pk, new_description):  
-    return HttpResponse("update_task_description " + new_description)
+    
+    
+    
+def update_task_description(request, pk):  
+    if request.method == 'POST': # If the form has been submitted...
+        form = UpdateTaskForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data# Process the data in form.cleaned_data
+            try:
+                task = Task.objects.get(id=int(pk))
+            except Task.DoesNotExist:
+                return HttpResponse('Task not found')
+            task.update_status_description( form.cleaned_data['status_description'] )
+            return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
+        
+    error_message = 'Posible only by form'
+    resirect_links = []
+    resirect_links.append(Link(url = reverse('coplay_root'), text = 'Home'))
+    return render(request, 'coplay/error.html', 
+                      {  'links'      :  resirect_links,
+                         'error_message':error_message})
+        
    
 def close_task(request, pk):      
-    return HttpResponse("close_task" + pk)
+    try:
+        task = Task.objects.get(id=int(pk))
+    except Task.DoesNotExist:
+        return HttpResponse('Task not found')
+    user = User.objects.all()[1]
+    if task.close( user ):
+        return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
+    error_message = 'Cannot close this task'
+    resirect_links = []
+    resirect_links.append(Link(url = reverse('coplay_root'), text = 'Home'))
+    resirect_links.append(Link(url =task.get_absolute_url(), text = 'Baky to tsak details'))
+    return render(request, 'coplay/error.html', 
+                      {  'links'      :  resirect_links,
+                         'error_message':error_message})
 
 

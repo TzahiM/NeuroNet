@@ -25,7 +25,7 @@ urlpatterns = patterns('',
 #pk (of task)/task_details
     url(r'^(?P<pk>\d+)/task_details/$', views.task_details, name='task_details'),    
 #pk (of task)/update_task_description  
-    url(r'^(?P<pk>\d+)/update_task_description/(?P<new_description>.+)/$', views.update_task_description, name='update_task_description'),
+    url(r'^(?P<pk>\d+)/update_task/$', views.update_task_description, name='update_task_status_description'),
 #pk (of task)/close_task
     url(r'^(?P<pk>\d+)/close_task/$', views.close_task, name='close_task'),        
 )
