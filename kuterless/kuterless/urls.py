@@ -1,6 +1,8 @@
+from coplay import urls
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
+
 
 admin.autodiscover()
 
@@ -19,7 +21,7 @@ urlpatterns = patterns('',
 
     url(r'^logout/$',
         'django.contrib.auth.views.logout',
-        {'next_page': reverse_lazy('coplay_root')}, name="logout"),
+        {'next_page': '/coplay/root'}, name="logout"),
     
     
     

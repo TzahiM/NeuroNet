@@ -5,25 +5,31 @@
 	<p>Responsible: {{task.responsible.username}}</p>
 	{{task.refresh_status}}
 	<p>Status : {{task.get_status_display}}</p>
-	<p>Time left : {{task.get_time_until_target | date}} {{task.get_time_until_target | time}}</p>
-	<p>Current tatus description : {{task.get_status_description | linebreaks}} </p>
-
-	<p>closed at : {{task.closed_at | date}} {{task.closed_at | time}}</p>
-	<p>By : {{task.closed_by.username}} </p>
-				<a href= "{% url 'coplay:close_task' task.id %}"> close this task</a>
-			{% if update_task_form  %}
-				<p>You can update this task's status here</p>
-				<form action= "{% url 'coplay:update_task_status_description' task.id %}" method="post">{% csrf_token %}
-						{% for field in update_task_form %}
-						    <div class="fieldWrapper">
-									{{ field.errors }}
-								{{ field.label_tag }} {{ field }}
-							</div>
-						{% endfor %}
-					<input type="submit" value="Update Status" />
-				</form>
+	<p>Target date : {{task.target_date}}</p>
 			
-			{% endif %}
+	<p>Time left : {{task.get_time_until_target }}</p>
+	<p>Current status description : {{task.get_status_description | linebreaks}} </p>
+	
+	{% if task.get_status == task.CLOSED %}
+		<p>closed at : {{task.closed_at | date}} {{task.closed_at | time}}</p>
+		<p>By : {{task.closed_by.username}} </p>
+	{% endif %}
+
+	{% if close_possible %}
+				<a href= "{% url 'coplay:close_task' task.id %}"> close this task</a>
+	{% endif %}
+	{% if update_task_form  %}
+		<p>You can update this task's status here</p>
+		<form action= "{% url 'coplay:update_task_status_description' task.id %}" method="post">{% csrf_token %}
+				{% for field in update_task_form %}
+					<div class="fieldWrapper">
+					{{ field.errors }}
+						{{ field.label_tag }} {{ field }}
+					</div>
+				{% endfor %}
+				<input type="submit" value="Update Status" />
+		</form>
+	{% endif %}
 	
 	{% if task.parent %}
 	<p>Retated to a discussion titled : {{task.parent.title | linebreaks}} <br>

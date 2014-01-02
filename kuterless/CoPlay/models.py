@@ -106,7 +106,6 @@ class LikeLevel(object):
                (BAD, 'Bad Idea'),
               )
 
-
 class Decision(models.Model):
     parent = models.ForeignKey(Discussion)
     content = models.TextField(validators=[MaxLengthValidator(MAX_TEXT)])
@@ -138,6 +137,12 @@ class Decision(models.Model):
         if self.vote_set.filter(voater = voater).count() == 1:
             vote = self.vote_set.get(voater = voater)
             return vote.value
+        return None
+    def get_vote_average_or_none(self):
+        numner_of_votes = self.get_number_of_votes()
+        if numner_of_votes != 0:
+            average = int(round( self.get_vote_sum() /numner_of_votes ))
+            return average   
         return None
         
         return self.vote_set.count()

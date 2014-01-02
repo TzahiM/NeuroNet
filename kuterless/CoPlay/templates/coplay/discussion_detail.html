@@ -5,13 +5,14 @@
 <h1>{{ discussion.title }}</h1>
 <p><b> {{ discussion.owner.username }}</b> Need your help</p>
 {% if discussion.description %}
-    <h2>In achiving</h2> 
+    <h3>In achiving</h3> 
     {{ discussion.description|linebreaks }}
-    <p> Last updated at {{discussion.updated_at| date }} {{discussion.updated_at| time }}</p>
+    <p> Last updated at {{discussion.updated_at }} </p>
 {% else %}
     <p>No further description.</p>
 {% endif %}
 
+<h2>Feedbacks</h2>
 
 {% if description_form %}
 
@@ -108,6 +109,7 @@
 {% endfor %}
 </ul>
 
+<h2>Decision of discussion owner, posted for attendents to vote</h2>
 
 {% if add_decision_form %}
 
@@ -124,11 +126,12 @@
 </form>
 {% endif %}
 
-    <h2>Decision</h2>
+    <h3>Decision</h3>
+{% if list_decision %}    
 <ul>
 {% for decision in list_decision %}
  		<li>{{ decision.content|linebreaks }} 
- 			{{decision.get_number_of_votes}} votes. sum of {{decision.get_vote_sum}}   {{ decision.created_at | time }}
+ 			created:{{ decision.created_at }} {{decision.get_number_of_votes}} votes   
  			{% if vote_form %}
  				<p><strong>What is your vote?</strong></p>
 				<form action= "{% url 'coplay:vote' decision.id %}" method="post">{% csrf_token %}
@@ -140,12 +143,20 @@
 				    {% endfor %}
 					<input type="submit" value="Vote" />
 				</form>
+ 			{% else %}
+ 				<p>average: {{decision.get_vote_average_or_none }} {{like_levels}} sum of {{decision.get_vote_sum}}	</p>  
+ 				
+ 				
  			{% endif %} 			
 		</li>
 {% endfor %}
 </ul>
+{% else %}
+<p> There are no desisions yet</p>
+{% endif %}
 
 
+<h2>Tasks</h2>
 
 {% if add_task_form %}
 
@@ -160,6 +171,8 @@
 		{% endfor %}
 	<input type="submit" value="Commit for this Task" />
 </form>
+		<p>Example: "10/25/06 14:30 "</p>	
+
 {% endif %}
 
     <h2>Tasks</h2>

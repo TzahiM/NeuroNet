@@ -1,8 +1,10 @@
 from coplay import models
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget, AdminSplitDateTime
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.forms.extras.widgets import SelectDateWidget
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -23,9 +25,11 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return Discussion.objects.order_by('-updated_at')
     
+   
 class AddFeedbackForm(forms.Form):
     feedbabk_type = forms.ChoiceField( choices=Feedback.FEEDBACK_TYPES)
     content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+
 
 class UpdateDiscussionForm(forms.Form):
     description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
@@ -41,7 +45,7 @@ class VoteForm(forms.Form):
 
 class AddTaskForm(forms.Form):
     goal_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
-    target_date =  forms.DateTimeField(widget=SelectDateWidget)
+    target_date =  forms.DateTimeField()
 
 class UpdateTaskForm(forms.Form):
     status_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
@@ -58,16 +62,23 @@ def discussion_details(request, pk):
     list_intuition   =discussion.feedback_set.all().filter( feedbabk_type = Feedback.INTUITION  ).order_by( "-created_at")
     list_advice      =discussion.feedback_set.all().filter( feedbabk_type = Feedback.ADVICE     ).order_by( "-created_at")
     list_decision   =discussion.decision_set.all().order_by( "-created_at") 
-    list_tasks       =discussion.task_set.all().order_by( "-created_at") 
+    list_tasks       =discussion.task_set.all().order_by( "-created_at")
+    like_levels = LikeLevel.level 
     
-     
-    feedback_form =AddFeedbackForm()
-    description_form = UpdateDiscussionForm()
-    add_decision_form = AddDecisionForm()
+    vote_form = None
+    feedback_form = None
+    description_form = None
+    add_decision_form = None
+    add_task_form = None
+    if request.user.is_authenticated():        
+        if request.user ==  discussion.owner:
+            description_form = UpdateDiscussionForm()
+            add_decision_form = AddDecisionForm()
+        else:
+            feedback_form =AddFeedbackForm()
+            vote_form = VoteForm()
     
-    request_user = User.objects.first()
-    vote_form = VoteForm()
-    add_task_form = AddTaskForm()
+        add_task_form = AddTaskForm()
     
     
     return render(request, 'coplay/discussion_detail.html', 
@@ -81,9 +92,9 @@ def discussion_details(request, pk):
             'feedback_form'   : feedback_form   ,
             'description_form': description_form,
             'add_decision_form': add_decision_form,
-            'request_user'    : request_user    ,
             'vote_form'       : vote_form       ,
-            'add_task_form'   : add_task_form   })
+            'add_task_form'   : add_task_form   ,
+            'like_levels'     : like_levels})
 
 
 
@@ -92,7 +103,7 @@ class NewDiscussionForm(forms.Form):
     title = forms.CharField(max_length=200)
     description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea)
     
-
+@login_required
 def add_discussion(request):
     if request.method == 'POST': # If the form has been submitted...
         form = NewDiscussionForm(request.POST) # A form bound to the POST data
@@ -116,7 +127,7 @@ def add_discussion(request):
     
 
 
-
+@login_required
 def update_discussion(request, pk):
     if request.method == 'POST': # If the form has been submitted...
         form = UpdateDiscussionForm(request.POST) # A form bound to the POST data
@@ -133,20 +144,22 @@ def update_discussion(request, pk):
 
 
     
-    
+@login_required    
 def add_feedback(request, pk):   
     if request.method == 'POST': # If the form has been submitted...
         form = AddFeedbackForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            user = User.objects.first()
+            user = request.user
             try:
                 discussion = Discussion.objects.get(id=int(pk))
             except Discussion.DoesNotExist:
                 return HttpResponse('Discussion not found')
-            discussion.add_feedback( user,  form.cleaned_data['feedbabk_type'] , form.cleaned_data['content'])
+            if user != discussion.owner:
+                discussion.add_feedback( user,  form.cleaned_data['feedbabk_type'] , form.cleaned_data['content'])
     return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
-    
+
+@login_required    
 def add_decision(request, pk):
     if request.method == 'POST': # If the form has been submitted...
         form = AddDecisionForm(request.POST) # A form bound to the POST data
@@ -156,10 +169,12 @@ def add_decision(request, pk):
                 discussion = Discussion.objects.get(id=int(pk))
             except Discussion.DoesNotExist:
                 return HttpResponse('Discussion not found')
-            discussion.add_decision( form.cleaned_data['content'] )
+            user = request.user
+            if user is discussion.owner:
+                discussion.add_decision( form.cleaned_data['content'] )
     return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
         
-    
+@login_required    
 def vote(request, pk):    
     if request.method == 'POST': # If the form has been submitted...
         form = VoteForm(request.POST) # A form bound to the POST data
@@ -169,13 +184,10 @@ def vote(request, pk):
                 decision = Decision.objects.get(id=int(pk))
             except Discussion.DoesNotExist:
                 return HttpResponse('Decision not found')
-            user = User.objects.first()
-            decision.vote( user, int(form.cleaned_data['value']) )
-            try:
-                discussion = Discussion.objects.get(id=decision.parent_id)
-            except Discussion.DoesNotExist:
-                return HttpResponse('Discussion not found')
-            return HttpResponseRedirect( discussion.get_absolute_url()) # Redirect after POST
+            user = request.user
+            if user != decision.parent.owner:
+                decision.vote( user, int(form.cleaned_data['value']) )
+            return HttpResponseRedirect( decision.parent.get_absolute_url()) # Redirect after POST
         return( HttpResponse('Invalid form'))        
         
     return( HttpResponse('Forbidden request not via form'))        
@@ -183,12 +195,13 @@ def vote(request, pk):
             
             
 
+@login_required
 def add_task(request, pk):    
     if request.method == 'POST': # If the form has been submitted...
         form = AddTaskForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            user = User.objects.first()
+            user = request.user
             try:
                 discussion = Discussion.objects.get(id=int(pk))
             except Discussion.DoesNotExist:
@@ -203,12 +216,13 @@ def add_task(request, pk):
                                  form.cleaned_data['target_date'] )
             return HttpResponseRedirect(new_task.get_absolute_url()) # Redirect after POST
 
-    return HttpResponseRedirect(reverse ('coplay_root')) # Redirect after POST
+    return HttpResponseRedirect('coplay_root') # Redirect after POST
 
 class Link():
     url = ''
     text = ''
     
+   
 def task_details(request, pk):
     try:
         task = Task.objects.get(id=int(pk))
@@ -220,24 +234,30 @@ def task_details(request, pk):
                       {  'links'      :  resirect_links,
                          'error_message':error_message})
         
-        
-    update_task_form = UpdateTaskForm()    
+    close_possible = False
+    update_task_form = None   
     
-    allowed_to_close = True
-        
-        
-        
-        
+    
+    
+     
+    if request.user.is_authenticated():     
+        user = request.user   
+        if task.get_status() == task.STARTED:
+            if user ==  task.responsible:
+                update_task_form = UpdateTaskForm()
+            else:
+                close_possible = True
+             
         
     return render(request, 'coplay/task_detail.html', 
                       {  'task'  :  task ,
                        'update_task_form' : update_task_form,
-                       'allowed_to_close' : allowed_to_close})
+                       'close_possible'   : close_possible})
     
     
     
     
-    
+@login_required     
 def update_task_description(request, pk):  
     if request.method == 'POST': # If the form has been submitted...
         form = UpdateTaskForm(request.POST) # A form bound to the POST data
@@ -247,31 +267,23 @@ def update_task_description(request, pk):
                 task = Task.objects.get(id=int(pk))
             except Task.DoesNotExist:
                 return HttpResponse('Task not found')
-            task.update_status_description( form.cleaned_data['status_description'] )
-            return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
+            user = request.user
+            if user == task.responsible:
+                task.update_status_description( form.cleaned_data['status_description'] )
+            
+    return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
         
-    error_message = 'Posible only by form'
-    resirect_links = []
-    resirect_links.append(Link(url = reverse('coplay_root'), text = 'Home'))
-    return render(request, 'coplay/error.html', 
-                      {  'links'      :  resirect_links,
-                         'error_message':error_message})
         
-   
+@login_required   
 def close_task(request, pk):      
     try:
         task = Task.objects.get(id=int(pk))
     except Task.DoesNotExist:
         return HttpResponse('Task not found')
-    user = User.objects.all()[1]
-    if task.close( user ):
-        return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
-    error_message = 'Cannot close this task'
-    resirect_links = []
-    resirect_links.append(Link(url = reverse('coplay_root'), text = 'Home'))
-    resirect_links.append(Link(url =task.get_absolute_url(), text = 'Baky to tsak details'))
-    return render(request, 'coplay/error.html', 
-                      {  'links'      :  resirect_links,
-                         'error_message':error_message})
-
+    user = request.user
+    if user != task.responsible:
+        task.close( user )
+        
+    return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
+    
 
