@@ -1,192 +1,199 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h1>{{ discussion.title }}</h1>
-<p><b> {{ discussion.owner.username }}</b> Need your help</p>
-{% if discussion.description %}
-    <h3>In achiving</h3> 
-    {{ discussion.description|linebreaks }}
-    <p> Last updated at {{discussion.updated_at }} </p>
-{% else %}
-    <p>No further description.</p>
-{% endif %}
-
-<h2>Feedbacks</h2>
-
-{% if description_form %}
-
-<p><strong>You can change your goals and requested help description</strong></p>
-
-<form action= "{% url 'coplay:update_goals' discussion.id %}" method="post">{% csrf_token %}
-	{% for field in description_form %}
-        <div class="fieldWrapper">
-            {{ field.errors }}
-            {{ field.label_tag }} {{ field }}
-        </div>
-    {% endfor %}
-	<input type="submit" value="Post New description" />
-</form>
-{% endif %}
-
-{% if feedback_form %}
-
-<p><strong>You can add your feedback here</strong></p>
-
-<form action= "{% url 'coplay:add_feedback' discussion.id %}" method="post">{% csrf_token %}
-	{% for field in feedback_form %}
-        <div class="fieldWrapper">
-            {{ field.errors }}
-            {{ field.label_tag }} {{ field }}
-        </div>
-    {% endfor %}
-	<input type="submit" value="Post Feedback" />
-</form>
-{% endif %}
-
-    <h3>Encourage</h3>
-<ul>
-{% for feedback in list_encourage %}
- 		<li>
-{% if feedback.created_at < discussion.updated_at %}
-	<strike>
-
-{% endif %} 			
- 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
-{% if feedback.created_at < discussion.updated_at %}
- 	</strike>
-
-{% endif %} 			
- 		</li>
-{% endfor %}
-</ul>
-    <h3>Cooperation</h3>
-<ul>
-{% for feedback in list_cooperation %}
- 		<li>
-{% if feedback.created_at < discussion.updated_at %}
-	<strike>
-
-{% endif %} 			
- 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
-{% if feedback.created_at < discussion.updated_at %}
- 	</strike>
-
-{% endif %} 			
- 		</li>
-{% endfor %}
-</ul>
-    <h3>Intuition</h3>
-<ul>
-{% for feedback in list_intuition %}
- 		<li>
-{% if feedback.created_at < discussion.updated_at %}
-	<strike>
-
-{% endif %} 			
- 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
-{% if feedback.created_at < discussion.updated_at %}
- 	</strike>
-
-{% endif %} 			
- 		</li>
-{% endfor %}
-</ul>
-    <h3>Advice</h3>
-<ul>
-{% for feedback in list_advice %}
- 		<li>
-{% if feedback.created_at < discussion.updated_at %}
-	<strike>
-
-{% endif %} 			
- 			{{ feedback.user.username }}:"{{ feedback.content |linebreaks}}" {{ feedback.created_at | time }}
-{% if feedback.created_at < discussion.updated_at %}
- 	</strike>
-
-{% endif %} 			
- 		</li>
-{% endfor %}
+<ul class="pagination">
+  <li><a href="#Decisions">Decisions</a></li>
+  <li><a href="#Tasks">Tasks</a></li>
 </ul>
 
-<h2>Decision of discussion owner, posted for attendents to vote</h2>
+        <div class="container" contenteditable="">
 
-{% if add_decision_form %}
-
-<p><strong>You can add a new decision here</strong></p>
-
-<form action= "{% url 'coplay:add_decision' discussion.id %}" method="post">{% csrf_token %}
-	{% for field in add_decision_form %}
-        <div class="fieldWrapper">
-            {{ field.errors }}
-            {{ field.label_tag }} {{ field }}
-        </div>
-    {% endfor %}
-	<input type="submit" value="Post Decision for attendentes grading" />
-</form>
-{% endif %}
-
-    <h3>Decision</h3>
-{% if list_decision %}    
-<ul>
-{% for decision in list_decision %}
- 		<li>{{ decision.content|linebreaks }} 
- 			created:{{ decision.created_at }} {{decision.get_number_of_votes}} votes   
- 			{% if vote_form %}
- 				<p><strong>What is your vote?</strong></p>
-				<form action= "{% url 'coplay:vote' decision.id %}" method="post">{% csrf_token %}
-					{% for field in vote_form %}
+            <div class="masthead">
+            	<center><h1>{{ discussion.title }}</h1></center>
+            	<p><b>
+                Hosted by {{ discussion.owner }}</b>
+                </p>                
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-2 col-md-6">
+				{% if discussion.description %}
+				    <h4>Goals and requestes help</h4> 
+				    <p>{{ discussion.description|linebreaks }}</p>
+				    <p> Last updated at {{discussion.updated_at }} </p>
+				{% else %}
+				    <p>No further description.</p>
+				{% endif %}
+                </div>
+                <div class="col-sm-2 col-md-6">
+				{% if description_form %}
+				<h4>Update of goals and requestes help</h4>
+								
+				<form action= "{% url 'coplay:update_goals' discussion.id %}" method="post">{% csrf_token %}
+					{% for field in description_form %}
 				        <div class="fieldWrapper">
 				            {{ field.errors }}
 				            {{ field.label_tag }} {{ field }}
 				        </div>
 				    {% endfor %}
-					<input type="submit" value="Vote" />
+					<input type="submit" value="Post New description" />
 				</form>
- 			{% else %}
- 				<p>average: {{decision.get_vote_average_or_none }} {{like_levels}} sum of {{decision.get_vote_sum}}	</p>  
- 				
- 				
- 			{% endif %} 			
-		</li>
-{% endfor %}
-</ul>
-{% else %}
-<p> There are no desisions yet</p>
-{% endif %}
-
-
-<h2>Tasks</h2>
-
-{% if add_task_form %}
-
-<p><strong>Want to do something? Post it here</strong></p>
-
-<form action= "{% url 'coplay:add_task' discussion.id %}" method="post">{% csrf_token %}
-		{% for field in add_task_form %}
-		    <div class="fieldWrapper">
-					{{ field.errors }}
-				{{ field.label_tag }} {{ field }}
-			</div>
-		{% endfor %}
-	<input type="submit" value="Commit for this Task" />
-</form>
-		<p>Example: "10/25/06 14:30 "</p>	
-
-{% endif %}
-
-    <h2>Tasks</h2>
-<ul>
-{% for task in list_tasks %}
- 		<li>{{ task.responsible.username }} shall achive {{task.goal_description|linebreaks}}<br> 
- 			untill {{task.target_date | date}} {{ task.get_status_display }}<br>
- 			<a href="{{ task.get_absolute_url }}">See more</a> 			
- 		</li>
-{% endfor %}
-</ul>
+				{% endif %}
+				
+				{% if feedback_form %}
+				
+				<h4>Post your feedback</h4>
+				
+				<form action= "{% url 'coplay:add_feedback' discussion.id %}" method="post">{% csrf_token %}
+					{% for field in feedback_form %}
+				        <div class="fieldWrapper">
+				            {{ field.errors }}
+				            {{ field.label_tag }} {{ field }}
+				        </div>
+				    {% endfor %}
+					<input type="submit" value="Post Feedback" />
+				</form>
+				{% endif %}
 
 
 
+                </div>
+            </div>
+
+            <!-- Example row of columns -->
+            <div class="row">
+                <div class="col-sm-6 col-md-3">
+                	
+					    <h3>Encourage</h3>
+					<ul>
+					{% for feedback in list_encourage %}
+					 		<li class="list-group-item" {% if feedback.created_at < discussion.updated_at %}class="text-muted" {% endif %} >		
+					 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
+					 		</li>
+					{% endfor %}
+					</ul>
+					                	
+                </div>
+                <div class="col-sm-6 col-md-3">
+                	
+					    <h3>Cooperation</h3>
+					<ul>
+					{% for feedback in list_cooperation %}
+					 		<li class="list-group-item" {% if feedback.created_at < discussion.updated_at %}class="text-muted" {% endif %} >		
+					 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
+					 		</li>
+					{% endfor %}
+					</ul>
+					                	
+                </div>
+                <div class="col-sm-6 col-md-3">
+					    <h3>Intuition</h3>
+					<ul>
+					{% for feedback in list_intuition %}
+					 		<li class="list-group-item" {% if feedback.created_at < discussion.updated_at %}class="text-muted" {% endif %} >		
+					 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
+					 		</li>
+					{% endfor %}
+					</ul>
+                </div>
+                <div class="col-sm-6 col-md-3">
+					    <h3>Advice</h3>
+					<ul>
+					{% for feedback in list_advice %}
+					 		<li class="list-group-item" {% if feedback.created_at < discussion.updated_at %}class="text-muted" {% endif %} >		
+					 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
+					 		</li>
+					{% endfor %}
+					</ul>
+                </div>
+
+        </div> <!-- /container -->
+
+            <div class="row">
+                <div class="col-sm-2 col-md-6">
+                 <h3 id="Decisions">Decision of discussion owner<br> posted for attendents to vote</h3>
+
+
+                 
+				{% if add_decision_form %}
+				
+				<h4>You can add a new decision here</strong></h4>
+				
+				<form action= "{% url 'coplay:add_decision' discussion.id %}" method="post">{% csrf_token %}
+					{% for field in add_decision_form %}
+				        <div class="fieldWrapper">
+				            {{ field.errors }}
+				            {{ field.label_tag }} {{ field }}
+				        </div>
+				    {% endfor %}
+					<input type="submit" value="Post Decision for attendentes grading" />
+				</form>
+				
+				<h4>And those are your decisions</strong></h4>
+				
+				{% endif %}
+                 
+					{% if list_decision %}    
+					<ul>
+					{% for decision in list_decision %}
+					 		<li class="list-group-item">{{ decision.content|linebreaks }} 
+					 			created:{{ decision.created_at }} {{decision.get_number_of_votes}} votes   
+					 			{% if vote_form %}
+					 				<h5>What is your vote?</h5>
+									<form action= "{% url 'coplay:vote' decision.id %}" method="post">{% csrf_token %}
+										{% for field in vote_form %}
+									        <div class="fieldWrapper">
+									            {{ field.errors }}
+									            {{ field.label_tag }} {{ field }}
+									        </div>
+									    {% endfor %}
+										<input type="submit" value="Vote" />
+									</form>
+					 			{% else %}
+					 				<p>average: {{decision.get_vote_average_or_none }} {{like_levels}} sum of {{decision.get_vote_sum}}	</p>  
+					 				
+					 				
+					 			{% endif %} 			
+							</li>
+					{% endfor %}
+					</ul>
+					{% else %}
+					<p> There are no desisions yet</p>
+					{% endif %}
+                </div> 
+                 
+                <div class="col-sm-2 col-md-6">
+                	
+                 <h3 id="Tasks">Tasks</h3>
+
+				{% if add_task_form %}
+				
+				<h4>Want to do something? Post it here</h4>
+				
+				<form action= "{% url 'coplay:add_task' discussion.id %}" method="post">{% csrf_token %}
+						{% for field in add_task_form %}
+						    <div class="fieldWrapper">
+									{{ field.errors }}
+								{{ field.label_tag }} {{ field }}
+							</div>
+						{% endfor %}
+					<input type="submit" value="Commit for this Task" />
+				</form>
+						<p>Example: "10/25/06 14:30 "</p>	
+				<h4>Current Tasks</h4>
+				{% endif %}
+
+				<ul>
+				{% for task in list_tasks %}
+				 		<li class="list-group-item">{{ task.responsible.username }} shall achive {{task.goal_description|linebreaks}}<br> 
+				 			untill {{task.target_date | date}} {{ task.get_status_display }}<br>
+				 			<a href="{{ task.get_absolute_url }}">See more</a> 			
+				 		</li>
+				{% endfor %}
+				</ul>
+
+                </div>
+            </div>
 
 {% endblock %}
 

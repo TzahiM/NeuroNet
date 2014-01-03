@@ -4,7 +4,7 @@
 	<h1>Discussions</h1>
 	<ul>
 	{% for discussion in latest_discussion_list %}
-	    <li>{{ discussion.updated_at|date }} - {{ discussion.title }} by {{ discussion.owner.username }} <a href="{{ discussion.get_absolute_url }}">Join</a></li>
+	    <li class="list-group-item">{{ discussion.updated_at|date }} - {{ discussion.title }} by {{ discussion.owner.username }} <a href="{{ discussion.get_absolute_url }}">Join</a></li>
 	{% empty %}
 	    <li>No discussions yet.</li>
 	{% endfor %}

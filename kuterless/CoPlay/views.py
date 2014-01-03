@@ -36,7 +36,7 @@ class UpdateDiscussionForm(forms.Form):
  
     
 class AddDecisionForm(forms.Form):
-    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '60', 'rows': '3'}))
 
 
 class VoteForm(forms.Form):
@@ -44,7 +44,7 @@ class VoteForm(forms.Form):
 
 
 class AddTaskForm(forms.Form):
-    goal_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+    goal_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '60', 'rows': '3'}))
     target_date =  forms.DateTimeField()
 
 class UpdateTaskForm(forms.Form):
