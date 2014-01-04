@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<br><br><br><br><br>
+<div class="container">
 	<form action= "{% url 'coplay:add_discussion' %}" method="post">{% csrf_token %}
 	{% for field in form %}
         <div class="fieldWrapper">
@@ -10,5 +12,6 @@
     {% endfor %}
 	<input type="submit" value="Let's play" />
 	</form>
+</div>	
 {% endblock %}
 

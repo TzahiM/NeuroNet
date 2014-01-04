@@ -1,12 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<h1>The goal of this task is: {{task.goal_description |linebreaks}}</h1>
-	<p>Responsible: {{task.responsible.username}}</p>
-	{{task.refresh_status}}
-	<p>Status : {{task.get_status_display}}</p>
-	<p>Target date : {{task.target_date}}</p>
-			
+<ul class="pagination">
+  <li><a href="{% url 'coplay:discussions_list' %}">Discussions list</a></li>
+  <li><a href="{% url 'coplay:add_discussion' %}">New discussions</a></li>
+</ul>
+
+ <div class="jumbotron">
+            	<div class="container">
+            	<center><h1>The goal of this task is: {{task.goal_description |linebreaks}}</h1></center>
+				<p>Responsible: {{task.responsible.username}}</p>
+				{{task.refresh_status}}
+				<p>Status : {{task.get_status_display}}</p>
+				<p>Target date : {{task.target_date}}</p>       
+                </div>         
+            </div>
+            
+<div class="container">
+
 	<p>Time left : {{task.get_time_until_target }}</p>
 	<p>Current status description : {{task.get_status_description | linebreaks}} </p>
 	
@@ -16,7 +27,7 @@
 	{% endif %}
 
 	{% if close_possible %}
-				<a href= "{% url 'coplay:close_task' task.id %}"> close this task</a>
+				<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}"> close this task</a>
 	{% endif %}
 	{% if update_task_form  %}
 		<p>You can update this task's status here</p>
@@ -33,9 +44,9 @@
 	
 	{% if task.parent %}
 	<p>Retated to a discussion titled : {{task.parent.title | linebreaks}} <br>
-		<a href="{{ task.parent.get_absolute_url }}">See more</a>
+		<a class="btn btn-success" href="{{ task.parent.get_absolute_url }}">See more</a>
 	{% endif %}
 	
-	
+</div>	
 {% endblock %}
 

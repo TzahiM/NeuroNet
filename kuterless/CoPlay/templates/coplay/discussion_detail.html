@@ -2,17 +2,23 @@
 
 {% block content %}
 <ul class="pagination">
-  <li><a href="#Decisions">Decisions</a></li>
-  <li><a href="#Tasks">Tasks</a></li>
+  <li><a href="#Decisions">Related Decisions</a></li>
+  <li><a href="#Tasks">Related Tasks</a></li>
+  <li><a href="{% url 'coplay:discussions_list' %}">Discussions list</a></li>
+  <li><a href="{% url 'coplay:add_discussion' %}">New discussions</a></li>
 </ul>
 
-        <div class="container" contenteditable="">
 
-            <div class="masthead">
+
+        <div class="container" >
+			
+            <div class="jumbotron">
+            	<div class="container">
             	<center><h1>{{ discussion.title }}</h1></center>
             	<p><b>
-                Hosted by {{ discussion.owner }}</b>
-                </p>                
+                Hosted by {{discussion.owner.get_fullname}} {{ discussion.owner }}</b>
+                </p>       
+                </div>         
             </div>
             
             <div class="row">
@@ -36,10 +42,10 @@
 				            {{ field.label_tag }} {{ field }}
 				        </div>
 				    {% endfor %}
-					<input type="submit" value="Post New description" />
+					<button type="submit" class="btn btn-default">Submit</button>
 				</form>
 				{% endif %}
-				
+
 				{% if feedback_form %}
 				
 				<h4>Post your feedback</h4>
@@ -61,52 +67,64 @@
             </div>
 
             <!-- Example row of columns -->
+            <div class="container" >
             <div class="row">
                 <div class="col-sm-6 col-md-3">
-                	
-					    <h3>Encourage</h3>
+                	<center><h3>Encourage</h3></center>
+					    
 					<ul>
 					{% for feedback in list_encourage %}
-					 		<li class="list-group-item" {% if feedback.created_at < discussion.updated_at %}class="text-muted" {% endif %} >		
-					 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
+					 		<li class="list-group-item">
+					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
+					 			{{ feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					 		</div>
 					 		</li>
 					{% endfor %}
 					</ul>
 					                	
                 </div>
                 <div class="col-sm-6 col-md-3">
-                	
-					    <h3>Cooperation</h3>
+                	<center><h3>Cooperation</h3></center>
+					    
 					<ul>
 					{% for feedback in list_cooperation %}
-					 		<li class="list-group-item" {% if feedback.created_at < discussion.updated_at %}class="text-muted" {% endif %} >		
-					 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
+					 		<li class="list-group-item">
+					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
+					 			{{ feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					 		</div>
 					 		</li>
 					{% endfor %}
 					</ul>
 					                	
                 </div>
                 <div class="col-sm-6 col-md-3">
-					    <h3>Intuition</h3>
+                	<center><h3>Intuition</h3></center>
+					    
 					<ul>
 					{% for feedback in list_intuition %}
-					 		<li class="list-group-item" {% if feedback.created_at < discussion.updated_at %}class="text-muted" {% endif %} >		
-					 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
+					 		<li class="list-group-item">
+					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
+					 			{{ feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					 		</div>
 					 		</li>
 					{% endfor %}
 					</ul>
                 </div>
                 <div class="col-sm-6 col-md-3">
-					    <h3>Advice</h3>
+                	<center><h3>Advice</h3></center>
+					    
+					    
 					<ul>
 					{% for feedback in list_advice %}
-					 		<li class="list-group-item" {% if feedback.created_at < discussion.updated_at %}class="text-muted" {% endif %} >		
-					 			{{ feedback.user.username }}:"{{ feedback.content|linebreaks }}" {{ feedback.created_at | time }}
+					 		<li class="list-group-item">
+					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
+					 			{{ feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					 		</div>
 					 		</li>
 					{% endfor %}
 					</ul>
                 </div>
-
+</div>
         </div> <!-- /container -->
 
             <div class="row">
@@ -117,7 +135,7 @@
                  
 				{% if add_decision_form %}
 				
-				<h4>You can add a new decision here</strong></h4>
+				<h4>You can add a new decision here</h4>
 				
 				<form action= "{% url 'coplay:add_decision' discussion.id %}" method="post">{% csrf_token %}
 					{% for field in add_decision_form %}
@@ -182,12 +200,15 @@
 						<p>Example: "10/25/06 14:30 "</p>	
 				<h4>Current Tasks</h4>
 				{% endif %}
-
 				<ul>
 				{% for task in list_tasks %}
-				 		<li class="list-group-item">{{ task.responsible.username }} shall achive {{task.goal_description|linebreaks}}<br> 
-				 			untill {{task.target_date | date}} {{ task.get_status_display }}<br>
-				 			<a href="{{ task.get_absolute_url }}">See more</a> 			
+				
+				 		<li class="list-group-item">
+				 				{{ task.responsible.username }} shall achive {{task.goal_description|linebreaks}}<br> 
+				 			untill {{task.target_date }} {{ task.get_status_display }}
+				 			
+				 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >See more</a></p>
+
 				 		</li>
 				{% endfor %}
 				</ul>

@@ -27,8 +27,8 @@ class IndexView(generic.ListView):
     
    
 class AddFeedbackForm(forms.Form):
-    feedbabk_type = forms.ChoiceField( choices=Feedback.FEEDBACK_TYPES)
     content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+    feedbabk_type = forms.ChoiceField( choices=Feedback.FEEDBACK_TYPES)
 
 
 class UpdateDiscussionForm(forms.Form):
@@ -109,7 +109,7 @@ def add_discussion(request):
         form = NewDiscussionForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            user = User.objects.first()
+            user = request.user
             new_discussion = Discussion(owner =  user ,
                                         title =  form.cleaned_data['title'] ,
                                         description = form.cleaned_data['description'])
@@ -155,9 +155,11 @@ def add_feedback(request, pk):
                 discussion = Discussion.objects.get(id=int(pk))
             except Discussion.DoesNotExist:
                 return HttpResponse('Discussion not found')
-            if user != discussion.owner:
+            if user != discussion.owner and form.cleaned_data['feedbabk_type']  and form.cleaned_data['content']:
                 discussion.add_feedback( user,  form.cleaned_data['feedbabk_type'] , form.cleaned_data['content'])
-    return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
+            return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
+        return HttpResponse('Invalid form. Please')
+    return HttpResponse('Request NA')
 
 @login_required    
 def add_decision(request, pk):
