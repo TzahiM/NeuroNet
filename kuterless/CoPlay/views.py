@@ -27,16 +27,16 @@ class IndexView(generic.ListView):
     
    
 class AddFeedbackForm(forms.Form):
-    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
     feedbabk_type = forms.ChoiceField( choices=Feedback.FEEDBACK_TYPES)
 
 
 class UpdateDiscussionForm(forms.Form):
-    description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+    description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
  
     
 class AddDecisionForm(forms.Form):
-    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '60', 'rows': '3'}))
+    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
 
 
 class VoteForm(forms.Form):
@@ -44,11 +44,11 @@ class VoteForm(forms.Form):
 
 
 class AddTaskForm(forms.Form):
-    goal_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '60', 'rows': '3'}))
+    goal_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
     target_date =  forms.DateTimeField()
 
 class UpdateTaskForm(forms.Form):
-    status_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '80', 'rows': '5'}))
+    status_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
 
 
 def discussion_details(request, pk):
