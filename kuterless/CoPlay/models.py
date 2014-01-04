@@ -139,11 +139,29 @@ class Decision(models.Model):
             return vote.value
         return None
     def get_vote_average_or_none(self):
-        numner_of_votes = self.get_number_of_votes()
-        if numner_of_votes != 0:
-            average = int(round( self.get_vote_sum() /numner_of_votes ))
+        number_of_votes = self.get_number_of_votes()
+        if number_of_votes != 0:
+            average = int(round( self.get_vote_sum() /number_of_votes ))
             return average   
         return None
+
+    def get_vote_level_name(self):
+        number_of_votes = self.get_vote_average_or_none()
+        if number_of_votes:
+            if number_of_votes == LikeLevel.EXCELLENT:
+                return 'Excellent'
+            if number_of_votes == LikeLevel.VERY_GOOD:
+                return 'very good'
+            if number_of_votes == LikeLevel.GOOD:
+                return 'good     '
+            if number_of_votes == LikeLevel.MEDIUM:
+                return 'medium   '
+            if number_of_votes == LikeLevel.BAD:
+                return 'bad      '
+            
+        return None
+            
+ 
         
         return self.vote_set.count()
     def print_content(self):

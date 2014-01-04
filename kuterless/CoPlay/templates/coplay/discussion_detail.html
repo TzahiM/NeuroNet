@@ -12,14 +12,12 @@
 
         <div class="container" >
 			
-            <div class="jumbotron">
             	<div class="container">
             	<center><h1>{{ discussion.title }}</h1></center>
             	<p><b>
                 Hosted by {{discussion.owner.get_fullname}} {{ discussion.owner }}</b>
                 </p>       
                 </div>         
-            </div>
             
             <div class="row">
                 <div class="col-sm-2 col-md-6">
@@ -42,7 +40,7 @@
 				            {{ field.label_tag }} {{ field }}
 				        </div>
 				    {% endfor %}
-					<button type="submit" class="btn btn-default">Submit</button>
+					<button type="submit" >Submit</button>
 				</form>
 				{% endif %}
 
@@ -147,6 +145,7 @@
 					<input type="submit" value="Post Decision for attendentes grading" />
 				</form>
 				
+
 				<h4>And those are your decisions</strong></h4>
 				
 				{% endif %}
@@ -155,7 +154,7 @@
 					<ul>
 					{% for decision in list_decision %}
 					 		<li class="list-group-item">{{ decision.content|linebreaks }} 
-					 			created:{{ decision.created_at }} {{decision.get_number_of_votes}} votes   
+					 			created:{{ decision.created_at }} with {{decision.get_number_of_votes}} votes   
 					 			{% if vote_form %}
 					 				<h5>What is your vote?</h5>
 									<form action= "{% url 'coplay:vote' decision.id %}" method="post">{% csrf_token %}
@@ -168,7 +167,7 @@
 										<input type="submit" value="Vote" />
 									</form>
 					 			{% else %}
-					 				<p>average: {{decision.get_vote_average_or_none }} {{like_levels}} sum of {{decision.get_vote_sum}}	</p>  
+					 				<p>Vote average: {{decision.get_vote_level_name }} </p>  
 					 				
 					 				
 					 			{% endif %} 			

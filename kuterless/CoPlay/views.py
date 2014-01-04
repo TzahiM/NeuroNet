@@ -172,9 +172,14 @@ def add_decision(request, pk):
             except Discussion.DoesNotExist:
                 return HttpResponse('Discussion not found')
             user = request.user
-            if user is discussion.owner:
+            if user == discussion.owner:
                 discussion.add_decision( form.cleaned_data['content'] )
-    return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
+            else:
+                return HttpResponse('Forbidden access')
+            return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
+        else:
+            return HttpResponse('Invalid form')
+    return HttpResponseRedirect('coplay_root') # Redirect after POST
         
 @login_required    
 def vote(request, pk):    
@@ -210,9 +215,7 @@ def add_task(request, pk):
                 return HttpResponse('Discussion not found')
             target_date = form.cleaned_data['target_date']
             if target_date <=  timezone.now():
-                response_string= """<p>target date should be in the future<\p>
-                <a href=""" + discussion.get_absolute_url() +'">Back To Discussion</a>'
-                return HttpResponse(response_string)
+                return HttpResponse( 'target date should be in the future' + str(target_date))
             new_task = discussion.add_task( user,  
                                  form.cleaned_data['goal_description'] ,
                                  form.cleaned_data['target_date'] )
