@@ -15,7 +15,13 @@
             	<div class="container">
             	<center><h1>{{ discussion.title }}</h1></center>
             	<p><b>
-                Hosted by {{discussion.owner.get_fullname}} {{ discussion.owner }}</b>
+            	{% if user == discussion.owner %}
+            	This is your discussion
+            	{% else %}
+                Hosted by {{discussion.owner.get_fullname}} {{ discussion.owner }}
+                {% endif %}
+                </b>
+                
                 </p>       
                 </div>         
             
