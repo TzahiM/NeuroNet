@@ -8,8 +8,13 @@
     <meta name="description" content="">
     <meta name="author" content="Tzahi Manistersky">
     <link rel="shortcut icon" href="{% static 'favicon.png' %}">
-
-    <title>קוטרלס</title>
+	
+	<title>
+	{% if page_name %}
+	{% else %}
+		קוטרלס - מה לעשות? לעשות !
+	{% endif %}
+    </title>
 
     <!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
@@ -28,23 +33,49 @@
   </head>
 
   <body>
+    <div class="container">
 
-
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
-          <p class="navbar-text navbar-right">
-            {% if user.id %}
+      <!-- Static navbar -->
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Public fulfilment</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="#">People</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Projects<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Public fulfilment</a></li>
+                <li class="divider"></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Labs <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'coplay:coplay_root' %}">CoPlayWeb</a></li>
+                <li class="divider"></li>
+              </ul>
+            </li>
+            <li>{% if user.id %}
               {{user}} 
               <a href="{% url 'logout' %}">Logout</a>
             {% else %}
               <a href="{% url 'login' %}?next={{request.path}}">Login</a>
-            {% endif %}
-          </p>
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">Kuterless</a>
-        </div>
+            {% endif %}</li>
+            <li><a href="../navbar-fixed-top/">About</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
       </div>
-    </div>
+
 
       <div class="container">
         {% block content %}
