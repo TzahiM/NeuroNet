@@ -10,7 +10,7 @@
             	<div class="container">
             	<center><h1>The goal of this task is: {{task.goal_description |linebreaks}}</h1></center>
 				<p>Responsible: {{task.responsible.username}}</p>
-				{{task.refresh_status}}
+				
 				<p>Status : {{task.get_status_display}}</p>
 				<p>Target date : {{task.target_date}}</p>       
                 </div>         

@@ -195,7 +195,9 @@ def vote(request, pk):
             if user != decision.parent.owner:
                 decision.vote( user, int(form.cleaned_data['value']) )
             return HttpResponseRedirect( decision.parent.get_absolute_url()) # Redirect after POST
-        return( HttpResponse('Invalid form'))        
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'Please select a vote value'})
+                
         
     return( HttpResponse('Forbidden request not via form'))        
             

@@ -19,7 +19,7 @@
 	{% if page_name %}
 		{{page_name}}
 	{% else %}
-		  יעקב רוסו :קוטרלס - מה לעשות? לעשות !
+		 קוטרלס - מה לעשות? לעשות ! (יעקב כץ)
 	{% endif %}
 	
     </title>
@@ -29,6 +29,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'style.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/css/carousel.css' %}" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -52,7 +53,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Public fulfilment</a>
+          <a class="navbar-brand" href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -60,9 +61,9 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Projects<b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Public fulfilment</a></li>
+                <li><a href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a></li>
                 <li class="divider"></li>
-                <li class="disabled"><a tabindex="-1" href="#">And many more to come...</a></li>
+                <li class="disabled"><a tabindex="-1" href="#">כן ירבו...</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -70,6 +71,7 @@
               <ul  class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                 <li><a href="{% url 'coplay:coplay_root' %}">CoPlayWeb</a></li>
                 <li class="divider"></li>
+                <li><a href="https://github.com/TzahiM/NeuroNet.git">Join the party (Geeks only !)</a></li>
               </ul>
             </li>
             
@@ -80,7 +82,7 @@
             {% else %}
               <li><a href="{% url 'login' %}?next={{request.path}}">Login</a></li>
             {% endif %}
-            <li><a href="../navbar-fixed-top/">          About          </a></li>
+            <li><a href="{% url 'public_fulfillment:about' %}">          About          </a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -106,6 +108,10 @@
 
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    
+   
+    
+    
   </body>
 </html>
 

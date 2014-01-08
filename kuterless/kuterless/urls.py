@@ -1,8 +1,6 @@
-from coplay import urls
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from django.core.urlresolvers import reverse_lazy, reverse
-from public_fulfillment.views import home, labs_root
+from public_fulfillment.views import labs_root
 
 
 admin.autodiscover()
