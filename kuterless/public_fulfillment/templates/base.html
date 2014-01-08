@@ -5,15 +5,23 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="Tzahi Manistersky">
+    <meta name="description" content=' אתר הבית של פרוייקט "הגשמה ציבורית"'>
+    <meta name="author" content=
+	    {% if author_name %}
+	    {{author_name}}
+		{% else %}
+			"Tzahi Manistersky"
+		{% endif %}
+    >
     <link rel="shortcut icon" href="{% static 'favicon.png' %}">
 	
 	<title>
 	{% if page_name %}
+		{{page_name}}
 	{% else %}
-		קוטרלס - מה לעשות? לעשות !
+		  יעקב רוסו :קוטרלס - מה לעשות? לעשות !
 	{% endif %}
+	
     </title>
 
     <!-- Bootstrap core CSS -->
@@ -54,27 +62,30 @@
               <ul class="dropdown-menu">
                 <li><a href="#">Public fulfilment</a></li>
                 <li class="divider"></li>
+                <li class="disabled"><a tabindex="-1" href="#">And many more to come...</a></li>
               </ul>
             </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Labs <b class="caret"></b></a>
-              <ul class="dropdown-menu">
+              <ul  class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                 <li><a href="{% url 'coplay:coplay_root' %}">CoPlayWeb</a></li>
                 <li class="divider"></li>
               </ul>
             </li>
-            <li>{% if user.id %}
-              {{user}} 
-              <a href="{% url 'logout' %}">Logout</a>
+            
+          </ul>
+          <ul class="nav navbar-nav navbar-right">            
+            {% if user.id %}
+              <li> <a href="{% url 'logout' %}"> {{user}} Logout</a> </l>
             {% else %}
-              <a href="{% url 'login' %}?next={{request.path}}">Login</a>
-            {% endif %}</li>
-            <li><a href="../navbar-fixed-top/">About</a></li>
+              <li><a href="{% url 'login' %}?next={{request.path}}">Login</a></li>
+            {% endif %}
+            <li><a href="../navbar-fixed-top/">          About          </a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
+
+
 
 
       <div class="container">

@@ -2,7 +2,6 @@ from coplay import urls
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.core.urlresolvers import reverse_lazy, reverse
-from public_fulfillment import views
 from public_fulfillment.views import home, labs_root
 
 
@@ -15,7 +14,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^$', home, name='home'),
+    url(r'^$', labs_root, name='home'),
     
     url(r'^public_fulfillment/', include('public_fulfillment.urls', namespace="public_fulfillment")),
 
