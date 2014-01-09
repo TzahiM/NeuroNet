@@ -6,6 +6,14 @@
   <li><a href="#Tasks">Related Tasks</a></li>
   <li><a href="{% url 'coplay:discussions_list' %}">Discussions list</a></li>
   <li><a href="{% url 'coplay:add_discussion' %}">New discussions</a></li>
+  <li><a href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a></li>
+  
+  
+  
+  {% if False == user.is_authenticated %}
+  	<li><a href="{% url 'public_fulfillment:sign_up' %}">Register</a></li>
+  {% endif %}
+  
 </ul>
 
 
@@ -18,8 +26,25 @@
             	{% if user == discussion.owner %}
             	This is your discussion
             	{% else %}
-                Hosted by {{discussion.owner.get_fullname}} {{ discussion.owner }}
+                Hosted by 
+					{% if discussion.owner.get_full_name %}
+	              		{{discussion.owner.get_full_name}} 
+	              	{% else %}
+	              		 {{discussion.owner}}
+	                {% endif %}
                 {% endif %}
+                
+               {% if False == user.is_authenticated %}
+               <center>
+               		<h1>For add your inputs you need to register and login first </h1>
+            		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">הרשמה ראשונה</a>
+				</center>
+               {% endif %}
+                
+                  
+  	
+
+                
                 </b>
                 
                 </p>       
@@ -209,7 +234,12 @@
 				{% for task in list_tasks %}
 				
 				 		<li class="list-group-item">
-				 				{{ task.responsible.username }} shall achive {{task.goal_description|linebreaks}}<br> 
+				 			{% if task.responsible.get_full_name %}
+		              			{{task.responsible.get_full_name}} 
+			              	{% else %}
+			              		 {{task.responsible}}
+			                {% endif %}
+				 			shall achive {{task.goal_description|linebreaks}}<br> 
 				 			untill {{task.target_date }} {{ task.get_status_display }}
 				 			
 				 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >See more</a></p>

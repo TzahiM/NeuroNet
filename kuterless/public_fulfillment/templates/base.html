@@ -76,10 +76,18 @@
             </li>
             
           </ul>
-          <ul class="nav navbar-nav navbar-right">            
+          <ul class="nav navbar-nav navbar-right">     
+        	          	       
             {% if user.id %}
-              <li> <a href="{% url 'logout' %}"> {{user}} Logout</a> </l>
+              <li> <a href="{% url 'logout' %}"> Hi
+              	{% if user.get_full_name %}
+              		{{user.get_full_name}} 
+              	{% else %}
+              		 {{user}}
+                {% endif %}
+              	 Logout?</a> </li>
             {% else %}
+              <li><a href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a></li>
               <li><a href="{% url 'login' %}?next={{request.path}}">Login</a></li>
             {% endif %}
             <li><a href="{% url 'public_fulfillment:about' %}">          About          </a></li>
