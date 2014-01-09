@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.forms.extras.widgets import SelectDateWidget
+from django.forms.widgets import DateTimeInput, DateInput
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
@@ -46,7 +47,7 @@ class VoteForm(forms.Form):
 class AddTaskForm(forms.Form):
     goal_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
     target_date =  forms.DateTimeField()
-
+    
 class UpdateTaskForm(forms.Form):
     status_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
 
