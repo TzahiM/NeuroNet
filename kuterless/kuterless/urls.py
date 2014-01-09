@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from public_fulfillment.views import labs_root
+from public_fulfillment.views import labs_root, about
 
 
 admin.autodiscover()
@@ -12,7 +12,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^$', labs_root, name='home'),
+    url(r'^$', about, name='home'),
     
     url(r'^public_fulfillment/', include('public_fulfillment.urls', namespace="public_fulfillment")),
 
