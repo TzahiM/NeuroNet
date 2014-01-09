@@ -13,7 +13,7 @@ from django.views import generic
 
 # Create your views here.
 def root(request):
-    return render(request, 'coplay/co_play_root.html')
+    return render(request, 'coplay/co_play_root.html', {'rtl': 'dir="rtl"'})
     
 
 class IndexView(generic.ListView):

@@ -14,6 +14,7 @@ def about(request):
     text_block_0 = ''
     return render(request, 'public_fulfillment/public_fulfillment_root.html', {
         'text_block_0': text_block_0,
+        'rtl': 'dir="rtl"'
     })
 
     
@@ -34,6 +35,7 @@ def labs_root(request):
 """
     return render(request, 'public_fulfillment/labs_root.html', {
         'text_block_0': text_block_0,
+        'rtl': 'dir="rtl"'
     })
 
 
@@ -55,7 +57,8 @@ class AddTUserForm(forms.Form):
 def sign_up(request):
     if request.user.is_authenticated():
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'Already logged in'})
+                      {  'message'      :  'Already logged in',
+                       'rtl': 'dir="rtl"'})
 
     if request.method == 'POST': # If the form has been submitted...
         form = AddTUserForm(request.POST) # A form bound to the POST data
@@ -63,7 +66,8 @@ def sign_up(request):
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
             if form.cleaned_data['password1'] != form.cleaned_data['password2']:
                 return render(request, 'coplay/message.html', 
-                      {  'message'      :  'Passwords not match'})
+                      {  'message'      :  'Passwords not match',
+                       'rtl': 'dir="rtl"'})
             user = User(username =  form.cleaned_data['user_name'] ,
                             first_name = form.cleaned_data['first_name'],
                             last_name =  form.cleaned_data['last_name'],
@@ -75,7 +79,8 @@ def sign_up(request):
             return HttpResponseRedirect(reverse('home')) # Redirect after POST
         else:
             return render(request, 'coplay/message.html', 
-                      {  'message'      :  'Please try again'})
+                      {  'message'      :  'Please try again',
+                       'rtl': 'dir="rtl"'})
             
         
     else:
@@ -84,9 +89,6 @@ def sign_up(request):
 
     return render(request, 'public_fulfillment/new_user.html', {
         'form': form,
+        'rtl': 'dir="rtl"'
     })
     
-    
-    
-    
-    return HttpResponse('sign_up')
