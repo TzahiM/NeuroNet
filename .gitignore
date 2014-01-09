@@ -11,3 +11,4 @@ Thumbs.db
 .project
 .pydevproject
 
+kuterless/db.sqlite3
