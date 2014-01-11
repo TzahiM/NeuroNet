@@ -95,7 +95,8 @@ def discussion_details(request, pk):
             'add_decision_form': add_decision_form,
             'vote_form'       : vote_form       ,
             'add_task_form'   : add_task_form   ,
-            'like_levels'     : like_levels})
+            'like_levels'     : like_levels,
+            'rtl'             : 'dir="rtl"'})
 
 
 
