@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" {{rtl | safe}}>
+<html lang="en" dir="rtl">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -57,9 +57,9 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#">People</a></li>
+            <li><a href="#">אנשים</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Projects<b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">פרויקטים<b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a></li>
                 <li class="divider"></li>
@@ -67,12 +67,12 @@
               </ul>
             </li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Labs <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">מהמעבדות<b class="caret"></b></a>
               <ul  class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                 <li><a href="{% url 'coplay:coplay_root' %}">CoPlayWeb</a></li>
                 <li class="divider"></li>
-                <li><a href="{% url 'labs_root' %}">Never ending story</a></li>
-                <li><a href="https://github.com/TzahiM/NeuroNet.git">Join the party (Geeks only !)</a></li>
+                <li><a href="{% url 'labs_root' %}">תמיד בבניה</a></li>
+                <li><a href="https://github.com/TzahiM/NeuroNet.git">למפתחים</a></li>
               </ul>
             </li>
             
@@ -89,9 +89,9 @@
               	 Logout?</a> </li>
             {% else %}
               <li><a href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a></li>
-              <li><a href="{% url 'login' %}?next={{request.path}}">Login</a></li>
+              <li><a href="{% url 'login' %}?next={{request.path}}">כניסה</a></li>
             {% endif %}
-            <li><a href="{% url 'public_fulfillment:about' %}">          About          </a></li>
+            <li><a href="{% url 'public_fulfillment:about' %}">          אודות          </a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

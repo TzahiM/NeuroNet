@@ -2,11 +2,11 @@
 
 {% block content %}
 <ul class="pagination">
-  <li><a href="{% url 'coplay:discussions_list' %}">Discussions list</a></li>
-  <li><a href="{% url 'coplay:add_discussion' %}">New discussions</a></li>
+  <li><a href="{% url 'coplay:discussions_list' %}">רשימת פעילויות</a></li>
+  <li><a href="{% url 'coplay:add_discussion' %}">התחלת פעילות</a></li>
   <li><a href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a></li>
   {% if False == user.is_authenticated %}
-  	<li><a href="{% url 'public_fulfillment:sign_up' %}">Register</a></li>
+  	<li><a href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a></li>
   {% endif %}
   <li><a href="{% url 'home' %}s">Home</a></li>
   
@@ -14,9 +14,9 @@
 
  <div class="jumbotron">
             	<div class="container">
-            	<center><h1>The goal of this task is: {{task.goal_description |linebreaks}}</h1></center>
+            	<center><h1> המטרה היא: {{task.goal_description |linebreaks}}</h1></center>
 				<p>					
-					Responsible: {{task.responsible.username}}
+					באחריות: {{task.responsible.username}}
 					{% if task.responsible.get_full_name %}
 		              	{{task.responsible.get_full_name}} 
 			       	{% else %}
@@ -24,26 +24,26 @@
 		            {% endif %}
 				</p>
 				
-				<p>Status : {{task.get_status_display}}</p>
-				<p>Target date : {{task.target_date}}</p>       
+				<p>מצב : {{task.get_status_display}}</p>
+				<p>תאריך יעד : {{task.target_date}}</p>       
                 </div>         
             </div>
             
 				{% if False == user.is_authenticated %}
                 <center>
-               		<h1>For add your inputs you need to register and login first </h1>
+               		<h1>כדי להגיב, להצביע או להתנדב למשימה עליך להירשם תחילה </h1>
             		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">הרשמה ראשונה</a>
 				</center>
                {% endif %}            
 <div class="container">
 
-	<p>Time left : {{task.get_time_until_target }}</p>
+	<p> זמן לסיום : {{task.get_time_until_target }}</p>
 	<p>Current status description : {{task.get_status_description | linebreaks}} </p>
 	
 	{% if task.get_status == task.CLOSED %}
-		<p>closed at : {{task.closed_at | date}} {{task.closed_at | time}}</p>
+		<p> {{task.closed_at }} נסגר ב</p>
 		<p>
-			By : 
+			על ידי:  
 			{% if task.closed_by.get_full_name %}
 		              	{{task.closed_by.get_full_name}} 
 		   	{% else %}
@@ -54,7 +54,7 @@
 	{% endif %}
 
 	{% if close_possible %}
-				<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}"> close this task</a>
+				<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">סגירת המשימה</a>
 	{% endif %}
 	{% if update_task_form  %}
 		<p>You can update this task's status here</p>
@@ -65,13 +65,13 @@
 						{{ field.label_tag }} {{ field }}
 					</div>
 				{% endfor %}
-				<input type="submit" value="Update Status" />
+				<input type="submit" value="עידכון ההתקדמות" />
 		</form>
 	{% endif %}
 	
 	{% if task.parent %}
-	<p>Retated to a discussion titled : {{task.parent.title | linebreaks}} <br>
-		<a class="btn btn-success" href="{{ task.parent.get_absolute_url }}">See more</a>
+	<p>  :המשימה קשורה לדיון שכותרתו{{task.parent.title | linebreaks}} <br>
+		<a class="btn btn-success" href="{{ task.parent.get_absolute_url }}">פרטים</a>
 	{% endif %}
 	
 </div>	

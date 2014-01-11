@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*->
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator
@@ -71,10 +72,10 @@ class Feedback(models.Model):
     ADVICE = 4
 
     FEEDBACK_TYPES = (
-        (ENCOURAGE, 'Encourage'),
-        (COOPERATION, 'Cooperation'),
-        (INTUITION, 'Intuition'),
-        (ADVICE, 'Advice'),
+        (ENCOURAGE, 'עידוד'),
+        (COOPERATION, 'שיתוף פעולה'),
+        (INTUITION, 'אינטואיציה'),
+        (ADVICE, 'עצה'),
     )
 
     discussion = models.ForeignKey(Discussion)
@@ -99,11 +100,11 @@ class LikeLevel(object):
     MEDIUM = 2
     BAD = 1
     level = (
-               (EXCELLENT, 'Excellent Idea'),
-               (VERY_GOOD, 'I realy like it'),
-               (GOOD, 'Not Bad'),
-               (MEDIUM, 'Not Sure'),
-               (BAD, 'Bad Idea'),
+               (EXCELLENT, 'רעיון מצוייו'),
+               (VERY_GOOD, 'טוב מאוד'),
+               (GOOD, 'לא רע'),
+               (MEDIUM, 'אין דעה'),
+               (BAD, 'רעיון לא טוב'),
               )
 
 class Decision(models.Model):
@@ -149,17 +150,17 @@ class Decision(models.Model):
         number_of_votes = self.get_vote_average_or_none()
         if number_of_votes:
             if number_of_votes == LikeLevel.EXCELLENT:
-                return 'Excellent'
+                return 'מצויין'
             if number_of_votes == LikeLevel.VERY_GOOD:
-                return 'very good'
+                return 'טוב מאוד'
             if number_of_votes == LikeLevel.GOOD:
-                return 'good     '
+                return 'טוב'
             if number_of_votes == LikeLevel.MEDIUM:
-                return 'medium   '
+                return 'אין דעה'
             if number_of_votes == LikeLevel.BAD:
-                return 'bad      '
+                return 'רעיון לא טוב'
             
-        return None
+        return 'אין'
             
  
         
@@ -198,9 +199,9 @@ class Task(models.Model):
     MISSED = 3
 
     STATUS_CHOICES = (
-        (STARTED, 'Started'),
-        (CLOSED, 'Closed'),
-        (MISSED, 'Missed'),
+        (STARTED, 'פעיל'),
+        (CLOSED, 'נסגר'),
+        (MISSED, 'פיספוס'),
     )
 
     parent = models.ForeignKey(Discussion, null=True, blank=True)

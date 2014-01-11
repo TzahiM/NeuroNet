@@ -2,17 +2,18 @@
 
 {% block content %}
 <ul class="pagination">
-  <li><a href="#Decisions">Related Decisions</a></li>
-  <li><a href="#Tasks">Related Tasks</a></li>
+
   
-  <li><a href="{% url 'coplay:discussions_list' %}">Discussions list</a></li>
-  <li><a href="{% url 'coplay:add_discussion' %}">New discussions</a></li>
+
   <li><a href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a></li>
   
   {% if False == user.is_authenticated %}
-  	<li><a href="{% url 'public_fulfillment:sign_up' %}">Register</a></li>
+  	<li><a href="{% url 'public_fulfillment:sign_up' %}">רישום</a></li>
   {% endif %}
-  <li><a href="{% url 'home' %}">Home</a></li>
+  <li><a href="{% url 'coplay:add_discussion' %}">התחלת פעילות חדשה</a></li>
+  <li><a href="{% url 'coplay:discussions_list' %}">פעילויות קיימות</a></li>
+  <li><a href="#Tasks">משימות</a></li>
+  <li><a href="#Decisions">החלטות</a></li>
   
 </ul>
 

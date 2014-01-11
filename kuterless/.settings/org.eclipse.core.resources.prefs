@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
 encoding//coplay/migrations/0001_initial.py=utf-8
+encoding//coplay/models.py=utf-8
 encoding//coplay/tests.py=utf-8
 encoding//public_fulfillment/views.py=utf-8

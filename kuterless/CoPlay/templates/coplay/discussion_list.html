@@ -2,11 +2,11 @@
 
 {% block content %}
 <br><br><br><br><br>
-	<center><h1>Discussions</h1></center>
+	<center><h1>פעילויות</h1></center>
 	<ul>
 	{% for discussion in latest_discussion_list %}
-	    <li  class="list-group-item">{{ discussion.updated_at|date }} - {{ discussion.title }} by {{ discussion.owner.username }}
-	    	 <a class="btn btn-success" href="{{ discussion.get_absolute_url }}">See more</a></li> 
+	    <li  class="list-group-item">{{ discussion.updated_at|date }} - {{ discussion.title }} של {{ discussion.owner.username }}
+	    	 <a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a></li> 
 	{% empty %}
 	    <li>No discussions yet.</li>
 	{% endfor %}

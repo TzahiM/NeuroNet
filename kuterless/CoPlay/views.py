@@ -124,6 +124,7 @@ def add_discussion(request):
 
     return render(request, 'coplay/new_discussion.html', {
         'form': form,
+        'rtl'             : 'dir="rtl"'
     })
 
     
@@ -261,7 +262,8 @@ def task_details(request, pk):
     return render(request, 'coplay/task_detail.html', 
                       {  'task'  :  task ,
                        'update_task_form' : update_task_form,
-                       'close_possible'   : close_possible})
+                       'close_possible'   : close_possible,
+                       'rtl'             : 'dir="rtl"'})
     
     
     
