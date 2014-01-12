@@ -69,7 +69,7 @@ def sign_up(request):
             password2 = form.cleaned_data['password2']
             if password1 != password2:
                 return render(request, 'coplay/message.html', 
-                      {  'message'      :  'Passwords not match',
+                      {  'message'      :  'אין התאמה בין שתי הסיסמאות',
                        'rtl': 'dir="rtl"'})
                 
             user_name =  form.cleaned_data['user_name']

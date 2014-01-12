@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*->
 from coplay import models
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task
 from django import forms
@@ -161,7 +162,9 @@ def add_feedback(request, pk):
             if user != discussion.owner and form.cleaned_data['feedbabk_type']  and form.cleaned_data['content']:
                 discussion.add_feedback( user,  form.cleaned_data['feedbabk_type'] , form.cleaned_data['content'])
             return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
-        return HttpResponse('Invalid form. Please')
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'לא הזנת תגובה',
+                       'rtl': 'dir="rtl"'})
     return HttpResponse('Request NA')
 
 @login_required    
@@ -181,7 +184,9 @@ def add_decision(request, pk):
                 return HttpResponse('Forbidden access')
             return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
         else:
-            return HttpResponse('Invalid form')
+            return render(request, 'coplay/message.html', 
+                      {  'message'      :  'בחר אחת מהאפשרויות',
+                       'rtl': 'dir="rtl"'})
     return HttpResponseRedirect('coplay_root') # Redirect after POST
         
 @login_required    
@@ -193,7 +198,9 @@ def vote(request, pk):
             try:
                 decision = Decision.objects.get(id=int(pk))
             except Discussion.DoesNotExist:
-                return HttpResponse('Decision not found')
+                return render(request, 'coplay/message.html', 
+                      {  'message'      :  'משימה לא ידועה',
+                       'rtl': 'dir="rtl"'})
             user = request.user
             if user != decision.parent.owner:
                 decision.vote( user, int(form.cleaned_data['value']) )
@@ -220,7 +227,9 @@ def add_task(request, pk):
                 return HttpResponse('Discussion not found')
             target_date = form.cleaned_data['target_date']
             if target_date <=  timezone.now():
-                return HttpResponse( 'target date should be in the future' + str(target_date))
+                return render(request, 'coplay/message.html', 
+                      {  'message'      :  'תאריך היעד חייב להיות בעתיד' + str(target_date),
+                       'rtl': 'dir="rtl"'})
             new_task = discussion.add_task( user,  
                                  form.cleaned_data['goal_description'] ,
                                  form.cleaned_data['target_date'] )
