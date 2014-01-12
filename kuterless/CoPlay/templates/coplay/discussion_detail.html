@@ -24,9 +24,9 @@
             	<center><h1>{{ discussion.title }}</h1></center>
             	<p><b>
             	{% if user == discussion.owner %}
-	            	זה הדיון שלך
+	            	זאת הפעילות שלך
             	{% else %}
-                	זה הדיון של {{ discussion.owner.get_full_name|default:discussion.owner.username }}
+                	זו הפעילות של {{ discussion.owner.get_full_name|default:discussion.owner.username }}
                 {% endif %}
                 
                {% if False == user.is_authenticated %}

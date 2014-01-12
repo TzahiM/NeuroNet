@@ -2,10 +2,15 @@
 
 {% block content %}
 <br><br><br><br><br>
-	<center><h1>פעילויות</h1></center>
+	<center><h1>למי אפשר לעזור?</h1></center>
 	<ul>
 	{% for discussion in latest_discussion_list %}
-	    <li  class="list-group-item">{{ discussion.updated_at|date }} - {{ discussion.title }} של {{ discussion.owner.username }}
+	    <li  class="list-group-item">
+	    	{{ discussion.owner.get_full_name|default:discussion.owner.username }}
+	    	  רוצה עזרה ב  
+	    	{{ discussion.title }}
+	    	{{ discussion.updated_at|date }}
+
 	    	 <a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a></li> 
 	{% empty %}
 	    <li>No discussions yet.</li>

@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<br><br><br><br><br>
+<br><br>
+מייל צריך להזין רק אם מקובל עליך לקבל מאיתנו עדכונים על יכולות חדשות שיתווספו לאתר.
+<br><br><br>
 <div class="container">
 	<form action= "{% url 'public_fulfillment:sign_up' %}" method="post">{% csrf_token %}
 	{% for field in form %}

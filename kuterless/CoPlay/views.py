@@ -97,7 +97,8 @@ def discussion_details(request, pk):
             'vote_form'       : vote_form       ,
             'add_task_form'   : add_task_form   ,
             'like_levels'     : like_levels,
-            'rtl'             : 'dir="rtl"'})
+            'rtl'             : 'dir="rtl"',
+            'page_name'       : ' עוזרים  ב '+  discussion.title })
 
 
 
@@ -272,7 +273,8 @@ def task_details(request, pk):
                       {  'task'  :  task ,
                        'update_task_form' : update_task_form,
                        'close_possible'   : close_possible,
-                       'rtl'             : 'dir="rtl"'})
+                       'rtl'             : 'dir="rtl"',
+                       'page_name':      'המשימה:'+ task.goal_description })
     
     
     
