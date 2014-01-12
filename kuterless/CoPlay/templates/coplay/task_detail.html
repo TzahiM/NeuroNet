@@ -26,16 +26,17 @@
                 </div>         
             </div>
             
-				{% if False == user.is_authenticated %}
+				{% if False == user.is_authenticated  %}
                 <center>
-               		<h1>כדי להגיב, להצביע או להתנדב למשימה עליך להירשם תחילה </h1>
+               		<h1>כדי לסגור משימה של מישהו אחר או לעדכן את התקדמות המשימה שלך צריך להיכנס למערכת</h1>
             		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">הרשמה ראשונה</a>
+            		<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
 				</center>
                {% endif %}            
 <div class="container">
 
 	<p> זמן לסיום : {{task.get_time_until_target }}</p>
-	<p>Current status description : {{task.get_status_description | linebreaks}} </p>
+	<p>מצב עדכני : {{task.get_status_description | linebreaks}} </p>
 	
 	{% if task.get_status == task.CLOSED %}
 		<p> {{task.closed_at }} נסגר ב</p>

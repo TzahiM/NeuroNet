@@ -34,6 +34,7 @@
                <center>
                		<h1>כדי להגיב, להצביע או להתנדב למשימה עליך להירשם תחילה </h1>
             		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">הרשמה ראשונה</a>
+            		<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
 				</center>
                {% endif %}
                 
