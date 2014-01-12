@@ -15,14 +15,11 @@
  <div class="jumbotron">
             	<div class="container">
             	<center><h1> המטרה היא: {{task.goal_description |linebreaks}}</h1></center>
-				<p>					
-					באחריות: {{task.responsible.username}}
-					{% if task.responsible.get_full_name %}
-		              	{{task.responsible.get_full_name}} 
-			       	{% else %}
-			       		 {{task.responsible}}
-		            {% endif %}
-				</p>
+            	{%if user == task.responsible %}
+					<p>	באחריות</p>
+            	{%else%}
+					<p>	באחריות:  {{task.responsible.get_full_name | default:task.responsible.username}}</p>
+            	{% endif %}
 				
 				<p>מצב : {{task.get_status_display}}</p>
 				<p>תאריך יעד : {{task.target_date}}</p>       
@@ -42,15 +39,7 @@
 	
 	{% if task.get_status == task.CLOSED %}
 		<p> {{task.closed_at }} נסגר ב</p>
-		<p>
-			על ידי:  
-			{% if task.closed_by.get_full_name %}
-		              	{{task.closed_by.get_full_name}} 
-		   	{% else %}
-				{{task.closed_by}}
-		    {% endif %}
-			
-		</p>
+		<p>			על ידי: {{ task.closed_by.get_full_name|default:task.closed_by.username}} 		</p>
 	{% endif %}
 
 	{% if close_possible %}

@@ -76,7 +76,7 @@ def sign_up(request):
             
             if User.objects.filter( username = user_name ).exists():
                 return render(request, 'coplay/message.html', 
-                      {  'message'      :  'User %s exists.' % (user_name),
+                      {  'message'      :  'משתמש %s קיים.' % (user_name),
                        'rtl': 'dir="rtl"'})
                 
             first_name = form.cleaned_data['first_name']
@@ -90,12 +90,23 @@ def sign_up(request):
                 )
 
             user.set_password(password1)
-            user.save()
-            #authenticate (request, user)
-            return render(request, 'coplay/message.html', 
-                      {  'message'      :  'נרשמת במערכת. עכשיו צריך לבצע כניסה',
+            user.save()    
+            user = authenticate(username=user_name, password=password1)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('home'))
+                    # Redirect to a success page.
+                else:
+                    # Return a 'disabled account' error message
+                    return render(request, 'coplay/message.html', 
+                      {  'message'      :  'disabled account',
                        'rtl': 'dir="rtl"'})
-            
+            else:
+                # Return an 'invalid login' error message.
+                return render(request, 'coplay/message.html', 
+                      {  'message'      :  'invalid login account',
+                       'rtl': 'dir="rtl"'})
         else:
             return render(request, 'coplay/message.html', 
                       {  'message'      :  'הנתונים אינם מלאים',

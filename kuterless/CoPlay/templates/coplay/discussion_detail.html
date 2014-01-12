@@ -25,14 +25,9 @@
             	<center><h1>{{ discussion.title }}</h1></center>
             	<p><b>
             	{% if user == discussion.owner %}
-            	זה הדיון שלך
+	            	זה הדיון שלך
             	{% else %}
-                זה הדיון של 
-					{% if discussion.owner.get_full_name %}
-	              		{{discussion.owner.get_full_name}} 
-	              	{% else %}
-	              		 {{discussion.owner}}
-	                {% endif %}
+                	זה הדיון של {{ discussion.owner.get_full_name|default:discussion.owner.username }}
                 {% endif %}
                 
                {% if False == user.is_authenticated %}
@@ -104,9 +99,9 @@
 					    
 					<ul>
 					{% for feedback in list_encourage %}
-					 		<li class="list-group-item">
-					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					<li class="list-group-item">
+					 			<div {% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
+					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -120,7 +115,7 @@
 					{% for feedback in list_cooperation %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -128,13 +123,13 @@
 					                	
                 </div>
                 <div class="col-sm-6 col-md-3">
-                	<center><h3>תחושות בטן</h3></center>
+                	<center><h3>אינטואיציה</h3></center>
 					    
 					<ul>
 					{% for feedback in list_intuition %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -148,7 +143,7 @@
 					{% for feedback in list_advice %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -235,13 +230,10 @@
 				{% for task in list_tasks %}
 				
 				 		<li class="list-group-item">
-				 			{% if task.responsible.get_full_name %}
-		              			{{task.responsible.get_full_name}} 
-			              	{% else %}
-			              		 {{task.responsible}}
-			                {% endif %}
-				 			ישיג את {{task.goal_description|linebreaks}}<br> 
-				 			untill {{task.target_date }} {{ task.get_status_display }}
+				 			{{task.goal_description|linebreaks}}<br>
+				 			באחריות {{ task.responsible.get_full_name|default:task.responsible.username}} 
+				 			  
+				 			יושלם עד {{task.target_date }} {{ task.get_status_display }}
 				 			
 				 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
 

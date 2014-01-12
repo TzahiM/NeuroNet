@@ -79,14 +79,9 @@
           </ul>
           <ul class="nav navbar-nav navbar-right">     
         	          	       
-            {% if user.id %}
-              <li> <a href="{% url 'logout' %}"> Hi
-              	{% if user.get_full_name %}
-              		{{user.get_full_name}} 
-              	{% else %}
-              		 {{user}}
-                {% endif %}
-              	 Logout?</a> </li>
+            {% if user.is_authenticated %}
+              <li> <a href="{% url 'logout' %}"> יציאה </a> </li>
+              <li><a href="#"> שלום {{ user.get_full_name|default:user.username }}</a></li>
             {% else %}
               <li><a href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a></li>
               <li><a href="{% url 'login' %}?next={{request.path}}">כניסה</a></li>
