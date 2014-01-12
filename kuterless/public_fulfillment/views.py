@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*->
 from classytags import models
 from django import forms
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponse, HttpResponseRedirect
@@ -46,12 +47,12 @@ class CreateUserView(CreateView):
     
 
 class AddTUserForm(forms.Form):
-    user_name  = forms.CharField(max_length = 200)
-    password1  = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2  = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
-    first_name = forms.CharField(max_length = 200)
-    last_name  = forms.CharField(max_length = 200)
-    email      = forms.EmailField()      
+    user_name  = forms.CharField( max_length = 200)
+    password1  = forms.CharField( widget=forms.PasswordInput)
+    password2  = forms.CharField( widget=forms.PasswordInput)
+    first_name = forms.CharField(  required = False, max_length = 200)
+    last_name  = forms.CharField( required = False, max_length = 200)
+    email      = forms.EmailField( required = False)      
 
 
 def sign_up(request):
@@ -64,22 +65,40 @@ def sign_up(request):
         form = AddTUserForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            if form.cleaned_data['password1'] != form.cleaned_data['password2']:
+            password1 = form.cleaned_data['password1']
+            password2 = form.cleaned_data['password2']
+            if password1 != password2:
                 return render(request, 'coplay/message.html', 
                       {  'message'      :  'Passwords not match',
                        'rtl': 'dir="rtl"'})
-            user = User(username =  form.cleaned_data['user_name'] ,
-                            first_name = form.cleaned_data['first_name'],
-                            last_name =  form.cleaned_data['last_name'],
-                            email     =  form.cleaned_data['email'])
+                
+            user_name =  form.cleaned_data['user_name']
             
-            user.set_password(form.cleaned_data['password1'])
-            
+            if User.objects.filter( username = user_name ).exists():
+                return render(request, 'coplay/message.html', 
+                      {  'message'      :  'User %s exists.' % (user_name),
+                       'rtl': 'dir="rtl"'})
+                
+            first_name = form.cleaned_data['first_name']
+            last_name =  form.cleaned_data['last_name']
+            email     =  form.cleaned_data['email']
+            user = User(
+                    username=user_name,
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name
+                )
+
+            user.set_password(password1)
             user.save()
-            return HttpResponseRedirect(reverse('home')) # Redirect after POST
+            #authenticate (request, user)
+            return render(request, 'coplay/message.html', 
+                      {  'message'      :  'נרשמת במערכת. עכשיו צריך לבצע כניסה',
+                       'rtl': 'dir="rtl"'})
+            
         else:
             return render(request, 'coplay/message.html', 
-                      {  'message'      :  'Please try again',
+                      {  'message'      :  'הנתונים אינם מלאים',
                        'rtl': 'dir="rtl"'})
             
         
