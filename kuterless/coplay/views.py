@@ -82,8 +82,7 @@ def discussion_details(request, pk):
     
         add_task_form = AddTaskForm()
     
-    page_name = discussion.title
-    
+    page_name =  u'עוזרים ב '+ discussion.title 
     
     return render(request, 'coplay/discussion_detail.html', 
          {  'discussion'      :  discussion     ,      
@@ -275,7 +274,7 @@ def task_details(request, pk):
                        'update_task_form' : update_task_form,
                        'close_possible'   : close_possible,
                        'rtl'             : 'dir="rtl"',
-                       'page_name':      'המשימה:'+ task.goal_description })
+                       'page_name':      u'המשימה:'+ task.goal_description })
     
     
     
