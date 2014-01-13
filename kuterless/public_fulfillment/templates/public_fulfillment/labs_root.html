@@ -17,7 +17,9 @@
 	
 		<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">חם מהתנור</a>
 		<a class="btn btn-success" href="{% url 'public_fulfillment:about' %}">אודות הפרוייקט</a>
+		{% if False == user.is_authenticated %}
 		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a>
+		{% endif %}
 		<br>
 		<br>
 		<br>

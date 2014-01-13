@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<ul class="pagination">
+<center>
+	{% if False == user.is_authenticated %}
+	<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">רישום</a>
+	<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
+    {% endif %}
+	<a class="btn btn-success" href="#Feedbacks">תגובות המשתמשים בפעילות הזאת</a>
+    
+	<a class="btn btn-success" href="#Decisions">החלטות להצבעה של הפעילות הזו</a>
+	<a class="btn btn-success" href="#Tasks">המשימות באחריות המשתתפים בפעילות הזאת</a></li>
+	<a class="btn btn-success" href="{% url 'coplay:add_discussion' %}">התחלת פעילות חדשה</a>
+	<a class="btn btn-success" href="{% url 'coplay:discussions_list' %}">פעילויות קיימות</a>
+	
+	<a class="btn btn-success" href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a>	
+</center>
 
-  
-
-  <li><a href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a></li>
-  
-  {% if False == user.is_authenticated %}
-  	<li><a href="{% url 'public_fulfillment:sign_up' %}">רישום</a></li>
-  {% endif %}
-  <li><a href="{% url 'coplay:add_discussion' %}">התחלת פעילות חדשה</a></li>
-  <li><a href="{% url 'coplay:discussions_list' %}">פעילויות קיימות</a></li>
-  <li><a href="#Tasks">משימות</a></li>
-  <li><a href="#Decisions">החלטות</a></li>
-  
-</ul>
 
 
         <div class="container" >
@@ -92,7 +92,7 @@
             </div>
 
             <!-- Example row of columns -->
-            <div class="container" >
+            <div class="container" id="Feedbacks">
             <div class="row">
                 <div class="col-sm-6 col-md-3">
                 	<center><h3>עידודים</h3></center>
