@@ -53,19 +53,23 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#">אנשים</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">פרויקטים<b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a></li>
-                <li class="divider"></li>
-                <li class="disabled"><a tabindex="-1" href="#">כן ירבו...</a></li>
-              </ul>
-            </li>
+          	<li><a href="{% url 'public_fulfillment:about' %}">          אודות          </a></li>
+          	            {% if user.is_authenticated %}
+              <li> <a href="{% url 'logout' %}"> יציאה </a> </li>
+              <li><a href="#"> שלום {{ user.get_full_name|default:user.username }}</a></li>
+            {% else %}
+              <li><a href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a></li>
+              <li><a href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a></li>
+            {% endif %}
+
+            
+          </ul>
+          <ul class="nav navbar-nav navbar-right">     
+        	          	       
+            
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">מהמעבדות<b class="caret"></b></a>
               <ul  class="dropdown-menu" role="menu" aria-labelledby="dLabel">
@@ -75,18 +79,18 @@
                 <li><a href="https://github.com/TzahiM/NeuroNet.git">למפתחים</a></li>
               </ul>
             </li>
-            
-          </ul>
-          <ul class="nav navbar-nav navbar-right">     
-        	          	       
-            {% if user.is_authenticated %}
-              <li> <a href="{% url 'logout' %}"> יציאה </a> </li>
-              <li><a href="#"> שלום {{ user.get_full_name|default:user.username }}</a></li>
-            {% else %}
-              <li><a href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a></li>
-              <li><a href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a></li>
-            {% endif %}
-            <li><a href="{% url 'public_fulfillment:about' %}">          אודות          </a></li>
+
+           <li class="dropdown">             
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">פרויקטים<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a></li>
+                <li class="divider"></li>
+                <li class="disabled"><a tabindex="-1" href="#">כן ירבו...</a></li>
+              </ul>
+            </li>
+
+             <li><a href="#">אנשים</a></li>
+            <li><a class="navbar-brand" href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
