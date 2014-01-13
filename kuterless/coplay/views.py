@@ -82,6 +82,7 @@ def discussion_details(request, pk):
     
         add_task_form = AddTaskForm()
     
+    page_name = ' עוזרים  ב '+  discussion.title
     
     return render(request, 'coplay/discussion_detail.html', 
          {  'discussion'      :  discussion     ,      
@@ -98,7 +99,7 @@ def discussion_details(request, pk):
             'add_task_form'   : add_task_form   ,
             'like_levels'     : like_levels,
             'rtl'             : 'dir="rtl"',
-            'page_name'       : ' עוזרים  ב '+  discussion.title })
+            'page_name'       : page_name })
 
 
 
