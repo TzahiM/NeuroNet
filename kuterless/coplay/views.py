@@ -102,7 +102,7 @@ def discussion_details(request, pk):
 
 
 class NewDiscussionForm(forms.Form):
-    title = forms.CharField(max_length=6)
+    title = forms.CharField(max_length=200,  widget=forms.Textarea(attrs= { 'rows': '1', 'cols': '50'}))
     description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea)
     
 @login_required
