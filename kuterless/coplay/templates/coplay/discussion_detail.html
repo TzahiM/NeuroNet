@@ -13,7 +13,11 @@
 	<a class="btn btn-success" href="{% url 'coplay:add_discussion' %}">התחלת פעילות חדשה</a>
 	<a class="btn btn-success" href="{% url 'coplay:discussions_list' %}">פעילויות קיימות</a>
 	
-	<a class="btn btn-success" href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a>	
+	<a class="btn btn-success" href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a>
+   	{% if user == discussion.owner %}
+    <a class="btn btn-danger" href="#delete">למחיקת הדיון</a>
+    {% endif %}
+	
 </center>
 
 
@@ -92,8 +96,10 @@
             </div>
 
             <!-- Example row of columns -->
-            <div class="container" id="Feedbacks">
-            <div class="row">
+            <div class="container" >
+ 
+            <div class="row" id="Feedbacks">
+
                 <div class="col-sm-6 col-md-3">
                 	<center><h3>עידודים</h3></center>
 					    
@@ -153,7 +159,10 @@
         </div> <!-- /container -->
 
             <div class="row">
-                <div id="Decisions" class="col-sm-2 col-md-6">
+                <div class="col-sm-2 col-md-6">
+				<br id="Decisions">
+				<br>
+				<br>
 
                  <h3 >ההחלטות של מנהל הדיון</h3>
 					
@@ -207,8 +216,11 @@
                 </div> 
                  
                 <div class="col-sm-2 col-md-6">
+	<br id=id="Tasks">
+	<br>
+	<br>
                 	
-                 <h3 id="Tasks">משימות</h3>
+                 <h3>משימות</h3>
 
 				{% if add_task_form %}
 				
@@ -240,9 +252,51 @@
 				 		</li>
 				{% endfor %}
 				</ul>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				
+				
+				
 
                 </div>
             </div>
+   	{% if user == discussion.owner %}
+   	<br>
+	<br id="delete">
+	<br>
+	<br>
+	<br>
+	<br>
+	<center>
+		<a class="btn btn-danger" href= "{% url 'coplay:delete_discussion' discussion.id %}">להמשיך במחיקה של {{discussion.title}} ?</a>	
+	</center>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+    
+    {% endif %}
 
 {% endblock %}
 
