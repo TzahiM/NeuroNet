@@ -2,10 +2,8 @@
 from coplay import models
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget, AdminSplitDateTime
 from django.contrib.auth.decorators import login_required
 from django.forms.extras.widgets import SelectDateWidget
-from django.forms.widgets import DateTimeInput, DateInput
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
@@ -112,6 +110,14 @@ def add_discussion(request):
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
             user = request.user
+            
+            list = Discussion.objects.all().filter(owner =user, title = form.cleaned_data['title'])
+            if list.count() != 0:
+                return render(request, 'coplay/message.html', 
+                      {  'message'      :  'כבר קיים עבורך דיון באותו נושא',
+                       'rtl': 'dir="rtl"'})
+            
+            
             new_discussion = Discussion(owner =  user ,
                                         title =  form.cleaned_data['title'] ,
                                         description = form.cleaned_data['description'])
@@ -207,6 +213,12 @@ def add_decision(request, pk):
                 return HttpResponse('Discussion not found')
             user = request.user
             if user == discussion.owner:
+                list = Decision.objects.all().filter( content = form.cleaned_data['content'], parent = discussion)
+                if list.count() != 0:
+                    return render(request, 'coplay/message.html', 
+                          {  'message'      :  'כבר רשומה עבורך החלטה באותו נושא',
+                           'rtl': 'dir="rtl"'})
+               
                 discussion.add_decision( form.cleaned_data['content'] )
             else:
                 return HttpResponse('Forbidden access')
@@ -258,6 +270,13 @@ def add_task(request, pk):
                 return render(request, 'coplay/message.html', 
                       {  'message'      :  'תאריך היעד חייב להיות בעתיד' + str(target_date),
                        'rtl': 'dir="rtl"'})
+                
+            list = Task.objects.all().filter(responsible =user, goal_description = form.cleaned_data['goal_description'], parent = discussion)
+            if list.count() != 0:
+                return render(request, 'coplay/message.html', 
+                      {  'message'      :  'כבר רשומה עבורך משימה באותו נושא',
+                       'rtl': 'dir="rtl"'})
+                 
             new_task = discussion.add_task( user,  
                                  form.cleaned_data['goal_description'] ,
                                  form.cleaned_data['target_date'] )
