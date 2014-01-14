@@ -12,7 +12,7 @@
 
  <div class="jumbotron">
             	<div class="container">
-            	<center><h1> המטרה היא: {{task.goal_description |linebreaks}}</h1></center>
+            	<center><h1> המטרה היא: {{task.goal_description |urlize|linebreaks}}</h1></center>
             	{%if user == task.responsible %}
 					<p>	באחריות</p>
             	{%else%}
@@ -34,7 +34,7 @@
 <div class="container">
 
 	<p> זמן לסיום : {{task.get_time_until_target }}</p>
-	<p>מצב עדכני : {{task.get_status_description | linebreaks}} </p>
+	<p>מצב עדכני : {{task.get_status_description |urlize|linebreaks}} </p>
 	
 	{% if task.get_status == task.CLOSED %}
 		<p> {{task.closed_at }} נסגר ב</p>
@@ -58,7 +58,7 @@
 	{% endif %}
 	
 	{% if task.parent %}
-	<p>  :המשימה קשורה לדיון שכותרתו{{task.parent.title | linebreaks}} <br>
+	<p>  :המשימה קשורה לדיון שכותרתו{{task.parent.title |urlize|linebreaks}} <br>
 		<a class="btn btn-success" href="{{ task.parent.get_absolute_url }}">פרטים</a>
 	{% endif %}
 	

@@ -25,7 +25,7 @@
         <div class="container" >
 			
             	<div class="container">
-            	<center><h1>{{ discussion.title }}</h1></center>
+            	<center><h1>{{ discussion.title |urlize|linebreaks}}</h1></center>
             	<p><b>
             	{% if user == discussion.owner %}
 	            	זאת הפעילות שלך
@@ -54,11 +54,16 @@
                 <div class="col-sm-2 col-md-6">
 				{% if discussion.description %}
 				    <h4>המטרות של הדיון והעזרה המבוקשת מהמשתתפים</h4> 
-				    <p>{{ discussion.description|linebreaks }}</p>
+				    <p>{{ discussion.description|urlize|linebreaks }}</p>
 				    <p> עודכן לאחרונה ב {{discussion.updated_at }} </p>
 				{% else %}
 				    <p>אין תיאור נוסף</p>
 				{% endif %}
+				
+
+				
+				
+				
                 </div>
                 <div class="col-sm-2 col-md-6">
 				{% if description_form %}
@@ -107,7 +112,7 @@
 					{% for feedback in list_encourage %}
 					<li class="list-group-item">
 					 			<div {% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -121,7 +126,7 @@
 					{% for feedback in list_cooperation %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -135,7 +140,7 @@
 					{% for feedback in list_intuition %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -149,7 +154,7 @@
 					{% for feedback in list_advice %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|linebreaks }} {{ feedback.created_at }}
+					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -189,7 +194,7 @@
 					{% if list_decision %}    
 					<ul>
 					{% for decision in list_decision %}
-					 		<li class="list-group-item">{{ decision.content|linebreaks }} 
+					 		<li class="list-group-item">{{ decision.content|urlize|linebreaks }} 
 					 			נוצרה ב:{{ decision.created_at }} עם {{decision.get_number_of_votes}} הצבעות   
 					 			{% if vote_form %}
 					 				<h5>מה דעתך ?</h5>
@@ -242,7 +247,7 @@
 				{% for task in list_tasks %}
 				
 				 		<li class="list-group-item">
-				 			{{task.goal_description|linebreaks}}<br>
+				 			{{task.goal_description|urlize|linebreaks}}<br>
 				 			באחריות {{ task.responsible.get_full_name|default:task.responsible.username}} 
 				 			  
 				 			יושלם עד {{task.target_date }} {{ task.get_status_display }}

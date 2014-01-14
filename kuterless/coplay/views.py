@@ -145,10 +145,14 @@ def update_discussion(request, pk):
             user = request.user
             if user == discussion.owner:
                 discussion.update_description( form.cleaned_data['description'] )
+                return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
             return render(request, 'coplay/message.html', 
                       {  'message'      :  'רק בעל הדיון מורשה לעדכן אותו',
                        'rtl': 'dir="rtl"'})
-    return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
+            
+    return render(request, 'coplay/message.html', 
+                      {  'message'      :  'לא הוזן תיאור חדש',
+                       'rtl': 'dir="rtl"'})
     
     
 
@@ -309,8 +313,9 @@ def update_task_description(request, pk):
             user = request.user
             if user == task.responsible:
                 task.update_status_description( form.cleaned_data['status_description'] )
+            return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
             
-    return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
+    return HttpResponseRedirect('coplay_root') # Redirect after POST
         
         
 @login_required   
