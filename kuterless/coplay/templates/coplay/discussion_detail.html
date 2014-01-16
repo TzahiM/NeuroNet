@@ -49,20 +49,6 @@
             
             <div class="row">
                 <div class="col-sm-2 col-md-6">
-				{% if discussion.description %}
-				    <h4>המטרות של הדיון והעזרה המבוקשת מהמשתתפים</h4> 
-				    <p>{{ discussion.description|urlize|linebreaks }}</p>
-				    <p> עודכן לאחרונה ב {{discussion.updated_at }} </p>
-				{% else %}
-				    <p>אין תיאור נוסף</p>
-				{% endif %}
-				
-
-				
-				
-				
-                </div>
-                <div class="col-sm-2 col-md-6">
 				{% if description_form %}
 				<h4>עדכון המטרות שלך והעזרה  שאתה צריך</h4>
 								
@@ -95,6 +81,21 @@
 
 
                 </div>
+                <div class="col-sm-2 col-md-6">
+				{% if discussion.description %}
+				    <h4>המטרות של הדיון והעזרה המבוקשת מהמשתתפים</h4> 
+				    <p>{{ discussion.description|urlize|linebreaks }}</p>
+				    <p> עודכן לאחרונה ב {{discussion.updated_at }} </p>
+				{% else %}
+				    <p>אין תיאור נוסף</p>
+				{% endif %}
+				
+
+				
+				
+				
+                </div>
+
             </div>
 
             <!-- Example row of columns -->
@@ -161,7 +162,50 @@
         </div> <!-- /container -->
 
             <div class="row">
+                 
                 <div class="col-sm-2 col-md-6">
+	<br id=id="Tasks">
+	<br>
+	<br>
+                	
+                 <h3>משימות</h3>
+
+				{% if add_task_form %}
+				
+				<h4>הצהרה שלך על משימה חדשה</h4>
+				
+				<form action= "{% url 'coplay:add_task' discussion.id %}" method="post">{% csrf_token %}
+						{% for field in add_task_form %}
+						    <div class="fieldWrapper">
+									{{ field.errors }}
+								{{ field.label_tag }} {{ field }}
+							</div>
+						{% endfor %}
+					<input type="submit" value="התחייבות לביצוע" />
+				</form>
+						<p>Example: "10/25/06 14:30 "</p>	
+				<h4>רשימת המשימות</h4>
+				{% endif %}
+				<ul>
+				{% for task in list_tasks %}
+				
+				 		<li class="list-group-item">
+				 			{{task.goal_description|urlize|linebreaks}}<br>
+				 			באחריות {{ task.responsible.get_full_name|default:task.responsible.username}} 
+				 			  
+				 			יושלם עד {{task.target_date }} {{ task.get_status_display }}
+				 			
+				 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
+
+				 		</li>
+				{% endfor %}
+				</ul>
+				
+				
+				
+
+                </div>
+                                <div class="col-sm-2 col-md-6">
 				<br id="Decisions">
 				<br>
 				<br>
@@ -216,67 +260,98 @@
 					<p>  אין התלבטויות</p>
 					{% endif %}
                 </div> 
-                 
-                <div class="col-sm-2 col-md-6">
-	<br id=id="Tasks">
-	<br>
-	<br>
-                	
-                 <h3>משימות</h3>
 
-				{% if add_task_form %}
-				
-				<h4>הצהרה שלך על משימה חדשה</h4>
-				
-				<form action= "{% url 'coplay:add_task' discussion.id %}" method="post">{% csrf_token %}
-						{% for field in add_task_form %}
-						    <div class="fieldWrapper">
-									{{ field.errors }}
-								{{ field.label_tag }} {{ field }}
-							</div>
-						{% endfor %}
-					<input type="submit" value="התחייבות לביצוע" />
-				</form>
-						<p>Example: "10/25/06 14:30 "</p>	
-				<h4>רשימת המשימות</h4>
-				{% endif %}
-				<ul>
-				{% for task in list_tasks %}
-				
-				 		<li class="list-group-item">
-				 			{{task.goal_description|urlize|linebreaks}}<br>
-				 			באחריות {{ task.responsible.get_full_name|default:task.responsible.username}} 
-				 			  
-				 			יושלם עד {{task.target_date }} {{ task.get_status_display }}
-				 			
-				 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
-
-				 		</li>
-				{% endfor %}
-				</ul>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				
-				
-				
-
-                </div>
             </div>
    	{% if user == discussion.owner %}
    	<br>
+   					<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+
 	<br id="delete">
 	<br>
 	<br>
