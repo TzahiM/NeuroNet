@@ -7,8 +7,8 @@
 		<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
     {% endif %}
 	<a class="btn btn-success" href="#Feedbacks">תגובות המשתמשים בפעילות הזאת</a>    
-	<a class="btn btn-success" href="#Decisions">החלטות להצבעה של הפעילות הזו</a>
-	<a class="btn btn-success" href="#Tasks">המשימות באחריות המשתתפים בפעילות הזאת</a>
+	<a class="btn btn-success" href="#Decisions">התלבטויות של מוביל הפעילות</a>
+	<a class="btn btn-success" href="#Tasks">המשימות באחריות המשתתפים</a>
 	<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">הסברים</a>	
    	{% if user == discussion.owner %}
    	<br>
@@ -166,7 +166,7 @@
 				<br>
 				<br>
 
-                 <h3 >ההחלטות של מנהל הדיון</h3>
+                 <h3 >התלבטויות של מוביל הפעילות</h3>
 					
 
                  
@@ -180,11 +180,11 @@
 				            {{ field.label_tag }} {{ field }}
 				        </div>
 				    {% endfor %}
-					<input type="submit" value="הוסף את ההחלטה להצבעת הנוכחים" />
+					<input type="submit" value="הוסף את ההתלבטות להצבעת הנוכחים" />
 				</form>
 				
 
-                 <h4 >ההחלטות שלך</h4>
+                 <h4 >ההיתלבטויות שלך</h4>
 				
 				{% endif %}
                  
@@ -213,7 +213,7 @@
 					{% endfor %}
 					</ul>
 					{% else %}
-					<p> עוד אין החלטות</p>
+					<p>  אין התלבטויות</p>
 					{% endif %}
                 </div> 
                  
