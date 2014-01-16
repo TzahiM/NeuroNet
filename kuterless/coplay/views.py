@@ -9,6 +9,8 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views import generic
 
+MAX_MESSAGE_INPUT_CHARS = 500
+
 # Create your views here.
 def root(request):
     return render(request, 'coplay/co_play_root.html', {'rtl': 'dir="rtl"'})
@@ -25,16 +27,16 @@ class IndexView(generic.ListView):
     
    
 class AddFeedbackForm(forms.Form):
-    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= { 'rows': '3'}))
+    content = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= { 'rows': '3'}))
     feedbabk_type = forms.ChoiceField( choices=Feedback.FEEDBACK_TYPES)
 
 
 class UpdateDiscussionForm(forms.Form):
-    description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'rows': '3'}))
+    description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= {'rows': '3'}))
  
     
 class AddDecisionForm(forms.Form):
-    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= { 'rows': '3'}))
+    content = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= { 'rows': '3'}))
 
 
 class VoteForm(forms.Form):
@@ -42,11 +44,11 @@ class VoteForm(forms.Form):
 
 
 class AddTaskForm(forms.Form):
-    goal_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= { 'rows': '3'}))
+    goal_description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= { 'rows': '3'}))
     target_date =  forms.DateTimeField( widget = SelectDateWidget)
     
 class UpdateTaskForm(forms.Form):
-    status_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'rows': '3'}))
+    status_description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= {'rows': '3'}))
 
 
 def discussion_details(request, pk):
@@ -101,7 +103,7 @@ def discussion_details(request, pk):
 
 class NewDiscussionForm(forms.Form):
     title = forms.CharField(max_length=200,  widget=forms.Textarea(attrs= { 'rows': '1', 'cols': '50'}))
-    description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea)
+    description = forms.CharField(max_length= MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea)
     
 @login_required
 def add_discussion(request):
