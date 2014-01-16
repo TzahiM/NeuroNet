@@ -1,37 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<center>
 	{% if False == user.is_authenticated %}
-	<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">רישום</a>
-	<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
-    {% endif %}
-	<a class="btn btn-success" href="{% url 'coplay:discussions_list' %}">רשימת פעילויות</a>
-	<a class="btn btn-success" href="{% url 'coplay:add_discussion' %}">התחלת פעילות</a>
+		<h1>כדי לסגור משימה של מישהו אחר או לעדכן את התקדמות המשימה שלך צריך להיכנס למערכת</h1>
 	
-	<a class="btn btn-success" href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a>	
+		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">רישום</a>
+		<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
+    {% endif %}
+	<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">הסברים</a>
+</center>	
+	
 
- <div class="jumbotron">
-            	<div class="container">
+ 	<div class="jumbotron">
+           	<div class="container">
             	<center><h1> המטרה היא: {{task.goal_description |urlize|linebreaks}}</h1></center>
             	{%if user == task.responsible %}
-					<p>	באחריות</p>
+					<p>באחריותך</p>
             	{%else%}
 					<p>	באחריות:  {{task.responsible.get_full_name | default:task.responsible.username}}</p>
             	{% endif %}
 				
 				<p>מצב : {{task.get_status_display}}</p>
 				<p>תאריך יעד : {{task.target_date}}</p>       
-                </div>         
-            </div>
+           </div>         
+    </div>
             
-				{% if False == user.is_authenticated  %}
-                <center>
-               		<h1>כדי לסגור משימה של מישהו אחר או לעדכן את התקדמות המשימה שלך צריך להיכנס למערכת</h1>
-            		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">הרשמה ראשונה</a>
-            		<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
-				</center>
-               {% endif %}            
-<div class="container">
 
 	<p> זמן לסיום : {{task.get_time_until_target }}</p>
 	<p>מצב עדכני : {{task.get_status_description |urlize|linebreaks}} </p>
@@ -42,7 +36,7 @@
 	{% endif %}
 
 	{% if close_possible %}
-				<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">סגירת המשימה</a>
+		<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לסגירת המשימה</a>
 	{% endif %}
 	{% if update_task_form  %}
 		<p>You can update this task's status here</p>

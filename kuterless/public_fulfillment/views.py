@@ -2,6 +2,7 @@
 from classytags import models
 from django import forms
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponse, HttpResponseRedirect
@@ -46,14 +47,21 @@ class CreateUserView(CreateView):
     template_name = 'public_fulfillment/user_form.html'
     
 
-class AddTUserForm(forms.Form):
+class AddUserForm(forms.Form):
     user_name  = forms.CharField( max_length = 200)
-    password1  = forms.CharField( widget=forms.PasswordInput)
-    password2  = forms.CharField( widget=forms.PasswordInput)
+    password  = forms.CharField( widget=forms.PasswordInput)
+    password_confirm  = forms.CharField( widget=forms.PasswordInput)
     first_name = forms.CharField(  required = False, max_length = 200)
     last_name  = forms.CharField( required = False, max_length = 200)
     email      = forms.EmailField( required = False)      
 
+
+class UpdateProfileUserForm(forms.Form):
+    password  = forms.CharField( required = False, widget=forms.PasswordInput)
+    password_confirm  = forms.CharField(  required = False, widget=forms.PasswordInput)
+    first_name = forms.CharField(  required = False, max_length = 200)
+    last_name  = forms.CharField( required = False, max_length = 200)
+    email      = forms.EmailField( required = False)      
 
 def sign_up(request):
     if request.user.is_authenticated():
@@ -62,12 +70,12 @@ def sign_up(request):
                        'rtl': 'dir="rtl"'})
 
     if request.method == 'POST': # If the form has been submitted...
-        form = AddTUserForm(request.POST) # A form bound to the POST data
+        form = AddUserForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            password1 = form.cleaned_data['password1']
-            password2 = form.cleaned_data['password2']
-            if password1 != password2:
+            password = form.cleaned_data['password']
+            password_confirm = form.cleaned_data['password_confirm']
+            if password != password_confirm:
                 return render(request, 'coplay/message.html', 
                       {  'message'      :  'אין התאמה בין שתי הסיסמאות',
                        'rtl': 'dir="rtl"'})
@@ -89,13 +97,15 @@ def sign_up(request):
                     last_name=last_name
                 )
 
-            user.set_password(password1)
+            user.set_password(password)
             user.save()    
-            user = authenticate(username=user_name, password=password1)
+            user = authenticate(username=user_name, password=password)
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return HttpResponseRedirect(reverse('home'))
+                    return render(request, 'coplay/message.html', 
+                      {  'message'      :  'ברוכים הבאים',
+                       'rtl': 'dir="rtl"'})
                     # Redirect to a success page.
                 else:
                     # Return a 'disabled account' error message
@@ -105,20 +115,71 @@ def sign_up(request):
             else:
                 # Return an 'invalid login' error message.
                 return render(request, 'coplay/message.html', 
-                      {  'message'      :  'invalid login account',
+                      {  'message'      :  'הכניסה נכשלה',
                        'rtl': 'dir="rtl"'})
         else:
             return render(request, 'coplay/message.html', 
                       {  'message'      :  'הנתונים אינם מלאים',
                        'rtl': 'dir="rtl"'})
             
+        return HttpResponseRedirect(reverse('coplay:coplay_root')) # Redirect after POST
         
     else:
-        form = AddTUserForm() # An unbound form
+        form = AddUserForm() # An unbound form
 
 
-    return render(request, 'public_fulfillment/new_user.html', {
+    return render(request, 'public_fulfillment/update_user.html', {
         'form': form,
         'rtl': 'dir="rtl"'
     })
+    
+
+@login_required
+def update_profile(request):
+    user = request.user
+
+    if request.method == 'POST': # If the form has been submitted...
+        form = UpdateProfileUserForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            password = form.cleaned_data['password']
+           
+            
+            if password:
+                    # Process the data in form.cleaned_data# Process the data in form.cleaned_data
+                password_confirm = form.cleaned_data['password_confirm']
+                
+                if password != password_confirm:
+                    return render(request, 'coplay/message.html', 
+                              {  'message'      :  'אין התאמה בין שתי הסיסמאות',
+                               'rtl': 'dir="rtl"'})
+                user.set_password(password)
+                        
+            
+            first_name = form.cleaned_data['first_name']
+            
+            if first_name:
+                user.first_name = first_name
+            last_name =  form.cleaned_data['last_name']
+            
+            if last_name:
+                user.last_name = last_name                    
+            email =  form.cleaned_data['email']
+            
+            
+            
+            if email:
+                user.email = email
+            user.save()
+
+        return HttpResponseRedirect(reverse('coplay:coplay_root')) # Redirect after POST
+                                
+    else:
+        form = UpdateProfileUserForm() # An unbound form
+
+
+    return render(request, 'public_fulfillment/update_user.html', {
+        'form': form,
+        'rtl': 'dir="rtl"'
+    })
+    
     

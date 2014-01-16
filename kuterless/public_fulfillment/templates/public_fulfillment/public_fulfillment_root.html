@@ -111,9 +111,10 @@
               <br>
               <br>
               <br>
-		<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">משתפים פעולה עם CoPlayWeb</a>
-		{% if False == user.is_authenticated %}
-		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">הצטרפות לעשייה</a>
+		{% if user.is_authenticated %}
+			<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">משתפים פעולה עם CoPlayWeb</a>
+		{% else %}
+			<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">הצטרפות לעשייה</a>
 		{% endif%}
 		<br>
               <br>

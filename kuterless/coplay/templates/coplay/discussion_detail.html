@@ -3,18 +3,15 @@
 {% block content %}
 <center>
 	{% if False == user.is_authenticated %}
-	<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">רישום</a>
-	<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
+		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">רישום</a>
+		<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
     {% endif %}
-	<a class="btn btn-success" href="#Feedbacks">תגובות המשתמשים בפעילות הזאת</a>
-    
+	<a class="btn btn-success" href="#Feedbacks">תגובות המשתמשים בפעילות הזאת</a>    
 	<a class="btn btn-success" href="#Decisions">החלטות להצבעה של הפעילות הזו</a>
-	<a class="btn btn-success" href="#Tasks">המשימות באחריות המשתתפים בפעילות הזאת</a></li>
-	<a class="btn btn-success" href="{% url 'coplay:add_discussion' %}">התחלת פעילות חדשה</a>
-	<a class="btn btn-success" href="{% url 'coplay:discussions_list' %}">פעילויות קיימות</a>
-	
-	<a class="btn btn-success" href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a>
+	<a class="btn btn-success" href="#Tasks">המשימות באחריות המשתתפים בפעילות הזאת</a>
+	<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">הסברים</a>	
    	{% if user == discussion.owner %}
+   	<br>
     <a class="btn btn-danger" href="#delete">למחיקת הדיון</a>
     {% endif %}
 	
@@ -33,7 +30,7 @@
                 	זו הפעילות של {{ discussion.owner.get_full_name|default:discussion.owner.username }}
                 {% endif %}
                 
-               {% if False == user.is_authenticated %}
+               {% if not user.is_authenticated %}
                <center>
                		<h1>כדי להגיב, להצביע או להתנדב למשימה עליך להירשם תחילה </h1>
             		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">הרשמה ראשונה</a>
