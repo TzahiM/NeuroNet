@@ -41,6 +41,19 @@ INSTALLED_APPS = (
     'south',
     'public_fulfillment',
     'coplay',
+    
+    'django.contrib.humanize',
+    'south',
+    'django_notify',
+    'mptt',
+    'sekizai',
+    'sorl.thumbnail',
+    'wiki',
+    'wiki.plugins.attachments',
+    'wiki.plugins.notifications',
+    'wiki.plugins.images',
+    'wiki.plugins.macros',
+    'django.contrib.sites',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -63,7 +76,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
                             "django.core.context_processors.media",
                             "django.core.context_processors.static",
                             "django.core.context_processors.tz",
-                            "django.contrib.messages.context_processors.messages"
+                            "django.contrib.messages.context_processors.messages",
+                            "sekizai.context_processors.sekizai",
+
                             )
 
 ROOT_URLCONF = 'kuterless.urls'
