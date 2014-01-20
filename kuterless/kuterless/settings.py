@@ -128,3 +128,7 @@ GRAPH_MODELS = {
   'group_models': True,
 }
 
+try:
+    from local_settings import *
+except ImportError:
+    pass

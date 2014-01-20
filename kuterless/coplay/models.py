@@ -42,12 +42,12 @@ class Discussion(models.Model):
 
 
     def add_task(self, responsible, goal_description, target_date):
-        task  = Task(parent = self , responsible = responsible, 
+        return self.task_set.create(parent=self, responsible = responsible, 
                          goal_description = goal_description, 
                          target_date =  target_date)
-        task.clean()
-        task.save()
-        return task
+#         task.clean()
+#         task.save()
+#         return task
 
    
     def print_content(self):

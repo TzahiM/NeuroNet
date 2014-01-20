@@ -208,7 +208,32 @@ class CoPlayTest(TestCase):
         des2.vote( self.at2 ,  LikeLevel.MEDIUM)
         des2.vote( self.at2 ,  LikeLevel.VERY_GOOD)        
         d.add_feedback(self.at2, Feedback.INTUITION, "INTUITION this")
+        task2 = d2.add_task(self.at2, 'd2 1s1', timezone.now() +  datetime.timedelta(seconds =2))
+        task3= d2.add_task(self.admin, 'd2 2nd', timezone.now() +  datetime.timedelta(seconds =2))
+        
+        print 'before delete'
+        print 'discuddions', Discussion.objects.count() 
+        print 'feedbacks', Feedback.objects.count() 
+        print 'Decision', Decision.objects.count() 
+        print 'Vote', Vote.objects.count() 
+        print 'Task', Task.objects.count() 
+        Feedback, Decision, LikeLevel, Vote, Task
         d.print_content()
         d2.print_content()
+        d2.delete()
+        print 'after delete'
+        print 'discuddions', Discussion.objects.count() 
+        print 'feedbacks', Feedback.objects.count() 
+        print 'Decision', Decision.objects.count() 
+        print 'Vote', Vote.objects.count() 
+        print 'Task', Task.objects.count() 
+        d.print_content()
+        self.assertEquals(2, Discussion.objects.count())
+        self.assertEquals(29, Feedback.objects.count())
+        self.assertEquals(7, Decision.objects.count())
+        self.assertEquals(17,  Vote.objects.count() )
+        self.assertEquals(8, Task.objects.count())
+
+        
 
 

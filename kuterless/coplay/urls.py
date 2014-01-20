@@ -14,6 +14,8 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/feedback/$', views.add_feedback, name='add_feedback'),
 #pk (of discussion)/update_goals
     url(r'^(?P<pk>\d+)/update_goals/$', views.update_discussion, name='update_goals'),
+#pk (of discussion)/delete_discussion
+    url(r'^(?P<pk>\d+)/delete_discussion/$', views.delete_discussion, name='delete_discussion'),
 #pk (of discussion)/add_decision
     url(r'^(?P<pk>\d+)/add_decision/$', views.add_decision, name='add_decision'),
 #pk (of decision)/vote

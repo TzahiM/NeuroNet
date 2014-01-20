@@ -2,16 +2,14 @@
 from coplay import models
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget, AdminSplitDateTime
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse, reverse_lazy
 from django.forms.extras.widgets import SelectDateWidget
-from django.forms.widgets import DateTimeInput, DateInput
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
 from django.views import generic
+
+MAX_MESSAGE_INPUT_CHARS = 500
 
 # Create your views here.
 def root(request):
@@ -29,16 +27,16 @@ class IndexView(generic.ListView):
     
    
 class AddFeedbackForm(forms.Form):
-    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
+    content = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= { 'rows': '3'}))
     feedbabk_type = forms.ChoiceField( choices=Feedback.FEEDBACK_TYPES)
 
 
 class UpdateDiscussionForm(forms.Form):
-    description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
+    description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= {'rows': '3'}))
  
     
 class AddDecisionForm(forms.Form):
-    content = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
+    content = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= { 'rows': '3'}))
 
 
 class VoteForm(forms.Form):
@@ -46,18 +44,18 @@ class VoteForm(forms.Form):
 
 
 class AddTaskForm(forms.Form):
-    goal_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
-    target_date =  forms.DateTimeField()
+    goal_description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= { 'rows': '3'}))
+    target_date =  forms.DateTimeField( widget = SelectDateWidget)
     
 class UpdateTaskForm(forms.Form):
-    status_description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea(attrs= {'cols': '40', 'rows': '3'}))
+    status_description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= {'rows': '3'}))
 
 
 def discussion_details(request, pk):
     try:
         discussion = Discussion.objects.get(id=int(pk))
     except Discussion.DoesNotExist:
-        return HttpResponseRedirect(reverse('coplay_root'))
+        return HttpResponseRedirect('coplay_root')
     
     list_encourage   =discussion.feedback_set.all().filter( feedbabk_type = Feedback.ENCOURAGE  ).order_by( "-created_at")
     list_cooperation =discussion.feedback_set.all().filter( feedbabk_type = Feedback.COOPERATION).order_by( "-created_at")
@@ -82,6 +80,7 @@ def discussion_details(request, pk):
     
         add_task_form = AddTaskForm()
     
+    page_name =  u'עוזרים ב '+ discussion.title 
     
     return render(request, 'coplay/discussion_detail.html', 
          {  'discussion'      :  discussion     ,      
@@ -97,15 +96,14 @@ def discussion_details(request, pk):
             'vote_form'       : vote_form       ,
             'add_task_form'   : add_task_form   ,
             'like_levels'     : like_levels,
-            'rtl'             : 'dir="rtl"',
-            'page_name'       : ' עוזרים  ב '+  discussion.title })
+            'page_name'       : page_name })
 
 
 
 
 class NewDiscussionForm(forms.Form):
-    title = forms.CharField(max_length=200)
-    description = forms.CharField(max_length=models.MAX_TEXT, widget=forms.Textarea)
+    title = forms.CharField(max_length=200,  widget=forms.Textarea(attrs= { 'rows': '1', 'cols': '50'}))
+    description = forms.CharField(max_length= MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea)
     
 @login_required
 def add_discussion(request):
@@ -114,6 +112,14 @@ def add_discussion(request):
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
             user = request.user
+            
+            list = Discussion.objects.all().filter(owner =user, title = form.cleaned_data['title'])
+            if list.count() != 0:
+                return render(request, 'coplay/message.html', 
+                      {  'message'      :  'כבר קיים עבורך דיון באותו נושא',
+                       'rtl': 'dir="rtl"'})
+            
+            
             new_discussion = Discussion(owner =  user ,
                                         title =  form.cleaned_data['title'] ,
                                         description = form.cleaned_data['description'])
@@ -141,12 +147,41 @@ def update_discussion(request, pk):
             try:
                 discussion = Discussion.objects.get(id=int(pk))
             except Discussion.DoesNotExist:
-                return HttpResponse('Discussion not found')
-            discussion.update_description( form.cleaned_data['description'] )
-    return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
+                return render(request, 'coplay/message.html', 
+                      {  'message'      :  'הדיון איננו קיים',
+                       'rtl': 'dir="rtl"'})
+            user = request.user
+            if user == discussion.owner:
+                discussion.update_description( form.cleaned_data['description'] )
+                return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
+            return render(request, 'coplay/message.html', 
+                      {  'message'      :  'רק בעל הדיון מורשה לעדכן אותו',
+                       'rtl': 'dir="rtl"'})
+            
+    return render(request, 'coplay/message.html', 
+                      {  'message'      :  'לא הוזן תיאור חדש',
+                       'rtl': 'dir="rtl"'})
     
     
 
+@login_required
+def delete_discussion(request, pk):
+    try:
+        discussion = Discussion.objects.get(id=int(pk))
+    except Discussion.DoesNotExist:
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'הדיון איננו קיים',
+                       'rtl': 'dir="rtl"'})
+    
+    user = request.user        
+    if user == discussion.owner:
+        discussion.delete()
+        return HttpResponseRedirect('discussions_list') # Redirect to discussions list
+    
+    return render(request, 'coplay/message.html', 
+                      {  'message'      :  'רק בעל הדיון  מורשה למחוק אותו',
+                       'rtl': 'dir="rtl"'})
+    
 
     
 @login_required    
@@ -180,6 +215,12 @@ def add_decision(request, pk):
                 return HttpResponse('Discussion not found')
             user = request.user
             if user == discussion.owner:
+                list = Decision.objects.all().filter( content = form.cleaned_data['content'], parent = discussion)
+                if list.count() != 0:
+                    return render(request, 'coplay/message.html', 
+                          {  'message'      :  'כבר רשומה עבורך החלטה באותו נושא',
+                           'rtl': 'dir="rtl"'})
+               
                 discussion.add_decision( form.cleaned_data['content'] )
             else:
                 return HttpResponse('Forbidden access')
@@ -231,6 +272,13 @@ def add_task(request, pk):
                 return render(request, 'coplay/message.html', 
                       {  'message'      :  'תאריך היעד חייב להיות בעתיד' + str(target_date),
                        'rtl': 'dir="rtl"'})
+                
+            list = Task.objects.all().filter(responsible =user, goal_description = form.cleaned_data['goal_description'], parent = discussion)
+            if list.count() != 0:
+                return render(request, 'coplay/message.html', 
+                      {  'message'      :  'כבר רשומה עבורך משימה באותו נושא',
+                       'rtl': 'dir="rtl"'})
+                 
             new_task = discussion.add_task( user,  
                                  form.cleaned_data['goal_description'] ,
                                  form.cleaned_data['target_date'] )
@@ -238,21 +286,15 @@ def add_task(request, pk):
 
     return HttpResponseRedirect('coplay_root') # Redirect after POST
 
-class Link():
-    url = ''
-    text = ''
     
    
 def task_details(request, pk):
     try:
         task = Task.objects.get(id=int(pk))
     except Task.DoesNotExist:
-        error_message = 'Task not found'
-        resirect_links = []
-        resirect_links.append(Link(url = reverse('coplay_root'), text = 'Home'))
-        return render(request, 'coplay/error.html', 
-                      {  'links'      :  resirect_links,
-                         'error_message':error_message})
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'משימה שאיננה קיימת',
+                       'rtl': 'dir="rtl"'})
         
     close_possible = False
     update_task_form = None   
@@ -274,7 +316,7 @@ def task_details(request, pk):
                        'update_task_form' : update_task_form,
                        'close_possible'   : close_possible,
                        'rtl'             : 'dir="rtl"',
-                       'page_name':      'המשימה:'+ task.goal_description })
+                       'page_name':      u'המשימה:'+ task.goal_description })
     
     
     
@@ -292,8 +334,9 @@ def update_task_description(request, pk):
             user = request.user
             if user == task.responsible:
                 task.update_status_description( form.cleaned_data['status_description'] )
+            return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
             
-    return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
+    return HttpResponseRedirect('coplay_root') # Redirect after POST
         
         
 @login_required   

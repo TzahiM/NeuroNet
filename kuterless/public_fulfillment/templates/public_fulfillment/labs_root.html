@@ -3,7 +3,7 @@
 {% block content %}
 	
 	<center>
-		<h1 data-toggle="tooltip" title="Default tooltip">תמיד בבניה</h1>
+		<b><h1 data-toggle="tooltip" title="Default tooltip">תמיד בבניה</h1></b>
 		
 					
                         <img src="http://www.bestourism.com/img/items/big/619/Sagrada-Familia-in-Barcelona-Spain_Splendid-architecture_2920.jpg" alt="..." width="400" height="280">
@@ -17,12 +17,18 @@
 	
 		<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">חם מהתנור</a>
 		<a class="btn btn-success" href="{% url 'public_fulfillment:about' %}">אודות הפרוייקט</a>
+		{% if False == user.is_authenticated %}
 		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a>
-		<br>
+		{% endif %}
 		<br>
 		<br>
 		
-				<iframe width="420" height="315" src="//www.youtube.com/embed/SocdcBIxCzI" frameborder="0" allowfullscreen></iframe>
+		<h1><u>מה חדש?</u></h1>
+		16/1/2014 :ערכון פרופיל משתמש לרבות סיסמה
+		<br>
+		שינוי שם מהחלטות להתלבטויות
+		<br>
+		היפוך שמאל ימין בטופס פעילות
 
 	</center>
 
