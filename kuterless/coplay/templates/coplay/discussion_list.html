@@ -5,13 +5,28 @@
 	<center><h1>מי צריך עזרה?</h1></center>
 	<ul>
 	{% for discussion in latest_discussion_list %}
-	    <li  class="list-group-item">
-	    	{{ discussion.owner.get_full_name|default:discussion.owner.username }}
-	    	  רוצה עזרה ב  
-	    	{{ discussion.title }}
-	    	{{ discussion.updated_at|date }}
-
-	    	 <a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a></li> 
+		{% if discussion.is_active %}
+		    <li  class="list-group-item">
+		    	{{ discussion.owner.get_full_name|default:discussion.owner.username }}
+		    	  רוצה עזרה ב  
+		    	{{ discussion.title }}
+		    	{{ discussion.updated_at|date }}
+		    	עלול להינעל עוד 
+		    	{{ discussion.get_time_to_inactivation }}
+	
+		    	 <a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a></li> 
+		{% else %}
+		    <li  class="list-group-item">
+		    	<strike>
+		    	{{ discussion.owner.get_full_name|default:discussion.owner.username }}
+		    	  רצה/תה  עזרה ב  
+		    	{{ discussion.title }}
+		    	{{ discussion.updated_at|date }}
+		    	</strike>
+		    	הפעילות ננעלה עקב חוסר משימות חדשות
+	
+		    	 <a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a></li> 
+		{% endif %}
 	{% empty %}
 	    <li>No discussions yet.</li>
 	{% endfor %}

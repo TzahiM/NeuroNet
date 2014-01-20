@@ -12,7 +12,7 @@
 		
 		
 		{% if text_block_0%}
-		{{text_block_0 | linebreaks}}
+		{{text_block_0 | urlize|linebreaks}}
 		{% endif %}
 	
 		<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">חם מהתנור</a>
@@ -24,11 +24,9 @@
 		<br>
 		
 		<h1><u>מה חדש?</u></h1>
-		16/1/2014 :ערכון פרופיל משתמש לרבות סיסמה
-		<br>
-		שינוי שם מהחלטות להתלבטויות
-		<br>
-		היפוך שמאל ימין בטופס פעילות
+		{% if version_description %}
+			{{version_description |urlize|linebreaks}}
+		{% endif %}
 
 	</center>
 

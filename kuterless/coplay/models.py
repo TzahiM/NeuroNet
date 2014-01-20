@@ -4,9 +4,11 @@ from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils import timezone
+from datetime import timedelta
 
 MAX_TEXT = 2000
 
+MAX_INACTIVITY_DAYS = 7
 
 class Discussion(models.Model):
     owner = models.ForeignKey(User)
@@ -49,11 +51,62 @@ class Discussion(models.Model):
 #         task.save()
 #         return task
 
-   
+    def is_active_and_time_to_inactivation(self):
+        if ( self.created_at + timedelta(seconds =( MAX_INACTIVITY_DAYS * 86400 )) ) >= timezone.now():
+            discussion_is_active = True
+            time_left =  ( self.created_at + timedelta(seconds =( MAX_INACTIVITY_DAYS * 86400 )) ) -  timezone.now() 
+            return discussion_is_active , time_left
+             
+        for tested_task in self.task_set.all():
+            if ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS)  ) >= timezone.now():
+                discussion_is_active = True
+                time_left =  ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS))  - timezone.now()
+                return discussion_is_active , time_left
+        discussion_is_active = False
+        time_left =  0
+        return discussion_is_active , time_left
+        
+        
+        
+
+    def is_active(self):
+        discussion_is_active,  time_left =  self.is_active_and_time_to_inactivation()
+        return discussion_is_active
+
+    def get_time_to_inactivation(self):
+        discussion_is_active,  time_left =  self.is_active_and_time_to_inactivation()
+        return time_left
+        
+        
+        
+        
+        
+        
+        """
+        implemented by call task.get_status() since current implamantation uses only status polling
+        """
+        for tested_task in self.task_set.all():
+            if tested_task.get_status() is tested_task.CLOSED:
+                if ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS) ) > timezone.now():
+                    discussion_is_active = True
+                    time_left =  ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS) ) - timezone.now()
+                    return discussion_is_active , time_left
+        discussion_is_active = False
+        time_left =  0
+        return discussion_is_active , time_left
+ 
+       
     def print_content(self):
         print 'Owner', self.owner.username
         print 'Title:', self.title
         print 'Description:', self.description
+        discussion_is_active,  time_left = self.is_active_and_time_to_inactivation()
+        if discussion_is_active:
+            print 'active, time left', time_left
+        else:
+            print 'inactivated'
+        
+        
         feedbacks = self.feedback_set.all()
         for feedback in feedbacks:
             feedback.print_content()
@@ -269,4 +322,7 @@ class Task(models.Model):
         
         
     def print_content(self):
-        print 'create', self.created_at, 'update', self.updated_at, 'status:', self.get_status_display(), 'now', timezone.now(), 'GoalDescription:', self.goal_description, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closed_at, self.status_description 
+        print 'create', self.created_at, 'update', self.updated_at, 'status:', self.get_status_display(), 'now', timezone.now(), 'GoalDescription:', self.goal_description, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closed_at, self.status_description
+        
+        
+         

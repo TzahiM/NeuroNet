@@ -22,7 +22,16 @@
         <div class="container" >
 			
             	<div class="container">
-            	<center><h1>{{ discussion.title |urlize|linebreaks}}</h1></center>
+            	<center>
+            		<h1>{{ discussion.title |urlize|linebreaks}}</h1>
+	            	{% if discussion.is_active %}
+	            	
+	            	    <h3> אם לא יהיו משימות חדשות, הפעילות עלולה להינעל עוד {{discussion.get_time_to_inactivation }} </h3>
+	            	{% else %}
+	            	    <h3> הפעילות ננעלה עקב חוסר משימות חדשות</h3>
+	            	{% endif %}
+            	</center>
+            	
             	<p><b>
             	{% if user == discussion.owner %}
 	            	זאת הפעילות שלך
@@ -85,6 +94,7 @@
 				{% if discussion.description %}
 				    <h4>המטרות של הדיון והעזרה המבוקשת מהמשתתפים</h4> 
 				    <p>{{ discussion.description|urlize|linebreaks }}</p>
+				    <p> נוצר  ב {{discussion.created_at }} </p>
 				    <p> עודכן לאחרונה ב {{discussion.updated_at }} </p>
 				{% else %}
 				    <p>אין תיאור נוסף</p>

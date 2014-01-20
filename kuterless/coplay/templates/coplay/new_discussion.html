@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<br><br><br><br><br>
+<br><br>
+<h1><b> לידיעתך, כדי שהפעילות לא תינעל את/ה או המשתתפים חייבים לקחת על עצמם משימות חדשות לפחות פעם בשבוע</b></h1>
+
+
+<br><br><br>
 <div class="container">
 	<form action= "{% url 'coplay:add_discussion' %}" method="post">{% csrf_token %}
 	{% for field in form %}

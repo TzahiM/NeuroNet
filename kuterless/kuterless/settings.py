@@ -28,6 +28,11 @@ ALLOWED_HOSTS = []
 
 SITE_ID  = 1
 
+EMAIL_HOST_USER = 'tzahimanmobile'
+
+EMAIL_HOST = 'mail.google.com'
+
+
 # Application definition
 
 INSTALLED_APPS = (
