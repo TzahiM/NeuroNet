@@ -26,7 +26,7 @@ def about(request):
 def labs_root(request):
     
     text_block_0 = """
-כמו סגרדה פמיליה בברצלונה, הבניה של האתר אף פעם לא תסתיים.
+כמו סגרדה פמיליה בברצלונה , הבניה של האתר אף פעם לא תסתיים.
 אז כרגע הגיעו לעבודה באתר שלשה פועלים ומיישרים את השטח לפני שיגיע האיש של הקידוחים.
 ו.... בחפירה הראשונה כבר נתקלנו באוצר. 
 פיתחנו גירסה אינטרנטית למשחק שעוזר לכל אחד לקדם כל יוזמה או לפתור כל בעיה בעזרתה של קבוצה. 
@@ -35,9 +35,22 @@ def labs_root(request):
 אף אחד לא יודע איך זה יתפתח. אבל ככה (אנחנו מאמינים) כולנו ביחד נמשיך לבנות ולבנות ולבנות....
 
 """
+
+    version_description = """
+20/1/2014:
+תיקון בעית הרשמה וכניסה
+הוספת נעילה של פעילויות בהעדר מחויבות של המשתתפים
+
+
+16/1/2014:
+ערכון פרופיל משתמש לרבות סיסמה
+שינוי שם מהחלטות להתלבטויות
+היפוך שמאל ימין בטופס פעילות
+"""
     return render(request, 'public_fulfillment/labs_root.html', {
         'text_block_0': text_block_0,
-        'rtl': 'dir="rtl"'
+        'rtl': 'dir="rtl"',
+        'version_description': version_description
     })
 
 
@@ -128,7 +141,7 @@ def sign_up(request):
         form = AddUserForm() # An unbound form
 
 
-    return render(request, 'public_fulfillment/update_user.html', {
+    return render(request, 'public_fulfillment/new_user.html', {
         'form': form,
         'rtl': 'dir="rtl"'
     })

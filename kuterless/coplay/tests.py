@@ -7,6 +7,7 @@ import datetime
 import time
 
 
+
 class CoPlayTest(TestCase):
 
     def setUp(self):
@@ -36,6 +37,21 @@ class CoPlayTest(TestCase):
         d.save()
         return d
 
+    def is_active_and_time_to_inactivation(self,discussion, max_inactivity_seconds):
+        if ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) >= timezone.now():
+            discussion_is_active = True
+            time_left =  ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) -  timezone.now() 
+            return discussion_is_active , time_left
+             
+        for tested_task in discussion.task_set.all():
+            if ( tested_task.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) >= timezone.now():
+                discussion_is_active = True
+                time_left =  ( tested_task.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) - timezone.now()
+                return discussion_is_active , time_left
+        discussion_is_active = False
+        time_left =  0
+        return discussion_is_active , time_left
+        
     
     
     def test_create_discussion(self):
@@ -100,6 +116,7 @@ class CoPlayTest(TestCase):
         self.assertEquals(task1.STARTED, task1.get_status())
         self.assertEquals(task1.CLOSED, task2.get_status())
         self.assertEquals(task1.MISSED, task3.get_status())
+                
         new_stat_desc = "fjfj"
         task1.update_status_description(new_stat_desc)
         self.assertEquals(task1.get_status_description(), new_stat_desc)
@@ -108,6 +125,10 @@ class CoPlayTest(TestCase):
         task1.update_status_description(new_stat_desc)
         self.assertNotEquals(task1.get_status_description(), new_stat_desc)
         d.print_content()
+        
+
+        
+        
 
     def test_whole_discussion(self):    
         d = self.create_dicussion()
@@ -234,6 +255,52 @@ class CoPlayTest(TestCase):
         self.assertEquals(17,  Vote.objects.count() )
         self.assertEquals(8, Task.objects.count())
 
+    def test_discussion_iniactivation(self):
         
-
+        """
+        I cannot test this feature as is since the time relolution of Discussion.is_active_and_time_to_inactivation()
+        is days
+        so i copied the same lines of code here for test with a seconds resolution.        
+        """
+        self.assertEquals(0, Task.objects.count())
+        d = self.create_dicussion()
+        task1 = d.add_task(self.at1, 'shall start', timezone.now() +  datetime.timedelta(seconds =4))
+        task2 = d.add_task(self.at2, 'shall close', timezone.now() +  datetime.timedelta(seconds =2))
+        task3= d.add_task(self.admin, 'shall missed', timezone.now() +  datetime.timedelta(seconds =2))
+        self.assertEquals(3, Task.objects.count())
+        time.sleep(1)
+        task2.close(self.admin)
+        time.sleep(2)
+        self.assertEquals(self.admin, task2.closed_by)
+        self.assertEquals(False, task1.close(self.at1))
+        self.assertEquals(task1.STARTED, task1.get_status())
+        self.assertEquals(task1.CLOSED, task2.get_status())
+        self.assertEquals(task1.MISSED, task3.get_status())
+        
+        print 'current tasks status------------------------------------'
+        
+        d.print_content()
+        max_inactivity_seconds = 1
+        active, time_left = self.is_active_and_time_to_inactivation( d, max_inactivity_seconds)
+        print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
+        self.assertEquals(active, False)
+        
+        max_inactivity_seconds = 5
+        active, time_left = self.is_active_and_time_to_inactivation( d, max_inactivity_seconds)
+        print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
+        self.assertEquals(active, True)
+        
+        time.sleep(3)
+        
+        max_inactivity_seconds = 5
+        active, time_left = self.is_active_and_time_to_inactivation( d, max_inactivity_seconds)
+        print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
+        self.assertEquals(active, False)
+        time.sleep(1)
+        
+        task3= d.add_task(self.admin, 'shall cause activation', timezone.now() +  datetime.timedelta(seconds =2))
+        max_inactivity_seconds = 5
+        active, time_left = self.is_active_and_time_to_inactivation( d, max_inactivity_seconds)
+        print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
+        self.assertEquals(active, True)
 

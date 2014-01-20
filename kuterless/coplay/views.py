@@ -70,15 +70,16 @@ def discussion_details(request, pk):
     description_form = None
     add_decision_form = None
     add_task_form = None
-    if request.user.is_authenticated():        
-        if request.user ==  discussion.owner:
-            description_form = UpdateDiscussionForm()
-            add_decision_form = AddDecisionForm()
-        else:
-            feedback_form =AddFeedbackForm()
-            vote_form = VoteForm()
-    
-        add_task_form = AddTaskForm()
+    if discussion.is_active():        
+        if request.user.is_authenticated():        
+            if request.user ==  discussion.owner:
+                description_form = UpdateDiscussionForm()
+                add_decision_form = AddDecisionForm()
+            else:
+                feedback_form =AddFeedbackForm()
+                vote_form = VoteForm()
+        
+            add_task_form = AddTaskForm()
     
     page_name =  u'עוזרים ב '+ discussion.title 
     
