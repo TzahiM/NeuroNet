@@ -24,7 +24,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [u'95.85.3.168', u'127.0.0.1']
 
 SITE_ID  = 1
 

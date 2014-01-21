@@ -36,7 +36,9 @@
 	{% endif %}
 
 	{% if close_possible %}
-		<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לסגירת המשימה</a>
+	<center>
+		<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לאישור סגירת המשימה לחץ כאן</a>
+	</center>
 	{% endif %}
 	{% if update_task_form  %}
 		<p>You can update this task's status here</p>
