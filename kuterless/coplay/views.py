@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views import generic
 
-MAX_MESSAGE_INPUT_CHARS = 500
+MAX_MESSAGE_INPUT_CHARS = 900
 
 # Create your views here.
 def root(request):
@@ -141,16 +141,19 @@ def add_discussion(request):
 
 @login_required
 def update_discussion(request, pk):
+    try:
+        discussion = Discussion.objects.get(id=int(pk))
+    except Discussion.DoesNotExist:
+                return render(request, 'coplay/message.html', 
+                      {  'message'      :  'הדיון איננו קיים',
+                       'rtl': 'dir="rtl"'})
+    
+    
+    
     if request.method == 'POST': # If the form has been submitted...
         form = UpdateDiscussionForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            try:
-                discussion = Discussion.objects.get(id=int(pk))
-            except Discussion.DoesNotExist:
-                return render(request, 'coplay/message.html', 
-                      {  'message'      :  'הדיון איננו קיים',
-                       'rtl': 'dir="rtl"'})
             user = request.user
             if user == discussion.owner:
                 discussion.update_description( form.cleaned_data['description'] )
@@ -159,8 +162,13 @@ def update_discussion(request, pk):
                       {  'message'      :  'רק בעל הדיון מורשה לעדכן אותו',
                        'rtl': 'dir="rtl"'})
             
+    
+    
+    
+    
+    
     return render(request, 'coplay/message.html', 
-                      {  'message'      :  'לא הוזן תיאור חדש',
+                      {  'message'      :  '  לא הוזן תיאור חדש או שהוזן תיאור ארוך מדי ',
                        'rtl': 'dir="rtl"'})
     
     
