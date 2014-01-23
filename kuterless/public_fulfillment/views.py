@@ -63,20 +63,42 @@ class CreateUserView(CreateView):
     
 
 class AddUserForm(forms.Form):
-    user_name  = forms.CharField( max_length = 200)
-    password  = forms.CharField( widget=forms.PasswordInput)
-    password_confirm  = forms.CharField( widget=forms.PasswordInput)
-    first_name = forms.CharField(  required = False, max_length = 200)
-    last_name  = forms.CharField( required = False, max_length = 200)
-    email      = forms.EmailField( required = False)      
+    user_name = forms.EmailField( label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'שם משתמש', 'class': 'form-control'}))
+
+    password  = forms.CharField( label='', 
+        widget=forms.PasswordInput(attrs={'placeholder': 'סיסמא', 'class': 'form-control'}))
+
+    password_confirm  = forms.CharField( label='', 
+        widget=forms.PasswordInput(attrs={'placeholder': 'אימות סיסמא', 'class': 'form-control'}))
+    
+    first_name  = forms.CharField( required = False, max_length = 200, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'שם פרטי', 'class': 'form-control'}))
+    
+    last_name = forms.CharField( required = False, max_length = 200, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'שם משפחה', 'class': 'form-control'}))
+    
+    email = forms.EmailField( required = False, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
+
 
 
 class UpdateProfileUserForm(forms.Form):
-    password  = forms.CharField( required = False, widget=forms.PasswordInput)
-    password_confirm  = forms.CharField(  required = False, widget=forms.PasswordInput)
-    first_name = forms.CharField(  required = False, max_length = 200)
-    last_name  = forms.CharField( required = False, max_length = 200)
-    email      = forms.EmailField( required = False)      
+    password  = forms.CharField( required = False, label='', 
+        widget=forms.PasswordInput(attrs={'placeholder': 'סיסמא', 'class': 'form-control'}))
+
+    password_confirm  = forms.CharField( required = False, label='', 
+        widget=forms.PasswordInput(attrs={'placeholder': 'אימות סיסמא', 'class': 'form-control'}))
+    
+    first_name  = forms.CharField( required = False, max_length = 200, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'שם פרטי', 'class': 'form-control'}))
+    
+    last_name = forms.CharField( required = False, max_length = 200, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'שם משפחה', 'class': 'form-control'}))
+    
+    email = forms.EmailField( required = False, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
+
 
 def sign_up(request):
     if request.user.is_authenticated():

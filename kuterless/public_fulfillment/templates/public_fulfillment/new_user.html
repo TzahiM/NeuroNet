@@ -5,7 +5,7 @@
 <b><h1>מייל צריך להזין רק אם מקובל עליך לקבל מאיתנו עדכונים על יכולות חדשות שיתווספו לאתר.</h1></b>
 
 <br><br><br>
-<div class="container">
+<div class="col-xs-12 col-md-4">
 	<form action= "{% url 'public_fulfillment:sign_up' %}" method="post">{% csrf_token %}
 	{% for field in form %}
         <div class="fieldWrapper">
@@ -13,7 +13,8 @@
             {{ field.label_tag }} {{ field }}
         </div>
     {% endfor %}
-	<input type="submit" value="להרשמה" />
+    <br>
+	<input type="submit" value="להרשמה" class="btn btn-primary" />
     <input type="hidden" name="next" value="{{ next }}" />
 	</form>
 </div>	
