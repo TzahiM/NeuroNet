@@ -28,11 +28,6 @@ ALLOWED_HOSTS = [u'95.85.3.168', u'127.0.0.1']
 
 SITE_ID  = 1
 
-EMAIL_HOST_USER = 'tzahimanmobile'
-
-EMAIL_HOST = 'mail.google.com'
-
-
 # Application definition
 
 INSTALLED_APPS = (
@@ -118,7 +113,16 @@ GRAPH_MODELS = {
   'group_models': True,
 }
 
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'tzahimanmobile@gmail.com'
+EMAIL_PORT = 465
+
+EMAIL_HOST = 'smtp.gmail.com'
+
+
 
 try:
     from local_settings import *

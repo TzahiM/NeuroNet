@@ -3,6 +3,7 @@ from coplay import models
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task
 from django import forms
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
 from django.forms.extras.widgets import SelectDateWidget
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -75,6 +76,8 @@ def discussion_details(request, pk):
             if request.user ==  discussion.owner:
                 description_form = UpdateDiscussionForm()
                 add_decision_form = AddDecisionForm()
+                if request.user.username == 'Tzahim':
+                    send_mail(discussion.title,discussion.description, 'tzahimanmobile@gmail.com', ['tzahiman@yahoo.com']) 
             else:
                 feedback_form =AddFeedbackForm()
                 vote_form = VoteForm()
