@@ -5,19 +5,20 @@
 <b><h1>מייל צריך להזין רק אם מקובל עליך לקבל מאיתנו עדכונים על יכולות חדשות שיתווספו לאתר.
 	<br>
 	יש למלא רק את הפרטים שברצונך לשנות
-	</h1></b>
+</h1></b>
 
 <br><br><br>
-<div class="container">
+<div class="col-xs-12 col-md-4">
 	<form action= "{% url 'public_fulfillment:update_profile' %}" method="post">{% csrf_token %}
-	{% for field in form %}
-        <div class="fieldWrapper">
-            {{ field.errors }}
-            {{ field.label_tag }} {{ field }}
-        </div>
-    {% endfor %}
-	<input type="submit" value="אלו הפרטים המעודכנים" />
-    <input type="hidden" name="next" value="{{ next }}" />
+		{% for field in form %}
+		<div class="fieldWrapper">
+			{{ field.errors }}
+			{{ field.label_tag }} {{ field }}
+		</div>
+		{% endfor %}
+		<br>
+		<input type="submit" value="אלו הפרטים המעודכנים" class="btn btn-primary" />
+		<input type="hidden" name="next" value="{{ next }}" />
 	</form>
 </div>	
 {% endblock %}
