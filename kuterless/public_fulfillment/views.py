@@ -37,6 +37,8 @@ def labs_root(request):
 """
 
     version_description = """
+23/1/2014:
+הוספת פרפראות
 20/1/2014:
 תיקון בעית הרשמה וכניסה
 הוספת נעילה של פעילויות בהעדר מחויבות של המשתתפים
@@ -146,6 +148,13 @@ def sign_up(request):
         'rtl': 'dir="rtl"'
     })
     
+
+def example(request):
+    return render(request, 'public_fulfillment/example.html', {
+        'rtl': 'dir="rtl"'
+    })
+
+
 
 @login_required
 def update_profile(request):
