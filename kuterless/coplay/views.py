@@ -76,8 +76,6 @@ def discussion_details(request, pk):
             if request.user ==  discussion.owner:
                 description_form = UpdateDiscussionForm()
                 add_decision_form = AddDecisionForm()
-                if request.user.username == 'Tzahim':
-                    send_mail(discussion.title,discussion.description, 'tzahimanmobile@gmail.com', ['tzahiman@yahoo.com']) 
             else:
                 feedback_form =AddFeedbackForm()
                 vote_form = VoteForm()
