@@ -21,9 +21,10 @@ class Discussion(models.Model):
     def __unicode__(self):
         return self.id
 
-    def get_absolute_url(self):   
-        return( reverse('coplay:discussion_details', kwargs={'pk': str(self.id)}) )
-        
+    def get_absolute_url(self):
+        return reverse(
+            'coplay:discussion_details', kwargs={'pk': str(self.id)})
+
     def update_description(self, description):
         self.description = description
         self.save()#cause all previous fedbacks to be striked at
