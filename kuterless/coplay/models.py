@@ -59,19 +59,21 @@ class Discussion(models.Model):
 #         return task
 
     def is_active_and_time_to_inactivation(self):
-        if ( self.created_at + timedelta(seconds =( MAX_INACTIVITY_DAYS * 86400 )) ) >= timezone.now():
-            discussion_is_active = True
-            time_left =  ( self.created_at + timedelta(seconds =( MAX_INACTIVITY_DAYS * 86400 )) ) -  timezone.now() 
-            return discussion_is_active , time_left
-             
+        now = timezone.now()
+        inactivity_interval = timedelta(MAX_INACTIVITY_DAYS)
+        time_left = self.created_at + inactivity_interval - now
+        discussion_is_active = time_left >= timedelta(0)
+        if discussion_is_active:
+            return discussion_is_active, time_left
+
         for tested_task in self.task_set.all():
-            if ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS)  ) >= timezone.now():
-                discussion_is_active = True
-                time_left =  ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS))  - timezone.now()
-                return discussion_is_active , time_left
-        discussion_is_active = False
-        time_left =  0
-        return discussion_is_active , time_left
+            time_left_task = tested_task.created_at + inactivity_interval - now
+            task_is_active = time_left_task >= timedelta(0)
+            if task_is_active:
+                return task_is_active, time_left_task
+
+        time_left = 0
+        return discussion_is_active, time_left
 
 
 
