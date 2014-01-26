@@ -14,8 +14,8 @@ MAX_INACTIVITY_DAYS = 7
 class Discussion(models.Model):
     owner = models.ForeignKey(User)
     title = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True,
-                                   validators=[MaxLengthValidator(MAX_TEXT)])
+    description = models.TextField(
+        blank=True, null=True, validators=[MaxLengthValidator(MAX_TEXT)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
