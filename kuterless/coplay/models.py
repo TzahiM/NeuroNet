@@ -322,7 +322,16 @@ class Task(models.Model):
         
         
     def print_content(self):
-        print 'create', self.created_at, 'update', self.updated_at, 'status:', self.get_status_display(), 'now', timezone.now(), 'GoalDescription:', self.goal_description, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closed_at, self.status_description
-        
-        
-         
+        print '\n'.join(
+            '{name}: {result}'.format(name, result)
+            for name, result in (
+                ('created_at', self.created_at),
+                ('updated_at', self.updated_at),
+                ('status_display', self.get_status_display()),
+                ('now', timezone.now()),
+                ('goal_description', self.goal_description),
+                ('target_date', self.target_date),
+                ('remaining', self.get_time_until_target()),
+                ('closing_at', self.closed_at),
+                ('status_description', self.status_description),
+            ))
