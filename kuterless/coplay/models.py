@@ -9,6 +9,7 @@ from datetime import timedelta
 MAX_TEXT = 2000
 
 MAX_INACTIVITY_DAYS = 7
+MAX_INACTIVITY_INTERVAL = timedelta(days=MAX_INACTIVITY_DAYS)
 
 
 class Discussion(models.Model):
@@ -60,14 +61,13 @@ class Discussion(models.Model):
 
     def is_active_and_time_to_inactivation(self):
         now = timezone.now()
-        inactivity_interval = timedelta(MAX_INACTIVITY_DAYS)
-        time_left = self.created_at + inactivity_interval - now
+        time_left = self.created_at + MAX_INACTIVITY_INTERVAL - now
         discussion_is_active = time_left >= timedelta(0)
         if discussion_is_active:
             return discussion_is_active, time_left
 
         for tested_task in self.task_set.all():
-            time_left_task = tested_task.created_at + inactivity_interval - now
+            time_left_task = tested_task.created_at + MAX_INACTIVITY_INTERVAL - now
             task_is_active = time_left_task >= timedelta(0)
             if task_is_active:
                 return task_is_active, time_left_task
@@ -79,11 +79,11 @@ class Discussion(models.Model):
 
 
     def is_active(self):
-        discussion_is_active, time_left = self.is_active_and_time_to_inactivation()
+        discussion_is_active, _ = self.is_active_and_time_to_inactivation()
         return discussion_is_active
 
     def get_time_to_inactivation(self):
-        discussion_is_active,  time_left = self.is_active_and_time_to_inactivation()
+        _,  time_left = self.is_active_and_time_to_inactivation()
         return time_left
 
 
@@ -96,9 +96,10 @@ class Discussion(models.Model):
         """
         for tested_task in self.task_set.all():
             if tested_task.get_status() is tested_task.CLOSED:
-                if (tested_task.created_at + timedelta(days=MAX_INACTIVITY_DAYS)) > timezone.now():
+                now = timezone.now()
+                if (tested_task.created_at + MAX_INACTIVITY_INTERVAL) > now
                     discussion_is_active = True
-                    time_left = (tested_task.created_at + timedelta(days=MAX_INACTIVITY_DAYS)) - timezone.now()
+                    time_left = tested_task.created_at + MAX_INACTIVITY_INTERVAL - now
                     return discussion_is_active , time_left
         discussion_is_active = False
         time_left = 0
