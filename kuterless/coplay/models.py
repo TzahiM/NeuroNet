@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*->
+# -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator
@@ -9,6 +9,7 @@ from datetime import timedelta
 MAX_TEXT = 2000
 
 MAX_INACTIVITY_DAYS = 7
+
 
 class Discussion(models.Model):
     owner = models.ForeignKey(User)
@@ -27,27 +28,32 @@ class Discussion(models.Model):
 
     def update_description(self, description):
         self.description = description
-        self.save()#cause all previous fedbacks to be striked at
+        self.save()  # cause all previous fedbacks to be striked at
 
     def add_feedback(self, user, feedbabk_type, content):
-        feedback = Feedback(discussion = self ,user = user, feedbabk_type = feedbabk_type, content = content )
+        feedback = Feedback(
+            discussion=self,
+            user=user,
+            feedbabk_type=feedbabk_type,
+            content=content,
+        )
         feedback.clean()
         feedback.save()
         return feedback
 
-
     def add_decision(self, content):
-        decision = Decision(parent = self , content = content)
+        decision = Decision(parent=self, content=content)
         decision.clean()
         decision.save()
         return decision
 
-
-
     def add_task(self, responsible, goal_description, target_date):
-        return self.task_set.create(parent=self, responsible = responsible, 
-                         goal_description = goal_description, 
-                         target_date =  target_date)
+        return self.task_set.create(
+            parent=self,
+            responsible=responsible,
+            goal_description=goal_description,
+            target_date=target_date,
+        )
 #         task.clean()
 #         task.save()
 #         return task
@@ -66,37 +72,37 @@ class Discussion(models.Model):
         discussion_is_active = False
         time_left =  0
         return discussion_is_active , time_left
-        
-        
-        
+
+
+
 
     def is_active(self):
-        discussion_is_active,  time_left =  self.is_active_and_time_to_inactivation()
+        discussion_is_active, time_left = self.is_active_and_time_to_inactivation()
         return discussion_is_active
 
     def get_time_to_inactivation(self):
-        discussion_is_active,  time_left =  self.is_active_and_time_to_inactivation()
+        discussion_is_active,  time_left = self.is_active_and_time_to_inactivation()
         return time_left
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
         """
         implemented by call task.get_status() since current implamantation uses only status polling
         """
         for tested_task in self.task_set.all():
             if tested_task.get_status() is tested_task.CLOSED:
-                if ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS) ) > timezone.now():
+                if (tested_task.created_at + timedelta(days=MAX_INACTIVITY_DAYS)) > timezone.now():
                     discussion_is_active = True
-                    time_left =  ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS) ) - timezone.now()
+                    time_left = (tested_task.created_at + timedelta(days=MAX_INACTIVITY_DAYS)) - timezone.now()
                     return discussion_is_active , time_left
         discussion_is_active = False
-        time_left =  0
+        time_left = 0
         return discussion_is_active , time_left
- 
-       
+
+
     def print_content(self):
         print 'Owner', self.owner.username
         print 'Title:', self.title
@@ -106,8 +112,8 @@ class Discussion(models.Model):
             print 'active, time left', time_left
         else:
             print 'inactivated'
-        
-        
+
+
         feedbacks = self.feedback_set.all()
         for feedback in feedbacks:
             feedback.print_content()
@@ -143,7 +149,7 @@ class Feedback(models.Model):
         return self.content
 
     def print_content(self):
-        print self.user.username, 'said a ResponseType', self.feedbabk_type, 'That:', self.content, 'created_at', self.created_at, 'updated', self.updated_at 
+        print self.user.username, 'said a ResponseType', self.feedbabk_type, 'That:', self.content, 'created_at', self.created_at, 'updated', self.updated_at
 
 
 
@@ -166,7 +172,7 @@ class Decision(models.Model):
     content = models.TextField(validators=[MaxLengthValidator(MAX_TEXT)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    value = models.IntegerField( default = 0)
+    value = models.IntegerField(default=0)
 
     def __unicode__(self):
         return self.content
@@ -174,7 +180,7 @@ class Decision(models.Model):
         return self.vote_set.count()
     def vote(self, voater, value):
         if (self.vote_set.filter( voater= voater).count() == 0):
-            new_vote = Vote(  decision = self, voater= voater, value = value)
+            new_vote = Vote(decision=self, voater=voater, value=value)
             new_vote.save()
             self.value += value
         else:
@@ -183,21 +189,21 @@ class Decision(models.Model):
             current_vote.value = value
             self.value += current_vote.value
             current_vote.save()
-            
+
         self.save()
-        
+
     def get_vote_sum(self):
         return(self.value)
     def get_vote_value_or_none(self, voater):
-        if self.vote_set.filter(voater = voater).count() == 1:
-            vote = self.vote_set.get(voater = voater)
+        if self.vote_set.filter(voater=voater).count() == 1:
+            vote = self.vote_set.get(voater=voater)
             return vote.value
         return None
     def get_vote_average_or_none(self):
         number_of_votes = self.get_number_of_votes()
         if number_of_votes != 0:
             average = int(round( self.get_vote_sum() /number_of_votes ))
-            return average   
+            return average
         return None
 
     def get_vote_level_name(self):
@@ -213,18 +219,18 @@ class Decision(models.Model):
                 return 'אין דעה'
             if number_of_votes == LikeLevel.BAD:
                 return 'רעיון לא טוב'
-            
+
         return 'אין'
-            
- 
-        
+
+
+
         return self.vote_set.count()
     def print_content(self):
         print 'Decide:', self.content, 'created_at', self.created_at, 'value', self.value
         votes = self.vote_set.all()
         for vote in votes:
             vote.print_content()
-        
+
 
 
 class Vote(models.Model):
@@ -260,10 +266,12 @@ class Task(models.Model):
 
     parent = models.ForeignKey(Discussion, null=True, blank=True)
     responsible = models.ForeignKey(User)
-    goal_description = models.TextField(validators=[MaxLengthValidator(MAX_TEXT)])
+    goal_description = models.TextField(
+        validators=[MaxLengthValidator(MAX_TEXT)])
     target_date = models.DateTimeField()
     closed_at = models.DateTimeField(null=True, blank=True)
-    closed_by = models.ForeignKey(User,  related_name='closed_by', null=True, blank=True)
+    closed_by = models.ForeignKey(
+        User, related_name='closed_by', null=True, blank=True)
     status_description = models.TextField(null=True, blank=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=STARTED)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -271,23 +279,23 @@ class Task(models.Model):
 
     def __unicode__(self):
         return self.content
-    
-    
-    def get_absolute_url(self):   
+
+
+    def get_absolute_url(self):
         return( reverse('coplay:task_details', kwargs={'pk': str(self.id)}) )
-    
-    
+
+
     def update_status_description(self, status_description):
         self.refresh_status()
         if self.status != self.STARTED:
-            return False        
+            return False
         self.status_description = status_description
         self.save()
         return True
 
     def get_status_description(self):
         return self.status_description
-        
+
     def close(self, closing_user):
         if self.responsible is closing_user:
             return False
@@ -295,33 +303,32 @@ class Task(models.Model):
         if (self.status == self.STARTED):
             self.status = self.CLOSED
             self.closed_at = timezone.now()
-            self.closed_by = closing_user 
+            self.closed_by = closing_user
             self.save()
             return True
         return False
-            
 
-        
+
+
     def get_time_until_target(self):
         self.refresh_status()
         if ( self.status == self.STARTED):
-            return  self.target_date - timezone.now() 
+            return self.target_date - timezone.now()
         return 0
     def refresh_status(self):
         if (self.status == self.CLOSED):
             return
         if (self.status == self.MISSED):
             return
-            
-        if (self.target_date < timezone.now() ):
+
+        if (self.target_date < timezone.now()):
             self.status = self.MISSED
             self.save()
-            
+
     def get_status(self):
         self.refresh_status()
         return self.status
-        
-        
+
     def print_content(self):
         print '\n'.join(
             '{name}: {result}'.format(name, result)
