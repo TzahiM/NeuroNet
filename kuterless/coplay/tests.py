@@ -38,20 +38,30 @@ class CoPlayTest(TestCase):
         return d
 
     def is_active_and_time_to_inactivation(self,discussion, max_inactivity_seconds):
-        if ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) >= timezone.now():
-            discussion_is_active = True
-            time_left =  ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) -  timezone.now() 
-            return discussion_is_active , time_left
-             
-        for tested_task in discussion.task_set.all():
-            if ( tested_task.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) >= timezone.now():
+        now = timezone.now()
+        list_tasks  = discussion.task_set.all().order_by( "-created_at")
+        if list_tasks:
+            latest_task = list_tasks.first()
+            if ( latest_task.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) >= now :
+                time_left =  ( latest_task.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) -  now
                 discussion_is_active = True
-                time_left =  ( tested_task.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) - timezone.now()
                 return discussion_is_active , time_left
+            if ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) >= now:
+                discussion_is_active = True
+                time_left =  ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) -  now 
+                return discussion_is_active , time_left
+            discussion_is_active = False
+            time_left =  0
+            return discussion_is_active , time_left
+        if ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) >= now:
+            discussion_is_active = True
+            time_left =  ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) -  now 
+            return discussion_is_active , time_left
+            
         discussion_is_active = False
         time_left =  0
         return discussion_is_active , time_left
-        
+
     
     
     def test_create_discussion(self):

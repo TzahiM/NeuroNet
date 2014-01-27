@@ -37,6 +37,8 @@ def labs_root(request):
 """
 
     version_description = """
+27/1/2014:
+תיקון בעיה בהרשמה    
 23/1/2014:
 עכשיו טפסי ההרשמה נראים נהדר - תודה מיכאל !
 הוספת פרפראות
@@ -64,7 +66,8 @@ class CreateUserView(CreateView):
     
 
 class AddUserForm(forms.Form):
-    user_name = forms.EmailField( label='', 
+    
+    user_name = forms.CharField( label='', 
         widget=forms.TextInput(attrs={'placeholder': 'שם משתמש', 'class': 'form-control'}))
 
     password  = forms.CharField( label='', 
