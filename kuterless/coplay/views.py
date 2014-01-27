@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*->
+# -*- coding: utf-8 -*-
 from coplay import models
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task
 from django import forms
