@@ -8,7 +8,7 @@ from datetime import timedelta
 
 MAX_TEXT = 2000
 
-MAX_INACTIVITY_DAYS = 7
+MAX_INACTIVITY_SECONDS  = 7 * 24 * 3600
 
 class Discussion(models.Model):
     owner = models.ForeignKey(User)
@@ -51,21 +51,30 @@ class Discussion(models.Model):
 #         task.save()
 #         return task
 
-    def is_active_and_time_to_inactivation(self):
-        if ( self.created_at + timedelta(seconds =( MAX_INACTIVITY_DAYS * 86400 )) ) >= timezone.now():
-            discussion_is_active = True
-            time_left =  ( self.created_at + timedelta(seconds =( MAX_INACTIVITY_DAYS * 86400 )) ) -  timezone.now() 
-            return discussion_is_active , time_left
-             
-        for tested_task in self.task_set.all():
-            if ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS)  ) >= timezone.now():
+    def is_active_and_time_to_inactivation(self, max_inactivity_seconds = MAX_INACTIVITY_SECONDS):
+        now = timezone.now()
+        list_tasks  = self.task_set.all().order_by( "-created_at")
+        if list_tasks:
+            latest_task = list_tasks.first()
+            if ( latest_task.created_at + timedelta(seconds = max_inactivity_seconds) ) >= now :
+                time_left =  ( latest_task.created_at + timedelta(seconds = max_inactivity_seconds) ) -  now
                 discussion_is_active = True
-                time_left =  ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS))  - timezone.now()
                 return discussion_is_active , time_left
+            if ( self.created_at + timedelta(seconds = max_inactivity_seconds) ) >= now:
+                discussion_is_active = True
+                time_left =  ( self.created_at + timedelta(seconds = max_inactivity_seconds) ) -  now 
+                return discussion_is_active , time_left
+            discussion_is_active = False
+            time_left =  0
+            return discussion_is_active , time_left
+        if ( self.created_at + timedelta(seconds = max_inactivity_seconds) ) >= now:
+            discussion_is_active = True
+            time_left =  ( self.created_at + timedelta(seconds = max_inactivity_seconds) ) -  now 
+            return discussion_is_active , time_left
+            
         discussion_is_active = False
         time_left =  0
-        return discussion_is_active , time_left
-        
+        return discussion_is_active , time_left       
         
         
 
@@ -78,22 +87,6 @@ class Discussion(models.Model):
         return time_left
         
         
-        
-        
-        
-        
-        """
-        implemented by call task.get_status() since current implamantation uses only status polling
-        """
-        for tested_task in self.task_set.all():
-            if tested_task.get_status() is tested_task.CLOSED:
-                if ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS) ) > timezone.now():
-                    discussion_is_active = True
-                    time_left =  ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS) ) - timezone.now()
-                    return discussion_is_active , time_left
-        discussion_is_active = False
-        time_left =  0
-        return discussion_is_active , time_left
  
        
     def print_content(self):

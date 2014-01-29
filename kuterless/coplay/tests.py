@@ -36,33 +36,6 @@ class CoPlayTest(TestCase):
         d.full_clean()
         d.save()
         return d
-
-    def is_active_and_time_to_inactivation(self,discussion, max_inactivity_seconds):
-        now = timezone.now()
-        list_tasks  = discussion.task_set.all().order_by( "-created_at")
-        if list_tasks:
-            latest_task = list_tasks.first()
-            if ( latest_task.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) >= now :
-                time_left =  ( latest_task.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) -  now
-                discussion_is_active = True
-                return discussion_is_active , time_left
-            if ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) >= now:
-                discussion_is_active = True
-                time_left =  ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) -  now 
-                return discussion_is_active , time_left
-            discussion_is_active = False
-            time_left =  0
-            return discussion_is_active , time_left
-        if ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) >= now:
-            discussion_is_active = True
-            time_left =  ( discussion.created_at + datetime.timedelta(seconds = max_inactivity_seconds) ) -  now 
-            return discussion_is_active , time_left
-            
-        discussion_is_active = False
-        time_left =  0
-        return discussion_is_active , time_left
-
-    
     
     def test_create_discussion(self):
         self.assertEquals(0, Discussion.objects.count())
@@ -291,26 +264,61 @@ class CoPlayTest(TestCase):
         
         d.print_content()
         max_inactivity_seconds = 1
-        active, time_left = self.is_active_and_time_to_inactivation( d, max_inactivity_seconds)
+        active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
         print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, False)
         
         max_inactivity_seconds = 5
-        active, time_left = self.is_active_and_time_to_inactivation( d, max_inactivity_seconds)
+        active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
         print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, True)
         
         time.sleep(3)
         
         max_inactivity_seconds = 5
-        active, time_left = self.is_active_and_time_to_inactivation( d, max_inactivity_seconds)
+        active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
         print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, False)
         time.sleep(1)
         
         task3= d.add_task(self.admin, 'shall cause activation', timezone.now() +  datetime.timedelta(seconds =2))
         max_inactivity_seconds = 5
-        active, time_left = self.is_active_and_time_to_inactivation( d, max_inactivity_seconds)
+        active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
         print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, True)
+        
+        print 'discussion re-activation ---------------------------------'
+        
+        d = self.create_dicussion()
+
+        max_inactivity_seconds = 5
+        active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
+        print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
+        self.assertEquals(active, True)
+        time.sleep(2)
+        max_inactivity_seconds = 5
+        active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
+        print 'after 2 sec max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
+        self.assertEquals(active, True)
+
+        task3= d.add_task(self.admin, '1st task', timezone.now() +  datetime.timedelta(seconds =2))
+        max_inactivity_seconds = 5
+        active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
+        print 'after add a task max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
+        self.assertEquals(active, True)
+        time.sleep(6)
+        max_inactivity_seconds = 5
+        active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
+        print 'discussion should be locked task max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
+        
+        self.assertEquals(active, False)
+        
+        task3= d.add_task(self.admin, '2nd task', timezone.now() +  datetime.timedelta(seconds =2))
+        max_inactivity_seconds = 5
+        active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
+        print 'discussion should be unlocked task max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
+        self.assertEquals(active, True)
+        
+        
+        
 
