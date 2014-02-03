@@ -1,0 +1,19 @@
+#ignore thumbnails created by windows
+Thumbs.db
+#ignore by django
+db.sqlite3
+*.log
+*.pot
+#ignore thumbnails created by windows
+Thumbs.db
+#ignore python
+*.pyc
+.project
+.pydevproject
+desktop.ini
+local_settings.py
+<<<<<<< HEAD
+=======
+
+>>>>>>> jvalansi/master
+kuterless/db.sqlite3
