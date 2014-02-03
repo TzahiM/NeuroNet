@@ -157,7 +157,7 @@ def discussion_email_updates(discussion, subject):
                                                                            'discussion': discussion })
                 
     for attensdent in attending_list:
-        if attensdent.email and ( (attensdent.username == 'Tzahim' ) or ( attensdent.username == 'zuzu' )):
+        if attensdent.email:
             send_html_message(subject, html_message, 'do-not-reply@kuterless.org.il', [attensdent.email])
 
 
@@ -169,7 +169,7 @@ def discussion_task_email_updates(task, subject):
                                                                            'task': task })
                 
     for attensdent in attending_list:
-        if attensdent.email and ( (attensdent.username == 'Tzahim' ) or ( attensdent.username == 'zuzu' )):
+        if attensdent.email:
             send_html_message(subject, html_message, 'do-not-reply@kuterless.org.il', [attensdent.email])
 
 
