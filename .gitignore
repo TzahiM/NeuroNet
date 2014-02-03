@@ -10,5 +10,6 @@ Thumbs.db
 *.pyc
 .project
 .pydevproject
+desktop.ini
 
 kuterless/db.sqlite3

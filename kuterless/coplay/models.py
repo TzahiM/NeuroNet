@@ -86,7 +86,28 @@ class Discussion(models.Model):
         discussion_is_active,  time_left =  self.is_active_and_time_to_inactivation()
         return time_left
         
-        
+    def get_attending_list(self, include_owner = False):
+        users_list = []
+        for feedback in self.feedback_set.all():
+            if feedback.user not in users_list:
+                users_list.append(feedback.user)    
+        for task in self.task_set.all():
+            if task.responsible not in users_list:
+                users_list.append(task.responsible)    
+        for descision in self.decision_set.all():
+            for vote in descision.vote_set.all():
+                if vote.voater not in users_list:
+                    users_list.append(vote.voater)  
+                
+        if include_owner:
+            if self.owner not in users_list:
+                users_list.append(self.owner)
+        else:
+            if self.owner in users_list:
+                users_list.remove(self.owner)
+            
+        return users_list
+            
  
        
     def print_content(self):
@@ -99,6 +120,11 @@ class Discussion(models.Model):
         else:
             print 'inactivated'
         
+        print 'attending:'
+        attending_list = self.get_attending_list()
+        for user in attending_list:
+            print user.username
+            
         
         feedbacks = self.feedback_set.all()
         for feedback in feedbacks:
@@ -133,6 +159,20 @@ class Feedback(models.Model):
 
     def __unicode__(self):
         return self.content
+    
+    
+    def get_feedbabk_type_name(self):
+        feedbabk_type = self.feedbabk_type
+        if feedbabk_type == self.ENCOURAGE:
+            return 'עידוד'
+        if feedbabk_type == self.COOPERATION:
+            return 'פעולה'
+        if feedbabk_type == self.INTUITION:
+            return 'אינטואיציה'
+        return 'עצה'
+    
+    
+    
 
     def print_content(self):
         print self.user.username, 'said a ResponseType', self.feedbabk_type, 'That:', self.content, 'created_at', self.created_at, 'updated', self.updated_at 

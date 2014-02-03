@@ -7,6 +7,8 @@ from django.core.mail import send_mail
 from django.forms.extras.widgets import SelectDateWidget
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.template import context
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.views import generic
 
@@ -106,6 +108,8 @@ def discussion_details(request, pk):
 class NewDiscussionForm(forms.Form):
     title = forms.CharField(max_length=200,  widget=forms.Textarea(attrs= { 'rows': '1', 'cols': '50'}))
     description = forms.CharField(max_length= MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea)
+
+
     
 @login_required
 def add_discussion(request):
@@ -137,6 +141,32 @@ def add_discussion(request):
         'rtl'             : 'dir="rtl"'
     })
 
+
+def discussion_email_updates(discussion, subject):
+
+    attending_list = discussion.get_attending_list(True)
+    message = render_to_string("coplay/email_discussion_update.html", { 'ROOT_URL': 'www.kuterless.org.il', 
+                                                                           'discussion': discussion })
+                
+    for attensdent in attending_list:
+        if attensdent.email and ( (attensdent.username == 'Tzahim' ) or ( attensdent.username == 'zuzu' )):
+            attensdent.email_user( subject , message)
+
+
+def discussion_task_email_updates(task, subject):
+
+    attending_list = task.parent.get_attending_list(True)
+    
+    message = render_to_string("coplay/email_task_update.html", { 'ROOT_URL': 'www.kuterless.org.il', 
+                                                                           'task': task })
+                
+    for attensdent in attending_list:
+        if attensdent.email and ( (attensdent.username == 'Tzahim' ) or ( attensdent.username == 'zuzu' )):
+            attensdent.email_user( subject , message)
+
+
+
+  
     
 
 
@@ -158,15 +188,13 @@ def update_discussion(request, pk):
             user = request.user
             if user == discussion.owner:
                 discussion.update_description( form.cleaned_data['description'] )
+                discussion_email_updates(discussion, 'עידכון מטרות בפעילות שבהשתתפותך')
+                
                 return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
             return render(request, 'coplay/message.html', 
                       {  'message'      :  'רק בעל הדיון מורשה לעדכן אותו',
                        'rtl': 'dir="rtl"'})
             
-    
-    
-    
-    
     
     return render(request, 'coplay/message.html', 
                       {  'message'      :  '  לא הוזן תיאור חדש או שהוזן תיאור ארוך מדי ',
@@ -207,6 +235,9 @@ def add_feedback(request, pk):
                 return HttpResponse('Discussion not found')
             if user != discussion.owner and form.cleaned_data['feedbabk_type']  and form.cleaned_data['content']:
                 discussion.add_feedback( user,  form.cleaned_data['feedbabk_type'] , form.cleaned_data['content'])
+                discussion_email_updates(discussion, 'התקבלה תגובה חדשה בפעילות שבהשתתפותך')
+                
+                
             return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
         return render(request, 'coplay/message.html', 
                       {  'message'      :  'לא הזנת תגובה',
@@ -232,6 +263,10 @@ def add_decision(request, pk):
                            'rtl': 'dir="rtl"'})
                
                 discussion.add_decision( form.cleaned_data['content'] )
+                discussion_email_updates(discussion, 'התקבלה התלבטות חדשה בפעילות שבהשתתפותך')
+                
+                
+                
             else:
                 return HttpResponse('Forbidden access')
             return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
@@ -292,6 +327,10 @@ def add_task(request, pk):
             new_task = discussion.add_task( user,  
                                  form.cleaned_data['goal_description'] ,
                                  form.cleaned_data['target_date'] )
+            
+            discussion_task_email_updates(new_task, 'נוספה משימה חדשה בפעילות שבהשתתפותך')
+            
+            
             return HttpResponseRedirect(new_task.get_absolute_url()) # Redirect after POST
 
     return HttpResponseRedirect('coplay_root') # Redirect after POST
@@ -344,6 +383,8 @@ def update_task_description(request, pk):
             user = request.user
             if user == task.responsible:
                 task.update_status_description( form.cleaned_data['status_description'] )
+                discussion_task_email_updates(task, 'עודכנה משימה בפעילות שבהשתתפותך. יתכן ואפשר לסגור את המשימה')
+
             return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
             
     return HttpResponseRedirect('coplay_root') # Redirect after POST
@@ -358,6 +399,8 @@ def close_task(request, pk):
     user = request.user
     if user != task.responsible:
         task.close( user )
+        discussion_task_email_updates(task, 'הושלמה משימה בפעילות שבהשתתפותך')
+        
         
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
     

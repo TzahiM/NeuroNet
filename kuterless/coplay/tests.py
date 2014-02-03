@@ -319,6 +319,21 @@ class CoPlayTest(TestCase):
         print 'discussion should be unlocked task max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, True)
         
+    def test_attending_list(self):    
+        dis = self.create_dicussion()
+        dis.add_feedback(self.at1, Feedback.ENCOURAGE, "like this")
         
         
-
+        decision = dis.add_decision( 'אולי מלמטה?')
+        decision.vote( self.at2 ,  LikeLevel.EXCELLENT)
+        attending_list = dis.get_attending_list()
+        self.assertEquals(len(attending_list), 2)       
+        task2 = dis.add_task(self.at3, 'shall close', timezone.now() +  datetime.timedelta(seconds =2))
+        attending_list = dis.get_attending_list()
+        self.assertEquals(len(attending_list), 3)       
+        attending_list = dis.get_attending_list(True)
+        self.assertEquals(len(attending_list), 4)       
+        task3= dis.add_task(self.admin, 'shall missed', timezone.now() +  datetime.timedelta(seconds =2))
+        attending_list = dis.get_attending_list()
+        self.assertEquals(len(attending_list), 3)       
+        
