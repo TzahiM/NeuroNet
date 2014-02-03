@@ -115,12 +115,6 @@ GRAPH_MODELS = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_USE_TLS = True
-
-EMAIL_PORT = 465
-
-EMAIL_HOST = 'smtp.gmail.com'
-
 
 
 try:
