@@ -4,6 +4,7 @@ from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
+from django.core.mail.message import EmailMessage
 from django.forms.extras.widgets import SelectDateWidget
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -142,6 +143,13 @@ def add_discussion(request):
     })
 
 
+
+def send_html_message( subject, html_content, from_email, to_list):
+    msg = EmailMessage(subject, html_content, from_email, to_list)
+    msg.content_subtype = "html"  # Main content is now text/html
+    msg.send()
+
+
 def discussion_email_updates(discussion, subject):
 
     attending_list = discussion.get_attending_list(True)
@@ -150,7 +158,7 @@ def discussion_email_updates(discussion, subject):
                 
     for attensdent in attending_list:
         if attensdent.email and ( (attensdent.username == 'Tzahim' ) or ( attensdent.username == 'zuzu' )):
-            attensdent.email_user( subject , message = html_message , from_email = 'do-not-reply@kuterless.org.il')
+            send_html_message(subject, html_message, 'do-not-reply@kuterless.org.il', [attensdent.email])
 
 
 def discussion_task_email_updates(task, subject):
