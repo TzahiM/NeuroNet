@@ -145,12 +145,12 @@ def add_discussion(request):
 def discussion_email_updates(discussion, subject):
 
     attending_list = discussion.get_attending_list(True)
-    message = render_to_string("coplay/email_discussion_update.html", { 'ROOT_URL': 'www.kuterless.org.il', 
+    html_message = render_to_string("coplay/email_discussion_update.html", { 'ROOT_URL': 'www.kuterless.org.il', 
                                                                            'discussion': discussion })
                 
     for attensdent in attending_list:
         if attensdent.email and ( (attensdent.username == 'Tzahim' ) or ( attensdent.username == 'zuzu' )):
-            attensdent.email_user( subject , message, from_email = 'do-not-reply@kuterless.org.il')
+            attensdent.email_user( subject , message = None, html_message = html_message , from_email = 'do-not-reply@kuterless.org.il')
 
 
 def discussion_task_email_updates(task, subject):
