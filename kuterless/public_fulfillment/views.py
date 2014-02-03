@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*->
+# -*- coding: utf-8 -*-
 from classytags import models
 from django import forms
 from django.contrib.auth import authenticate, login
@@ -37,13 +37,23 @@ def labs_root(request):
 """
 
     version_description = """
+3/2/2014:
+הוספה של שליחת מיילים על כל עדכון בפעילות ומשימות הקשורות אליה.
+במיילים מופיע הקישור לאתר כדי לצפות בפעילות או המשימה המעודכנת    
+29/1/2014:
+תיקון בעיה של נעילה מופרזת של פעילויות (issue # 20)
+27/1/2014:
+תיקון בעיה בהרשמה    
+23/1/2014:
+עכשיו טפסי ההרשמה נראים נהדר - תודה מיכאל !
+הוספת פרפראות
 20/1/2014:
 תיקון בעית הרשמה וכניסה
 הוספת נעילה של פעילויות בהעדר מחויבות של המשתתפים
 
 
 16/1/2014:
-ערכון פרופיל משתמש לרבות סיסמה
+עדכון פרופיל משתמש לרבות סיסמה
 שינוי שם מהחלטות להתלבטויות
 היפוך שמאל ימין בטופס פעילות
 """
@@ -61,20 +71,43 @@ class CreateUserView(CreateView):
     
 
 class AddUserForm(forms.Form):
-    user_name  = forms.CharField( max_length = 200)
-    password  = forms.CharField( widget=forms.PasswordInput)
-    password_confirm  = forms.CharField( widget=forms.PasswordInput)
-    first_name = forms.CharField(  required = False, max_length = 200)
-    last_name  = forms.CharField( required = False, max_length = 200)
-    email      = forms.EmailField( required = False)      
+    
+    user_name = forms.CharField( label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'שם משתמש', 'class': 'form-control'}))
+
+    password  = forms.CharField( label='', 
+        widget=forms.PasswordInput(attrs={'placeholder': 'סיסמא', 'class': 'form-control'}))
+
+    password_confirm  = forms.CharField( label='', 
+        widget=forms.PasswordInput(attrs={'placeholder': 'אימות סיסמא', 'class': 'form-control'}))
+    
+    first_name  = forms.CharField( required = False, max_length = 200, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'שם פרטי', 'class': 'form-control'}))
+    
+    last_name = forms.CharField( required = False, max_length = 200, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'שם משפחה', 'class': 'form-control'}))
+    
+    email = forms.EmailField( required = False, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
+
 
 
 class UpdateProfileUserForm(forms.Form):
-    password  = forms.CharField( required = False, widget=forms.PasswordInput)
-    password_confirm  = forms.CharField(  required = False, widget=forms.PasswordInput)
-    first_name = forms.CharField(  required = False, max_length = 200)
-    last_name  = forms.CharField( required = False, max_length = 200)
-    email      = forms.EmailField( required = False)      
+    password  = forms.CharField( required = False, label='', 
+        widget=forms.PasswordInput(attrs={'placeholder': 'סיסמא', 'class': 'form-control'}))
+
+    password_confirm  = forms.CharField( required = False, label='', 
+        widget=forms.PasswordInput(attrs={'placeholder': 'אימות סיסמא', 'class': 'form-control'}))
+    
+    first_name  = forms.CharField( required = False, max_length = 200, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'שם פרטי', 'class': 'form-control'}))
+    
+    last_name = forms.CharField( required = False, max_length = 200, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'שם משפחה', 'class': 'form-control'}))
+    
+    email = forms.EmailField( required = False, label='', 
+        widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
+
 
 def sign_up(request):
     if request.user.is_authenticated():
@@ -146,6 +179,13 @@ def sign_up(request):
         'rtl': 'dir="rtl"'
     })
     
+
+def example(request):
+    return render(request, 'public_fulfillment/example.html', {
+        'rtl': 'dir="rtl"'
+    })
+
+
 
 @login_required
 def update_profile(request):

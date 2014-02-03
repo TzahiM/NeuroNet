@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*->
+# -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator
@@ -8,7 +8,7 @@ from datetime import timedelta
 
 MAX_TEXT = 2000
 
-MAX_INACTIVITY_DAYS = 7
+MAX_INACTIVITY_SECONDS  = 7 * 24 * 3600
 
 class Discussion(models.Model):
     owner = models.ForeignKey(User)
@@ -51,21 +51,30 @@ class Discussion(models.Model):
 #         task.save()
 #         return task
 
-    def is_active_and_time_to_inactivation(self):
-        if ( self.created_at + timedelta(seconds =( MAX_INACTIVITY_DAYS * 86400 )) ) >= timezone.now():
-            discussion_is_active = True
-            time_left =  ( self.created_at + timedelta(seconds =( MAX_INACTIVITY_DAYS * 86400 )) ) -  timezone.now() 
-            return discussion_is_active , time_left
-             
-        for tested_task in self.task_set.all():
-            if ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS)  ) >= timezone.now():
+    def is_active_and_time_to_inactivation(self, max_inactivity_seconds = MAX_INACTIVITY_SECONDS):
+        now = timezone.now()
+        list_tasks  = self.task_set.all().order_by( "-created_at")
+        if list_tasks:
+            latest_task = list_tasks.first()
+            if ( latest_task.created_at + timedelta(seconds = max_inactivity_seconds) ) >= now :
+                time_left =  ( latest_task.created_at + timedelta(seconds = max_inactivity_seconds) ) -  now
                 discussion_is_active = True
-                time_left =  ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS))  - timezone.now()
                 return discussion_is_active , time_left
+            if ( self.created_at + timedelta(seconds = max_inactivity_seconds) ) >= now:
+                discussion_is_active = True
+                time_left =  ( self.created_at + timedelta(seconds = max_inactivity_seconds) ) -  now 
+                return discussion_is_active , time_left
+            discussion_is_active = False
+            time_left =  0
+            return discussion_is_active , time_left
+        if ( self.created_at + timedelta(seconds = max_inactivity_seconds) ) >= now:
+            discussion_is_active = True
+            time_left =  ( self.created_at + timedelta(seconds = max_inactivity_seconds) ) -  now 
+            return discussion_is_active , time_left
+            
         discussion_is_active = False
         time_left =  0
-        return discussion_is_active , time_left
-        
+        return discussion_is_active , time_left       
         
         
 
@@ -77,23 +86,28 @@ class Discussion(models.Model):
         discussion_is_active,  time_left =  self.is_active_and_time_to_inactivation()
         return time_left
         
-        
-        
-        
-        
-        
-        """
-        implemented by call task.get_status() since current implamantation uses only status polling
-        """
-        for tested_task in self.task_set.all():
-            if tested_task.get_status() is tested_task.CLOSED:
-                if ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS) ) > timezone.now():
-                    discussion_is_active = True
-                    time_left =  ( tested_task.created_at + timedelta(days = MAX_INACTIVITY_DAYS) ) - timezone.now()
-                    return discussion_is_active , time_left
-        discussion_is_active = False
-        time_left =  0
-        return discussion_is_active , time_left
+    def get_attending_list(self, include_owner = False):
+        users_list = []
+        for feedback in self.feedback_set.all():
+            if feedback.user not in users_list:
+                users_list.append(feedback.user)    
+        for task in self.task_set.all():
+            if task.responsible not in users_list:
+                users_list.append(task.responsible)    
+        for descision in self.decision_set.all():
+            for vote in descision.vote_set.all():
+                if vote.voater not in users_list:
+                    users_list.append(vote.voater)  
+                
+        if include_owner:
+            if self.owner not in users_list:
+                users_list.append(self.owner)
+        else:
+            if self.owner in users_list:
+                users_list.remove(self.owner)
+            
+        return users_list
+            
  
        
     def print_content(self):
@@ -106,6 +120,11 @@ class Discussion(models.Model):
         else:
             print 'inactivated'
         
+        print 'attending:'
+        attending_list = self.get_attending_list()
+        for user in attending_list:
+            print user.username
+            
         
         feedbacks = self.feedback_set.all()
         for feedback in feedbacks:
@@ -140,6 +159,20 @@ class Feedback(models.Model):
 
     def __unicode__(self):
         return self.content
+    
+    
+    def get_feedbabk_type_name(self):
+        feedbabk_type = self.feedbabk_type
+        if feedbabk_type == self.ENCOURAGE:
+            return 'עידוד'
+        if feedbabk_type == self.COOPERATION:
+            return 'פעולה'
+        if feedbabk_type == self.INTUITION:
+            return 'אינטואיציה'
+        return 'עצה'
+    
+    
+    
 
     def print_content(self):
         print self.user.username, 'said a ResponseType', self.feedbabk_type, 'That:', self.content, 'created_at', self.created_at, 'updated', self.updated_at 

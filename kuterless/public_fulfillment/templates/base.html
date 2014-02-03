@@ -68,7 +68,7 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-          	<li><a href="{% url 'public_fulfillment:about' %}">          אודות          </a></li>
+          	<li><a href="http://wiki.hasadna.org.il/index.php?title=%D7%94%D7%92%D7%A9%D7%9E%D7%94_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%AA">          אודות          </a></li>
           	            {% if user.is_authenticated %}
               <li> <a href="{% url 'logout' %}"> יציאה </a> </li>
               <li><a href="#"> שלום {{ user.get_full_name|default:user.username }}</a></li>
@@ -84,9 +84,17 @@
         	          	       
             
             <li class="dropdown">
+              <a href="{% url 'labs_root' %}" class="dropdown-toggle" data-toggle="dropdown">פרפראות<b class="caret"></b></a>
+              <ul  class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <li><a href="{% url 'public_fulfillment:example' %}">למשל</a></li>
+                <li class="divider"></li>
+              </ul>
+            </li>
+            <li class="dropdown">
               <a href="{% url 'labs_root' %}" class="dropdown-toggle" data-toggle="dropdown">המעבדות שלנו<b class="caret"></b></a>
               <ul  class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                 <li><a href="{% url 'coplay:coplay_root' %}">CoPlayWeb</a></li>
+                <li><a href="{% url 'labs_root' %}#versions">מה חדש?</a></li>
                 <li class="divider"></li>
                 <li><a href="{% url 'labs_root' %}">איך אנחנו מפתחים?</a></li>
                 <li><a href="https://github.com/TzahiM/NeuroNet.git">למפתחים</a></li>
@@ -96,7 +104,7 @@
            <li class="dropdown">             
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">פרויקטים<b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a></li>
+                <li><a href="http://wiki.hasadna.org.il/index.php?title=%D7%94%D7%92%D7%A9%D7%9E%D7%94_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%AA">הגשמה ציבורית</a></li>
                 <li class="divider"></li>
                 <li class="disabled"><a tabindex="-1" href="#">המשך יבוא</a></li>
               </ul>
@@ -106,7 +114,7 @@
               	<ul class="dropdown-menu">
 	                <li ><a href="{% url 'coplay:discussions_list' %}">עזרה לפעילות קיימת</a></li>
 	                <li ><a href="{% url 'coplay:add_discussion' %}">התחלת פעילות חדשה</a></li>
-	                <li ><a href="/labs/coplay/2/details/">פעילות לדוגמה</a></li>
+	                <li ><a href="/labs/coplay/17/details/">פעילות לדוגמה</a></li>
 				</ul>
 			</li>
 
@@ -114,7 +122,7 @@
             	<a href="#" >אנשים</a>
 			</li>
 
-            <li><a class="navbar-brand" href="{% url 'public_fulfillment:about' %}">הגשמה ציבורית</a></li>
+            <li><a class="navbar-brand" href="http://wiki.hasadna.org.il/index.php?title=%D7%94%D7%92%D7%A9%D7%9E%D7%94_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%AA">הגשמה ציבורית</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

@@ -24,14 +24,9 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [u'95.85.3.168', u'127.0.0.1']
 
 SITE_ID  = 1
-
-EMAIL_HOST_USER = 'tzahimanmobile'
-
-EMAIL_HOST = 'mail.google.com'
-
 
 # Application definition
 
@@ -132,6 +127,8 @@ GRAPH_MODELS = {
   'all_applications': True,
   'group_models': True,
 }
+
+
 
 try:
     from local_settings import *
