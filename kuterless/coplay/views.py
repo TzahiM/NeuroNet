@@ -165,12 +165,12 @@ def discussion_task_email_updates(task, subject):
 
     attending_list = task.parent.get_attending_list(True)
     
-    message = render_to_string("coplay/email_task_update.html", { 'ROOT_URL': 'www.kuterless.org.il', 
+    html_message = render_to_string("coplay/email_task_update.html", { 'ROOT_URL': 'www.kuterless.org.il', 
                                                                            'task': task })
                 
     for attensdent in attending_list:
         if attensdent.email and ( (attensdent.username == 'Tzahim' ) or ( attensdent.username == 'zuzu' )):
-            attensdent.email_user( subject , message,from_email = 'do-not-reply@kuterless.org.il')
+            send_html_message(subject, html_message, 'do-not-reply@kuterless.org.il', [attensdent.email])
 
 
 
