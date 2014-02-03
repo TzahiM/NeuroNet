@@ -150,7 +150,7 @@ def discussion_email_updates(discussion, subject):
                 
     for attensdent in attending_list:
         if attensdent.email and ( (attensdent.username == 'Tzahim' ) or ( attensdent.username == 'zuzu' )):
-            attensdent.email_user( subject , message = None, html_message = html_message , from_email = 'do-not-reply@kuterless.org.il')
+            attensdent.email_user( subject , message = html_message , from_email = 'do-not-reply@kuterless.org.il')
 
 
 def discussion_task_email_updates(task, subject):
