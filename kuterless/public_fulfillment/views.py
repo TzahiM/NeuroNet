@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from classytags import models
+from coplay.views import user_coplay_report
 from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http.response import HttpResponse, HttpResponseRedirect
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic.edit import CreateView
 
@@ -19,6 +19,11 @@ def about(request):
         'rtl': 'dir="rtl"'
     })
 
+def root(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
+    
+    return about(request)
     
     
 
@@ -37,6 +42,9 @@ def labs_root(request):
 """
 
     version_description = """
+17/2/2014:
+ביטול השליחה של מיילים אודות עדכונים למשתמש שביצע אותם.
+הוספת עמודי פעילות למשתמשים(issue # 17)
 3/2/2014:
 הוספה של שליחת מיילים על כל עדכון בפעילות ומשימות הקשורות אליה.
 במיילים מופיע הקישור לאתר כדי לצפות בפעילות או המשימה המעודכנת    

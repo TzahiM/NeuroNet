@@ -3,12 +3,11 @@ from coplay import models
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task
 from django import forms
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
+from django.contrib.auth.models import User
 from django.core.mail.message import EmailMessage
 from django.forms.extras.widgets import SelectDateWidget
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.template import context
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.views import generic
@@ -27,7 +26,7 @@ class IndexView(generic.ListView):
     
 
     def get_queryset(self):
-        return Discussion.objects.order_by('-updated_at')
+        return Discussion.objects.order_by('-locked_at')
     
    
 class AddFeedbackForm(forms.Form):
@@ -40,7 +39,7 @@ class UpdateDiscussionForm(forms.Form):
  
     
 class AddDecisionForm(forms.Form):
-    content = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= { 'rows': '3'}))
+    content = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, label='', widget=forms.Textarea(attrs= { 'rows': '3', 'class': 'form-control'}))
 
 
 class VoteForm(forms.Form):
@@ -48,7 +47,7 @@ class VoteForm(forms.Form):
 
 
 class AddTaskForm(forms.Form):
-    goal_description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea(attrs= { 'rows': '3'}))
+    goal_description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS, label='', widget=forms.Textarea(attrs= { 'rows': '3', 'class': 'form-control'}))
     target_date =  forms.DateTimeField( widget = SelectDateWidget)
     
 class UpdateTaskForm(forms.Form):
@@ -66,7 +65,7 @@ def discussion_details(request, pk):
     list_intuition   =discussion.feedback_set.all().filter( feedbabk_type = Feedback.INTUITION  ).order_by( "-created_at")
     list_advice      =discussion.feedback_set.all().filter( feedbabk_type = Feedback.ADVICE     ).order_by( "-created_at")
     list_decision   =discussion.decision_set.all().order_by( "-created_at") 
-    list_tasks       =discussion.task_set.all().order_by( "-created_at")
+    list_tasks       =discussion.task_set.all().order_by( "-target_date")
     like_levels = LikeLevel.level 
     
     vote_form = None
@@ -120,8 +119,8 @@ def add_discussion(request):
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
             user = request.user
             
-            list = Discussion.objects.all().filter(owner =user, title = form.cleaned_data['title'])
-            if list.count() != 0:
+            discussions_list = Discussion.objects.all().filter(owner =user, title = form.cleaned_data['title'])
+            if discussions_list.count() != 0:
                 return render(request, 'coplay/message.html', 
                       {  'message'      :  'כבר קיים עבורך דיון באותו נושא',
                        'rtl': 'dir="rtl"'})
@@ -150,18 +149,18 @@ def send_html_message( subject, html_content, from_email, to_list):
     msg.send()
 
 
-def discussion_email_updates(discussion, subject):
+def discussion_email_updates(discussion, subject, logged_in_user):
 
     attending_list = discussion.get_attending_list(True)
     html_message = render_to_string("coplay/email_discussion_update.html", { 'ROOT_URL': 'www.kuterless.org.il', 
                                                                            'discussion': discussion })
                 
     for attensdent in attending_list:
-        if attensdent.email:
+        if attensdent.email and attensdent is not logged_in_user:
             send_html_message(subject, html_message, 'do-not-reply@kuterless.org.il', [attensdent.email])
 
 
-def discussion_task_email_updates(task, subject):
+def discussion_task_email_updates(task, subject, logged_in_user):
 
     attending_list = task.parent.get_attending_list(True)
     
@@ -169,7 +168,7 @@ def discussion_task_email_updates(task, subject):
                                                                            'task': task })
                 
     for attensdent in attending_list:
-        if attensdent.email:
+        if attensdent.email and attensdent is not logged_in_user:
             send_html_message(subject, html_message, 'do-not-reply@kuterless.org.il', [attensdent.email])
 
 
@@ -196,7 +195,7 @@ def update_discussion(request, pk):
             user = request.user
             if user == discussion.owner:
                 discussion.update_description( form.cleaned_data['description'] )
-                discussion_email_updates(discussion, 'עידכון מטרות בפעילות שבהשתתפותך')
+                discussion_email_updates(discussion, 'עידכון מטרות בפעילות שבהשתתפותך', request.user)
                 
                 return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
             return render(request, 'coplay/message.html', 
@@ -243,7 +242,7 @@ def add_feedback(request, pk):
                 return HttpResponse('Discussion not found')
             if user != discussion.owner and form.cleaned_data['feedbabk_type']  and form.cleaned_data['content']:
                 discussion.add_feedback( user,  form.cleaned_data['feedbabk_type'] , form.cleaned_data['content'])
-                discussion_email_updates(discussion, 'התקבלה תגובה חדשה בפעילות שבהשתתפותך')
+                discussion_email_updates(discussion, 'התקבלה תגובה חדשה בפעילות שבהשתתפותך', request.user)
                 
                 
             return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
@@ -264,14 +263,14 @@ def add_decision(request, pk):
                 return HttpResponse('Discussion not found')
             user = request.user
             if user == discussion.owner:
-                list = Decision.objects.all().filter( content = form.cleaned_data['content'], parent = discussion)
-                if list.count() != 0:
+                decisions_list = Decision.objects.all().filter( content = form.cleaned_data['content'], parent = discussion)
+                if decisions_list.count() != 0:
                     return render(request, 'coplay/message.html', 
                           {  'message'      :  'כבר רשומה עבורך החלטה באותו נושא',
                            'rtl': 'dir="rtl"'})
                
                 discussion.add_decision( form.cleaned_data['content'] )
-                discussion_email_updates(discussion, 'התקבלה התלבטות חדשה בפעילות שבהשתתפותך')
+                discussion_email_updates(discussion, 'התקבלה התלבטות חדשה בפעילות שבהשתתפותך', request.user)
                 
                 
                 
@@ -326,8 +325,8 @@ def add_task(request, pk):
                       {  'message'      :  'תאריך היעד חייב להיות בעתיד' + str(target_date),
                        'rtl': 'dir="rtl"'})
                 
-            list = Task.objects.all().filter(responsible =user, goal_description = form.cleaned_data['goal_description'], parent = discussion)
-            if list.count() != 0:
+            tasks_list = Task.objects.all().filter(responsible =user, goal_description = form.cleaned_data['goal_description'], parent = discussion)
+            if tasks_list.count() != 0:
                 return render(request, 'coplay/message.html', 
                       {  'message'      :  'כבר רשומה עבורך משימה באותו נושא',
                        'rtl': 'dir="rtl"'})
@@ -336,7 +335,7 @@ def add_task(request, pk):
                                  form.cleaned_data['goal_description'] ,
                                  form.cleaned_data['target_date'] )
             
-            discussion_task_email_updates(new_task, 'נוספה משימה חדשה בפעילות שבהשתתפותך')
+            discussion_task_email_updates(new_task, 'נוספה משימה חדשה בפעילות שבהשתתפותך', request.user)
             
             
             return HttpResponseRedirect(new_task.get_absolute_url()) # Redirect after POST
@@ -391,7 +390,7 @@ def update_task_description(request, pk):
             user = request.user
             if user == task.responsible:
                 task.update_status_description( form.cleaned_data['status_description'] )
-                discussion_task_email_updates(task, 'עודכנה משימה בפעילות שבהשתתפותך. יתכן ואפשר לסגור את המשימה')
+                discussion_task_email_updates(task, 'עודכנה משימה בפעילות שבהשתתפותך. יתכן ואפשר לסגור את המשימה', request.user)
 
             return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
             
@@ -407,9 +406,73 @@ def close_task(request, pk):
     user = request.user
     if user != task.responsible:
         task.close( user )
-        discussion_task_email_updates(task, 'הושלמה משימה בפעילות שבהשתתפותך')
+        discussion_task_email_updates(task, 'הושלמה משימה בפעילות שבהשתתפותך', request.user)
         
         
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
     
+def show_coplay_report( request, tasks_list, discussions_list, page_name = ''):
+    
+    
+    sorted_tasks_list = tasks_list.order_by( "-target_date")
+    tasks_open_by_increased_time_left = []
+    tasks_closed_by_reverse_time = []
+    tasks_missed_by_reverse_time = []
+    for task in sorted_tasks_list:
+        status =  task.get_status()
+        if status is task.STARTED:
+            tasks_open_by_increased_time_left.append(task)        
+        if status is task.CLOSED:
+            tasks_closed_by_reverse_time.append(task)
+        if status is task.MISSED:
+            tasks_missed_by_reverse_time.append(task)
+    
+    discussions_active_by_increase_time_left = [] 
+    discussions_locked_by_increase_locked_at = []
+        
+    
+    sorted_discussions = discussions_list.order_by( "-locked_at")
+    for discussion in sorted_discussions:
+        if discussion.is_active():
+            discussions_active_by_increase_time_left.append(discussion)
+        else:
+            discussions_locked_by_increase_locked_at.append(discussion)   
+        
+    
+    return render(request, 'coplay/coplay_report.html', 
+         {  'tasks_open_by_increased_time_left'      :  tasks_open_by_increased_time_left     ,      
+            'tasks_closed_by_reverse_time'  : tasks_closed_by_reverse_time  ,   
+            'tasks_missed_by_reverse_time': tasks_missed_by_reverse_time, 
+            'discussions_active_by_increase_time_left'  : discussions_active_by_increase_time_left  ,
+            'discussions_locked_by_increase_locked_at'     : discussions_locked_by_increase_locked_at     ,
+            'page_name'       : page_name })
+
+    
+def get_user_fullname_or_username(user):
+    full_name =  user.get_full_name()
+    if full_name:
+        return full_name
+    return user.username
+    
+def user_coplay_report(request, username = None):
+    if username:
+        try:
+            user = User.objects.get(username = username)
+        except User.DoesNotExist:
+            return HttpResponse('User not found')
+    else:
+        user = request.user
+        
+    
+    if user == request.user:
+        page_name = u'הפעילות שלי '
+    else:
+        page_name = u'הפעילות של ' + get_user_fullname_or_username(user)
+        
+    
+    tasks_list = Task.objects.filter( responsible = user  )
+    discussions_list = Discussion.objects.filter( owner = user  )
+    
+         
+    return show_coplay_report( request, tasks_list, discussions_list, page_name) 
 

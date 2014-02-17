@@ -29,7 +29,12 @@ urlpatterns = patterns('',
 #pk (of task)/update_task_description  
     url(r'^(?P<pk>\d+)/update_task/$', views.update_task_description, name='update_task_status_description'),
 #pk (of task)/close_task
-    url(r'^(?P<pk>\d+)/close_task/$', views.close_task, name='close_task'),        
+    url(r'^(?P<pk>\d+)/close_task/$', views.close_task, name='close_task'),     
+#/username/user_coplay_report
+# ex: labs/coplay/Tzahim/user_coplay_report
+    url(r'^(?P<username>.+)/user_coplay_report/$', views.user_coplay_report, name='user_coplay_report'),
+            
+       
 )
 
 

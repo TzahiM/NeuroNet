@@ -17,6 +17,7 @@ class Discussion(models.Model):
                                    validators=[MaxLengthValidator(MAX_TEXT)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    locked_at = models.DateTimeField(default = None, blank=True, null=True)
 
     def __unicode__(self):
         return self.id
@@ -43,15 +44,17 @@ class Discussion(models.Model):
 
 
 
-    def add_task(self, responsible, goal_description, target_date):
-        return self.task_set.create(parent=self, responsible = responsible, 
+    def add_task(self, responsible, goal_description, target_date, max_inactivity_seconds = MAX_INACTIVITY_SECONDS):
+        self.locked_at = timedelta(seconds = max_inactivity_seconds) + timezone.now()
+        task = self.task_set.create(parent=self, responsible = responsible, 
                          goal_description = goal_description, 
-                         target_date =  target_date)
-#         task.clean()
-#         task.save()
-#         return task
-
-    def is_active_and_time_to_inactivation(self, max_inactivity_seconds = MAX_INACTIVITY_SECONDS):
+                         target_date =  target_date)        
+        self.save()
+        task.clean()
+        task.save()
+        return task
+     
+    def is_active_and_time_to_inactivation_obsolete(self, max_inactivity_seconds = MAX_INACTIVITY_SECONDS):
         now = timezone.now()
         list_tasks  = self.task_set.all().order_by( "-created_at")
         if list_tasks:
@@ -75,8 +78,39 @@ class Discussion(models.Model):
         discussion_is_active = False
         time_left =  0
         return discussion_is_active , time_left       
+
+
+
+    def is_active_and_time_to_inactivation(self, max_inactivity_seconds = MAX_INACTIVITY_SECONDS):
+        now = timezone.now()
+        if self.locked_at is None:#init self.created_at for the first time
+            discussion_is_active , time_left = self.is_active_and_time_to_inactivation_obsolete(max_inactivity_seconds)
+            if discussion_is_active:
+                self.locked_at = now +   time_left
+                self.save();
+                return discussion_is_active , time_left
+            list_tasks  = self.task_set.all().order_by( "-created_at")
+            if list_tasks:
+                latest_task = list_tasks.first()
+                self.locked_at = latest_task.created_at + timedelta(seconds = max_inactivity_seconds)
+                self.save();
+                return discussion_is_active , time_left 
+                
+            self.locked_at = self.created_at + timedelta(seconds = max_inactivity_seconds)
+            self.save();
+            return discussion_is_active , time_left
+                        
+        if now >= self.locked_at:
+            discussion_is_active = False
+            time_left = 0
+            return discussion_is_active , time_left
         
+        discussion_is_active = True
         
+        time_left = self.locked_at - now
+        
+        return discussion_is_active , time_left
+            
 
     def is_active(self):
         discussion_is_active,  time_left =  self.is_active_and_time_to_inactivation()
@@ -285,9 +319,9 @@ class Task(models.Model):
     MISSED = 3
 
     STATUS_CHOICES = (
-        (STARTED, 'פעיל'),
-        (CLOSED, 'נסגר'),
-        (MISSED, 'פיספוס'),
+        (STARTED, 'בדרך'),
+        (CLOSED, 'הושלמה'),
+        (MISSED, 'פוספסה'),
     )
 
     parent = models.ForeignKey(Discussion, null=True, blank=True)

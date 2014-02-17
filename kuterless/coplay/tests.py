@@ -264,11 +264,15 @@ class CoPlayTest(TestCase):
         
         d.print_content()
         max_inactivity_seconds = 1
+        d.locked_at = None
+        d.save()        
         active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
         print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, False)
         
         max_inactivity_seconds = 5
+        d.locked_at = None
+        d.save()                
         active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
         print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, True)
@@ -276,13 +280,15 @@ class CoPlayTest(TestCase):
         time.sleep(3)
         
         max_inactivity_seconds = 5
+        d.locked_at = None
+        d.save()                
         active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
         print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, False)
         time.sleep(1)
         
-        task3= d.add_task(self.admin, 'shall cause activation', timezone.now() +  datetime.timedelta(seconds =2))
         max_inactivity_seconds = 5
+        task3= d.add_task(self.admin, 'shall cause activation', timezone.now() +  datetime.timedelta(seconds =2), max_inactivity_seconds)
         active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
         print 'at max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, True)
@@ -301,8 +307,8 @@ class CoPlayTest(TestCase):
         print 'after 2 sec max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, True)
 
-        task3= d.add_task(self.admin, '1st task', timezone.now() +  datetime.timedelta(seconds =2))
         max_inactivity_seconds = 5
+        task3= d.add_task(self.admin, '1st task', timezone.now() +  datetime.timedelta(seconds =2), max_inactivity_seconds)
         active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
         print 'after add a task max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, True)
@@ -313,8 +319,8 @@ class CoPlayTest(TestCase):
         
         self.assertEquals(active, False)
         
-        task3= d.add_task(self.admin, '2nd task', timezone.now() +  datetime.timedelta(seconds =2))
         max_inactivity_seconds = 5
+        task3= d.add_task(self.admin, '2nd task', timezone.now() +  datetime.timedelta(seconds =2), max_inactivity_seconds)
         active, time_left = d.is_active_and_time_to_inactivation(  max_inactivity_seconds)
         print 'discussion should be unlocked task max_inactivity_seconds', max_inactivity_seconds, 'active', active, 'time left', time_left
         self.assertEquals(active, True)

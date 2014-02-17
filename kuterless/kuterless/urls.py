@@ -1,6 +1,9 @@
+from public_fulfillment.views import root
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django_notify.urls import get_pattern as get_notify_pattern
 from public_fulfillment.views import labs_root, about
+from wiki.urls import get_pattern as get_wiki_pattern
 
 
 admin.autodiscover()
@@ -12,7 +15,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^$', about, name='home'),
+    url(r'^$', root, name='home'),
     
     url(r'^public_fulfillment/', include('public_fulfillment.urls', namespace="public_fulfillment")),
 
@@ -33,8 +36,6 @@ urlpatterns = patterns('',
 )
 
 
-from wiki.urls import get_pattern as get_wiki_pattern
-from django_notify.urls import get_pattern as get_notify_pattern
 urlpatterns += patterns('',
     (r'^notify/', get_notify_pattern()),
     (r'^wiki/', get_wiki_pattern())
