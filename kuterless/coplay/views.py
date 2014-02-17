@@ -156,7 +156,7 @@ def discussion_email_updates(discussion, subject, logged_in_user):
                                                                            'discussion': discussion })
                 
     for attensdent in attending_list:
-        if attensdent.email and attensdent is not logged_in_user:
+        if attensdent.email and attensdent != logged_in_user:
             send_html_message(subject, html_message, 'do-not-reply@kuterless.org.il', [attensdent.email])
 
 
@@ -168,7 +168,7 @@ def discussion_task_email_updates(task, subject, logged_in_user):
                                                                            'task': task })
                 
     for attensdent in attending_list:
-        if attensdent.email and attensdent is not logged_in_user:
+        if attensdent.email and attensdent !=  logged_in_user:
             send_html_message(subject, html_message, 'do-not-reply@kuterless.org.il', [attensdent.email])
 
 
