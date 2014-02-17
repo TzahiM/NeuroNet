@@ -18,7 +18,7 @@
             	{%if user == task.responsible %}
 					<p>באחריותך</p>
             	{%else%}
-					<p>	באחריות:  {{task.responsible.get_full_name | default:task.responsible.username}}</p>
+					<p>	באחריות:  <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a></p>
             	{% endif %}
 				
 				<p>מצב : {{task.get_status_display}}</p>
@@ -32,7 +32,7 @@
 	
 	{% if task.get_status == task.CLOSED %}
 		<p> {{task.closed_at }} נסגר ב</p>
-		<p>			על ידי: {{ task.closed_by.get_full_name|default:task.closed_by.username}} 		</p>
+		<p>			על ידי: <a  href="{% url 'coplay:user_coplay_report'  task.closed_by.username %}">{{ task.closed_by.get_full_name|default:task.closed_by.username }}</a>		</p>
 	{% endif %}
 
 	{% if close_possible %}

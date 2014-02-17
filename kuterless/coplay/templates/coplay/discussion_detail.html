@@ -36,7 +36,7 @@
             	{% if user == discussion.owner %}
 	            	זאת הפעילות שלך
             	{% else %}
-                	זו הפעילות של {{ discussion.owner.get_full_name|default:discussion.owner.username }}
+                	זו הפעילות של <a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
                 {% endif %}
                 
                {% if not user.is_authenticated %}
@@ -120,7 +120,7 @@
 					{% for feedback in list_encourage %}
 					<li class="list-group-item">
 					 			<div {% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
+					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -134,7 +134,7 @@
 					{% for feedback in list_cooperation %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
+					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -148,7 +148,7 @@
 					{% for feedback in list_intuition %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
+					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -162,7 +162,7 @@
 					{% for feedback in list_advice %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			{{ feedback.user.get_full_name|default:feedback.user.username }}:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
+					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -201,7 +201,7 @@
 				
 				 		<li class="list-group-item">
 				 			{{task.goal_description|urlize|linebreaks}}<br>
-				 			באחריות {{ task.responsible.get_full_name|default:task.responsible.username}} 
+				 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
 				 			  
 				 			יושלם עד {{task.target_date }} {{ task.get_status_display }}
 				 			
