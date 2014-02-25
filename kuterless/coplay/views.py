@@ -65,7 +65,7 @@ def discussion_details(request, pk):
     list_intuition   =discussion.feedback_set.all().filter( feedbabk_type = Feedback.INTUITION  ).order_by( "-created_at")
     list_advice      =discussion.feedback_set.all().filter( feedbabk_type = Feedback.ADVICE     ).order_by( "-created_at")
     list_decision   =discussion.decision_set.all().order_by( "-created_at") 
-    list_tasks       =discussion.task_set.all().order_by( "-target_date")
+    list_tasks       =discussion.task_set.all().order_by( "target_date")
     like_levels = LikeLevel.level 
     
     vote_form = None
@@ -411,41 +411,33 @@ def close_task(request, pk):
         
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
     
-def show_coplay_report( request, tasks_list, discussions_list, page_name = ''):
+
+def get_discussions_lists():
+    sorted_discussions_by_inverse_locket_at_list = Discussion.objects.all().order_by( "-locked_at")
+    sorted_discussions_by_locket_at_list = Discussion.objects.all().order_by( "locked_at")
     
+    active_discussions_by_urgancy_list = []
+    locked_discussions_by_relevancy_list = []
     
-    sorted_tasks_list = tasks_list.order_by( "-target_date")
-    tasks_open_by_increased_time_left = []
-    tasks_closed_by_reverse_time = []
-    tasks_missed_by_reverse_time = []
-    for task in sorted_tasks_list:
-        status =  task.get_status()
-        if status is task.STARTED:
-            tasks_open_by_increased_time_left.append(task)        
-        if status is task.CLOSED:
-            tasks_closed_by_reverse_time.append(task)
-        if status is task.MISSED:
-            tasks_missed_by_reverse_time.append(task)
-    
-    discussions_active_by_increase_time_left = [] 
-    discussions_locked_by_increase_locked_at = []
-        
-    
-    sorted_discussions = discussions_list.order_by( "-locked_at")
-    for discussion in sorted_discussions:
+    for discussion in sorted_discussions_by_inverse_locket_at_list:
+        if not discussion.is_active():
+            locked_discussions_by_relevancy_list.append(discussion)
+
+    for discussion in sorted_discussions_by_locket_at_list:
         if discussion.is_active():
-            discussions_active_by_increase_time_left.append(discussion)
-        else:
-            discussions_locked_by_increase_locked_at.append(discussion)   
-        
+            active_discussions_by_urgancy_list.append(discussion)
     
-    return render(request, 'coplay/coplay_report.html', 
-         {  'tasks_open_by_increased_time_left'      :  tasks_open_by_increased_time_left     ,      
-            'tasks_closed_by_reverse_time'  : tasks_closed_by_reverse_time  ,   
-            'tasks_missed_by_reverse_time': tasks_missed_by_reverse_time, 
-            'discussions_active_by_increase_time_left'  : discussions_active_by_increase_time_left  ,
-            'discussions_locked_by_increase_locked_at'     : discussions_locked_by_increase_locked_at     ,
-            'page_name'       : page_name })
+    
+    return active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list
+
+def get_tasks_lists():
+    for task in Task.objects.all():
+        task.refresh_status()
+    open_tasks_list_by_urgancy_list = Task.objects.all().filter( status = Task.STARTED).order_by("target_date")
+    closed_tasks_list_by_relevancy_list = Task.objects.all().filter( status = Task.CLOSED).order_by("-closed_at")
+    missed_tasks_list_by_relevancy_list = Task.objects.all().filter( status = Task.MISSED).order_by("-target_date")
+    
+    return open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, missed_tasks_list_by_relevancy_list
 
     
 def get_user_fullname_or_username(user):
@@ -469,10 +461,53 @@ def user_coplay_report(request, username = None):
     else:
         page_name = u'הפעילות של ' + get_user_fullname_or_username(user)
         
+    open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, missed_tasks_list_by_relevancy_list = get_tasks_lists()
     
-    tasks_list = Task.objects.filter( responsible = user  )
-    discussions_list = Discussion.objects.filter( owner = user  )
+    active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
     
-         
-    return show_coplay_report( request, tasks_list, discussions_list, page_name) 
+    user_s_open_tasks_list = []
+    other_users_open_tasks_list = []
+    missed_tasks_list = []
+    user_closed_tasks_list = []
+    
+    for task in open_tasks_list_by_urgancy_list:
+        if task.responsible == user:
+            user_s_open_tasks_list.append(task)
+        else:
+            discussion = task.parent
+            if user in discussion.get_attending_list(include_owner = True):
+                other_users_open_tasks_list.append(task)
+
+    for task in missed_tasks_list_by_relevancy_list:
+        discussion = task.parent
+        if user in discussion.get_attending_list(include_owner = True):
+            missed_tasks_list.append(task)
+            
+    for task in closed_tasks_list_by_relevancy_list:
+        if task.responsible == user:
+            user_closed_tasks_list.append(task)
+            
+            
+    user_discussions_active = []
+    user_discussions_locked = []
+    
+    for discussion in active_discussions_by_urgancy_list:
+        if user in discussion.get_attending_list(include_owner = True):
+            user_discussions_active.append(discussion)
+            
+    for discussion in locked_discussions_by_relevancy_list:
+        if user in discussion.get_attending_list(include_owner = True):
+            user_discussions_locked.append(discussion)
+
+            
+    
+    return render(request, 'coplay/coplay_report.html', 
+         {  'tasks_open_by_increased_time_left'      :  user_s_open_tasks_list     ,
+            'tasks_others_open_by_increased_time_left': other_users_open_tasks_list,      
+            'discussions_active_by_increase_time_left'  : user_discussions_active  ,
+            'discussions_locked_by_increase_locked_at'     : user_discussions_locked     ,
+            'tasks_closed_by_reverse_time'  : user_closed_tasks_list  ,   
+            'tasks_missed_by_reverse_time': missed_tasks_list,
+            'applicabale_user'            :  user   ,
+            'page_name'       : page_name })
 

@@ -2,10 +2,14 @@
 
 {% block content %}
 <center>
-	<a class="btn btn-success" href="#TasksOpen">משימות פתוחות</a>    
-	<a class="btn btn-success" href="#TasksClosed">משימות שהושלמו</a>
-	<a class="btn btn-success" href="#DiscussionsActive">פעילויות פעילות</a>
+	<a class="btn btn-success" href="#TasksOpen">משימות פתוחות אישיות</a>    
+	<a class="btn btn-success" href="#TasksOpenOthers">משימות פתוחות של אחרים  </a>
+	<a class="btn btn-success" href="#DiscussionsActive">פעילויות פעילות </a>
 	<a class="btn btn-success" href="#DiscussionsLocked">פעילויות לא פעילות</a>
+	<a class="btn btn-success" href="#TasksClosed">משימות שהושלמו</a>
+	<a class="btn btn-success" href="#TasksMissedAll">משימות מפוספסות של כולם</a>
+	<a class="btn btn-success" href="{% url 'coplay:discussions_list' %}">רשימת כל הפעילויות</a>
+	
 	
 </center>
 
@@ -19,39 +23,26 @@
             	</center>
             	
                 </div>         
-            
-            <div class="row">
-                <div class="col-sm-2 col-md-6" id = "DiscussionsActive">
-                	<center><h2>פעילויות פעילות</h2></center>
-					<ul>
-					{% for discussion in discussions_active_by_increase_time_left %}
-					    <li  class="list-group-item">
-						    	<a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
-						    	  רוצה עזרה ב  
-						    	{{ discussion.title }}
-						    	{{ discussion.updated_at|date }}
-						    	עלול להינעל עוד 
-						    	{{ discussion.get_time_to_inactivation }}
-					
-						<a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a></li> 
-					{% empty %}
-					    <center><li class="list-group-item">אין</li></center>
-					{% endfor %}
-					</ul>
-				
-                </div>
-                <div class="col-sm-2 col-md-6" id = "TasksOpen">
-                	<center><h2>משימות בעבודה</h2></center>
+                
+			<div class="row">
+                <div class="col-sm-2 col-md-6" id = "TasksOpenOthers">
+                	<center><h2>משימות פתוחות של אחרים</h2></center>
 	                	<ul>
-					{% for task in tasks_open_by_increased_time_left %}
+					{% for task in tasks_others_open_by_increased_time_left %}
 					
 					 		<li class="list-group-item">
+					 			{% if  task.parent.owner == applicabale_user%}
+					 			<h3>
+					 			{% endif %}
 					 			{{task.goal_description|urlize|linebreaks}}<br>
 					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
 					 			  
 					 			נשאר לסיום {{task.get_time_until_target }}
 					 			
 					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
+					 			{% if  task.parent.owner == applicabale_user%}
+					 			</h3>
+					 			{% endif %}
 	
 					 		</li>
 					{% empty %}
@@ -60,14 +51,46 @@
 					</ul>
                 </div>
 
-            </div>
-
+                <div class="col-sm-2 col-md-6" id = "TasksOpen">
+                	<center><h2>  משימות פתוחות אישיות </h2></center>
+	                	<ul>
+					{% for task in tasks_open_by_increased_time_left %}
+					
+					 		<li class="list-group-item">
+					 			{% if  task.parent.owner == applicabale_user%}
+					 			<h3>
+					 			{% endif %}
+					 			{{task.goal_description|urlize|linebreaks}}<br>
+					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
+					 			  
+					 			נשאר לסיום {{task.get_time_until_target }}
+					 			
+					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
+					 			{% if  task.parent.owner == applicabale_user%}
+					 			</h3>
+					 			{% endif %}
+	
+					 		</li>
+					{% empty %}
+					    <center><li class="list-group-item">אין</li></center>
+					{% endfor %}
+					</ul>
+                </div>
+                
+				                
+            </div>   
+            
             <div class="row">
+             
                 <div class="col-sm-2 col-md-6" id = "DiscussionsLocked">
                 	<center><h2>פעילויות לא פעילות</h2></center>
 					<ul>
 					{% for discussion in discussions_locked_by_increase_locked_at %}
 						<li class="list-group-item">
+					    	{% if discussion.owner == applicabale_user %}
+					    	<h3>
+					    	{% endif %}
+
 							<a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>		    	
 				    	  רצה/תה  עזרה ב  
 				    		{{ discussion.title }}
@@ -76,6 +99,9 @@
 			              	{{ discussion.locked_at|date }}
 						
 							<a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a>
+					    	{% if discussion.owner == applicabale_user %}
+					    	</h3>
+					    	{% endif %}
 						</li> 
 					{% empty %}
 					    <center><li class="list-group-item">אין</li></center>
@@ -83,18 +109,89 @@
 					</ul>
 				
                 </div>
+             
+             
+             
+                <div class="col-sm-2 col-md-6" id = "DiscussionsActive">
+                	<center><h2>פעילויות פעילות</h2></center>
+					<ul>
+					{% for discussion in discussions_active_by_increase_time_left %}
+					    <li  class="list-group-item">
+					    	{% if discussion.owner == applicabale_user %}
+					    	<h3>
+					    	{% endif %}
+						    	<a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
+						    	  רוצה עזרה ב  
+						    	{{ discussion.title }}
+						    	{{ discussion.updated_at|date }}
+						    	עלול להינעל עוד 
+						    	{{ discussion.get_time_to_inactivation }}
+					
+							<a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a>
+					    	{% if discussion.owner == applicabale_user %}
+					    	</h3>
+					    	{% endif %}
+						</li> 
+					{% empty %}
+					    <center><li class="list-group-item">אין</li></center>
+					{% endfor %}
+					</ul>
+				
+                </div>
+
+
+            </div>
+            
+
+            <div class="row">
+            	
+                <div class="col-sm-2 col-md-6" id = "TasksMissedAll">
+                	<center><h2>משימות שפוספסו</h2></center>
+	                	<ul>
+					{% for task in tasks_missed_by_reverse_time  %}
+					
+					 		<li class="list-group-item">
+					 			{% if  task.parent.owner == applicabale_user%}
+					 			<h3>
+					 			{% endif %}
+					 			
+					 			{{task.goal_description|urlize|linebreaks}}<br>
+					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
+					 			פוספסה ב {{task.target_date }}
+					 			
+					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
+					 			{% if  task.parent.owner == applicabale_user%}
+					 			</h3>
+					 			{% endif %}
+	
+					 		</li>
+					{% empty %}
+					    <center><li class="list-group-item">אין</li></center>
+					{% endfor %}
+					</ul>
+                </div>
+            	
+            	
+            	
                 <div class="col-sm-2 col-md-6" id = "TasksClosed">
-                	<center><h2>משימות שהושלמו</h2></center>
+                	<center><h2>משימות אישיות שהושלמו</h2></center>
 	                	<ul>
 					{% for task in tasks_closed_by_reverse_time %}
 					
 					 		<li class="list-group-item">
+					 			{% if  task.parent.owner == applicabale_user%}
+					 			<h3>
+					 			{% endif %}
+					 			
 					 			{{task.goal_description|urlize|linebreaks}}<br>
 					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
 					 			נסגרה ב {{task.closed_at }} 
 					על ידי: {{ task.closed_by.get_full_name|default:task.closed_by.username}}
 					 			
 					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
+					 			{% if  task.parent.owner == applicabale_user%}
+					 			</h3>
+					 			{% endif %}
 	
 					 		</li>
 					{% empty %}
@@ -104,7 +201,12 @@
 				
                 </div>
 
+
+
             </div>
+            
+            
+            
 		</div>
 		
 
