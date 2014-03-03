@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-03 14:03+0200\n"
-"PO-Revision-Date: 2014-03-03 14:04+0200\n"
+"POT-Creation-Date: 2014-03-03 16:02+0200\n"
+"PO-Revision-Date: 2014-03-03 16:03+0200\n"
 "Last-Translator: Udi Oron <udioron@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,13 +17,69 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.5.7\n"
 
-#: .\models.py:16 .\views.py:110
+#: .\models.py:18 .\views.py:125
 msgid "title"
 msgstr "כותרת"
 
-#: .\models.py:17 .\views.py:111
+#: .\models.py:19
+msgid "Description"
+msgstr "תיאור"
+
+#: .\views.py:128
 msgid "description"
 msgstr "תיאור"
+
+#: .\views.py:157
+msgid "Your activity was created successfully"
+msgstr "הפעילות נוצרה בהצלחה"
+
+#: .\templates\coplay\decision_form.html:9
+#: .\templates\coplay\discussion_detail.html:237
+msgid "Create Decision"
+msgstr "התלבטות חדשה"
+
+#: .\templates\coplay\decision_form.html:14
+#: .\templates\coplay\discussion_form.html:14
+#: .\templates\coplay\feedback_form.html:14
+#: .\templates\coplay\task_form.html:14
+msgid "Save"
+msgstr "שמירה"
+
+#: .\templates\coplay\discussion_confirm_delete.html:9
+#: .\templates\coplay\discussion_confirm_delete.html:15
+msgid "Delete"
+msgstr "מחיקה"
+
+#: .\templates\coplay\discussion_confirm_delete.html:14
+msgid "Are you sure?"
+msgstr "האם אתה בטוח?"
+
+#: .\templates\coplay\discussion_detail.html:34
+#: .\templates\coplay\discussion_form.html:9
+msgid "Edit"
+msgstr "עריכה"
+
+#: .\templates\coplay\discussion_detail.html:43
+msgid "Created:"
+msgstr "נוצר:"
+
+#: .\templates\coplay\discussion_detail.html:48
+msgid "Updated:"
+msgstr "עודכן:"
+
+#: .\templates\coplay\discussion_detail.html:97
+#: .\templates\coplay\feedback_form.html:9
+msgid "Create Feedback"
+msgstr "הוספת תגובה"
+
+#: .\templates\coplay\discussion_detail.html:196
+#: .\templates\coplay\task_form.html:9
+msgid "Create Task"
+msgstr "הוספת משימה"
+
+#: .\templates\coplay\discussion_detail.html:200
+msgid "Tasks"
+msgstr "משימות"
 
 #: .\templates\coplay\new_discussion.html:7
 msgid "New Activity"

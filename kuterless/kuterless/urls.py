@@ -27,7 +27,7 @@ urlpatterns = patterns('',
         'django.contrib.auth.views.login',
         {'template_name': 'login.html'}, name="login"),
 
-    url(r'^logout/$',
+    url(r'^alogout/$',
         'django.contrib.auth.views.logout',
         {'next_page': 'home'}, name="logout"),
     

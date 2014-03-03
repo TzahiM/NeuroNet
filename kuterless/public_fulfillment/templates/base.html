@@ -86,7 +86,7 @@
                     <li>
                         <a href="{% url 'public_fulfillment:update_profile' %}?next={{ request.path }}">עדכון
                             פרופיל</a></li>
-                    <li><a href="{% url 'logout' %}"> יציאה </a></li>
+                    <li><a href="{% url 'logout' %}?next={{ request.path }}"> יציאה </a></li>
                 {% else %}
                     <li>
                         <a href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a>
