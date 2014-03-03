@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
+from django.contrib import messages
 from coplay import models
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task
-from django import forms
+import floppyforms as forms
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail.message import EmailMessage
 from django.forms.extras.widgets import SelectDateWidget
 from django.http.response import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.views import generic
+from django.utils.translation import ugettext as _
 
 MAX_MESSAGE_INPUT_CHARS = 900
 
@@ -106,8 +108,8 @@ def discussion_details(request, pk):
 
 
 class NewDiscussionForm(forms.Form):
-    title = forms.CharField(max_length=200,  widget=forms.Textarea(attrs= { 'rows': '1', 'cols': '50'}))
-    description = forms.CharField(max_length= MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea)
+    title = forms.CharField(label=_("title"), max_length=200,  widget=forms.Textarea(attrs= { 'rows': '1', 'cols': '50'}))
+    description = forms.CharField(label=_("description"), max_length= MAX_MESSAGE_INPUT_CHARS, widget=forms.Textarea)
 
 
     
@@ -131,7 +133,8 @@ def add_discussion(request):
                                         description = form.cleaned_data['description'])
             new_discussion.clean()
             new_discussion.save()
-            return HttpResponseRedirect(new_discussion.get_absolute_url()) # Redirect after POST
+            messages.success(request, _("Your activity was created successfully"))
+            return redirect(new_discussion)
     else:
         form = NewDiscussionForm() # An unbound form
 

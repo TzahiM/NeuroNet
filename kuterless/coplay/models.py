@@ -5,6 +5,7 @@ from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
+from django.utils.translation import ugettext as _
 
 MAX_TEXT = 2000
 
@@ -12,8 +13,8 @@ MAX_INACTIVITY_SECONDS  = 7 * 24 * 3600
 
 class Discussion(models.Model):
     owner = models.ForeignKey(User)
-    title = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True,
+    title = models.CharField(_("title"), max_length=200)
+    description = models.TextField(_("description"), blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -390,6 +391,3 @@ class Task(models.Model):
         
     def print_content(self):
         print 'create', self.created_at, 'update', self.updated_at, 'status:', self.get_status_display(), 'now', timezone.now(), 'GoalDescription:', self.goal_description, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closed_at, self.status_description
-        
-        
-         
