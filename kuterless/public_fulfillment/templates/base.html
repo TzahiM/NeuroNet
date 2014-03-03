@@ -16,14 +16,14 @@
 		{% endif %}
     >
     <link rel="shortcut icon" href="{% static 'favicon.png' %}">
-	
+
 	<title>
 	{% if page_name %}
 		{{page_name}}
 	{% else %}
 		 קוטרלס - מה לעשות? לעשות ! (יעקב כץ)
 	{% endif %}
-	
+
     </title>
 
     <!-- Bootstrap core CSS -->
@@ -50,7 +50,7 @@
   ga('create', 'UA-47099729-1', 'kuterless.org.il');
   ga('send', 'pageview');
 
-</script>    
+</script>
   </head>
 
   <body>
@@ -68,7 +68,6 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-          	<li><a href="/">          ראשי          </a></li>
           	            {% if user.is_authenticated %}
               <li> <a href="{% url 'logout' %}"> יציאה </a> </li>
               <li><a href="#"> שלום {{ user.get_full_name|default:user.username }}</a></li>
@@ -78,51 +77,40 @@
               <li><a href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a></li>
             {% endif %}
 
-            
+
           </ul>
-          <ul class="nav navbar-nav navbar-right">     
-        	          	       
-            
+          <ul class="nav navbar-nav navbar-right">
+
+
             <li class="dropdown">
-              <a href="{% url 'labs_root' %}" class="dropdown-toggle" data-toggle="dropdown">פרפראות<b class="caret"></b></a>
+              <a href="{% url 'labs_root' %}" class="dropdown-toggle" data-toggle="dropdown">
+                  על אודות
+
+                  <b class="caret"></b></a>
               <ul  class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                <li><a href="{% url 'public_fulfillment:example' %}">למשל</a></li>
-                <li class="divider"></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a href="{% url 'labs_root' %}" class="dropdown-toggle" data-toggle="dropdown">המעבדות שלנו<b class="caret"></b></a>
-              <ul  class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                <li><a href="{% url 'coplay:coplay_root' %}">CoPlayWeb</a></li>
+          	<li><a href="/">
+                פתיחה
+            </a></li>
+                <li><a href="http://wiki.hasadna.org.il/index.php?title=%D7%94%D7%92%D7%A9%D7%9E%D7%94_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%AA">הגשמה ציבורית</a></li>
+
+                  <li>
+                      <a href="{% url 'public_fulfillment:example' %}">
+                                            פרפראות
+                      </a>
+                  </li>
                 <li><a href="{% url 'labs_root' %}#versions">מה חדש?</a></li>
                 <li class="divider"></li>
                 <li><a href="{% url 'labs_root' %}">איך אנחנו מפתחים?</a></li>
                 <li><a href="https://github.com/TzahiM/NeuroNet.git">למפתחים</a></li>
               </ul>
             </li>
-		   <li><a href="{% url 'coplay:coplay_root' %}">ביחד</a></li>
-           <li class="dropdown">             
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">פרויקטים<b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="http://wiki.hasadna.org.il/index.php?title=%D7%94%D7%92%D7%A9%D7%9E%D7%94_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%AA">הגשמה ציבורית</a></li>
-                <li class="divider"></li>
-                <li class="disabled"><a tabindex="-1" href="#">המשך יבוא</a></li>
-              </ul>
-            </li>
 
-            <li>  <a href="#" class="dropdown-toggle" data-toggle="dropdown">עושים<b class="caret"></b></a>
-              	<ul class="dropdown-menu">
-	                <li ><a href="{% url 'coplay:discussions_list' %}">עזרה לפעילות קיימת</a></li>
-	                <li ><a href="{% url 'coplay:add_discussion' %}">התחלת פעילות חדשה</a></li>
-	                <li ><a href="{% url 'coplay:discussion_details' 17 %}">פעילות לדוגמה</a></li>
-				</ul>
-			</li>
+            <li ><a href="{% url 'coplay:add_discussion' %}">התחלת פעילות חדשה</a></li>
+            <li ><a href="{% url 'coplay:discussions_list' %}">
+פעילויות קיימות
+            </a></li>
 
-            <li>  
-            	<a href="#" >אנשים</a>
-			</li>
-
-            <li><a class="navbar-brand" href="http://wiki.hasadna.org.il/index.php?title=%D7%94%D7%92%D7%A9%D7%9E%D7%94_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%AA">הגשמה ציבורית</a></li>
+              <li><a class="navbar-brand" href="{% url 'coplay:coplay_root' %}">CoPlayWeb</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -140,27 +128,27 @@
 
       <footer>
     <p>
-    	
+
     	<a href="https://hackita.hasadna.org.il"> מבית היוצר של  "הכיתה" מחזור סתיו 2013</a>
     	<br>
 
-התכנים חופשיים לשימוש תחת רשיון CC-BY והמטבח שלנו פתוח ושקוף -  
+התכנים חופשיים לשימוש תחת רשיון CC-BY והמטבח שלנו פתוח ושקוף -
       <a href="https://github.com/TzahiM/NeuroNet.git">כאן</a>
-      
+
     </p>
 
-                           
+
       </footer>
     </div> <!-- /container -->
 
 
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-    
-   
 
-    
-    
+
+
+
+
   </body>
 </html>
 
