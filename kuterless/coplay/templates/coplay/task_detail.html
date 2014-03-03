@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load humanize %}
+
 {% block content %}
 <center>
 	{% if False == user.is_authenticated %}
@@ -22,12 +24,12 @@
             	{% endif %}
 				
 				<p>מצב : {{task.get_status_display}}</p>
-				<p>תאריך יעד : {{task.target_date}}</p>       
+				<p>תאריך יעד : {{task.target_date |date:"d/n/Y H:i" }}</p>       
            </div>         
     </div>
             
 	<p> התחלה : {{task.created_at }}</p>
-	<p> זמן לסיום : {{task.get_time_until_target }}</p>
+	<p> זמן לסיום : {{task.target_date | naturaltime }}</p>
 	<p>מצב עדכני : {{task.get_status_description |urlize|linebreaks}} </p>
 	
 	{% if task.get_status == task.CLOSED %}

@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load humanize %}
+
 {% block content %}
 <center>
 	{% if False == user.is_authenticated %}
@@ -26,7 +28,7 @@
             		<h1>{{ discussion.title |urlize|linebreaks}}</h1>
 	            	{% if discussion.is_active %}
 	            	
-	            	    <h3> אם לא יהיו משימות חדשות, הפעילות עלולה להינעל עוד {{discussion.get_time_to_inactivation }} </h3>
+	            	    <h3> אם לא יהיו משימות חדשות, הפעילות עלולה להינעל עוד {{discussion.locked_at | timeuntil}} </h3>
 	            	{% else %}
 	            	    <h3> הפעילות ננעלה עקב חוסר נוכחי של משימות חדשות</h3>
 	            	{% endif %}
@@ -94,8 +96,8 @@
 				{% if discussion.description %}
 				    <h4>המטרות של הדיון והעזרה המבוקשת מהמשתתפים</h4> 
 				    <p>{{ discussion.description|urlize|linebreaks }}</p>
-				    <p> נוצר  ב {{discussion.created_at }} </p>
-				    <p> עודכן לאחרונה ב {{discussion.updated_at }} </p>
+				    <p> נוצר  ב {{discussion.created_at | naturaltime }} </p>
+				    <p> עודכן לאחרונה ב {{discussion.updated_at | naturaltime}} </p>
 				{% else %}
 				    <p>אין תיאור נוסף</p>
 				{% endif %}
@@ -120,7 +122,7 @@
 					{% for feedback in list_encourage %}
 					<li class="list-group-item">
 					 			<div {% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
+					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime}}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -134,7 +136,7 @@
 					{% for feedback in list_cooperation %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
+					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime}}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -148,7 +150,7 @@
 					{% for feedback in list_intuition %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
+					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -162,7 +164,7 @@
 					{% for feedback in list_advice %}
 					 		<li class="list-group-item">
 					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at }}
+					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime}}
 					 		</div>
 					 		</li>
 					{% endfor %}
@@ -193,7 +195,7 @@
 						{% endfor %}
 					<input type="submit" value="התחייבות לביצוע" />
 				</form>
-						<p>Example: "10/25/06 14:30 "</p>	
+						
 				<h4>רשימת המשימות</h4>
 				{% endif %}
 				<ul>
@@ -203,7 +205,7 @@
 				 			{{task.goal_description|urlize|linebreaks}}<br>
 				 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
 				 			  
-				 			יושלם עד {{task.target_date }} {{ task.get_status_display }}
+				 			{{ task.get_status_display }} {{task.target_date | naturaltime}} 
 				 			
 				 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
 
@@ -246,7 +248,7 @@
 					<ul>
 					{% for decision in list_decision %}
 					 		<li class="list-group-item">{{ decision.content|urlize|linebreaks }} 
-					 			נוצרה ב:{{ decision.created_at }} עם {{decision.get_number_of_votes}} הצבעות   
+					 			נוצרה ב:{{ decision.created_at | naturaltime}} עם {{decision.get_number_of_votes}} הצבעות   
 					 			{% if vote_form %}
 					 				<h5>מה דעתך ?</h5>
 									<form action= "{% url 'coplay:vote' decision.id %}" method="post">{% csrf_token %}
