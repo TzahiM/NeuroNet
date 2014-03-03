@@ -54,6 +54,7 @@ INSTALLED_APPS = (
     'wiki.plugins.images',
     'wiki.plugins.macros',
     'django.contrib.sites',
+    'floppyforms',
 )
 
 MIDDLEWARE_CLASSES = (

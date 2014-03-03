@@ -3,177 +3,178 @@
 
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content=' אתר הבית של פרוייקט "הגשמה ציבורית"'>
     <meta name="author" content=
-	    {% if author_name %}
-	    {{author_name}}
-		{% else %}
-			"Tzahi Manistersky"
-		{% endif %}
-    >
+            {% if author_name %}
+                {{ author_name }}
+            {% else %}
+                "Tzahi Manistersky"
+            {% endif %}
+            >
     <link rel="shortcut icon" href="{% static 'favicon.png' %}">
-	
-	<title>
-	{% if page_name %}
-		{{page_name}}
-	{% else %}
-		 קוטרלס - מה לעשות? לעשות ! (יעקב כץ)
-	{% endif %}
-	
+
+    <title>
+        {% if page_name %}
+            {{ page_name }}
+        {% else %}
+            קוטרלס - מה לעשות? לעשות ! (יעקב כץ)
+        {% endif %}
+
     </title>
 
     <!-- Bootstrap core CSS -->
-    <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/css/bootstrap-rtl.css' %}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="{% static 'style.css' %}" rel="stylesheet">
     <link href="{% static 'bootstrap/css/carousel.css' %}" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script>
+    <![endif]-->
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-  ga('create', 'UA-47099729-1', 'kuterless.org.il');
-  ga('send', 'pageview');
+        ga('create', 'UA-47099729-1', 'kuterless.org.il');
+        ga('send', 'pageview');
 
-</script>    
-  </head>
+    </script>
+</head>
 
-  <body>
-    <div class="container">
+<body>
+<div class="container">
 
-      <!-- Static navbar -->
-      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar navbar-inverse navbar-fixed-top  navbar-right" role="navigation">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <li><a class="navbar-brand"
+                   href="{% url 'coplay:coplay_root' %}">CoPlayWeb</a>
+            </li>
         </div>
         <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-          	<li><a href="/">          ראשי          </a></li>
-          	            {% if user.is_authenticated %}
-              <li> <a href="{% url 'logout' %}"> יציאה </a> </li>
-              <li><a href="#"> שלום {{ user.get_full_name|default:user.username }}</a></li>
-              <li><a href="{% url 'public_fulfillment:update_profile' %}?next={{request.path}}">עדכון פרופיל</a></li>
-            {% else %}
-              <li><a href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a></li>
-              <li><a href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a></li>
-            {% endif %}
-
-            
-          </ul>
-          <ul class="nav navbar-nav navbar-right">     
-        	          	       
-            
-            <li class="dropdown">
-              <a href="{% url 'labs_root' %}" class="dropdown-toggle" data-toggle="dropdown">פרפראות<b class="caret"></b></a>
-              <ul  class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                <li><a href="{% url 'public_fulfillment:example' %}">למשל</a></li>
-                <li class="divider"></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a href="{% url 'labs_root' %}" class="dropdown-toggle" data-toggle="dropdown">המעבדות שלנו<b class="caret"></b></a>
-              <ul  class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                <li><a href="{% url 'coplay:coplay_root' %}">CoPlayWeb</a></li>
-                <li><a href="{% url 'labs_root' %}#versions">מה חדש?</a></li>
-                <li class="divider"></li>
-                <li><a href="{% url 'labs_root' %}">איך אנחנו מפתחים?</a></li>
-                <li><a href="https://github.com/TzahiM/NeuroNet.git">למפתחים</a></li>
-              </ul>
-            </li>
-		   <li><a href="{% url 'coplay:coplay_root' %}">ביחד</a></li>
-           <li class="dropdown">             
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">פרויקטים<b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="http://wiki.hasadna.org.il/index.php?title=%D7%94%D7%92%D7%A9%D7%9E%D7%94_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%AA">הגשמה ציבורית</a></li>
-                <li class="divider"></li>
-                <li class="disabled"><a tabindex="-1" href="#">המשך יבוא</a></li>
-              </ul>
-            </li>
-
-            <li>  <a href="#" class="dropdown-toggle" data-toggle="dropdown">עושים<b class="caret"></b></a>
-              	<ul class="dropdown-menu">
-	                <li ><a href="{% url 'coplay:discussions_list' %}">עזרה לפעילות קיימת</a></li>
-	                <li ><a href="{% url 'coplay:add_discussion' %}">התחלת פעילות חדשה</a></li>
-	                <li ><a href="{% url 'coplay:discussion_details' 17 %}">פעילות לדוגמה</a></li>
-				</ul>
-			</li>
-
-            <li>  
-            	<a href="#" >אנשים</a>
-			</li>
-
-            <li><a class="navbar-brand" href="http://wiki.hasadna.org.il/index.php?title=%D7%94%D7%92%D7%A9%D7%9E%D7%94_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%AA">הגשמה ציבורית</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li><span class="navbar-text">
+                        שלום {{ user.get_full_name|default:user.username }}</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'public_fulfillment:update_profile' %}?next={{ request.path }}">עדכון
+                            פרופיל</a></li>
+                    <li><a href="{% url 'logout' %}?next={{ request.path }}"> יציאה </a></li>
+                {% else %}
+                    <li>
+                        <a href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a>
+                    </li>
+                    <li><a href="{% url 'login' %}?next={{ request.path }}">כניסה
+                        למשתמש קיים</a></li>
+                {% endif %}
 
 
+            </ul>
+            <ul class="nav navbar-nav">
+
+                <li><a href="{% url 'coplay:discussions_list' %}">
+                    פעילויות קיימות
+                </a></li>
 
 
-      <div class="container">
-        {% block content %}
-            MY CONTENT GOES HERE
-        {% endblock %}
-      </div>
-
-      <hr>
-
-      <footer>
-    <p>
-    	
-    	<a href="https://hackita.hasadna.org.il"> מבית היוצר של  "הכיתה" מחזור סתיו 2013</a>
-    	<br>
-
-התכנים חופשיים לשימוש תחת רשיון CC-BY והמטבח שלנו פתוח ושקוף -  
-      <a href="https://github.com/TzahiM/NeuroNet.git">כאן</a>
-      
-    </p>
-
-                           
-      </footer>
-    </div> <!-- /container -->
+                <li><a href="{% url 'coplay:add_discussion' %}">התחלת פעילות
+                    חדשה</a></li>
 
 
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-    
-   
+                <li class="dropdown">
+                    <a href="{% url 'labs_root' %}" class="dropdown-toggle"
+                       data-toggle="dropdown">
+                        על אודות
 
-    
-    
-  </body>
+                        <b class="caret"></b></a>
+                    <ul class="dropdown-menu" role="menu"
+                        aria-labelledby="dLabel">
+                        <li><a href="/">
+                            פתיחה
+                        </a></li>
+                        <li>
+                            <a href="http://wiki.hasadna.org.il/index.php?title=%D7%94%D7%92%D7%A9%D7%9E%D7%94_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%AA">הגשמה
+                                ציבורית</a></li>
+
+                        <li>
+                            <a href="{% url 'public_fulfillment:example' %}">
+                                פרפראות
+                            </a>
+                        </li>
+                        <li><a href="{% url 'labs_root' %}#versions">מה
+                            חדש?</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url 'labs_root' %}">איך אנחנו
+                            מפתחים?</a></li>
+                        <li><a href="https://github.com/TzahiM/NeuroNet.git">למפתחים</a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+
+    {% include 'coplay/_messages.html' %}
+
+    {% block content %}
+        MY CONTENT GOES HERE
+    {% endblock %}
+
+    <hr>
+
+    <footer>
+        <p>
+
+            <a href="https://hackita.hasadna.org.il"> מבית היוצר של "הכיתה"
+                מחזור סתיו 2013</a>
+            <br>
+
+            התכנים חופשיים לשימוש תחת רשיון CC-BY והמטבח שלנו פתוח ושקוף -
+            <a href="https://github.com/TzahiM/NeuroNet.git">כאן</a>
+
+        </p>
+
+
+    </footer>
+</div>
+<!-- /container -->
+
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+
+</body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
 
 
 <hr/>

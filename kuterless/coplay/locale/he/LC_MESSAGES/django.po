@@ -1,0 +1,106 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-03-03 16:02+0200\n"
+"PO-Revision-Date: 2014-03-03 16:03+0200\n"
+"Last-Translator: Udi Oron <udioron@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.7\n"
+
+#: .\models.py:18 .\views.py:125
+msgid "title"
+msgstr "כותרת"
+
+#: .\models.py:19
+msgid "Description"
+msgstr "תיאור"
+
+#: .\views.py:128
+msgid "description"
+msgstr "תיאור"
+
+#: .\views.py:157
+msgid "Your activity was created successfully"
+msgstr "הפעילות נוצרה בהצלחה"
+
+#: .\templates\coplay\decision_form.html:9
+#: .\templates\coplay\discussion_detail.html:237
+msgid "Create Decision"
+msgstr "התלבטות חדשה"
+
+#: .\templates\coplay\decision_form.html:14
+#: .\templates\coplay\discussion_form.html:14
+#: .\templates\coplay\feedback_form.html:14
+#: .\templates\coplay\task_form.html:14
+msgid "Save"
+msgstr "שמירה"
+
+#: .\templates\coplay\discussion_confirm_delete.html:9
+#: .\templates\coplay\discussion_confirm_delete.html:15
+msgid "Delete"
+msgstr "מחיקה"
+
+#: .\templates\coplay\discussion_confirm_delete.html:14
+msgid "Are you sure?"
+msgstr "האם אתה בטוח?"
+
+#: .\templates\coplay\discussion_detail.html:34
+#: .\templates\coplay\discussion_form.html:9
+msgid "Edit"
+msgstr "עריכה"
+
+#: .\templates\coplay\discussion_detail.html:43
+msgid "Created:"
+msgstr "נוצר:"
+
+#: .\templates\coplay\discussion_detail.html:48
+msgid "Updated:"
+msgstr "עודכן:"
+
+#: .\templates\coplay\discussion_detail.html:97
+#: .\templates\coplay\feedback_form.html:9
+msgid "Create Feedback"
+msgstr "הוספת תגובה"
+
+#: .\templates\coplay\discussion_detail.html:196
+#: .\templates\coplay\task_form.html:9
+msgid "Create Task"
+msgstr "הוספת משימה"
+
+#: .\templates\coplay\discussion_detail.html:200
+msgid "Tasks"
+msgstr "משימות"
+
+#: .\templates\coplay\new_discussion.html:7
+msgid "New Activity"
+msgstr "פעילות חדשה"
+
+#: .\templates\coplay\new_discussion.html:11
+msgid "An acitivity describes something you would like to build or promote."
+msgstr "פעילות מתארת יוזמה שברצונך  לקדם."
+
+#: .\templates\coplay\new_discussion.html:12
+msgid "Creating an activity allows others to engage in your initative."
+msgstr "יצירת פעילות תאפשר לאחרים להרתם אליה ולעזור לך להשיג את מטרותיך."
+
+#: .\templates\coplay\new_discussion.html:22
+msgid ""
+"Please notice: To keep this activity unlocked, new tasks must be created at "
+"least once per week."
+msgstr ""
+"לידיעתך, כדי שהפעילות לא תינעל את/ה או המשתתפים חייבים לקחת על עצמם משימות "
+"חדשות לפחות פעם בשבוע"
+
+#: .\templates\coplay\new_discussion.html:24
+msgid "Let's play"
+msgstr "צור פעילות"

@@ -1,391 +1,282 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% load humanize %}
 
 {% block content %}
-<center>
-	{% if False == user.is_authenticated %}
-		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">רישום</a>
-		<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
-    {% endif %}
-	<a class="btn btn-success" href="#Feedbacks">תגובות המשתמשים בפעילות הזאת</a>    
-	<a class="btn btn-success" href="#Decisions">התלבטויות של מוביל הפעילות</a>
-	<a class="btn btn-success" href="#Tasks">המשימות באחריות המשתתפים</a>
-	<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">הסברים</a>	
-   	{% if user == discussion.owner %}
-   	<br>
-    <a class="btn btn-danger" href="#delete">למחיקת הדיון</a>
-    {% endif %}
-	
-</center>
+    <div class="row">
+        <div class="col-md-12">
+            <a class="btn btn-default pull-right"
+               href="{% url 'coplay:coplay_root' %}">
+                להסברים על המערכת
+                &raquo;
+            </a>
 
+            <h1>{{ discussion.title }}</h1>
 
-
-        <div class="container" >
-			
-            	<div class="container">
-            	<center>
-            		<h1>{{ discussion.title |urlize|linebreaks}}</h1>
-	            	{% if discussion.is_active %}
-	            	
-	            	    <h3> אם לא יהיו משימות חדשות, הפעילות עלולה להינעל עוד {{discussion.locked_at | timeuntil}} </h3>
-	            	{% else %}
-	            	    <h3> הפעילות ננעלה עקב חוסר נוכחי של משימות חדשות</h3>
-	            	{% endif %}
-            	</center>
-            	
-            	<p><b>
-            	{% if user == discussion.owner %}
-	            	זאת הפעילות שלך
-            	{% else %}
-                	זו הפעילות של <a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
+            <h3>
+                {% if user == discussion.owner %}
+                    <a class="btn btn-danger pull-right"
+                       href="{% url 'coplay:discussion_delete' discussion.id %}">למחיקת
+                        הדיון</a>
+                    זאת הפעילות שלך
+                {% else %}
+                    זו הפעילות של
+                    <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
                 {% endif %}
-                
-               {% if not user.is_authenticated %}
-               <center>
-               		<h1>כדי להגיב, להצביע או להתנדב למשימה עליך להיכנס למערכת </h1>
-            		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">הרשמה ראשונה</a>
-            		<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
-				</center>
-               {% endif %}
-                
-                  
-  	
+            </h3>
+        </div>
+    </div>
 
-                
-                </b>
-                
-                </p>       
-                </div>         
-            
-            <div class="row">
-                <div class="col-sm-2 col-md-6">
-				{% if description_form %}
-				<h4>עדכון המטרות שלך והעזרה  שאתה צריך</h4>
-								
-				<form action= "{% url 'coplay:update_goals' discussion.id %}" method="post">{% csrf_token %}
-					{% for field in description_form %}
-				        <div class="fieldWrapper">
-				            {{ field.errors }}
-				            {{ field.label_tag }} {{ field }}
-				        </div>
-				    {% endfor %}
-					<button type="submit" >עדכן</button>
-				</form>
-				{% endif %}
+    <div class="well">
+        {% if user == discussion.owner %}
+            <a class="btn btn-info pull-right"
+               href="{% url 'coplay:discussion_update' discussion.id %}">{% trans "Edit" %}</a>
+        {% endif %}
 
-				{% if feedback_form %}
-				
-				<h4>התגובה הבאה שלך</h4>
-				
-				<form action= "{% url 'coplay:add_feedback' discussion.id %}" method="post">{% csrf_token %}
-					{% for field in feedback_form %}
-				        <div class="fieldWrapper">
-				            {{ field.errors }}
-				            {{ field.label_tag }} {{ field }}
-				        </div>
-				    {% endfor %}
-					<input type="submit" value="שלח" />
-				</form>
-				{% endif %}
+        <h4>המטרות של הדיון והעזרה המבוקשת מהמשתתפים</h4>
+
+        <p>{{ discussion.description|urlize|linebreaks }}</p>
+
+        <p>
+            <i>
+                {% trans "Created:" %}
+                {{ discussion.created_at | naturaltime }}
+                &bull;
 
 
+                {% trans "Updated:" %}
+                {{ discussion.updated_at | naturaltime }}
+            </i>
+        </p>
+    </div>
 
-                </div>
-                <div class="col-sm-2 col-md-6">
-				{% if discussion.description %}
-				    <h4>המטרות של הדיון והעזרה המבוקשת מהמשתתפים</h4> 
-				    <p>{{ discussion.description|urlize|linebreaks }}</p>
-				    <p> נוצר  ב {{discussion.created_at | naturaltime }} </p>
-				    <p> עודכן לאחרונה ב {{discussion.updated_at | naturaltime}} </p>
-				{% else %}
-				    <p>אין תיאור נוסף</p>
-				{% endif %}
-				
+    <div class="panel panel-default">
+        <div class="panel-body"><a href="#Feedbacks">תגובות המשתמשים
+            בפעילות
+            הזאת</a>
+            &bull;
+            <a href="#Decisions">התלבטויות של מוביל
+                הפעילות</a>
+            &bull;
+            <a href="#Tasks">המשימות באחריות
+                המשתתפים</a>
+        </div>
+    </div>
+    {% if not user.is_authenticated %}
+        <div class="alert alert-warning">
+            כדי להגיב, להצביע או להתנדב למשימה עליך להיכנס
+            למערכת:
 
-				
-				
-				
-                </div>
-
-            </div>
-
-            <!-- Example row of columns -->
-            <div class="container" >
- 
-            <div class="row" id="Feedbacks">
-
-                <div class="col-sm-6 col-md-3">
-                	<center><h3>עידודים</h3></center>
-					    
-					<ul>
-					{% for feedback in list_encourage %}
-					<li class="list-group-item">
-					 			<div {% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime}}
-					 		</div>
-					 		</li>
-					{% endfor %}
-					</ul>
-					                	
-                </div>
-                <div class="col-sm-6 col-md-3">
-                	<center><h3>הצעות לשיתוף פעולה</h3></center>
-					    
-					<ul>
-					{% for feedback in list_cooperation %}
-					 		<li class="list-group-item">
-					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime}}
-					 		</div>
-					 		</li>
-					{% endfor %}
-					</ul>
-					                	
-                </div>
-                <div class="col-sm-6 col-md-3">
-                	<center><h3>אינטואיציה</h3></center>
-					    
-					<ul>
-					{% for feedback in list_intuition %}
-					 		<li class="list-group-item">
-					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
-					 		</div>
-					 		</li>
-					{% endfor %}
-					</ul>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                	<center><h3>עצות</h3></center>
-					    
-					    
-					<ul>
-					{% for feedback in list_advice %}
-					 		<li class="list-group-item">
-					 			<div{% if feedback.created_at < discussion.updated_at %}					 			class="text-muted"				 			{% endif %}	>		
-					 			<a  href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime}}
-					 		</div>
-					 		</li>
-					{% endfor %}
-					</ul>
-                </div>
-</div>
-        </div> <!-- /container -->
-
-            <div class="row">
-                 
-                <div class="col-sm-2 col-md-6">
-	<br id="Tasks">
-	<br>
-	<br>
-                	
-                 <h3>משימות</h3>
-
-				{% if add_task_form %}
-				
-				<h4>הצהרה שלך על משימה חדשה</h4>
-				
-				<form action= "{% url 'coplay:add_task' discussion.id %}" method="post">{% csrf_token %}
-						{% for field in add_task_form %}
-						    <div class="fieldWrapper">
-									{{ field.errors }}
-								{{ field.label_tag }} {{ field }}
-							</div>
-						{% endfor %}
-					<input type="submit" value="התחייבות לביצוע" />
-				</form>
-						
-				<h4>רשימת המשימות</h4>
-				{% endif %}
-				<ul>
-				{% for task in list_tasks %}
-				
-				 		<li class="list-group-item">
-				 			{{task.goal_description|urlize|linebreaks}}<br>
-				 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
-				 			  
-				 			{{ task.get_status_display }} {{task.target_date | naturaltime}} 
-				 			
-				 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
-
-				 		</li>
-				{% endfor %}
-				</ul>
-				
-				
-				
-
-                </div>
-                                <div class="col-sm-2 col-md-6">
-				<br id="Decisions">
-				<br>
-				<br>
-
-                 <h3 >התלבטויות של מוביל הפעילות</h3>
-					
-
-                 
-				{% if add_decision_form %}
-				
-				
-				<form action= "{% url 'coplay:add_decision' discussion.id %}" method="post">{% csrf_token %}
-					{% for field in add_decision_form %}
-				        <div class="fieldWrapper">
-				            {{ field.errors }}
-				            {{ field.label_tag }} {{ field }}
-				        </div>
-				    {% endfor %}
-					<input type="submit" value="הוסף את ההתלבטות להצבעת הנוכחים" />
-				</form>
-				
-
-                 <h4 >ההיתלבטויות שלך</h4>
-				
-				{% endif %}
-                 
-					{% if list_decision %}    
-					<ul>
-					{% for decision in list_decision %}
-					 		<li class="list-group-item">{{ decision.content|urlize|linebreaks }} 
-					 			נוצרה ב:{{ decision.created_at | naturaltime}} עם {{decision.get_number_of_votes}} הצבעות   
-					 			{% if vote_form %}
-					 				<h5>מה דעתך ?</h5>
-									<form action= "{% url 'coplay:vote' decision.id %}" method="post">{% csrf_token %}
-										{% for field in vote_form %}
-									        <div class="fieldWrapper">
-									            {{ field.errors }}
-									            {{ field.label_tag }} {{ field }}
-									        </div>
-									    {% endfor %}
-										<input type="submit" value="שליחת הצבעה" />
-									</form>
-					 			{% else %}
-					 				<p>הצבעה ממוצעת: {{decision.get_vote_level_name }} </p>  
-					 				
-					 				
-					 			{% endif %} 			
-							</li>
-					{% endfor %}
-					</ul>
-					{% else %}
-					<p>  אין התלבטויות</p>
-					{% endif %}
-                </div> 
-
-            </div>
-   	{% if user == discussion.owner %}
-   	<br>
-   					<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-
-	<br id="delete">
-	<br>
-	<br>
-	<br>
-	<br>
-	<center>
-		<a class="btn btn-danger" href= "{% url 'coplay:delete_discussion' discussion.id %}">להמשיך במחיקה של {{discussion.title}} ?</a>	
-	</center>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-    
+            <a
+                    href="{% url 'public_fulfillment:sign_up' %}">הרשמה
+                ראשונה</a> &bull;
+            <a
+                    href="{% url 'login' %}?next={{ request.path }}">כניסה
+                למשתמש
+                קיים</a>
+        </div>
     {% endif %}
+
+
+    {% if discussion.is_active %}
+        <div class="alert alert-warning">
+            אם לא יהיו משימות חדשות, הפעילות עלולה להינעל
+            עוד {{ discussion.locked_at | timeuntil }}
+        </div>
+    {% else %}
+        <div class="alert alert-error">
+            הפעילות ננעלה עקב חוסר נוכחי של משימות חדשות
+        </div>
+    {% endif %}
+
+
+    {% if feedback_form %}
+        <p>
+            <a class="btn btn-info"
+               href="{% url 'coplay:create_feedback' discussion.id %}">{% trans "Create Feedback" %}</a>
+        </p>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-sm-6 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+
+                    עידודים
+
+                </b></div>
+
+
+                <ul class="list-group">
+                    {% for feedback in list_encourage %}
+                        <li class="list-group-item">
+                            <div
+                                    {% if feedback.created_at < discussion.updated_at %}
+                                        class="text-muted"                            {% endif %}    >
+                                <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+
+                    הצעות לשיתוף פעולה
+                </b></div>
+
+                <ul class="list-group">
+                    {% for feedback in list_cooperation %}
+                        <li class="list-group-item">
+                            <div
+                                    {% if feedback.created_at < discussion.updated_at %}
+                                        class="text-muted"                            {% endif %}    >
+                                <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+
+                    אינטואיציה
+                </b></div>
+
+                <ul class="list-group">
+                    {% for feedback in list_intuition %}
+                        <li class="list-group-item">
+                            <div
+                                    {% if feedback.created_at < discussion.updated_at %}
+                                        class="text-muted"                            {% endif %}    >
+                                <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+
+                    עצות
+                </b></div>
+
+
+                <ul class="list-group">
+                    {% for feedback in list_advice %}
+                        <li class="list-group-item">
+                            <div
+                                    {% if feedback.created_at < discussion.updated_at %}
+                                        class="text-muted"                            {% endif %}    >
+                                <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-6" id="Tasks">
+
+            <a class="btn btn-info pull-right"
+               href="{% url 'coplay:create_task' discussion.id %}">{% trans "Create Task" %}</a>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+                    {% trans "Tasks" %}
+                </b></div>
+
+
+                <ul class="list-group">
+                    {% for task in list_tasks %}
+
+                        <li class="list-group-item">
+                            {{ task.goal_description|urlize|linebreaks }}<br>
+                            באחריות <a
+                                href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a>
+
+                            {{ task.get_status_display }} {{ task.target_date | naturaltime }}
+
+                            <p><a class="btn btn-success"
+                                  href={{ task.get_absolute_url }}>להרחבה</a>
+                            </p>
+
+                        </li>
+                    {% endfor %}
+                </ul>
+
+
+            </div>
+        </div>
+
+        <div class="col-md-6" id="Decisions">
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+                    {% if user == discussion.owner %}
+                        ההיתלבטויות שלך
+                    {% else %}
+                        התלבטויות של מוביל הפעילות
+                    {% endif %}
+                    {% if add_decision_form %}
+                        <a class="btn btn-info pull-right"
+                           href="{% url 'coplay:create_decision' discussion.id %}">{% trans "Create Decision" %}</a>
+                    {% endif %}
+                </b></div>
+
+
+                {% if list_decision %}
+                    <ul class="list-group">
+                        {% for decision in list_decision %}
+                            <li class="list-group-item">{{ decision.content|urlize|linebreaks }}
+                                נוצרה
+                                ב:{{ decision.created_at | naturaltime }}
+                                עם {{ decision.get_number_of_votes }} הצבעות
+                                {% if vote_form %}
+                                    <h5>מה דעתך ?</h5>
+                                    <form action="{% url 'coplay:vote' decision.id %}"
+                                          method="post">{% csrf_token %}
+                                        {% for field in vote_form %}
+                                            <div class="fieldWrapper">
+                                                {{ field.errors }}
+                                                {{ field.label_tag }} {{ field }}
+                                            </div>
+                                        {% endfor %}
+                                        <input type="submit"
+                                               value="שליחת הצבעה"/>
+                                    </form>
+                                {% else %}
+                                    <p>הצבעה
+                                        ממוצעת: {{ decision.get_vote_level_name }} </p>
+
+
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p> אין התלבטויות</p>
+                {% endif %}
+            </div>
+
+
+        </div>
+    </div>
+
 
 {% endblock %}
 
