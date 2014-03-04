@@ -50,15 +50,20 @@ class Discussion(models.Model):
 
     def add_task(self, responsible, goal_description, target_date,
                  max_inactivity_seconds=MAX_INACTIVITY_SECONDS):
-        self.locked_at = timedelta(
-            seconds=max_inactivity_seconds) + timezone.now()
+        
+        
         task = self.task_set.create(parent=self, responsible=responsible,
                                     goal_description=goal_description,
                                     target_date=target_date)
-        self.save()
         task.clean()
         task.save()
+        self.unlock(max_inactivity_seconds)
         return task
+    
+    def unlock(self,max_inactivity_seconds=MAX_INACTIVITY_SECONDS):
+        self.locked_at = timedelta(
+            seconds=max_inactivity_seconds) + timezone.now()
+        self.save()
 
     def is_active_and_time_to_inactivation_obsolete(self,
                                                     max_inactivity_seconds=MAX_INACTIVITY_SECONDS):

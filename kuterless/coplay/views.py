@@ -22,6 +22,24 @@ MAX_MESSAGE_INPUT_CHARS = 900
 def root(request):
     return render(request, 'coplay/co_play_root.html', {'rtl': 'dir="rtl"'})
 
+def get_discussions_lists():
+    sorted_discussions_by_inverse_locket_at_list = Discussion.objects.all().order_by(
+        "-locked_at")
+    sorted_discussions_by_locket_at_list = Discussion.objects.all().order_by(
+        "locked_at")
+
+    active_discussions_by_urgancy_list = []
+    locked_discussions_by_relevancy_list = []
+
+    for discussion in sorted_discussions_by_inverse_locket_at_list:
+        if not discussion.is_active():
+            locked_discussions_by_relevancy_list.append(discussion)
+
+    for discussion in sorted_discussions_by_locket_at_list:
+        if discussion.is_active():
+            active_discussions_by_urgancy_list.append(discussion)
+
+    return active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list
 
 class IndexView(generic.ListView):
     model = Discussion
@@ -30,7 +48,9 @@ class IndexView(generic.ListView):
 
 
     def get_queryset(self):
-        return Discussion.objects.order_by('-locked_at')
+        active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
+        
+        return (active_discussions_by_urgancy_list + locked_discussions_by_relevancy_list)
 
 
 class AddFeedbackForm(forms.Form):
@@ -449,24 +469,6 @@ def close_task(request, pk):
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
 
 
-def get_discussions_lists():
-    sorted_discussions_by_inverse_locket_at_list = Discussion.objects.all().order_by(
-        "-locked_at")
-    sorted_discussions_by_locket_at_list = Discussion.objects.all().order_by(
-        "locked_at")
-
-    active_discussions_by_urgancy_list = []
-    locked_discussions_by_relevancy_list = []
-
-    for discussion in sorted_discussions_by_inverse_locket_at_list:
-        if not discussion.is_active():
-            locked_discussions_by_relevancy_list.append(discussion)
-
-    for discussion in sorted_discussions_by_locket_at_list:
-        if discussion.is_active():
-            active_discussions_by_urgancy_list.append(discussion)
-
-    return active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list
 
 
 def get_tasks_lists():
@@ -578,6 +580,7 @@ class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
 
 
 class DeleteDiscussionView(DiscussionOwnerView, DeleteView):
+
     model = Discussion
 
 
@@ -608,9 +611,19 @@ class CreateTaskView(CreateView):
                                                               **kwargs)
 
     def form_valid(self, form):
+        if form.instance.target_date <= timezone.now():
+            return render(self.request, 'coplay/message.html',
+                              {'message': 'תאריך היעד חייב להיות בעתיד' + str(
+                                  form.instance.target_date),
+                               'rtl': 'dir="rtl"'})
         form.instance.parent = self.discussion
         form.instance.responsible = self.request.user
-        return super(CreateTaskView, self).form_valid(form)
+        resp = super(CreateTaskView, self).form_valid(form)
+        form.instance.parent.unlock()
+        discussion_task_email_updates(form.instance,
+                                          'נוספה משימה חדשה בפעילות שבהשתתפותך',
+                                          self.request.user)
+        return resp
 
 
 class CreateFeedbackForm(forms.ModelForm):
@@ -640,7 +653,11 @@ class CreateFeedbackView(CreateView):
     def form_valid(self, form):
         form.instance.discussion = self.discussion
         form.instance.user = self.request.user
-        return super(CreateFeedbackView, self).form_valid(form)
+        resp = super(CreateFeedbackView, self).form_valid(form)
+        discussion_email_updates(resp.instance.discussion,
+                                         'התקבלה תגובה חדשה בפעילות שבהשתתפותך',
+                                         self.request.user)
+        return resp
 
 
 class CreateDecisionForm(forms.ModelForm):
@@ -671,6 +688,11 @@ class CreateDecisionView(CreateView):
         form.instance.parent = self.discussion
         resp = super(CreateDecisionView, self).form_valid(form)
         # form.instance is the new decision
+        discussion_email_updates(form.instance.parent,
+                                         'התקבלה התלבטות חדשה בפעילות שבהשתתפותך',
+                                         self.request.user)
+        
+        
         return resp
 
 

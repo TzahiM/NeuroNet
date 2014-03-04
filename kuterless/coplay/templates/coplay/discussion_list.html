@@ -7,9 +7,9 @@
         {% for discussion in latest_discussion_list %}
             {% if discussion.is_active %}
                 <li class="list-group-item">
-                {{ discussion.updated_at|naturaltime }}:
+                
                     <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
-                    רצה עזרה ב
+                    רוצה עזרה ב
                     <a href="{{ discussion.get_absolute_url }}">{{ discussion.title }}</a>
 
 
@@ -24,13 +24,12 @@
                     <strike>
                         <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
                         רצה/תה עזרה ב
-                        {{ discussion.title }}
+                        <a href="{{ discussion.get_absolute_url }}">{{ discussion.title }}</a>
                         {{ discussion.updated_at|date }}
                     </strike>
-                    הפעילות ננעלה עקב חוסר נוכחי במשימות חדשות מאז
-                    {{ discussion.locked_at|date }}
-                    <a class="btn btn-success"
-                       href="{{ discussion.get_absolute_url }}">פרטים</a></li>
+                    הפעילות ננעלה עקב חוסר נוכחי במשימות חדשות 
+                    {{ discussion.locked_at|naturaltime }}
+                </li>
             {% endif %}
         {% empty %}
             <liclass="list-group-item"> אין פעילויות</li>

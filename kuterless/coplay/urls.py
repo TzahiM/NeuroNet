@@ -1,5 +1,6 @@
 from coplay import views
 from django.conf.urls import patterns, url
+from django.core.urlresolvers import reverse
 
 
 urlpatterns = patterns('',
@@ -11,7 +12,7 @@ urlpatterns = patterns('',
 #pk (of discussion)/details
     url(r'^(?P<pk>\d+)/details/$', views.discussion_details, name='discussion_details'),
     url(r'^(?P<pk>\d+)/update/$', views.UpdateDiscussionDescView.as_view(), name='discussion_update'),
-    url(r'^(?P<pk>\d+)/delete/$', views.DeleteDiscussionView.as_view(), name='discussion_delete'),
+    url(r'^(?P<pk>\d+)/delete/$', views.DeleteDiscussionView.as_view(success_url='discussions_list'), name='discussion_delete'),
 #pk (of discussion)/feedback_for
     url(r'^(?P<pk>\d+)/feedback/$', views.add_feedback, name='add_feedback'),
 #pk (of discussion)/update_goals
