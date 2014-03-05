@@ -29,6 +29,9 @@
 			<div class="row">
 
                 <div class="col-sm-2 col-md-6" id = "TasksOpen">
+    	<br>
+        <br>
+        <br>
                 	<center><h2>  משימות פתוחות אישיות </h2></center>
 	                	<ul>
 					{% for task in tasks_open_by_increased_time_left %}
@@ -49,11 +52,17 @@
 	
 					 		</li>
 					{% empty %}
-					    <center><li class="list-group-item">אין</li></center>
+					    <li class="list-group-item">
+					    <a class="btn btn-success" href="{% url 'coplay:discussions_list' %}">לעזור לפעילות קיימת</a>
+					    	
+					    </li>
 					{% endfor %}
 					</ul>
                 </div>
                 <div class="col-sm-2 col-md-6" id = "TasksOpenOthers">
+    	<br>
+        <br>
+        <br>
                 	<center><h2>משימות פתוחות של אחרים</h2></center>
 	                	<ul>
 					{% for task in tasks_others_open_by_increased_time_left %}
@@ -88,6 +97,9 @@
              
              
                 <div class="col-sm-2 col-md-6" id = "DiscussionsActive">
+    	<br>
+        <br>
+        <br>
                 	<center><h2>פעילויות פעילות</h2></center>
 					<ul>
 					{% for discussion in discussions_active_by_increase_time_left %}
@@ -108,13 +120,18 @@
 					    	{% endif %}
 						</li> 
 					{% empty %}
-					    <center><li class="list-group-item">אין</li></center>
+					    <li class="list-group-item">
+					    <a class="btn btn-success"href="{% url 'coplay:add_discussion' %}">התחלת פעילות חדשה</a>
+					    </li>
 					{% endfor %}
 					</ul>
 				
                 </div>
 
                 <div class="col-sm-2 col-md-6" id = "DiscussionsLocked">
+    	<br>
+        <br>
+        <br>
                 	<center><h2>פעילויות לא פעילות</h2></center>
 					<ul>
 					{% for discussion in discussions_locked_by_increase_locked_at %}
@@ -151,6 +168,9 @@
             	
             	
                 <div class="col-sm-2 col-md-6" id = "TasksClosed">
+    	<br>
+        <br>
+        <br>
                 	<center><h2>משימות אישיות שהושלמו</h2></center>
 	                	<ul>
 					{% for task in tasks_closed_by_reverse_time %}
@@ -179,6 +199,9 @@
                 </div>
 
                 <div class="col-sm-2 col-md-6" id = "TasksMissedAll">
+    	<br>
+        <br>
+        <br>
                 	<center><h2>משימות שפוספסו</h2></center>
 	                	<ul>
 					{% for task in tasks_missed_by_reverse_time  %}

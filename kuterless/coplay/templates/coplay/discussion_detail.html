@@ -28,28 +28,6 @@
         </div>
     </div>
 
-    <div class="well">
-        {% if user == discussion.owner %}
-            <a class="btn btn-info pull-right"
-               href="{% url 'coplay:discussion_update' discussion.id %}">{% trans "Edit" %}</a>
-        {% endif %}
-
-        <h4>המטרות של הדיון והעזרה המבוקשת מהמשתתפים</h4>
-
-        <p>{{ discussion.description|urlize|linebreaks }}</p>
-
-        <p>
-            <i>
-                {% trans "Created:" %}
-                {{ discussion.created_at | naturaltime }}
-                &bull;
-
-
-                {% trans "Updated:" %}
-                {{ discussion.updated_at | naturaltime }}
-            </i>
-        </p>
-    </div>
 
     <div class="panel panel-default">
         <div class="panel-body"><a href="#Feedbacks">תגובות המשתמשים
@@ -90,6 +68,28 @@
         </div>
     {% endif %}
 
+    <div class="well">
+        {% if user == discussion.owner %}
+            <a class="btn btn-info pull-right"
+               href="{% url 'coplay:discussion_update' discussion.id %}">{% trans "Edit" %}</a>
+        {% endif %}
+
+        <h4>המטרות של הדיון והעזרה המבוקשת מהמשתתפים</h4>
+
+        <p>{{ discussion.description|urlize|linebreaks }}</p>
+
+        <p>
+            <i id="Feedbacks">
+                {% trans "Created:" %}
+                {{ discussion.created_at | naturaltime }}
+                &bull;
+
+
+                {% trans "Updated:" %}
+                {{ discussion.updated_at | naturaltime }}
+            </i>
+        </p>
+    </div>
 
     {% if feedback_form %}
         <p>
@@ -98,8 +98,8 @@
         </p>
     {% endif %}
 
-    <div class="row">
-        <div class="col-sm-6 col-md-3">
+    <div class="row" >
+        <div class="col-sm-6 col-md-3" >
             <div class="panel panel-default">
                 <div class="panel-heading"><b>
 
@@ -143,7 +143,7 @@
 
             </div>
         </div>
-        <div class="col-sm-6 col-md-3">
+        <div class="col-sm-6 col-md-3" >
             <div class="panel panel-default">
                 <div class="panel-heading"><b>
 
@@ -188,9 +188,11 @@
 
     </div>
 
-    <div class="row">
-
+    <div class="row" >
         <div class="col-md-6" id="Tasks">
+    	<br>
+        <br>
+        <br>
 
             <a class="btn btn-info pull-right"
                href="{% url 'coplay:create_task' discussion.id %}">{% trans "Create Task" %}</a>
@@ -224,6 +226,9 @@
         </div>
 
         <div class="col-md-6" id="Decisions">
+    	<br>
+        <br>
+        <br>
 
             <div class="panel panel-default">
                 <div class="panel-heading"><b>
@@ -244,7 +249,7 @@
                         {% for decision in list_decision %}
                             <li class="list-group-item">{{ decision.content|urlize|linebreaks }}
                                 נוצרה
-                                ב:{{ decision.created_at | naturaltime }}
+                                {{ decision.created_at | naturaltime }}
                                 עם {{ decision.get_number_of_votes }} הצבעות
                                 {% if vote_form %}
                                     <h5>מה דעתך ?</h5>

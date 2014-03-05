@@ -103,7 +103,7 @@ def discussion_details(request, pk):
     list_advice = discussion.feedback_set.all().filter(
         feedbabk_type=Feedback.ADVICE).order_by("-created_at")
     list_decision = discussion.decision_set.all().order_by("-created_at")
-    list_tasks = discussion.task_set.all().order_by("target_date")
+    list_tasks = discussion.task_set.all().order_by("-target_date")
     like_levels = LikeLevel.level
 
     vote_form = None
@@ -653,8 +653,8 @@ class CreateFeedbackView(CreateView):
     def form_valid(self, form):
         form.instance.discussion = self.discussion
         form.instance.user = self.request.user
-        resp = super(CreateFeedbackView, self).form_valid(form)
-        discussion_email_updates(resp.instance.discussion,
+        resp = super(CreateFeedbackView, self).form_valid(form)        
+        discussion_email_updates(form.instance.discussion,
                                          'התקבלה תגובה חדשה בפעילות שבהשתתפותך',
                                          self.request.user)
         return resp
