@@ -69,7 +69,7 @@
     {% endif %}
 
     <div class="well">
-        {% if user == discussion.owner %}
+        {% if user == discussion.owner and discussion.is_active%}
             <a class="btn btn-info pull-right"
                href="{% url 'coplay:discussion_update' discussion.id %}">{% trans "Edit" %}</a>
         {% endif %}
@@ -91,7 +91,7 @@
         </p>
     </div>
 
-    {% if feedback_form %}
+    {% if feedback_form and discussion.is_active %}
         <p>
             <a class="btn btn-info"
                href="{% url 'coplay:create_feedback' discussion.id %}">{% trans "Create Feedback" %}</a>
@@ -237,7 +237,7 @@
                     {% else %}
                         התלבטויות של מוביל הפעילות
                     {% endif %}
-                    {% if add_decision_form %}
+                    {% if add_decision_form and discussion.is_active%}
                         <a class="btn btn-info pull-right"
                            href="{% url 'coplay:create_decision' discussion.id %}">{% trans "Create Decision" %}</a>
                     {% endif %}
