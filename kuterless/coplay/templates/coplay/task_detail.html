@@ -7,7 +7,7 @@
 	{% if False == user.is_authenticated %}
 		<h1>כדי לסגור משימה של מישהו אחר או לעדכן את התקדמות המשימה שלך צריך להיכנס למערכת</h1>
 	
-		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}">רישום</a>
+		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}?next={{ request.path }}">רישום</a>
 		<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
     {% endif %}
 	<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">הסברים</a>

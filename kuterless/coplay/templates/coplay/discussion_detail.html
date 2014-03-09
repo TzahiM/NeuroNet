@@ -47,7 +47,7 @@
             למערכת:
 
             <a
-                    href="{% url 'public_fulfillment:sign_up' %}">הרשמה
+                    href="{% url 'public_fulfillment:sign_up' %}?next={{ request.path }}">הרשמה
                 ראשונה</a> &bull;
             <a
                     href="{% url 'login' %}?next={{ request.path }}">כניסה

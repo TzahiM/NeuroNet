@@ -6,8 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, resolve_url
+from django.utils.http import is_safe_url
 from django.views.generic.edit import CreateView
+from kuterless import settings
 
 # Create your views here.
 
@@ -42,6 +44,8 @@ def labs_root(request):
 """
 
     version_description = """
+9/3/2014:
+חזרה לאותו עמוד אחרי הרשמה(issue #6)
 5/3/2014:
 טיוב העיצוב של דפי הפעילויות
 הפרדת עדכוני מטרות הפעילות ויצירת משימה והוספת ההתלבטויות לטפסים נפרדים 
@@ -95,7 +99,7 @@ class AddUserForm(forms.Form):
         widget=forms.PasswordInput(attrs={'placeholder': 'סיסמא', 'class': 'form-control'}))
 
     password_confirm  = forms.CharField( label='', 
-        widget=forms.PasswordInput(attrs={'placeholder': 'אימות סיסמא', 'class': 'form-control'}))
+        widget=forms.PasswordInput(attrs={'placeholder': 'אותה סיסמא', 'class': 'form-control'}))
     
     first_name  = forms.CharField( required = False, max_length = 200, label='', 
         widget=forms.TextInput(attrs={'placeholder': 'שם פרטי', 'class': 'form-control'}))
@@ -130,10 +134,16 @@ def sign_up(request):
         return render(request, 'coplay/message.html', 
                       {  'message'      :  'Already logged in',
                        'rtl': 'dir="rtl"'})
+    redirect_to = request.REQUEST.get('next', '')
+    if not is_safe_url(url=redirect_to, host=request.get_host()):
+        redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
 
     if request.method == 'POST': # If the form has been submitted...
         form = AddUserForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
+            # Ensure the user-originating redirection url is safe.
+
+            
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
             password = form.cleaned_data['password']
             password_confirm = form.cleaned_data['password_confirm']
@@ -165,9 +175,7 @@ def sign_up(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return render(request, 'coplay/message.html', 
-                      {  'message'      :  'ברוכים הבאים',
-                       'rtl': 'dir="rtl"'})
+                    return HttpResponseRedirect(redirect_to) 
                     # Redirect to a success page.
                 else:
                     # Return a 'disabled account' error message
@@ -184,7 +192,7 @@ def sign_up(request):
                       {  'message'      :  'הנתונים אינם מלאים',
                        'rtl': 'dir="rtl"'})
             
-        return HttpResponseRedirect(reverse('coplay:coplay_root')) # Redirect after POST
+        return HttpResponseRedirect(redirect_to) # Redirect after POST
         
     else:
         form = AddUserForm() # An unbound form
@@ -192,6 +200,7 @@ def sign_up(request):
 
     return render(request, 'public_fulfillment/new_user.html', {
         'form': form,
+        'next': redirect_to,
         'rtl': 'dir="rtl"'
     })
     
@@ -206,6 +215,9 @@ def example(request):
 @login_required
 def update_profile(request):
     user = request.user
+    redirect_to = request.REQUEST.get('next', '')
+    if not is_safe_url(url=redirect_to, host=request.get_host()):
+        redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
 
     if request.method == 'POST': # If the form has been submitted...
         form = UpdateProfileUserForm(request.POST) # A form bound to the POST data
@@ -240,7 +252,7 @@ def update_profile(request):
                 user.email = email
             user.save()
 
-        return HttpResponseRedirect(reverse('coplay:coplay_root')) # Redirect after POST
+        return HttpResponseRedirect(redirect_to) # Redirect after POST
                                 
     else:
         form = UpdateProfileUserForm() # An unbound form
@@ -248,6 +260,7 @@ def update_profile(request):
 
     return render(request, 'public_fulfillment/update_user.html', {
         'form': form,
+        'next': redirect_to,
         'rtl': 'dir="rtl"'
     })
     

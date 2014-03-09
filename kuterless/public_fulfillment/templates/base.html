@@ -89,7 +89,7 @@
                     <li><a href="{% url 'logout' %}?next={{ request.path }}"> יציאה </a></li>
                 {% else %}
                     <li>
-                        <a href="{% url 'public_fulfillment:sign_up' %}">הרשמה</a>
+                        <a href="{% url 'public_fulfillment:sign_up' %}?next={{ request.path }}">הרשמה</a>
                     </li>
                     <li><a href="{% url 'login' %}?next={{ request.path }}">כניסה
                         למשתמש קיים</a></li>
