@@ -6,3 +6,6 @@ body {
 h1 {
     margin-top: 10px;
 }
+#encourage .panel-heading {
+	/* background-color: #ff0000; */	
+}
