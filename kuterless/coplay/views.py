@@ -21,7 +21,7 @@ MAX_MESSAGE_INPUT_CHARS = 900
 # Create your views here.
 def root(request):
     return render(request, 'coplay/co_play_root.html', {'rtl': 'dir="rtl"'})
-
+#hi assaf
 def get_discussions_lists():
     sorted_discussions_by_inverse_locket_at_list = Discussion.objects.all().order_by(
         "-locked_at")
