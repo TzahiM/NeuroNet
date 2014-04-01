@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # -*- coding: utf-8 -*-
+from datetime import timedelta
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils import timezone
-from datetime import timedelta
 from django.utils.translation import ugettext as _
 
 MAX_TEXT = 2000
@@ -163,7 +163,11 @@ class Discussion(models.Model):
 
         return users_list
 
-
+    def record_a_view(self, viewing_user):
+        if viewing_user in User.objects.all():
+            viewer = self.viewer_set.get_or_create( user = viewing_user)[0]
+            viewer.increment_views_counter()
+        
     def print_content(self):
         print 'Owner', self.owner.username
         print 'Title:', self.title
@@ -188,6 +192,9 @@ class Discussion(models.Model):
         tasks = self.task_set.all()
         for task in tasks:
             task.print_content()
+        viewers = self.viewer_set.all()
+        for viewer in viewers:
+            viewer.print_content()
 
 
 class Feedback(models.Model):
@@ -341,11 +348,17 @@ class Task(models.Model):
     STARTED = 1
     CLOSED = 2
     MISSED = 3
-
+    ABORTED = 4
+    DUMED   = 5
+    DONE    = 6
+    
     STATUS_CHOICES = (
-        (STARTED, 'בדרך'),
-        (CLOSED, 'הושלמה'),
+        (STARTED, 'פעילה'),
+        (CLOSED, 'הושלמה בהצלחה'),
         (MISSED, 'פוספסה'),
+        (ABORTED, 'בוטלה בזמן'),
+        (DUMED, 'לא תושלם בזמן'),
+        (DONE, 'הסתימה'),        
     )
 
     parent = models.ForeignKey(Discussion, null=True, blank=True)
@@ -416,3 +429,31 @@ class Task(models.Model):
 
     def print_content(self):
         print 'create', self.created_at, 'update', self.updated_at, 'status:', self.get_status_display(), 'now', timezone.now(), 'GoalDescription:', self.goal_description, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closed_at, self.status_description
+        
+        
+
+class Viewer(models.Model):
+    user = models.ForeignKey(User)
+    discussion = models.ForeignKey(Discussion)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    views_counter = models.IntegerField(default = 0)
+
+    
+    def increment_views_counter(self):
+        self.views_counter += 1
+        self.save()
+
+    def clear_views_counter(self):
+        self.views_counter = 0
+        self.save()
+        
+
+    def __unicode__(self):
+        return "{} - {}: {}".format(self.user, self.views_counter, self.discussion.title)
+
+    def print_content(self):
+        print 'Viewer', self.user.username, 'views_counter', self.views_counter
+
+        

@@ -343,3 +343,22 @@ class CoPlayTest(TestCase):
         attending_list = dis.get_attending_list()
         self.assertEquals(len(attending_list), 3)       
         
+    def test_viewers(self):
+        d = self.create_dicussion()
+        self.assertEquals(d.viewer_set.count(), 0) 
+        d.record_a_view(self.at1)      
+        d.record_a_view(self.at2)      
+        d.record_a_view(self.at3)      
+        d.record_a_view(self.at1)      
+        d.record_a_view(self.at2)      
+        d.record_a_view(self.at2)      
+        d.record_a_view(self.at2) 
+        at1_view = d.viewer_set.get( user = self.at1)
+        at2_view = d.viewer_set.get( user = self.at2)
+        at3_view = d.viewer_set.get( user = self.at3)
+             
+        self.assertEquals(at1_view.views_counter, 2) 
+        self.assertEquals(at2_view.views_counter, 4) 
+        self.assertEquals(at3_view.views_counter, 1) 
+        self.assertEquals(d.viewer_set.count(), 3) 
+        
