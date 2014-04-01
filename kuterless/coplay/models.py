@@ -449,6 +449,8 @@ class Viewer(models.Model):
         self.views_counter = 0
         self.save()
         
+    def get_views_counter(self):
+        return self.views_counter
 
     def __unicode__(self):
         return "{} - {}: {}".format(self.user, self.views_counter, self.discussion.title)

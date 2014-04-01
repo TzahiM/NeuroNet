@@ -39,6 +39,8 @@
             &bull;
             <a href="#Tasks">המשימות באחריות
                 המשתתפים</a>
+            &bull;
+            <a href="#Views">נתוני צפיה</a>
         </div>
     </div>
     {% if not user.is_authenticated %}
@@ -280,6 +282,42 @@
 
 
         </div>
+    </div>    
+    <div class="row" >
+        <div class="col-md-6" id="Views">
+    	<br>
+        <br>
+        <br>
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+                    נתוני צפייה
+                </b></div>
+
+
+                <ul class="list-group">
+                    {% for viewer in list_viewers %}
+
+                        <li class="list-group-item">
+                            {{ viewer.get_views_counter }} צפיות של 
+                            <a href="{% url 'coplay:user_coplay_report'  viewer.user.username %}">{{ viewer.user.get_full_name|default:viewer.user.username }}</a>
+
+                            הפעם האחרונה היתה   {{ viewer.updated_at | naturaltime }}
+
+                            
+
+                        </li>
+                    {% endfor %}
+                </ul>
+
+
+            </div>
+        </div>
+
+        
+        
+        
     </div>
 
 

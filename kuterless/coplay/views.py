@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-from django.contrib import messages
-from django.utils.decorators import method_decorator
-from django.views.generic import UpdateView, DeleteView, CreateView
 from coplay import models
-from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task
-import floppyforms as forms
+from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
+    Viewer
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail.message import EmailMessage
@@ -13,8 +11,11 @@ from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils import timezone
-from django.views import generic
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
+from django.views import generic
+from django.views.generic import UpdateView, DeleteView, CreateView
+import floppyforms as forms
 
 MAX_MESSAGE_INPUT_CHARS = 900
 
@@ -105,6 +106,7 @@ def discussion_details(request, pk):
     list_decision = discussion.decision_set.all().order_by("-created_at")
     list_tasks = discussion.task_set.all().order_by("-target_date")
     like_levels = LikeLevel.level
+    list_viewers = discussion.viewer_set.all().order_by("-updated_at")
 
     vote_form = None
     feedback_form = None
@@ -123,8 +125,9 @@ def discussion_details(request, pk):
         add_task_form = AddTaskForm()
 
     page_name = u'עוזרים ב ' + discussion.title
-
-    return render(request, 'coplay/discussion_detail.html',
+    
+    #the response shall not indicate current user's view
+    return_response = render(request, 'coplay/discussion_detail.html',
                   {'discussion': discussion,
                    'list_encourage': list_encourage,
                    'list_cooperation': list_cooperation,
@@ -138,7 +141,14 @@ def discussion_details(request, pk):
                    'vote_form': vote_form,
                    'add_task_form': add_task_form,
                    'like_levels': like_levels,
+                   'list_viewers':list_viewers,
                    'page_name': page_name})
+    
+    #current view is recorded after response had been resolved
+    if request.user.is_authenticated():
+        discussion.record_a_view(request.user)
+        
+    return return_response
 
 
 class NewDiscussionForm(forms.Form):
@@ -541,9 +551,20 @@ def user_coplay_report(request, username=None):
     for discussion in locked_discussions_by_relevancy_list:
         if user in discussion.get_attending_list(include_owner=True):
             user_discussions_locked.append(discussion)
+            
+    number_of_closed_tasks = len(user_closed_tasks_list)
+    number_of_views = 0
+    views_list = Viewer.objects.filter( user = user)
+    for view in views_list:
+        if view.discussion.owner != user:
+            number_of_views += view.get_views_counter()
+    
+    
 
     return render(request, 'coplay/coplay_report.html',
                   {
+                      'number_of_closed_tasks'           : number_of_closed_tasks,
+                      'number_of_views'                  : number_of_views       ,
                       'tasks_open_by_increased_time_left': user_s_open_tasks_list,
                       'tasks_others_open_by_increased_time_left': other_users_open_tasks_list,
                       'discussions_active_by_increase_time_left': user_discussions_active,
