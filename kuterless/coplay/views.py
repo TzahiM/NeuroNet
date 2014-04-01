@@ -537,9 +537,12 @@ def user_coplay_report(request, username=None):
         if user in discussion.get_attending_list(include_owner=True):
             missed_tasks_list.append(task)
 
+    number_of_closed_tasks_for_others = 0
     for task in closed_tasks_list_by_relevancy_list:
         if task.responsible == user:
             user_closed_tasks_list.append(task)
+            if task.parent.owner != user:
+                number_of_closed_tasks_for_others +=1
 
     user_discussions_active = []
     user_discussions_locked = []
@@ -553,18 +556,22 @@ def user_coplay_report(request, username=None):
             user_discussions_locked.append(discussion)
             
     number_of_closed_tasks = len(user_closed_tasks_list)
+    
+
     number_of_views = 0
     views_list = Viewer.objects.filter( user = user)
     for view in views_list:
         if view.discussion.owner != user:
             number_of_views += view.get_views_counter()
     
-    
+    number_of_feedbacks = user.feedback_set.all().count()
 
     return render(request, 'coplay/coplay_report.html',
                   {
                       'number_of_closed_tasks'           : number_of_closed_tasks,
+                      'number_of_closed_tasks_for_others': number_of_closed_tasks_for_others,
                       'number_of_views'                  : number_of_views       ,
+                      'number_of_feedbacks'              : number_of_feedbacks   ,
                       'tasks_open_by_increased_time_left': user_s_open_tasks_list,
                       'tasks_others_open_by_increased_time_left': other_users_open_tasks_list,
                       'discussions_active_by_increase_time_left': user_discussions_active,
