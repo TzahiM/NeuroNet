@@ -565,11 +565,14 @@ def user_coplay_report(request, username=None):
             number_of_views += view.get_views_counter()
     
     number_of_feedbacks = user.feedback_set.all().count()
+    
+    number_of_task_closing = Task.objects.filter( closed_by = user ).count()
 
     return render(request, 'coplay/coplay_report.html',
                   {
                       'number_of_closed_tasks'           : number_of_closed_tasks,
                       'number_of_closed_tasks_for_others': number_of_closed_tasks_for_others,
+                      'number_of_task_closing'           : number_of_task_closing,
                       'number_of_views'                  : number_of_views       ,
                       'number_of_feedbacks'              : number_of_feedbacks   ,
                       'tasks_open_by_increased_time_left': user_s_open_tasks_list,
