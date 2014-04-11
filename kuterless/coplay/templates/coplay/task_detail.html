@@ -13,35 +13,36 @@
 	<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">הסברים</a>
 </center>	
 	
+    <div class="row">
+        <div class="col-md-12">
 
- 	<div class="jumbotron">
-           	<div class="container">
-            	<center><h1> המטרה היא: {{task.goal_description |urlize|linebreaks}}</h1></center>
+            	<h1> {{task.goal_description |urlize|linebreaks}}</h1>
             	{%if user == task.responsible %}
 					<p>באחריותך</p>
             	{%else%}
 					<p>	באחריות:  <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a></p>
+					{% if close_possible %}
+					<center>
+						<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לאישור סגירת המשימה לחץ כאן</a>
+						<a class="btn btn-danger" href= "{% url 'coplay:abort_task' task.id %}">לאישור ביטול המשימה לחץ כאן</a>
+					</center>
+					{% endif %}
             	{% endif %}
 				
 				<p>מצב : {{task.get_status_display}}</p>
 				<p>תאריך יעד : {{task.target_date |date:"d/n/Y H:i" }}</p>       
-           </div>         
-    </div>
+        </div>         
+    </div>        
             
 	<p> התחלה : {{task.created_at }}</p>
 	<p> זמן לסיום : {{task.target_date | naturaltime }}</p>
 	<p>מצב עדכני : {{task.get_status_description |urlize|linebreaks}} </p>
 	
-	{% if task.get_status == task.CLOSED %}
+	{% if task.closed_at %}
 		<p> {{task.closed_at }} נסגר ב</p>
 		<p>			על ידי: <a  href="{% url 'coplay:user_coplay_report'  task.closed_by.username %}">{{ task.closed_by.get_full_name|default:task.closed_by.username }}</a>		</p>
 	{% endif %}
 
-	{% if close_possible %}
-	<center>
-		<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לאישור סגירת המשימה לחץ כאן</a>
-	</center>
-	{% endif %}
 	{% if update_task_form  %}
 		<p>You can update this task's status here</p>
 		<form action= "{% url 'coplay:update_task_status_description' task.id %}" method="post">{% csrf_token %}

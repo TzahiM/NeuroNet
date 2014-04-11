@@ -9,7 +9,7 @@
 	<a class="btn btn-success" href="#DiscussionsActive">פעילויות פעילות </a>
 	<a class="btn btn-success" href="#DiscussionsLocked">פעילויות לא פעילות</a>
 	<a class="btn btn-success" href="#TasksClosed">משימות שהושלמו</a>
-	<a class="btn btn-success" href="#TasksMissedAll">משימות מפוספסות של כולם</a>
+	<a class="btn btn-success" href="#TasksFailedAll">משימות שנכשלו של כולם</a>
 	<a class="btn btn-success" href="{% url 'coplay:discussions_list' %}">רשימת כל הפעילויות</a>
 	
 	
@@ -24,6 +24,7 @@
             		<h1>{{ page_name}}</h1>
             		{{number_of_closed_tasks}} משימות שהושלמו
             	    {{number_of_closed_tasks_for_others}}  מתוכם למשתמשים אחרים 
+            	    {{number_of_aborted_tasks}}  משימות שבוטלו בזמן 
             	    {{number_of_task_closing}} סגירות משימות
             	    {{number_of_feedbacks}} תגובות בפעילויות של אחרים
             	    {{number_of_views}} צפיות בפעילויות של אחרים
@@ -182,7 +183,7 @@
 					{% for task in tasks_closed_by_reverse_time %}
 					
 					 		<li class="list-group-item">
-					 			{% if  task.parent.owner == applicabale_user%}
+					 			{% if  task.parent.owner != applicabale_user%}
 					 			<h3>
 					 			{% endif %}
 					 			
@@ -204,13 +205,13 @@
 				
                 </div>
 
-                <div class="col-sm-2 col-md-6" id = "TasksMissedAll">
+                <div class="col-sm-2 col-md-6" id = "TasksFailedAll">
     	<br>
         <br>
         <br>
-                	<center><h2>משימות שפוספסו</h2></center>
+                	<center><h2>משימות שלא הצליחו</h2></center>
 	                	<ul>
-					{% for task in tasks_missed_by_reverse_time  %}
+					{% for task in tasks_failed_by_reverse_update_time  %}
 					
 					 		<li class="list-group-item">
 					 			{% if  task.parent.owner == applicabale_user%}
@@ -219,7 +220,7 @@
 					 			
 					 			{{task.goal_description|urlize|linebreaks}}<br>
 					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
-					 			פוספסה  {{task.target_date | naturaltime }}
+					 			{{task.get_status_display}}  {{task.updated_at | naturaltime }}
 					 			
 					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}

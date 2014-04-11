@@ -426,7 +426,7 @@ def task_details(request, pk):
 
     if request.user.is_authenticated():
         user = request.user
-        if task.get_status() == task.STARTED:
+        if  task.target_date > timezone.now():
             if user == task.responsible:
                 update_task_form = UpdateTaskForm()
             else:
@@ -455,7 +455,7 @@ def update_task_description(request, pk):
                 task.update_status_description(
                     form.cleaned_data['status_description'])
                 discussion_task_email_updates(task,
-                                              'עודכנה משימה בפעילות שבהשתתפותך. יתכן ואפשר לסגור את המשימה',
+                                              'עודכנה משימה בפעילות שבהשתתפותך. יתכן ואפשר לסגור או לבטל את המשימה',
                                               request.user)
 
             return HttpResponseRedirect(
@@ -472,12 +472,26 @@ def close_task(request, pk):
         return HttpResponse('Task not found')
     user = request.user
     if user != task.responsible:
-        task.close(user)
-        discussion_task_email_updates(task, 'הושלמה משימה בפעילות שבהשתתפותך',
+        if task.close(user):
+            discussion_task_email_updates(task, 'הושלמה משימה בפעילות שבהשתתפותך',
                                       request.user)
 
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
 
+
+@login_required
+def abort_task(request, pk):
+    try:
+        task = Task.objects.get(id=int(pk))
+    except Task.DoesNotExist:
+        return HttpResponse('Task not found')
+    user = request.user
+    if user != task.responsible:
+        if task.abort(user):
+            discussion_task_email_updates(task, 'בוטלה משימה בפעילות שבהשתתפותך',
+                                      request.user)
+
+    return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
 
 
 
@@ -521,7 +535,7 @@ def user_coplay_report(request, username=None):
 
     user_s_open_tasks_list = []
     other_users_open_tasks_list = []
-    missed_tasks_list = []
+    failed_tasks_list = []
     user_closed_tasks_list = []
 
     for task in open_tasks_list_by_urgancy_list:
@@ -531,11 +545,15 @@ def user_coplay_report(request, username=None):
             discussion = task.parent
             if user in discussion.get_attending_list(include_owner=True):
                 other_users_open_tasks_list.append(task)
-
-    for task in missed_tasks_list_by_relevancy_list:
+                
+    tasks_by_recent_updates = Task.objects.all().order_by("-updated_at")
+    
+    for task in tasks_by_recent_updates:
         discussion = task.parent
         if user in discussion.get_attending_list(include_owner=True):
-            missed_tasks_list.append(task)
+            status = task.get_status()
+            if status == Task.MISSED or status == Task.ABORTED:
+                failed_tasks_list.append(task)
 
     number_of_closed_tasks_for_others = 0
     for task in closed_tasks_list_by_relevancy_list:
@@ -567,11 +585,13 @@ def user_coplay_report(request, username=None):
     number_of_feedbacks = user.feedback_set.all().count()
     
     number_of_task_closing = Task.objects.filter( closed_by = user ).count()
+    number_of_aborted_tasks = Task.objects.filter( status=Task.ABORTED ).count()
 
     return render(request, 'coplay/coplay_report.html',
                   {
                       'number_of_closed_tasks'           : number_of_closed_tasks,
                       'number_of_closed_tasks_for_others': number_of_closed_tasks_for_others,
+                      'number_of_aborted_tasks'          : number_of_aborted_tasks,
                       'number_of_task_closing'           : number_of_task_closing,
                       'number_of_views'                  : number_of_views       ,
                       'number_of_feedbacks'              : number_of_feedbacks   ,
@@ -580,7 +600,7 @@ def user_coplay_report(request, username=None):
                       'discussions_active_by_increase_time_left': user_discussions_active,
                       'discussions_locked_by_increase_locked_at': user_discussions_locked,
                       'tasks_closed_by_reverse_time': user_closed_tasks_list,
-                      'tasks_missed_by_reverse_time': missed_tasks_list,
+                      'tasks_failed_by_reverse_update_time': failed_tasks_list,
                       'applicabale_user': user,
                       'page_name': page_name})
 
