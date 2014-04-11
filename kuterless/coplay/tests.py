@@ -105,6 +105,7 @@ class CoPlayTest(TestCase):
         self.assertEquals(task1.get_status_description(), new_stat_desc)
         new_stat_desc = "dfasgg"
         task1.close(self.admin)
+        time.sleep(2)
         task1.update_status_description(new_stat_desc)
         self.assertNotEquals(task1.get_status_description(), new_stat_desc)
         d.print_content()
@@ -254,6 +255,7 @@ class CoPlayTest(TestCase):
         time.sleep(1)
         task2.close(self.admin)
         time.sleep(2)
+        task2.print_content()
         self.assertEquals(self.admin, task2.closed_by)
         self.assertEquals(False, task1.close(self.at1))
         self.assertEquals(task1.STARTED, task1.get_status())

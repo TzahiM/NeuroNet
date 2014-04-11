@@ -349,16 +349,12 @@ class Task(models.Model):
     CLOSED = 2
     MISSED = 3
     ABORTED = 4
-    DUMED   = 5
-    DONE    = 6
     
     STATUS_CHOICES = (
         (STARTED, 'פעילה'),
         (CLOSED, 'הושלמה בהצלחה'),
         (MISSED, 'פוספסה'),
         (ABORTED, 'בוטלה בזמן'),
-        (DUMED, 'לא תושלם בזמן'),
-        (DONE, 'הסתימה'),        
     )
 
     parent = models.ForeignKey(Discussion, null=True, blank=True)
@@ -383,42 +379,68 @@ class Task(models.Model):
 
 
     def update_status_description(self, status_description):
-        self.refresh_status()
-        if self.status != self.STARTED:
+        if (self.target_date < timezone.now() ):
             return False
         self.status_description = status_description
         self.save()
         return True
 
     def get_status_description(self):
+        self.refresh_status()
         return self.status_description
 
-    def close(self, closing_user):
+    def abort(self, closing_user):
         if self.responsible is closing_user:
             return False
         self.refresh_status()
-        if (self.status == self.STARTED):
-            self.status = self.CLOSED
-            self.closed_at = timezone.now()
+        if (self.status == self.MISSED):
+            return False
+        now  = timezone.now()
+        if (self.target_date >= now ):
+            return False
+
+        if (self.status != self.ABORTED):
+            self.status = self.ABORTED
+            self.closed_at = now
             self.closed_by = closing_user
             self.save()
             return True
         return False
 
+    def close(self, closing_user):
+        if self.responsible is closing_user:
+            return False
+        now  = timezone.now()
+        if (self.target_date < now ):
+            return False
+        self.refresh_status()
+        if (self.status == self.MISSED):
+            return False
+
+        if (self.status != self.CLOSED):
+            self.status = self.CLOSED
+            self.closed_at = now
+            self.closed_by = closing_user
+            self.save()
+            return True #task closing had been performed
+        return False
+
 
     def get_time_until_target(self):
-        self.refresh_status()
-        if ( self.status == self.STARTED):
-            return self.target_date - timezone.now()
+        now = timezone.now()
+        if ( self.target_date >= now):
+            return self.target_date - now
         return 0
 
     def refresh_status(self):
         if (self.status == self.CLOSED):
             return
         if (self.status == self.MISSED):
-            return
+            return        
+        if (self.status == self.ABORTED):
+            return        
 
-        if (self.target_date < timezone.now() ):
+        if ((self.target_date < timezone.now() ) and (self.status == self.STARTED)):
             self.status = self.MISSED
             self.save()
 
