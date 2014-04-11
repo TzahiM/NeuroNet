@@ -392,11 +392,11 @@ class Task(models.Model):
     def abort(self, closing_user):
         if self.responsible is closing_user:
             return False
+        now  = timezone.now()
+        if (self.target_date < now ):
+            return False
         self.refresh_status()
         if (self.status == self.MISSED):
-            return False
-        now  = timezone.now()
-        if (self.target_date >= now ):
             return False
 
         if (self.status != self.ABORTED):
@@ -404,7 +404,7 @@ class Task(models.Model):
             self.closed_at = now
             self.closed_by = closing_user
             self.save()
-            return True
+            return True #task abortion had been performed
         return False
 
     def close(self, closing_user):
@@ -433,12 +433,6 @@ class Task(models.Model):
         return 0
 
     def refresh_status(self):
-        if (self.status == self.CLOSED):
-            return
-        if (self.status == self.MISSED):
-            return        
-        if (self.status == self.ABORTED):
-            return        
 
         if ((self.target_date < timezone.now() ) and (self.status == self.STARTED)):
             self.status = self.MISSED
