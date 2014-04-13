@@ -585,7 +585,7 @@ def user_coplay_report(request, username=None):
     number_of_feedbacks = user.feedback_set.all().count()
     
     number_of_task_closing = Task.objects.filter( closed_by = user ).count()
-    number_of_aborted_tasks = Task.objects.filter( status=Task.ABORTED ).count()
+    number_of_aborted_tasks = Task.objects.filter( status=Task.ABORTED, responsible = user ).count()
 
     return render(request, 'coplay/coplay_report.html',
                   {
