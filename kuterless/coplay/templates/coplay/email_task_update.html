@@ -1,6 +1,10 @@
 {% extends "coplay/email_base.html" %}
 
 {% block content %}
+    <br>
+    {% if detailes %}
+  		{{detailes}}
+  	{% endif %}
   <p>
       <a href="http://{{ROOT_URL}}{{task.get_absolute_url}}">לצפיה בפירוט המשימה  </a>
    </p>

@@ -1,6 +1,11 @@
 {% extends "coplay/email_base.html" %}
 
 {% block content %}
+    <br>
+    {% if detailes %}
+  		{{detailes}}
+  	{% endif %}
+
   <p>
       <a href="http://{{ROOT_URL}}{{discussion.get_absolute_url}}">לצפיה בדיון המלא </a>
    </p>

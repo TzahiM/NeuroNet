@@ -494,6 +494,22 @@ def abort_task(request, pk):
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
 
 
+@login_required
+def re_open_task(request, pk):
+    try:
+        task = Task.objects.get(id=int(pk))
+    except Task.DoesNotExist:
+        return HttpResponse('Task not found')
+    
+    user = request.user
+    if user != task.responsible:
+        if task.re_open(user):
+            discussion_task_email_updates(task, 'נפתחה מחדש משימה בפעילות שבהשתתפותך',
+                                      request.user)
+
+    return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
+
+
 
 def get_tasks_lists():
     for task in Task.objects.all():

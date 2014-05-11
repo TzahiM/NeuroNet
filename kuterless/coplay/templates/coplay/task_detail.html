@@ -5,7 +5,7 @@
 {% block content %}
 <center>
 	{% if False == user.is_authenticated %}
-		<h1>כדי לסגור משימה של מישהו אחר או לעדכן את התקדמות המשימה שלך צריך להיכנס למערכת</h1>
+		<h1>כדי לאשר שינוי מצב של משימה של מישהו אחר או לעדכן את התקדמות המשימה שלך צריך להיכנס למערכת</h1>
 	
 		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}?next={{ request.path }}">רישום</a>
 		<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
@@ -23,8 +23,15 @@
 					<p>	באחריות:  <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a></p>
 					{% if close_possible %}
 					<center>
-						<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לאישור סגירת המשימה לחץ כאן</a>
-						<a class="btn btn-danger" href= "{% url 'coplay:abort_task' task.id %}">לאישור ביטול המשימה לחץ כאן</a>
+						{% if task.get_status != task.CLOSED %}
+							<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לסגירת המשימה לחץ כאן</a>
+						{% endif %}
+						{% if task.get_status != task.STARTED %}
+							<a class="btn btn-warning" href= "{% url 'coplay:re_open_task' task.id %}">לפתיחה מחדש של  המשימה לחץ כאן</a>
+						{% endif %}
+						{% if task.get_status != task.ABORTED %}
+							<a class="btn btn-danger" href= "{% url 'coplay:abort_task' task.id %}">לביטול המשימה לחץ כאן</a>
+						{% endif %}
 					</center>
 					{% endif %}
             	{% endif %}
@@ -39,7 +46,7 @@
 	<p>מצב עדכני : {{task.get_status_description |urlize|linebreaks}} </p>
 	
 	{% if task.closed_at %}
-		<p> {{task.closed_at }} נסגר ב</p>
+		<p> {{task.closed_at }} אושר ב</p>
 		<p>			על ידי: <a  href="{% url 'coplay:user_coplay_report'  task.closed_by.username %}">{{ task.closed_by.get_full_name|default:task.closed_by.username }}</a>		</p>
 	{% endif %}
 

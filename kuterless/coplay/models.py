@@ -371,7 +371,7 @@ class Task(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return self.content
+        return self.goal_description
 
 
     def get_absolute_url(self):
@@ -401,6 +401,25 @@ class Task(models.Model):
 
         if (self.status != self.ABORTED):
             self.status = self.ABORTED
+            self.closed_at = now
+            self.closed_by = closing_user
+            self.save()
+            return True #task abortion had been performed
+        return False
+
+    def re_open(self, closing_user):
+        if self.responsible is closing_user:
+            return False
+        now  = timezone.now()
+        if (self.target_date < now ):
+            return False
+        self.refresh_status()
+        if (self.status == self.MISSED):
+            return False
+        
+
+        if (self.status != self.STARTED):
+            self.status = self.STARTED
             self.closed_at = now
             self.closed_by = closing_user
             self.save()

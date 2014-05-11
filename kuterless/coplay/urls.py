@@ -38,6 +38,8 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/close_task/$', views.close_task, name='close_task'),
 #pk (of task)/abort_task
     url(r'^(?P<pk>\d+)/abort_task/$', views.abort_task, name='abort_task'),
+#pk (of task)/re_open_task
+    url(r'^(?P<pk>\d+)/re_open_task/$', views.re_open_task, name='re_open_task'),
 #/username/user_coplay_report
 # ex: labs/coplay/Tzahim/user_coplay_report
     url(r'^(?P<username>.+)/user_coplay_report/$', views.user_coplay_report, name='user_coplay_report'),
