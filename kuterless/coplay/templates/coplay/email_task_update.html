@@ -2,11 +2,11 @@
 
 {% block content %}
     <br>
-    {% if detailes %}
-  		{{detailes}}
+    {% if details %}
+  		{{details|urlize|linebreaks}}
   	{% endif %}
   <p>
-      <a href="http://{{ROOT_URL}}{{task.get_absolute_url}}">לצפיה בפירוט המשימה  </a>
+      <a href="http://{{ROOT_URL}}{{task.get_absolute_url}}">לעדכון וצפיה  במשימה  {{task.goal_description|urlize|linebreaks}} שבאחריות {{ task.responsible.get_full_name|default:task.responsible.username }}</a>
    </p>
    <br>
    <br>

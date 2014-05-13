@@ -226,7 +226,7 @@ class Feedback(models.Model):
         if feedbabk_type == self.ENCOURAGE:
             return 'עידוד'
         if feedbabk_type == self.COOPERATION:
-            return 'פעולה'
+            return 'שיתוף פעולה'
         if feedbabk_type == self.INTUITION:
             return 'אינטואיציה'
         return 'עצה'

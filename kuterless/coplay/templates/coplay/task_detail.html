@@ -16,7 +16,7 @@
     <div class="row">
         <div class="col-md-12">
 
-            	<h1> {{task.goal_description |urlize|linebreaks}}</h1>
+            	<h2> {{task.goal_description |urlize|linebreaks}}</h2>
             	{%if user == task.responsible %}
 					<p>באחריותך</p>
             	{%else%}
@@ -24,16 +24,19 @@
 					{% if close_possible %}
 					<center>
 						{% if task.get_status != task.CLOSED %}
-							<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לסגירת המשימה לחץ כאן</a>
+							<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לסגירת משימה</a>
 						{% endif %}
 						{% if task.get_status != task.STARTED %}
-							<a class="btn btn-warning" href= "{% url 'coplay:re_open_task' task.id %}">לפתיחה מחדש של  המשימה לחץ כאן</a>
+							<a class="btn btn-warning" href= "{% url 'coplay:re_open_task' task.id %}">לפתיחה מחדש של  המשימה</a>
 						{% endif %}
 						{% if task.get_status != task.ABORTED %}
-							<a class="btn btn-danger" href= "{% url 'coplay:abort_task' task.id %}">לביטול המשימה לחץ כאן</a>
+							<a class="btn btn-danger" href= "{% url 'coplay:abort_task' task.id %}">לביטול המשימה</a>
 						{% endif %}
 					</center>
+					<p><b>עידכון המצב : {{task.get_status_description |urlize|linebreaks}} </b></p>
+
 					{% endif %}
+
             	{% endif %}
 				
 				<p>מצב : {{task.get_status_display}}</p>
@@ -43,7 +46,6 @@
             
 	<p> התחלה : {{task.created_at }}</p>
 	<p> זמן לסיום : {{task.target_date | naturaltime }}</p>
-	<p>מצב עדכני : {{task.get_status_description |urlize|linebreaks}} </p>
 	
 	{% if task.closed_at %}
 		<p> {{task.closed_at }} אושר ב</p>
@@ -51,7 +53,6 @@
 	{% endif %}
 
 	{% if update_task_form  %}
-		<p>You can update this task's status here</p>
 		<form action= "{% url 'coplay:update_task_status_description' task.id %}" method="post">{% csrf_token %}
 				{% for field in update_task_form %}
 					<div class="fieldWrapper">
@@ -59,12 +60,13 @@
 						{{ field.label_tag }} {{ field }}
 					</div>
 				{% endfor %}
-				<input type="submit" value="עידכון ההתקדמות" />
+				<input type="submit" value=" עדכון המשתתפים על המצב של המשימה ובקשה  שיסגרו או יבטלו או יפתחו אותה מחדש" />
 		</form>
 	{% endif %}
 	
+	
 	{% if task.parent %}
-	<p>  :המשימה קשורה לדיון שכותרתו{{task.parent.title |urlize|linebreaks}} <br>
+	<p>  :המשימה קשורה לפעילות בנושא {{task.parent.title |urlize|linebreaks}} <br>
 		<a class="btn btn-success" href="{{ task.parent.get_absolute_url }}">פרטים</a>
 	{% endif %}
 	

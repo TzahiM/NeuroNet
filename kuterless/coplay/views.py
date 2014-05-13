@@ -15,6 +15,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
+from flask import logging
 import floppyforms as forms
 
 MAX_MESSAGE_INPUT_CHARS = 900
@@ -196,16 +197,19 @@ def add_discussion(request):
 
 
 def send_html_message(subject, html_content, from_email, to_list):
-    msg = EmailMessage(subject, html_content, from_email, to_list)
+    msg = EmailMessage(subject.replace( "\n", " ").replace( "\r", " "), html_content, from_email, to_list)
     msg.content_subtype = "html"  # Main content is now text/html
+    print(msg)
     msg.send()
 
 
-def discussion_email_updates(discussion, subject, logged_in_user):
+def discussion_email_updates(discussion, subject, logged_in_user, details = None, id = ''):
     attending_list = discussion.get_attending_list(True)
     html_message = render_to_string("coplay/email_discussion_update.html",
                                     {'ROOT_URL': 'www.kuterless.org.il',
-                                     'discussion': discussion})
+                                     'discussion': discussion,
+                                     'details': details,
+                                     'id': id})
 
     for attensdent in attending_list:
         if attensdent.email and attensdent != logged_in_user:
@@ -214,12 +218,13 @@ def discussion_email_updates(discussion, subject, logged_in_user):
                               [attensdent.email])
 
 
-def discussion_task_email_updates(task, subject, logged_in_user):
+def discussion_task_email_updates(task, subject, logged_in_user, details = None):
     attending_list = task.parent.get_attending_list(True)
 
     html_message = render_to_string("coplay/email_task_update.html",
                                     {'ROOT_URL': 'www.kuterless.org.il',
-                                     'task': task})
+                                     'task': task,
+                                     'details': details})
 
     for attensdent in attending_list:
         if attensdent.email and attensdent != logged_in_user:
@@ -294,9 +299,11 @@ def add_feedback(request, pk):
                 return HttpResponse('Discussion not found')
             if user != discussion.owner and form.cleaned_data[
                 'feedbabk_type'] and form.cleaned_data['content']:
-                discussion.add_feedback(user,
+                feedback = discussion.add_feedback(user,
                                         form.cleaned_data['feedbabk_type'],
                                         form.cleaned_data['content'])
+                subject_text = u""
+                
                 discussion_email_updates(discussion,
                                          'התקבלה תגובה חדשה בפעילות שבהשתתפותך',
                                          request.user)
@@ -428,7 +435,7 @@ def task_details(request, pk):
         user = request.user
         if  task.target_date > timezone.now():
             if user == task.responsible:
-                update_task_form = UpdateTaskForm()
+                update_task_form = UpdateTaskForm(initial={'status_description': task.status_description})
             else:
                 close_possible = True
 
@@ -454,9 +461,16 @@ def update_task_description(request, pk):
             if user == task.responsible:
                 task.update_status_description(
                     form.cleaned_data['status_description'])
+                
+                subject = task.status_description +   u'של ' + get_user_fullname_or_username(task.responsible) + u' בנוגע ל ' + task.get_status_description()
+                details = subject 
+                
                 discussion_task_email_updates(task,
-                                              'עודכנה משימה בפעילות שבהשתתפותך. יתכן ואפשר לסגור או לבטל את המשימה',
-                                              request.user)
+                                              subject,
+                                              request.user,
+                                              details)
+                
+                
 
             return HttpResponseRedirect(
                 task.get_absolute_url()) # Redirect after POST
@@ -473,8 +487,14 @@ def close_task(request, pk):
     user = request.user
     if user != task.responsible:
         if task.close(user):
-            discussion_task_email_updates(task, 'הושלמה משימה בפעילות שבהשתתפותך',
-                                      request.user)
+            subject = u'אושרה השלמתה של' + task.goal_description + u'באחריות  ' + get_user_fullname_or_username(task.responsible) 
+            details = subject 
+                
+            discussion_task_email_updates(task,
+                                              subject,
+                                              request.user,
+                                              details)
+
 
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
 
@@ -488,8 +508,13 @@ def abort_task(request, pk):
     user = request.user
     if user != task.responsible:
         if task.abort(user):
-            discussion_task_email_updates(task, 'בוטלה משימה בפעילות שבהשתתפותך',
-                                      request.user)
+            subject = u'אושר  ביטולה של' + task.goal_description + u'באחריות  ' + get_user_fullname_or_username(task.responsible) 
+            details = subject 
+                
+            discussion_task_email_updates(task,
+                                              subject,
+                                              request.user,
+                                              details)
 
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
 
@@ -504,8 +529,13 @@ def re_open_task(request, pk):
     user = request.user
     if user != task.responsible:
         if task.re_open(user):
-            discussion_task_email_updates(task, 'נפתחה מחדש משימה בפעילות שבהשתתפותך',
-                                      request.user)
+            subject = u'אושרה  פתיחתה מחדש של' + task.goal_description + u'באחריות  ' + get_user_fullname_or_username(task.responsible) 
+            details = subject 
+                
+            discussion_task_email_updates(task,
+                                              subject,
+                                              request.user,
+                                              details)
 
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
 
@@ -641,9 +671,28 @@ class DiscussionOwnerView(object):
         return super(DiscussionOwnerView, self).dispatch(request, *args,
                                                               **kwargs)
 
-
 class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
+    
     form_class = UpdateDiscussionDescForm
+    
+    def form_valid(self, form):
+
+        resp = super(UpdateDiscussionDescView, self).form_valid(form)  
+        subject_text = u"%s %s %s %s" % (u"עידכון היעדים ב",
+                                   form.instance.title,
+                                   u"של",
+                                   get_user_fullname_or_username(self.request.user))
+        
+        details = subject_text + "\n:הנוסח החדש של תיאור הפעילות, היעדים והעזרה המבוקשת הוא\n" + form.instance.description
+                                                            
+      
+        discussion_email_updates(form.instance,
+                                         subject_text,
+                                         self.request.user,
+                                         details)
+        
+        return resp
+    
 
 
 class DeleteDiscussionView(DiscussionOwnerView, DeleteView):
@@ -687,9 +736,26 @@ class CreateTaskView(CreateView):
         form.instance.responsible = self.request.user
         resp = super(CreateTaskView, self).form_valid(form)
         form.instance.parent.unlock()
-        discussion_task_email_updates(form.instance,
-                                          'נוספה משימה חדשה בפעילות שבהשתתפותך',
-                                          self.request.user)
+        
+        subject_text = u"%s %s %s %s" % (u" משימה חדשה:",
+                                   form.instance.goal_description,
+                                   u"באחריות",
+                                   get_user_fullname_or_username(form.instance.parent.owner))
+        
+        link_name = u" זה הקישור לפרטים של" + form.instance.goal_description + u"שבאחריות " + get_user_fullname_or_username(form.instance.parent.owner)
+        
+        details = '\n<a href="http://www.kuterless.org.il/%s">%s</a>\n' % (form.instance.get_absolute_url(), link_name)
+            
+                                                              
+      
+        discussion_email_updates(form.instance.parent,
+                                         subject_text,
+                                         self.request.user,
+                                         details)
+        
+        
+        
+        
         return resp
 
 
@@ -714,16 +780,31 @@ class CreateFeedbackView(CreateView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.discussion = get_object_or_404(Discussion, pk=self.kwargs['pk'])
+        if self.discussion.owner == request.user:
+            return HttpResponse("Unauthorized", status=401)
+        
         return super(CreateFeedbackView, self).dispatch(request, *args,
                                                               **kwargs)
+
 
     def form_valid(self, form):
         form.instance.discussion = self.discussion
         form.instance.user = self.request.user
-        resp = super(CreateFeedbackView, self).form_valid(form)        
+        resp = super(CreateFeedbackView, self).form_valid(form)  
+        subject_text = u"%s של %s: %s" % (form.instance.get_feedbabk_type_name(), get_user_fullname_or_username(self.request.user),
+                                                        form.instance.content)
+        
+        details = u"%s של %s: \n%s" % (form.instance.get_feedbabk_type_name(), get_user_fullname_or_username(self.request.user),
+                                                        form.instance.content)
+                                                            
+      
         discussion_email_updates(form.instance.discussion,
-                                         'התקבלה תגובה חדשה בפעילות שבהשתתפותך',
-                                         self.request.user)
+                                         subject_text,
+                                         self.request.user,
+                                         details)
+        
+        
+        
         return resp
 
 
@@ -755,9 +836,21 @@ class CreateDecisionView(CreateView):
         form.instance.parent = self.discussion
         resp = super(CreateDecisionView, self).form_valid(form)
         # form.instance is the new decision
+        subject_text = u"%s של %s: %s" % (u"התלבטות חדשה", get_user_fullname_or_username(self.request.user),
+                                                        form.instance.content)
+        
+        details = u"%s רוצה שתצביע/י על:\n%s\n  להצבעה צריך להיכנס אל:" % ( get_user_fullname_or_username(self.request.user),
+                                                        form.instance.content)
+        
+        
+        
+        
+        
         discussion_email_updates(form.instance.parent,
-                                         'התקבלה התלבטות חדשה בפעילות שבהשתתפותך',
-                                         self.request.user)
+                                         subject_text,
+                                         self.request.user,
+                                         details,
+                                         "#Decisions")
         
         
         return resp

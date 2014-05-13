@@ -2,12 +2,13 @@
 
 {% block content %}
     <br>
-    {% if detailes %}
-  		{{detailes}}
+    {% if details %}
+  		{{details|urlize|linebreaks }}
   	{% endif %}
 
   <p>
-      <a href="http://{{ROOT_URL}}{{discussion.get_absolute_url}}">לצפיה בדיון המלא </a>
+  	
+      <a href="http://{{ROOT_URL}}{{discussion.get_absolute_url}}{{id}}">  קישור לפרטי הפעילות  {{discussion.title|urlize|linebreaks}} של {{discussion.owner.get_full_name|default:discussion.owner.username}}</a>
    </p>
    <br>
    <br>
