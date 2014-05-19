@@ -5,16 +5,16 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-md-12">
+        <div id="discussion-detail" class="col-md-12">
             <a class="btn btn-default pull-right"
                href="{% url 'coplay:coplay_root' %}">
                 להסברים על המערכת
                 &raquo;
             </a>
 
-            <h1>{{ discussion.title }}</h1>
+            <div class="title"><h1>{{ discussion.title }}</h1></div>
 
-            <h3>
+            <div class="delete"><h3>
                 {% if user == discussion.owner %}
                     <a class="btn btn-danger pull-right"
                        href="{% url 'coplay:discussion_delete' discussion.id %}">למחיקת
@@ -24,12 +24,12 @@
                     זו הפעילות של
                     <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
                 {% endif %}
-            </h3>
+            </h3></div>
         </div>
     </div>
 
 
-    <div class="panel panel-default">
+    <div id="discussion-shortcuts" class="panel panel-default">
         <div class="panel-body"><a href="#Feedbacks">תגובות המשתמשים
             בפעילות
             הזאת</a>
@@ -58,19 +58,22 @@
         </div>
     {% endif %}
 
-
+    <div id="discussion-deadline">
     {% if discussion.is_active %}
         <div class="alert alert-warning">
+            {% trans "Discussion Deadline" %}
             אם לא יהיו משימות חדשות, הפעילות עלולה להינעל
             עוד {{ discussion.locked_at | timeuntil }}
         </div>
     {% else %}
         <div class="alert alert-error">
+            {% trans "Discussion Locked" %}
             הפעילות ננעלה עקב חוסר נוכחי של משימות חדשות
         </div>
     {% endif %}
+    </div>
 
-    <div class="well">
+    <div id="discussion-body" class="well">
         {% if user == discussion.owner and discussion.is_active%}
             <a class="btn btn-info pull-right"
                href="{% url 'coplay:discussion_update' discussion.id %}">{% trans "Edit" %}</a>
@@ -93,16 +96,18 @@
         </p>
     </div>
 
+    <div id="discussion-feedback"
     {% if feedback_form and discussion.is_active %}
         <p>
             <a class="btn btn-info"
                href="{% url 'coplay:create_feedback' discussion.id %}">{% trans "Create Feedback" %}</a>
         </p>
     {% endif %}
+    </div>
 
     <div class="row" >
         <div class="col-sm-6 col-md-3" >
-            <div class="panel panel-default" id="encourage">
+            <div class="panel panel-default" id="encouragement">
                 <div class="panel-heading"><b>
 
                     עידודים
@@ -125,7 +130,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-3">
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="cooperation">
                 <div class="panel-heading"><b>
 
                     הצעות לשיתוף פעולה
@@ -146,7 +151,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-3" >
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="intuition">
                 <div class="panel-heading"><b>
 
                     אינטואיציה
@@ -166,7 +171,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-3">
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="advice">
                 <div class="panel-heading"><b>
 
                     עצות
@@ -196,7 +201,7 @@
         <br>
         <br>
 
-            <a class="btn btn-info pull-right"
+            <a class="new btn btn-info pull-right"
                href="{% url 'coplay:create_task' discussion.id %}">{% trans "Create Task" %}</a>
 
             <div class="panel panel-default">
@@ -209,15 +214,17 @@
                     {% for task in list_tasks %}
 
                         <li class="list-group-item">
-                            {{ task.goal_description|urlize|linebreaks }}<br>
+                            {{ task.goal_description|urlize|linebreaks }}<br>{% trans "Responsibility" %}
                             באחריות <a
                                 href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a>
 
                             {{ task.get_status_display }} {{ task.target_date | naturaltime }}
 
-                            <p><a class="btn btn-success"
-                                  href={{ task.get_absolute_url }}>להרחבה</a>
-                            </p>
+                            <a class="btn btn-success"
+                                  href={{ task.get_absolute_url }}>
+                                    {% trans "Details" %}
+                                  להרחבה</a>
+                            
 
                         </li>
                     {% endfor %}
@@ -240,7 +247,7 @@
                         התלבטויות של מוביל הפעילות
                     {% endif %}
                     {% if add_decision_form and discussion.is_active%}
-                        <a class="btn btn-info pull-right"
+                        <a class="new btn btn-info pull-right"
                            href="{% url 'coplay:create_decision' discussion.id %}">{% trans "Create Decision" %}</a>
                     {% endif %}
                 </b></div>
