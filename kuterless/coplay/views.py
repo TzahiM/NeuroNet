@@ -221,8 +221,6 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
                                      'details': details,
                                      'id': id})
     
-    with open('output.html', 'w') as f_debug:
-        f_debug.write(html_message)
 
     for attensdent in attending_list:
         if attensdent.email and attensdent != logged_in_user:
@@ -240,8 +238,6 @@ def discussion_task_email_updates(task, subject, logged_in_user, details = None)
                                      'html_title': subject.replace( "\n", " ").replace( "\r", " "),
                                      'details': details})
     
-    with open('output.html', 'w') as f_debug:
-        f_debug.write(html_message)
 
     for attensdent in attending_list:
         if attensdent.email and attensdent != logged_in_user:
