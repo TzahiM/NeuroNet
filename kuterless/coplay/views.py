@@ -771,7 +771,7 @@ class CreateTaskView(CreateView):
         form.instance.parent.unlock()
         
         
-        subject_text = u"%s %s %s" % ( get_user_fullname_or_username(self.request.user),
+        subject_text = "%s %s %s" % ( get_user_fullname_or_username(self.request.user),
                                            u"לקח/ה על עצמו/ה",
                                             form.instance.goal_description)
         
