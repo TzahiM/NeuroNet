@@ -712,7 +712,7 @@ class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
     def form_valid(self, form):
 
         resp = super(UpdateDiscussionDescView, self).form_valid(form)  
-        subject_text = u"%s %s %s" % (get_user_fullname_or_username(self.request.user),
+        subject_text = "%s %s %s" % (get_user_fullname_or_username(self.request.user),
                                          u"עידכן/ה את היעדים של",
                                    form.instance.title)
         
@@ -823,11 +823,13 @@ class CreateFeedbackView(CreateView):
         form.instance.discussion = self.discussion
         form.instance.user = self.request.user
         resp = super(CreateFeedbackView, self).form_valid(form)  
-        subject_text = "%s %s %s %s %s" % ( get_user_fullname_or_username(self.request.user),
-                                           u"הוסיף/ה",
-                                           form.instance.get_feedbabk_type_name(),
-                                           u'ב',
-                                           form.instance.discussion.title)
+        subject_text = get_user_fullname_or_username(self.request.user) 
+        + ' ' 
+        + u"הוסיף/ה"
+        + ' ' 
+        + form.instance.get_feedbabk_type_name()
+        + ' ' 
+        + form.instance.discussion.title
         
         details = subject_text + ':\n\n"' +  form.instance.content + '"\n'
                                                             
