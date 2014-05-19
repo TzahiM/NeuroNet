@@ -775,7 +775,7 @@ class CreateTaskView(CreateView):
                                            u"לקח/ה על עצמו/ה",
                                             form.instance.goal_description)
         
-        details = subject_text + ':\n\n' +  "עד" + form.instance.target_date.strftime('%m/%d/%Y') + '"\n\n'
+        details = subject_text + ':\n\n' +  u"עד" + form.instance.target_date.strftime('%m/%d/%Y') + '"\n\n'
         
         
                                                               
