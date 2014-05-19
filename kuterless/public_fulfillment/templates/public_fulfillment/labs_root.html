@@ -16,12 +16,12 @@
 		{% endif %}
 	
 		<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">חם מהתנור</a>
-		<a class="btn btn-success" href="{% url 'public_fulfillment:about' %}">אודות הפרוייקט</a>
+		<a class="btn btn-success" href="http://wiki.hasadna.org.il/index.php?title=%D7%94%D7%92%D7%A9%D7%9E%D7%94_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%AA" target="_blank">אודות הפרוייקט</a>
 		{% if False == user.is_authenticated %}
 		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}?next={{ request.path }}">הרשמה</a>
 		{% endif %}
 		<br>
-		<br>
+
 		
 		<h1 id = 'versions'><u>מה חדש?</u></h1>
 		{% if version_description %}

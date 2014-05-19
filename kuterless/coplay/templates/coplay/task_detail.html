@@ -19,36 +19,44 @@
             	<h2> {{task.goal_description |urlize|linebreaks}}</h2>
             	{%if user == task.responsible %}
 					<p>באחריותך</p>
+					{% if not task.get_time_until_target%}
+						{% if task.get_status_description%}
+						<p><b>הודעתך האחרונה היא: {{task.get_status_description |urlize|linebreaks}} </b></p>					
+						{% endif %}
+					{% endif %}
             	{%else%}
 					<p>	באחריות:  <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a></p>
+					{% if task.get_status_description%}
+						<p><b>שהודיע/ה  ש: {{task.get_status_description |urlize|linebreaks}} </b></p>
+					{%endif%}
 					{% if close_possible %}
-					<center>
-						{% if task.get_status != task.CLOSED %}
-							<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לסגירת משימה</a>
-						{% endif %}
-						{% if task.get_status != task.STARTED %}
-							<a class="btn btn-warning" href= "{% url 'coplay:re_open_task' task.id %}">לפתיחה מחדש של  המשימה</a>
-						{% endif %}
-						{% if task.get_status != task.ABORTED %}
-							<a class="btn btn-danger" href= "{% url 'coplay:abort_task' task.id %}">לביטול המשימה</a>
-						{% endif %}
-					</center>
-					<p><b>עידכון המצב : {{task.get_status_description |urlize|linebreaks}} </b></p>
+						<center>
+						<p>עידכון המצב : {{task.get_status_description |urlize|linebreaks}} </p>
+							{% if task.get_status != task.CLOSED %}
+								<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לסגירת משימה</a>
+							{% endif %}
+							{% if task.get_status != task.STARTED %}
+								<a class="btn btn-warning" href= "{% url 'coplay:re_open_task' task.id %}">לפתיחה מחדש של  המשימה</a>
+							{% endif %}
+							{% if task.get_status != task.ABORTED %}
+								<a class="btn btn-danger" href= "{% url 'coplay:abort_task' task.id %}">לביטול המשימה</a>
+							{% endif %}
+						</center>
 
 					{% endif %}
 
             	{% endif %}
-				
-				<p>מצב : {{task.get_status_display}}</p>
-				<p>תאריך יעד : {{task.target_date |date:"d/n/Y H:i" }}</p>       
+				<p>המשימה רשומה כ{{task.get_status_display}}</p>
+				<p>עדכון אחרון : {{task.updated_at| naturaltime }}</p>				
         </div>         
     </div>        
             
-	<p> התחלה : {{task.created_at }}</p>
+	<p> התחילה : {{task.created_at |date:"d/n/Y H:i" }}</p>
 	<p> זמן לסיום : {{task.target_date | naturaltime }}</p>
+	<p>תאריך יעד : {{task.target_date |date:"d/n/Y H:i" }}</p>       
 	
 	{% if task.closed_at %}
-		<p> {{task.closed_at }} אושר ב</p>
+		<p> {{task.closed_at|date:"d/n/Y H:i"  }} אושר ב</p>
 		<p>			על ידי: <a  href="{% url 'coplay:user_coplay_report'  task.closed_by.username %}">{{ task.closed_by.get_full_name|default:task.closed_by.username }}</a>		</p>
 	{% endif %}
 

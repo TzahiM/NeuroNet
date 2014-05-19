@@ -4,7 +4,11 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Message Subject or Title</title>
+  <title>
+  	{%if html_title %}
+  		{{html_title |urlize}}
+  	{% endif%}
+  	</title>
   <style type="text/css">
     #outlook a {padding:0;} /* Force Outlook to provide a "view in browser" menu link. */
     body{width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; margin:0; padding:0;}
@@ -153,6 +157,10 @@
   <table cellpadding="0" cellspacing="0" dir="rtl" border="0" id="backgroundTable">
   <tr>
     <td>
+{% if subject_debug %}
+	-{{subject_debug }}-
+{% endif %}
+    	
     	<p>זוהי הודעה אוטומטית מהאתר של הגשמה ציבורית</p>
       {% block content %}
       {% endblock %}

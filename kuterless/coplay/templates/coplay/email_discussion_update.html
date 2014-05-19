@@ -1,6 +1,10 @@
 {% extends "coplay/email_base.html" %}
 
 {% block content %}
+
+{% if subject_debug %}
+	-{{subject_debug }}-
+{% endif %}
     <br>
     {% if details %}
   		{{details|urlize|linebreaks }}
@@ -8,7 +12,7 @@
 
   <p>
   	
-      <a href="http://{{ROOT_URL}}{{discussion.get_absolute_url}}{{id}}">  קישור לפרטי הפעילות  {{discussion.title|urlize|linebreaks}} של {{discussion.owner.get_full_name|default:discussion.owner.username}}</a>
+      <a href="http://{{ROOT_URL}}{{discussion.get_absolute_url}}{{id}}">הפעילות המלאה</a>
    </p>
    <br>
    <br>

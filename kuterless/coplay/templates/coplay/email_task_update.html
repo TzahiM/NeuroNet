@@ -1,12 +1,16 @@
 {% extends "coplay/email_base.html" %}
 
 {% block content %}
-    <br>
+
+<p>
     {% if details %}
-  		{{details|urlize|linebreaks}}
+  		{{details|urlize|linebreaks }}
   	{% endif %}
+
+</p>
   <p>
-      <a href="http://{{ROOT_URL}}{{task.get_absolute_url}}">לעדכון וצפיה  במשימה  {{task.goal_description|urlize|linebreaks}} שבאחריות {{ task.responsible.get_full_name|default:task.responsible.username }}</a>
+  	
+      <a href="http://{{ROOT_URL}}{{task.get_absolute_url}}">לעדכון וצפיה  במשימה</a>
    </p>
    <br>
    <br>
