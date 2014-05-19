@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% load humanize %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <a class="btn btn-default pull-right"
+               href="{% url 'coplay:coplay_root' %}">
+                להסברים על המערכת
+                &raquo;
+            </a>
+
+            <h1>{{ discussion.title }}</h1>
+
+            <h3>
+                {% if user == discussion.owner %}
+                    <a class="btn btn-danger pull-right"
+                       href="{% url 'coplay:discussion_delete' discussion.id %}">למחיקת
+                        הדיון</a>
+                    זאת הפעילות שלך
+                {% else %}
+                    זו הפעילות של
+                    <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
+                {% endif %}
+            </h3>
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-body"><a href="#Feedbacks">תגובות המשתמשים
+            בפעילות
+            הזאת</a>
+            &bull;
+            <a href="#Decisions">התלבטויות של מוביל
+                הפעילות</a>
+            &bull;
+            <a href="#Tasks">המשימות באחריות
+                המשתתפים</a>
+        </div>
+    </div>
+    {% if not user.is_authenticated %}
+        <div class="alert alert-warning">
+            כדי להגיב, להצביע או להתנדב למשימה עליך להיכנס
+            למערכת:
+
+            <a
+                    href="{% url 'public_fulfillment:sign_up' %}?next={{ request.path }}">הרשמה
+                ראשונה</a> &bull;
+            <a
+                    href="{% url 'login' %}?next={{ request.path }}">כניסה
+                למשתמש
+                קיים</a>
+        </div>
+    {% endif %}
+
+
+    {% if discussion.is_active %}
+        <div class="alert alert-warning">
+            אם לא יהיו משימות חדשות, הפעילות עלולה להינעל
+            עוד {{ discussion.locked_at | timeuntil }}
+        </div>
+    {% else %}
+        <div class="alert alert-error">
+            הפעילות ננעלה עקב חוסר נוכחי של משימות חדשות
+        </div>
+    {% endif %}
+
+    <div class="well">
+        {% if user == discussion.owner and discussion.is_active%}
+            <a class="btn btn-info pull-right"
+               href="{% url 'coplay:discussion_update' discussion.id %}">{% trans "Edit" %}</a>
+        {% endif %}
+
+        <h4>המטרות של הדיון והעזרה המבוקשת מהמשתתפים</h4>
+
+        <p>{{ discussion.description|urlize|linebreaks }}</p>
+
+        <p>
+            <i id="Feedbacks">
+                {% trans "Created:" %}
+                {{ discussion.created_at | naturaltime }}
+                &bull;
+
+
+                {% trans "Updated:" %}
+                {{ discussion.updated_at | naturaltime }}
+            </i>
+        </p>
+    </div>
+
+    {% if feedback_form and discussion.is_active %}
+        <p>
+            <a class="btn btn-info"
+               href="{% url 'coplay:create_feedback' discussion.id %}">{% trans "Create Feedback" %}</a>
+        </p>
+    {% endif %}
+
+    <div class="row" >
+        <div class="col-sm-6 col-md-3" >
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+
+                    עידודים
+
+                </b></div>
+
+
+                <ul class="list-group" id="encourage">
+                    {% for feedback in list_encourage %}
+                        <li class="list-group-item">
+                            <div
+                                    {% if feedback.created_at < discussion.updated_at %}
+                                        class="text-muted"                            {% endif %}    >
+                                <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+
+                    הצעות לשיתוף פעולה
+                </b></div>
+
+                <ul class="list-group">
+                    {% for feedback in list_cooperation %}
+                        <li class="list-group-item">
+                            <div
+                                    {% if feedback.created_at < discussion.updated_at %}
+                                        class="text-muted"                            {% endif %}    >
+                                <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3" >
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+
+                    אינטואיציה
+                </b></div>
+
+                <ul class="list-group">
+                    {% for feedback in list_intuition %}
+                        <li class="list-group-item">
+                            <div
+                                    {% if feedback.created_at < discussion.updated_at %}
+                                        class="text-muted"                            {% endif %}    >
+                                <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+
+                    עצות
+                </b></div>
+
+
+                <ul class="list-group">
+                    {% for feedback in list_advice %}
+                        <li class="list-group-item">
+                            <div
+                                    {% if feedback.created_at < discussion.updated_at %}
+                                        class="text-muted"                            {% endif %}    >
+                                <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row" >
+        <div class="col-md-6" id="Tasks">
+    	<br>
+        <br>
+        <br>
+
+            <a class="btn btn-info pull-right"
+               href="{% url 'coplay:create_task' discussion.id %}">{% trans "Create Task" %}</a>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+                    {% trans "Tasks" %}
+                </b></div>
+
+
+                <ul class="list-group">
+                    {% for task in list_tasks %}
+
+                        <li class="list-group-item">
+                            {{ task.goal_description|urlize|linebreaks }}<br>
+                            באחריות <a
+                                href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a>
+
+                            {{ task.get_status_display }} {{ task.target_date | naturaltime }}
+
+                            <p><a class="btn btn-success"
+                                  href={{ task.get_absolute_url }}>להרחבה</a>
+                            </p>
+
+                        </li>
+                    {% endfor %}
+                </ul>
+
+
+            </div>
+        </div>
+
+        <div class="col-md-6" id="Decisions">
+    	<br>
+        <br>
+        <br>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>
+                    {% if user == discussion.owner %}
+                        ההיתלבטויות שלך
+                    {% else %}
+                        התלבטויות של מוביל הפעילות
+                    {% endif %}
+                    {% if add_decision_form and discussion.is_active%}
+                        <a class="btn btn-info pull-right"
+                           href="{% url 'coplay:create_decision' discussion.id %}">{% trans "Create Decision" %}</a>
+                    {% endif %}
+                </b></div>
+
+
+                {% if list_decision %}
+                    <ul class="list-group">
+                        {% for decision in list_decision %}
+                            <li class="list-group-item">{{ decision.content|urlize|linebreaks }}
+                                נוצרה
+                                {{ decision.created_at | naturaltime }}
+                                עם {{ decision.get_number_of_votes }} הצבעות
+                                {% if vote_form %}
+                                    <h5>מה דעתך ?</h5>
+                                    <form action="{% url 'coplay:vote' decision.id %}"
+                                          method="post">{% csrf_token %}
+                                        {% for field in vote_form %}
+                                            <div class="fieldWrapper">
+                                                {{ field.errors }}
+                                                {{ field.label_tag }} {{ field }}
+                                            </div>
+                                        {% endfor %}
+                                        <input type="submit"
+                                               value="שליחת הצבעה"/>
+                                    </form>
+                                {% else %}
+                                    <p>הצבעה
+                                        ממוצעת: {{ decision.get_vote_level_name }} </p>
+
+
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p> אין התלבטויות</p>
+                {% endif %}
+            </div>
+
+
+        </div>
+    </div>
+
+
+{% endblock %}
+

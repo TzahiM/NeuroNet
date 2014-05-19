@@ -1,0 +1,11 @@
+body {
+  padding-top: 65px;
+  padding-bottom: 20px;
+}
+
+h1 {
+    margin-top: 10px;
+}
+#encourage .panel-heading {
+	background-color: #ff0000;	
+}
