@@ -17,6 +17,7 @@ from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
 from flask import logging
 import floppyforms as forms
+import kuterless.settings
 
 MAX_MESSAGE_INPUT_CHARS = 900
 
@@ -215,12 +216,16 @@ def send_html_message(subject, html_content, from_email, to_list):
 def discussion_email_updates(discussion, subject, logged_in_user, details = None, id = ''):
     attending_list = discussion.get_attending_list(True)
     html_message = render_to_string("coplay/email_discussion_update.html",
-                                    {'ROOT_URL': 'www.kuterless.org.il',
+                                    {'ROOT_URL': kuterless.settings.SITE_URL,
                                      'discussion': discussion,
                                      'html_title': string_to_email_subject(subject),
+                                     'subject_debug':string_to_email_subject(subject),
                                      'details': details,
                                      'id': id})
     
+
+    with open( "output.html" , "w") as debug_file:
+        debug_file.write(html_message)
 
     for attensdent in attending_list:
         if attensdent.email and attensdent != logged_in_user:
@@ -233,11 +238,14 @@ def discussion_task_email_updates(task, subject, logged_in_user, details = None)
     attending_list = task.parent.get_attending_list(True)
 
     html_message = render_to_string("coplay/email_task_update.html",
-                                    {'ROOT_URL': 'www.kuterless.org.il',
+                                    {'ROOT_URL': kuterless.settings.SITE_URL,
                                      'task': task,
-                                     'html_title': subject.replace( "\n", " ").replace( "\r", " "),
+                                     'html_title': string_to_email_subject(subject),
+                                     'subject_debug':string_to_email_subject(subject),
                                      'details': details})
     
+    with open( "output.html" , "w") as debug_file:
+        debug_file.write(html_message)
 
     for attensdent in attending_list:
         if attensdent.email and attensdent != logged_in_user:
@@ -476,8 +484,8 @@ def update_task_description(request, pk):
                     form.cleaned_data['status_description'])
                 
                 
-                subject_text = u"%s %s %s" % ( get_user_fullname_or_username(task.responsible),
-                                           u"שלח הודעה בקשר ל",
+                subject_text = "%s %s %s" % ( get_user_fullname_or_username(task.responsible),
+                                           u"שלח הודעה בקשר ל ",
                                             task.goal_description)
         
                 details = subject_text + ':\n\n"' +  task.status_description  + '"\n\n' 
@@ -509,8 +517,8 @@ def close_task(request, pk):
         if task.close(user):
             
             
-            subject_text = u"%s %s %s" % ( get_user_fullname_or_username(task.responsible),
-                                           u" השלימ/ה את",
+            subject_text = "%s %s %s" % ( get_user_fullname_or_username(task.responsible),
+                                           u" השלימ/ה את ",
                                             task.goal_description)
       
              
@@ -534,8 +542,8 @@ def abort_task(request, pk):
     user = request.user
     if user != task.responsible:
         if task.abort(user):
-            subject_text = u"%s %s %s" % ( get_user_fullname_or_username(task.responsible),
-                                           u" ביטל/ה את",
+            subject_text = "%s %s %s" % ( get_user_fullname_or_username(task.responsible),
+                                           u" ביטל/ה את ",
                                             task.goal_description)
       
              
@@ -559,8 +567,8 @@ def re_open_task(request, pk):
     user = request.user
     if user != task.responsible:
         if task.re_open(user):
-            subject_text = u"%s %s %s" % ( get_user_fullname_or_username(task.responsible),
-                                           u" עדיין לא השלים/ה את",
+            subject_text = "%s %s %s" % ( get_user_fullname_or_username(task.responsible),
+                                           u" עדיין לא השלים/ה את ",
                                             task.goal_description)
       
              
@@ -712,11 +720,9 @@ class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
     def form_valid(self, form):
 
         resp = super(UpdateDiscussionDescView, self).form_valid(form)  
-        subject_text = "%s %s %s" % (get_user_fullname_or_username(self.request.user),
-                                         u"עידכן/ה את היעדים של",
-                                   form.instance.title)
+        subject_text = get_user_fullname_or_username(self.request.user) + u" עידכן/ה את היעדים של " + form.instance.title
         
-        details = subject_text + ":\n" + '"\n' + form.instance.description + '"\n'
+        details = subject_text + ":\n\n" + '"' + form.instance.description + '"\n'
                                                             
       
         discussion_email_updates(form.instance,
@@ -772,15 +778,13 @@ class CreateTaskView(CreateView):
         
         
         subject_text = "%s %s %s" % ( get_user_fullname_or_username(self.request.user),
-                                           u"לקח/ה על עצמו/ה",
-                                            form.instance.goal_description)
+                                           u'לקח/ה על עצמו/ה' ,
+                                            ('"' + form.instance.goal_description + '"'))
         
-        details = subject_text + ':\n\n' +  u"עד" + form.instance.target_date.strftime('%m/%d/%Y') + '"\n\n'
-        
-        
+        details = subject_text + '\n\n' +  u" תאריך היעד הוא " + form.instance.target_date.strftime('%m/%d/%Y') + '\n\n'
                                                               
       
-        discussion_email_updates(form.instance.parent,
+        discussion_task_email_updates(form.instance,
                                          subject_text,
                                          self.request.user,
                                          details)
@@ -823,14 +827,11 @@ class CreateFeedbackView(CreateView):
         form.instance.discussion = self.discussion
         form.instance.user = self.request.user
         resp = super(CreateFeedbackView, self).form_valid(form)  
-        subject_text = get_user_fullname_or_username(self.request.user)+ ' '+ u"הוסיף/ה"+ ' '+ form.instance.get_feedbabk_type_name()+ u"הוסיף/ה" + form.instance.discussion.title
+        subject_text = get_user_fullname_or_username(self.request.user)+ ' '+ u"הוסיף/ה"+ ' '+ form.instance.get_feedbabk_type_name() + ' '+ u"בקשר ל"+ form.instance.discussion.title
         
-        details = subject_text + ':\n\n"' +  form.instance.content + '\n'
+        details = subject_text + ':\n\n"' +  form.instance.content + '"\n'
                                                             
                                                             
-                                                            
-                                                            
-      
         discussion_email_updates(form.instance.discussion,
                                          subject_text,
                                          self.request.user,

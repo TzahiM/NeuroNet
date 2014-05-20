@@ -26,6 +26,8 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [u'95.85.3.168', u'127.0.0.1']
 
+SITE_URL = 'www.kuterless.org.il'
+
 SITE_ID  = 1
 
 # Application definition

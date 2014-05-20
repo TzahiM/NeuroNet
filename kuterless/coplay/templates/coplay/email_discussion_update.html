@@ -1,24 +1,19 @@
 {% extends "coplay/email_base.html" %}
 
 {% block content %}
-
-{% if subject_debug %}
-	-{{subject_debug }}-
-{% endif %}
     <br>
     {% if details %}
-  		{{details|urlize|linebreaks }}
+     <p>
+  		{{details|urlize|linebreaks }}    	
+    </p>
   	{% endif %}
 
   <p>
   	
-      <a href="http://{{ROOT_URL}}{{discussion.get_absolute_url}}{{id}}">הפעילות המלאה</a>
+      <a href="http://{{ROOT_URL}}{{discussion.get_absolute_url}}{{id}}">אל הפעילות המלאה</a>
    </p>
    <br>
    <br>
-   <p>    
-      אם אינך רוצה לקבל מיילים יש למחוק את המייל  מהפרופיל שלך
-   </p>
       
 
 {% endblock %}

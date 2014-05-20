@@ -157,14 +157,22 @@
   <table cellpadding="0" cellspacing="0" dir="rtl" border="0" id="backgroundTable">
   <tr>
     <td>
+
 {% if subject_debug %}
-	-{{subject_debug }}-
+	{{subject_debug }}
+	<br>
 {% endif %}
     	
     	<p>זוהי הודעה אוטומטית מהאתר של הגשמה ציבורית</p>
       {% block content %}
       {% endblock %}
       <p>קוטרלס - מה לעשות? - לעשות !</p>
+      
+	   <p>    
+      <a href="http://{{ROOT_URL}}{% url 'public_fulfillment:update_profile' %}">אם אינך רוצה לקבל מיילים יש למחוק את המייל  מהפרופיל שלך</a>
+      	      
+	   </p>
+      
     </td>
   </tr>
   </table>
