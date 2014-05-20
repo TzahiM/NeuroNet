@@ -31,7 +31,6 @@
 					{%endif%}
 					{% if close_possible %}
 						<center>
-						<p>עידכון המצב : {{task.get_status_description |urlize|linebreaks}} </p>
 							{% if task.get_status != task.CLOSED %}
 								<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לסגירת משימה</a>
 							{% endif %}
