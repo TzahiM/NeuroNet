@@ -836,7 +836,7 @@ class CreateFeedbackView(CreateView):
                                             '"' + form.instance.discussion.title + '"')
                                             
         
-        detai ls = subject_text + '\n\n"' +  u" תאריך היעד הוא " + form.instance.content + '"\n\n'
+        details = subject_text + '\n\n"' +  form.instance.content + '"\n\n'
         
                                                             
                                                             
