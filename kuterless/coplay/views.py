@@ -833,7 +833,7 @@ class CreateFeedbackView(CreateView):
                                            u'הוסיף/ה' ,
                                             form.instance.get_feedbabk_type_name(),
                                            u'בקשר ל' ,
-                                           (u'"' + form.instance.discussion.title + u'"') ) 
+                                           form.instance.discussion.title) 
 
                                             
         details = '%s \n\n"%s "\n\n' % ( subject_text, form.instance.content)
