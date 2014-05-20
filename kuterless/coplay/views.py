@@ -219,13 +219,13 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
                                     {'ROOT_URL': kuterless.settings.SITE_URL,
                                      'discussion': discussion,
                                      'html_title': string_to_email_subject(subject),
-                                     'subject_debug':string_to_email_subject(subject),
+#                                     'subject_debug':string_to_email_subject(subject),
                                      'details': details,
                                      'id': id})
     
 
-    with open( "output.html" , "w") as debug_file:
-        debug_file.write(html_message)
+#    with open( "output.html" , "w") as debug_file:
+#        debug_file.write(html_message)
 
     for attensdent in attending_list:
         if attensdent.email and attensdent != logged_in_user:
@@ -241,11 +241,11 @@ def discussion_task_email_updates(task, subject, logged_in_user, details = None)
                                     {'ROOT_URL': kuterless.settings.SITE_URL,
                                      'task': task,
                                      'html_title': string_to_email_subject(subject),
-                                     'subject_debug':string_to_email_subject(subject),
+#                                     'subject_debug':string_to_email_subject(subject),
                                      'details': details})
     
-    with open( "output.html" , "w") as debug_file:
-        debug_file.write(html_message)
+#    with open( "output.html" , "w") as debug_file:
+#        debug_file.write(html_message)
 
     for attensdent in attending_list:
         if attensdent.email and attensdent != logged_in_user:
