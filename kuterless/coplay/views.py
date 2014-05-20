@@ -830,7 +830,7 @@ class CreateFeedbackView(CreateView):
         
         
         subject_text = "%s %s %s" % ( get_user_fullname_or_username(self.request.user),
-                                           u'הוסיף/ה' ,
+                                           'הוסיף/ה' ,
                                             form.instance.get_feedbabk_type_name()) 
 
         #subject_text.add(form.instance.discussion.title)                                    
