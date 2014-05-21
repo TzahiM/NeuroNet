@@ -485,20 +485,17 @@ def update_task_description(request, pk):
                 task.update_status_description(
                     form.cleaned_data['status_description'])
                 
+                t = Template("""
+                {{task.responsible.get_full_name|default:task.responsible.username}} הודיע/ה ש :\n
+                "{{task.get_status_description}} "\n
+                """)
                 
-                subject_text = "%s %s %s" % ( get_user_fullname_or_username(task.responsible),
-                                           u"שלח הודעה בקשר ל ",
-                                            task.goal_description)
-        
-                details = subject_text + ':\n\n"' +  task.status_description  + '"\n\n' 
-                
-        
-                
+                trunkated_subject_and_detailes = t.render(Context({"task": task}))
                 
                 discussion_task_email_updates(task,
-                                              subject_text,
+                                              trunkated_subject_and_detailes,
                                               request.user,
-                                              details)
+                                              trunkated_subject_and_detailes)
                 
                 
 
@@ -506,6 +503,21 @@ def update_task_description(request, pk):
                 task.get_absolute_url()) # Redirect after POST
 
     return HttpResponseRedirect('coplay_root') # Redirect after POST
+
+def task_state_change_update(task, state_change_description):
+    t = Template("""
+                {{task.responsible.get_full_name|default:task.responsible.username}} {{state_change_description}} :\n
+                 "{{task.get_status_description}} "\nאושר על ידי {{task.closed_by.get_full_name|default:task.closed_by.username}}
+                 """)
+                
+    trunkated_subject_and_detailes = t.render(Context({"task": task, 'state_change_description': state_change_description}))
+
+
+                
+    discussion_task_email_updates(task,
+                                    trunkated_subject_and_detailes,
+                                    task.closed_by,
+                                    trunkated_subject_and_detailes)
 
 
 @login_required
@@ -518,18 +530,7 @@ def close_task(request, pk):
     if user != task.responsible:
         if task.close(user):
             
-            
-            subject_text = "%s %s %s" % ( get_user_fullname_or_username(task.responsible),
-                                           u" השלימ/ה את ",
-                                            task.goal_description)
-      
-             
-            details =  subject_text + ':\n\n' + 'אושר על ידי ' + get_user_fullname_or_username(user) 
-                
-            discussion_task_email_updates(task,
-                                              subject_text,
-                                              request.user,
-                                              details)
+            task_state_change_update( task,  u" השלימ/ה את ")
 
 
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
@@ -544,17 +545,8 @@ def abort_task(request, pk):
     user = request.user
     if user != task.responsible:
         if task.abort(user):
-            subject_text = "%s %s %s" % ( get_user_fullname_or_username(task.responsible),
-                                           u" ביטל/ה את ",
-                                            task.goal_description)
-      
-             
-            details =  subject_text + ':\n\n' + 'אושר על ידי ' + get_user_fullname_or_username(user) 
-                
-            discussion_task_email_updates(task,
-                                              subject_text,
-                                              request.user,
-                                              details)
+            
+            task_state_change_update( task,  u" ביטל/ה את ")
 
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
 
@@ -569,17 +561,9 @@ def re_open_task(request, pk):
     user = request.user
     if user != task.responsible:
         if task.re_open(user):
-            subject_text = "%s %s %s" % ( get_user_fullname_or_username(task.responsible),
-                                           u" עדיין לא השלים/ה את ",
-                                            task.goal_description)
-      
-             
-            details =  subject_text + ':\n\n' + 'אושר על ידי ' + get_user_fullname_or_username(user) 
-                
-            discussion_task_email_updates(task,
-                                              subject_text,
-                                              request.user,
-                                              details)
+            
+            task_state_change_update( task,  u" עדיין לא השלים/ה את ")
+
 
     return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
 
@@ -725,12 +709,19 @@ class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
         subject_text = get_user_fullname_or_username(self.request.user) + u" עידכן/ה את היעדים של " + form.instance.title
         
         details = subject_text + ":\n\n" + '"' + form.instance.description + '"\n'
+
+        t = Template("""
+        {{discussion.owner.get_full_name|default:discussion.owner.username}} עידכן/ה את המטרות של הפעילות והעזרה המבוקשת :\n
+        "{{discussion.description}} "\n
+        """)
+        
+        trunkated_subject_and_detailes = t.render(Context({"discussion": form.instance}))
                                                             
       
         discussion_email_updates(form.instance,
-                                         subject_text,
+                                         trunkated_subject_and_detailes,
                                          self.request.user,
-                                         details)
+                                         trunkated_subject_and_detailes)
         
         return resp
     
@@ -778,18 +769,18 @@ class CreateTaskView(CreateView):
         resp = super(CreateTaskView, self).form_valid(form)
         form.instance.parent.unlock()
         
+
+        t = Template("""
+        {{task.responsible.get_full_name|default:task.responsible.username}} הבטיח/ה ש :\n
+        "{{task.goal_description}} "\n  עד {{task.target_date ||date:"d/n/Y H:i"}}
+        """)
         
-        subject_text = "%s %s %s" % ( get_user_fullname_or_username(self.request.user),
-                                           u'לקח/ה על עצמו/ה' ,
-                                            ('"' + form.instance.goal_description + '"'))
-        
-        details = subject_text + '\n\n' +  u" תאריך היעד הוא " + form.instance.target_date.strftime('%m/%d/%Y') + '\n\n'
-                                                              
+        trunkated_subject_and_detailes = t.render(Context({"task": form.instance}))
       
         discussion_task_email_updates(form.instance,
-                                         subject_text,
+                                         trunkated_subject_and_detailes,
                                          self.request.user,
-                                         details)
+                                         trunkated_subject_and_detailes)
         
         
         
@@ -832,13 +823,9 @@ class CreateFeedbackView(CreateView):
 
         t = Template("""
         {{feedbabk.user.get_full_name|default:feedbabk.user.username}} פירסם/ה {{feedbabk.get_feedbabk_type_name}}:\n
-        "{{feedbabk.content}}"\n
+        "{{feedbabk.content}} "\n
         """)
-#        subject_text = "%s %s %s" % ( get_user_fullname_or_username(self.request.user),
-#                                           'הוסיף/ה' ,
-#                                            form.instance.get_feedbabk_type_name()) 
 
-        #subject_text.add(form.instance.discussion.title)                                    
         trunkated_subject_and_detailes = t.render(Context({"feedbabk": form.instance}))
         
                                                             
@@ -882,25 +869,20 @@ class CreateDecisionView(CreateView):
         resp = super(CreateDecisionView, self).form_valid(form)
         # form.instance is the new decision
         
+
+        t = Template("""
+        {{decision.parent.owner.get_full_name|default:decision.parent.owner.username}} ממקש/ת שתצביע/י על :\n
+        "{{decision.content}} "\nלהצבעה צריך להיכנס אל הפעילות המלאה...
+        """)
         
-        subject_text = u"%s %s %s" % ( get_user_fullname_or_username(self.request.user),
-                                           u"הוסיף/ה התלבטות בקשר ל",
-                                            form.instance.parent.title)
-        
-        details = subject_text + ':\n"' +  form.instance.content + '"\n\n'
+        trunkated_subject_and_detailes = t.render(Context({"decision": form.instance}))
                                                             
-        
-         
-        details += u"להצבעה צריך להיכנס אל הפעילות המלאה..." + '\n'
-        
-        
-        
-        
+      
         
         discussion_email_updates(form.instance.parent,
-                                         subject_text,
+                                         trunkated_subject_and_detailes,
                                          self.request.user,
-                                         details,
+                                         trunkated_subject_and_detailes,
                                          "#Decisions")
         
         
