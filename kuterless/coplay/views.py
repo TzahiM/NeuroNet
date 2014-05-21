@@ -772,7 +772,7 @@ class CreateTaskView(CreateView):
 
         t = Template("""
         {{task.responsible.get_full_name|default:task.responsible.username}} הבטיח/ה ש :\n
-        "{{task.goal_description}} "\n  עד {{task.target_date ||date:"d/n/Y H:i"}}
+        "{{task.goal_description}} "\n  עד {{task.target_date | date:"d/n/Y H:i"}}
         """)
         
         trunkated_subject_and_detailes = t.render(Context({"task": form.instance}))
