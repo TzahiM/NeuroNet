@@ -657,7 +657,7 @@ def user_coplay_report(request, username=None):
             number_of_views += view.get_views_counter()
     
     number_of_feedbacks = user.feedback_set.all().count()
-    
+    number_of_votes     = user.vote_set.all().count()
     number_of_task_closing = Task.objects.filter( closed_by = user ).count()
     number_of_aborted_tasks = Task.objects.filter( status=Task.ABORTED, responsible = user ).count()
 
@@ -669,6 +669,7 @@ def user_coplay_report(request, username=None):
                       'number_of_task_closing'           : number_of_task_closing,
                       'number_of_views'                  : number_of_views       ,
                       'number_of_feedbacks'              : number_of_feedbacks   ,
+                      'number_of_votes'                  : number_of_votes       ,
                       'tasks_open_by_increased_time_left': user_s_open_tasks_list,
                       'tasks_others_open_by_increased_time_left': other_users_open_tasks_list,
                       'discussions_active_by_increase_time_left': user_discussions_active,
