@@ -9,6 +9,8 @@ from django.core.mail.message import EmailMessage
 from django.forms.extras.widgets import SelectDateWidget
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.base import Template
+from django.template.context import Context
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -827,21 +829,24 @@ class CreateFeedbackView(CreateView):
         form.instance.discussion = self.discussion
         form.instance.user = self.request.user
         resp = super(CreateFeedbackView, self).form_valid(form)  
-        
-        
-        subject_text = "%s %s %s" % ( get_user_fullname_or_username(self.request.user),
-                                           'הוסיף/ה' ,
-                                            form.instance.get_feedbabk_type_name()) 
+
+        t = Template("""
+        {{feedbabk.user.get_full_name|default:feedbabk.user.username}} פירסם/ה {{feedbabk.get_feedbabk_type_name}}:\n
+        "{{feedbabk.content}}"\n
+        """)
+#        subject_text = "%s %s %s" % ( get_user_fullname_or_username(self.request.user),
+#                                           'הוסיף/ה' ,
+#                                            form.instance.get_feedbabk_type_name()) 
 
         #subject_text.add(form.instance.discussion.title)                                    
-        details = '%s \n\n"%s "\n\n' % ( subject_text, form.instance.content)
+        trunkated_subject_and_detailes = t.render(Context({"feedbabk": form.instance}))
         
                                                             
                                                             
         discussion_email_updates(form.instance.discussion,
-                                         subject_text,
+                                         trunkated_subject_and_detailes,
                                          self.request.user,
-                                         details)
+                                         trunkated_subject_and_detailes)
         
         
         
