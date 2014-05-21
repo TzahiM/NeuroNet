@@ -507,7 +507,7 @@ def update_task_description(request, pk):
 def task_state_change_update(task, state_change_description):
     t = Template("""
                 {{task.responsible.get_full_name|default:task.responsible.username}} {{state_change_description}} :\n
-                 "{{task.get_status_description}} "\nאושר על ידי {{task.closed_by.get_full_name|default:task.closed_by.username}}
+                 "{{task.goal_description}} "\nאושר על ידי {{task.closed_by.get_full_name|default:task.closed_by.username}}
                  """)
                 
     trunkated_subject_and_detailes = t.render(Context({"task": task, 'state_change_description': state_change_description}))
