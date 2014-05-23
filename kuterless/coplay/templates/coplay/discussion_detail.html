@@ -8,7 +8,7 @@
         <div id="discussion-detail" class="col-md-12">
             <a class="btn btn-default pull-right"
                href="{% url 'coplay:coplay_root' %}">
-                להסברים על המערכת
+                {% trans "Coplay Info" %} 
                 &raquo;
             </a>
 
@@ -17,11 +17,11 @@
             <div class="delete"><h3>
                 {% if user == discussion.owner %}
                     <a class="btn btn-danger pull-right"
-                       href="{% url 'coplay:discussion_delete' discussion.id %}">למחיקת
-                        הדיון</a>
-                    זאת הפעילות שלך
+                       href="{% url 'coplay:discussion_delete' discussion.id %}">
+                       {% trans "Delete Discussion" %}</a>
+                    {% trans "Your Activity" %}
                 {% else %}
-                    זו הפעילות של
+                    {% trans "Activity Of" %}
                     <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
                 {% endif %}
             </h3></div>
@@ -30,31 +30,21 @@
 
 
     <div id="discussion-shortcuts" class="panel panel-default">
-        <div class="panel-body"><a href="#Feedbacks">תגובות המשתמשים
-            בפעילות
-            הזאת</a>
+        <div class="panel-body"><a href="#Feedbacks">{% trans "Discussion Feedbacks" %}</a>
             &bull;
-            <a href="#Decisions">התלבטויות של מוביל
-                הפעילות</a>
+            <a href="#Decisions">{% trans "Discussion Decisions" %}</a>
             &bull;
-            <a href="#Tasks">המשימות באחריות
-                המשתתפים</a>
+            <a href="#Tasks">{% trans "Discussion Tasks" %}</a>
             &bull;
-            <a href="#Views">נתוני צפיה</a>
+            <a href="#Views">{% trans "Discussion Views" %}</a>
         </div>
     </div>
     {% if not user.is_authenticated %}
-        <div class="alert alert-warning">
-            כדי להגיב, להצביע או להתנדב למשימה עליך להיכנס
-            למערכת:
-
+        <div class="alert alert-warning">{% trans "Login Needed" %}
             <a
-                    href="{% url 'public_fulfillment:sign_up' %}?next={{ request.path }}">הרשמה
-                ראשונה</a> &bull;
+                    href="{% url 'public_fulfillment:sign_up' %}?next={{ request.path }}">{% trans "Registration" %}</a> &bull;
             <a
-                    href="{% url 'login' %}?next={{ request.path }}">כניסה
-                למשתמש
-                קיים</a>
+                    href="{% url 'login' %}?next={{ request.path }}">{% trans "Login" %}</a>
         </div>
     {% endif %}
 
@@ -62,13 +52,11 @@
     {% if discussion.is_active %}
         <div class="alert alert-warning">
             {% trans "Discussion Deadline" %}
-            אם לא יהיו משימות חדשות, הפעילות עלולה להינעל
-            עוד {{ discussion.locked_at | timeuntil }}
+            {{ discussion.locked_at | timeuntil }}
         </div>
     {% else %}
         <div class="alert alert-error">
             {% trans "Discussion Locked" %}
-            הפעילות ננעלה עקב חוסר נוכחי של משימות חדשות
         </div>
     {% endif %}
     </div>
@@ -79,7 +67,7 @@
                href="{% url 'coplay:discussion_update' discussion.id %}">{% trans "Edit" %}</a>
         {% endif %}
 
-        <h4>המטרות של הדיון והעזרה המבוקשת מהמשתתפים</h4>
+        <h4>{% trans "Discussion Goals and Help Requested" %}</h4>
 
         <p>{{ discussion.description|urlize|linebreaks }}</p>
 
@@ -108,11 +96,9 @@
     <div class="row" >
         <div class="col-sm-6 col-md-3" >
             <div class="panel panel-default" id="encouragement">
-                <div class="panel-heading"><b>
-
-                    עידודים
-
-                </b></div>
+                <div class="panel-heading">
+                    {% trans "Discussion Encouragements" %}
+                </div>
 
 
                 <ul class="list-group">
@@ -131,10 +117,9 @@
         </div>
         <div class="col-sm-6 col-md-3">
             <div class="panel panel-default" id="cooperation">
-                <div class="panel-heading"><b>
-
-                    הצעות לשיתוף פעולה
-                </b></div>
+                <div class="panel-heading">
+                    {% trans "Discussion Cooperations" %}
+                </div>
 
                 <ul class="list-group">
                     {% for feedback in list_cooperation %}
@@ -152,10 +137,9 @@
         </div>
         <div class="col-sm-6 col-md-3" >
             <div class="panel panel-default" id="intuition">
-                <div class="panel-heading"><b>
-
-                    אינטואיציה
-                </b></div>
+                <div class="panel-heading">
+                    {% trans "Discussion Intuitions" %}
+                </div>
 
                 <ul class="list-group">
                     {% for feedback in list_intuition %}
@@ -172,10 +156,9 @@
         </div>
         <div class="col-sm-6 col-md-3">
             <div class="panel panel-default" id="advice">
-                <div class="panel-heading"><b>
-
-                    עצות
-                </b></div>
+                <div class="panel-heading">
+                    {% trans "Discussion Advices" %}
+                </div>
 
 
                 <ul class="list-group">
@@ -205,9 +188,9 @@
                href="{% url 'coplay:create_task' discussion.id %}">{% trans "Create Task" %}</a>
 
             <div class="panel panel-default">
-                <div class="panel-heading"><b>
+                <div class="panel-heading">
                     {% trans "Tasks" %}
-                </b></div>
+                </div>
 
 
                 <ul class="list-group">
@@ -215,15 +198,12 @@
 
                         <li class="list-group-item">
                             {{ task.goal_description|urlize|linebreaks }}<br>{% trans "Responsibility" %}
-                            באחריות <a
-                                href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a>
+                            <a href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a>
 
                             {{ task.get_status_display }} {{ task.target_date | naturaltime }}
 
-                            <a class="btn btn-success"
-                                  href={{ task.get_absolute_url }}>
-                                    {% trans "Details" %}
-                                  להרחבה</a>
+                            <a class="btn btn-success" href={{ task.get_absolute_url }}>
+                                    {% trans "Details" %}</a>
                             
 
                         </li>
@@ -240,28 +220,28 @@
         <br>
 
             <div class="panel panel-default">
-                <div class="panel-heading"><b>
+                <div class="panel-heading">
                     {% if user == discussion.owner %}
-                        ההיתלבטויות שלך
+                        {% trans "Your Decisions" %} 
                     {% else %}
-                        התלבטויות של מוביל הפעילות
+                        {% trans "Activity Owner's Decisions" %}
                     {% endif %}
                     {% if add_decision_form and discussion.is_active%}
                         <a class="new btn btn-info pull-right"
                            href="{% url 'coplay:create_decision' discussion.id %}">{% trans "Create Decision" %}</a>
                     {% endif %}
-                </b></div>
+                </div>
 
 
                 {% if list_decision %}
                     <ul class="list-group">
                         {% for decision in list_decision %}
                             <li class="list-group-item">{{ decision.content|urlize|linebreaks }}
-                                נוצרה
+                                {% trans "Created" %} 
                                 {{ decision.created_at | naturaltime }}
-                                עם {{ decision.get_number_of_votes }} הצבעות
+                                עם {{ decision.get_number_of_votes }} {% trans "Polls" %}
                                 {% if vote_form %}
-                                    <h5>מה דעתך ?</h5>
+                                    <h5>{% trans "Your Opinion" %}</h5>
                                     <form action="{% url 'coplay:vote' decision.id %}"
                                           method="post">{% csrf_token %}
                                         {% for field in vote_form %}
@@ -271,19 +251,17 @@
                                             </div>
                                         {% endfor %}
                                         <input type="submit"
-                                               value="שליחת הצבעה"/>
+                                               value="{% trans "Submit Opinion" %}"/>
                                     </form>
                                 {% else %}
-                                    <p>הצבעה
-                                        ממוצעת: {{ decision.get_vote_level_name }} </p>
-
+                                    <div id="rating">{% trans "Average Vote" %} {{ decision.get_vote_level_name }} </div>
 
                                 {% endif %}
                             </li>
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p> אין התלבטויות</p>
+                    <p>{% trans "No Polls" %}</p>
                 {% endif %}
             </div>
 
@@ -299,7 +277,7 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading"><b>
-                    נתוני צפייה
+                    {% trans "Discussion Views" %}
                 </b></div>
 
 
@@ -307,13 +285,12 @@
                     {% for viewer in list_viewers %}
 
                         <li class="list-group-item">
-                            {{ viewer.get_views_counter }} צפיות של 
+                            {% trans "Recent View was at" %}   {{ viewer.updated_at | naturaltime }}
+                            {% trans "By" %}
                             <a href="{% url 'coplay:user_coplay_report'  viewer.user.username %}">{{ viewer.user.get_full_name|default:viewer.user.username }}</a>
-
-                            הפעם האחרונה היתה   {{ viewer.updated_at | naturaltime }}
-
-                            
-
+                            {% trans "Total" %}
+                            {{ viewer.get_views_counter }} 
+                            {% trans "Views" %} 
                         </li>
                     {% endfor %}
                 </ul>
@@ -329,4 +306,3 @@
 
 
 {% endblock %}
-
