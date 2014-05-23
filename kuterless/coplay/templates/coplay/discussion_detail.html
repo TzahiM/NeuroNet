@@ -32,7 +32,7 @@
     <div id="discussion-shortcuts" class="panel panel-default">
         <div class="panel-body"><a href="#Feedbacks">{% trans "Discussion Feedbacks" %}</a>
             &bull;
-            <a href="#Decisions">{% trans "Discussion Decisions" %}</a>
+            <a href="#Decisions">התלבטויות להצבעה</a>
             &bull;
             <a href="#Tasks">{% trans "Discussion Tasks" %}</a>
             &bull;
@@ -222,13 +222,13 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     {% if user == discussion.owner %}
-                        {% trans "Your Decisions" %} 
+                        התלבטויות שלך 
                     {% else %}
-                        {% trans "Activity Owner's Decisions" %}
+                        התלבטויות להצבעה
                     {% endif %}
                     {% if add_decision_form and discussion.is_active%}
                         <a class="new btn btn-info pull-right"
-                           href="{% url 'coplay:create_decision' discussion.id %}">{% trans "Create Decision" %}</a>
+                           href="{% url 'coplay:create_decision' discussion.id %}">הוספת התלבטות להצבעה</a>
                     {% endif %}
                 </div>
 
@@ -239,7 +239,7 @@
                             <li class="list-group-item">{{ decision.content|urlize|linebreaks }}
                                 {% trans "Created" %} 
                                 {{ decision.created_at | naturaltime }}
-                                עם {{ decision.get_number_of_votes }} {% trans "Polls" %}
+                                עם {{ decision.get_number_of_votes }} הצבעות
                                 {% if vote_form %}
                                     <h5>{% trans "Your Opinion" %}</h5>
                                     <form action="{% url 'coplay:vote' decision.id %}"
@@ -261,7 +261,7 @@
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p>{% trans "No Polls" %}</p>
+                    <p>אין התלבטויות</p>
                 {% endif %}
             </div>
 

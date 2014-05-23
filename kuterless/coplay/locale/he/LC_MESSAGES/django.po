@@ -76,7 +76,7 @@ msgstr "תגובות המשתמשים בפעילות הזאת"
 
 #: templates/coplay/discussion_detail.html:35
 msgid "Discussion Decisions"
-msgstr "החלטות של מוביל הפעילות"
+msgstr "התלבטויות של מוביל הפעילות"
 
 #: templates/coplay/discussion_detail.html:37
 msgid "Discussion Tasks"
@@ -164,11 +164,11 @@ msgstr "לקרוא עוד..."
 
 #: templates/coplay/discussion_detail.html:225
 msgid "Your Decisions"
-msgstr "ההחלטות שלך"
+msgstr "ההתלבטויות שלך"
 
 #: templates/coplay/discussion_detail.html:227
 msgid "Activity Owner's Decisions"
-msgstr "החלטות של מוביל הפעילות"
+msgstr "התלבטויות של מוביל הפעילות"
 
 #: templates/coplay/discussion_detail.html:240
 msgid "Created"
@@ -176,7 +176,7 @@ msgstr "נוצרה"
 
 #: templates/coplay/discussion_detail.html:242
 msgid "Polls"
-msgstr "קבוצת מיקוד"
+msgstr "הצבעות"
 
 #: templates/coplay/discussion_detail.html:244
 msgid "Your Opinion"
@@ -192,7 +192,7 @@ msgstr "דירוג ממוצע:"
 
 #: templates/coplay/discussion_detail.html:264
 msgid "No Polls"
-msgstr "אין החלטות העומדות להצבעה."
+msgstr "אין התלבטויות העומדות להצבעה."
 
 #: templates/coplay/discussion_detail.html:288
 msgid "Recent View was at"

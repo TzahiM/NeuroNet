@@ -872,7 +872,7 @@ class CreateDecisionView(CreateView):
         
 
         t = Template("""
-        {{decision.parent.owner.get_full_name|default:decision.parent.owner.username}} ממקש/ת שתצביע/י על :\n
+        {{decision.parent.owner.get_full_name|default:decision.parent.owner.username}} מבקש/ת שתצביע/י על :\n
         "{{decision.content}} "\nלהצבעה צריך להיכנס אל הפעילות המלאה...
         """)
         
