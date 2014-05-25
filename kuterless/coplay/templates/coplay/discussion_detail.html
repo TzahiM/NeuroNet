@@ -32,7 +32,7 @@
     <div id="discussion-shortcuts" class="panel panel-default">
         <div class="panel-body"><a href="#Feedbacks">{% trans "Discussion Feedbacks" %}</a>
             &bull;
-            <a href="#Decisions">התלבטויות להצבעה</a>
+            <a href="#Decisions">רעיונות להצבעה</a>
             &bull;
             <a href="#Tasks">{% trans "Discussion Tasks" %}</a>
             &bull;
@@ -56,7 +56,9 @@
         </div>
     {% else %}
         <div class="alert alert-error">
-            {% trans "Discussion Locked" %}
+        	{% trans "Discussion Locked" %}
+            לפתיחה  קח/י יוזמה והמשך/י ב<a class="new btn btn-info"
+               href="{% url 'coplay:create_task' discussion.id %}">{% trans "Create Task" %}</a>   
         </div>
     {% endif %}
     </div>
@@ -222,13 +224,13 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     {% if user == discussion.owner %}
-                        התלבטויות שלך 
+                        הרעיונות שהעמדת להצבעה  
                     {% else %}
-                        התלבטויות להצבעה
+                        רעיונות להצבעה
                     {% endif %}
                     {% if add_decision_form and discussion.is_active%}
                         <a class="new btn btn-info pull-right"
-                           href="{% url 'coplay:create_decision' discussion.id %}">הוספת התלבטות להצבעה</a>
+                           href="{% url 'coplay:create_decision' discussion.id %}">הוספת רעיון נוסף להצבעה</a>
                     {% endif %}
                 </div>
 
@@ -261,7 +263,7 @@
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p>אין התלבטויות</p>
+                    <p>אין רעיונות להצבעה</p>
                 {% endif %}
             </div>
 
