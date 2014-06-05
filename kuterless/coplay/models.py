@@ -163,10 +163,35 @@ class Discussion(models.Model):
 
         return users_list
 
+    def get_followers_list(self):
+        followers_list = []
+        for viewer in self.viewer_set.all():
+            if viewer.get_is_a_follower():
+                followers_list.append(viewer.user)
+
+
+        return followers_list
+
     def record_a_view(self, viewing_user):
         if viewing_user in User.objects.all():
             viewer = self.viewer_set.get_or_create( user = viewing_user)[0]
             viewer.increment_views_counter()
+            
+    def start_follow(self, viewing_user):
+        if viewing_user in User.objects.all():
+            viewer = self.viewer_set.get_or_create( user = viewing_user)[0]
+            viewer.start_follow()
+
+    def stop_follow(self, viewing_user):
+        if viewing_user in User.objects.all():
+            viewer = self.viewer_set.get_or_create( user = viewing_user)[0]
+            viewer.stop_follow()
+
+    def is_a_follower(self, viewing_user):
+        if self.viewer_set.all().filter( user = viewing_user):
+            viewer = self.viewer_set.get( user = viewing_user)
+            return viewer.get_is_a_follower()
+        return False
         
     def print_content(self):
         print 'Owner', self.owner.username
@@ -474,10 +499,14 @@ class Viewer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     views_counter = models.IntegerField(default = 0)
+    views_counter_updated_at = models.DateTimeField(default=None, blank=True, null=True)
+    is_a_follower = models.BooleanField(default = False)
+    is_allowed_to_participate    = models.BooleanField(default = False)
 
     
     def increment_views_counter(self):
         self.views_counter += 1
+        self.views_counter_updated_at = timezone.now()
         self.save()
 
     def clear_views_counter(self):
@@ -487,10 +516,23 @@ class Viewer(models.Model):
     def get_views_counter(self):
         return self.views_counter
 
+    def start_follow(self):
+        self.is_a_follower = True
+        self.save()
+
+
+    def stop_follow(self):
+        self.is_a_follower = False
+        self.save()
+
+    def get_is_a_follower(self):
+        return self.is_a_follower
+
+
     def __unicode__(self):
         return "{} - {}: {}".format(self.user, self.views_counter, self.discussion.title)
 
     def print_content(self):
-        print 'Viewer', self.user.username, 'views_counter', self.views_counter
+        print 'Viewer', self.user.username, 'views_counter', self.views_counter, 'updated_at', self.updated_at, 'views_counter_updated_at', self.views_counter_updated_at, 'is_a_follower', self.is_a_follower, 'is_allowed_to_participate', self.is_allowed_to_participate
 
         

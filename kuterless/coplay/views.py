@@ -110,7 +110,8 @@ def discussion_details(request, pk):
     list_decision = discussion.decision_set.all().order_by("-created_at")
     list_tasks = discussion.task_set.all().order_by("-target_date")
     like_levels = LikeLevel.level
-    list_viewers = discussion.viewer_set.all().order_by("-updated_at")
+    list_viewers = discussion.viewer_set.all().exclude(
+        views_counter= 0 ).order_by("-views_counter_updated_at")
 
     vote_form = None
     feedback_form = None

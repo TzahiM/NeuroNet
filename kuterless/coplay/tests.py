@@ -381,4 +381,44 @@ class CoPlayTest(TestCase):
         self.assertEquals(at2_view.views_counter, 4) 
         self.assertEquals(at3_view.views_counter, 1) 
         self.assertEquals(d.viewer_set.count(), 3) 
+        print "viewers test"
+        d.print_content()
+        print "viewers test print end"
+
         
+    def test_discussion_followers(self):
+        d = self.create_dicussion()
+        self.assertEquals(d.is_a_follower( self.at1), False) 
+        self.assertEquals(d.viewer_set.count(), 0) 
+        
+        d.start_follow( self.at1)
+        self.assertEquals(d.is_a_follower( self.at1), True) 
+        self.assertEquals(d.viewer_set.count(), 1) 
+        
+        d.stop_follow( self.at1)
+        self.assertEquals(d.is_a_follower( self.at1), False) 
+        self.assertEquals(d.viewer_set.count(), 1) 
+        
+        d.start_follow( self.at2)
+        self.assertEquals(d.is_a_follower( self.at2), True) 
+        self.assertEquals(d.viewer_set.count(), 2) 
+        
+        followers_list = d.get_followers_list()
+        self.assertEquals( self.at3 in followers_list , False)
+         
+        d.start_follow( self.at3)
+        
+        followers_list = d.get_followers_list()
+        self.assertEquals( self.at3 in followers_list , True) 
+        
+        self.assertEquals( len(followers_list) , 2) 
+        self.assertEquals(d.viewer_set.count(), 3) 
+        
+        d.start_follow( self.at1)
+        followers_list = d.get_followers_list()
+        self.assertEquals( len(followers_list), 3)
+        
+        print "followers test"
+        d.print_content()
+        print "followers test print end"
+         
