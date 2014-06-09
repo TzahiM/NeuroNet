@@ -118,6 +118,7 @@ def discussion_details(request, pk):
     description_form = None
     add_decision_form = None
     add_task_form = None
+    is_a_follower = False
     if request.user.is_authenticated():
         if discussion.is_active():
             if request.user == discussion.owner:
@@ -128,6 +129,7 @@ def discussion_details(request, pk):
                 vote_form = VoteForm()
 
         add_task_form = AddTaskForm()
+        is_a_follower = discussion.is_a_follower(request.user)
 
     page_name = u'עוזרים ב' + discussion.title
     
@@ -147,7 +149,8 @@ def discussion_details(request, pk):
                    'add_task_form': add_task_form,
                    'like_levels': like_levels,
                    'list_viewers':list_viewers,
-                   'page_name': page_name})
+                   'page_name': page_name ,
+                   'is_a_follower': is_a_follower})
     
     #current view is recorded after response had been resolved
     if request.user.is_authenticated():
@@ -190,6 +193,8 @@ def add_discussion(request):
             new_discussion.save()
             messages.success(request,
                              _("Your activity was created successfully"))
+            new_discussion.start_follow(user)
+            
             return redirect(new_discussion)
     else:
         form = NewDiscussionForm() # An unbound form
@@ -217,7 +222,7 @@ def send_html_message(subject, html_content, from_email, to_list):
 
 
 def discussion_email_updates(discussion, subject, logged_in_user, details = None, id = ''):
-    attending_list = discussion.get_attending_list(True)
+    attending_list = discussion.get_followers_list()
     html_message = render_to_string("coplay/email_discussion_update.html",
                                     {'ROOT_URL': kuterless.settings.SITE_URL,
                                      'discussion': discussion,
@@ -238,7 +243,7 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
 
 
 def discussion_task_email_updates(task, subject, logged_in_user, details = None):
-    attending_list = task.parent.get_attending_list(True)
+    attending_list = task.parent.get_followers_list()
 
     html_message = render_to_string("coplay/email_task_update.html",
                                     {'ROOT_URL': kuterless.settings.SITE_URL,
@@ -309,6 +314,29 @@ def delete_discussion(request, pk):
                   {'message': 'רק בעל הדיון  מורשה למחוק אותו',
                    'rtl': 'dir="rtl"'})
 
+
+@login_required
+def start_follow(request, pk):
+    try:
+        discussion = Discussion.objects.get(id=int(pk))
+    except Discussion.DoesNotExist:
+        return HttpResponseRedirect('coplay_root')
+    discussion.start_follow(request.user)
+    
+    return HttpResponseRedirect(
+                discussion.get_absolute_url())    
+    
+@login_required
+def stop_follow(request, pk):
+    try:
+        discussion = Discussion.objects.get(id=int(pk))
+    except Discussion.DoesNotExist:
+        return HttpResponseRedirect('coplay_root')
+    discussion.stop_follow(request.user)
+    
+    return HttpResponseRedirect(
+                discussion.get_absolute_url())    
+    
 
 @login_required
 def add_feedback(request, pk):
@@ -393,6 +421,8 @@ def vote(request, pk):
             user = request.user
             if user != decision.parent.owner:
                 decision.vote(user, int(form.cleaned_data['value']))
+                decision.parent.start_follow(user)
+
             return HttpResponseRedirect(
                 decision.parent.get_absolute_url()) # Redirect after POST
         return render(request, 'coplay/message.html',
@@ -618,14 +648,14 @@ def user_coplay_report(request, username=None):
             user_s_open_tasks_list.append(task)
         else:
             discussion = task.parent
-            if user in discussion.get_attending_list(include_owner=True):
+            if user in discussion.get_followers_list():
                 other_users_open_tasks_list.append(task)
                 
     tasks_by_recent_updates = Task.objects.all().order_by("-updated_at")
     
     for task in tasks_by_recent_updates:
         discussion = task.parent
-        if user in discussion.get_attending_list(include_owner=True):
+        if user in discussion.get_followers_list():
             status = task.get_status()
             if status == Task.MISSED or status == Task.ABORTED:
                 failed_tasks_list.append(task)
@@ -641,11 +671,11 @@ def user_coplay_report(request, username=None):
     user_discussions_locked = []
 
     for discussion in active_discussions_by_urgancy_list:
-        if user in discussion.get_attending_list(include_owner=True):
+        if user in discussion.get_followers_list():
             user_discussions_active.append(discussion)
 
     for discussion in locked_discussions_by_relevancy_list:
-        if user in discussion.get_attending_list(include_owner=True):
+        if user in discussion.get_followers_list():
             user_discussions_locked.append(discussion)
             
     number_of_closed_tasks = len(user_closed_tasks_list)
@@ -724,6 +754,7 @@ class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
                                          trunkated_subject_and_detailes,
                                          self.request.user,
                                          trunkated_subject_and_detailes)
+        form.instance.start_follow(self.request.user)
         
         return resp
     
@@ -784,7 +815,7 @@ class CreateTaskView(CreateView):
                                          self.request.user,
                                          trunkated_subject_and_detailes)
         
-        
+        self.discussion.start_follow(self.request.user)
         
         
         return resp
@@ -837,7 +868,7 @@ class CreateFeedbackView(CreateView):
                                          self.request.user,
                                          trunkated_subject_and_detailes)
         
-        
+        form.instance.discussion.start_follow(self.request.user)
         
         return resp
 
@@ -887,6 +918,7 @@ class CreateDecisionView(CreateView):
                                          trunkated_subject_and_detailes,
                                          "#Decisions")
         
+        form.instance.parent.start_follow(self.request.user)
         
         return resp
 

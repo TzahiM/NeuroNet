@@ -188,6 +188,8 @@ class Discussion(models.Model):
             viewer.stop_follow()
 
     def is_a_follower(self, viewing_user):
+        if not viewing_user:
+            return False
         if self.viewer_set.all().filter( user = viewing_user):
             viewer = self.viewer_set.get( user = viewing_user)
             return viewer.get_is_a_follower()
@@ -204,7 +206,7 @@ class Discussion(models.Model):
             print 'inactivated'
 
         print 'attending:'
-        attending_list = self.get_attending_list()
+        attending_list = self.get_followers_list()
         for user in attending_list:
             print user.username
 

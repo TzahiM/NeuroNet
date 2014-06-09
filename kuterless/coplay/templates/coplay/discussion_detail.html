@@ -24,6 +24,12 @@
                     {% trans "Activity Of" %}
                     <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
                 {% endif %}
+                {% if is_a_follower %}                
+                	<a class="new btn btn-warning" href="{% url 'coplay:stop_follow' discussion.id %}">להפסיק לקבל עדכונים</a> 
+                {% else %}
+                	<a class="new btn btn-info" href="{% url 'coplay:start_follow' discussion.id %}">מענין, רוצה לקבל עדכונים</a>   
+                {% endif %}
+        
             </h3></div>
         </div>
     </div>
@@ -287,7 +293,7 @@
                     {% for viewer in list_viewers %}
 
                         <li class="list-group-item">
-                            {% trans "Recent View was at" %}   {{ viewer.updated_at | naturaltime }}
+                            {% trans "Recent View was at" %}   {{ viewer.views_counter_updated_at | naturaltime }}
                             {% trans "By" %}
                             <a href="{% url 'coplay:user_coplay_report'  viewer.user.username %}">{{ viewer.user.get_full_name|default:viewer.user.username }}</a>
                             {% trans "Total" %}

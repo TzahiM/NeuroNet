@@ -13,6 +13,13 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/details/$', views.discussion_details, name='discussion_details'),
     url(r'^(?P<pk>\d+)/update/$', views.UpdateDiscussionDescView.as_view(), name='discussion_update'),
     url(r'^(?P<pk>\d+)/delete/$', views.DeleteDiscussionView.as_view(success_url='discussions_list'), name='discussion_delete'),
+    
+#pk (of discussion)/start_follow
+    url(r'^(?P<pk>\d+)/start_follow/$', views.start_follow, name='start_follow'),
+    
+#pk (of discussion)/stop_follow
+    url(r'^(?P<pk>\d+)/stop_follow/$', views.stop_follow, name='stop_follow'),
+
 #pk (of discussion)/feedback_for
     url(r'^(?P<pk>\d+)/feedback/$', views.add_feedback, name='add_feedback'),
 #pk (of discussion)/update_goals
@@ -43,6 +50,8 @@ urlpatterns = patterns('',
 #/username/user_coplay_report
 # ex: labs/coplay/Tzahim/user_coplay_report
     url(r'^(?P<username>.+)/user_coplay_report/$', views.user_coplay_report, name='user_coplay_report'),
+    
+    
 
 
 )
