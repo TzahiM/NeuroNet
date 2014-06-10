@@ -1,6 +1,5 @@
 from coplay import views
 from django.conf.urls import patterns, url
-from django.core.urlresolvers import reverse
 
 
 urlpatterns = patterns('',
@@ -51,7 +50,12 @@ urlpatterns = patterns('',
 # ex: labs/coplay/Tzahim/user_coplay_report
     url(r'^(?P<username>.+)/user_coplay_report/$', views.user_coplay_report, name='user_coplay_report'),
     
+# ex: labs/coplay/Tzahim/start_follow_user
+    url(r'^(?P<username>.+)/start_follow_user/$', views.start_follow_user, name='start_follow_user'),
     
+    
+# ex: labs/coplay/Tzahim/stop_follow_user
+    url(r'^(?P<username>.+)/stop_follow_user/$', views.stop_follow_user, name='stop_follow_user'),
 
 
 )

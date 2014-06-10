@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-from coplay.models import Discussion, Feedback, Decision, LikeLevel, Vote, Task
+from coplay.models import Discussion, Feedback, Decision, LikeLevel, Vote, Task, \
+    FollowRelation
+from coplay.views import is_user_is_following, start_users_following, \
+    stop_users_following, get_followers_list, get_following_list
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
@@ -421,4 +424,58 @@ class CoPlayTest(TestCase):
         print "followers test"
         d.print_content()
         print "followers test print end"
-         
+
+    def test_following_user(self):
+        
+        self.assertEquals(FollowRelation.objects.count(), 0) 
+        self.assertEquals(is_user_is_following(self.at1, self.at2), False)
+        self.assertEquals(is_user_is_following(self.at2, self.at1), False)
+        start_users_following(self.at1, self.at2)
+        self.assertEquals(is_user_is_following(self.at1, self.at2), True)         
+        self.assertEquals(is_user_is_following(self.at2, self.at1), False)
+
+        stop_users_following(self.at1, self.at2)
+        
+        self.assertEquals(is_user_is_following(self.at1, self.at2), False)
+        self.assertEquals(is_user_is_following(self.at2, self.at1), False)
+
+        start_users_following(self.at1, self.at3)
+        
+        start_users_following(self.at1, self.admin)
+
+        start_users_following(self.at3, self.at1)
+        
+        self.assertEquals(is_user_is_following(self.at1, self.at3), True)
+        self.assertEquals(is_user_is_following(self.at3, self.at1), True)
+        self.assertEquals(is_user_is_following(self.at1, self.admin), True)
+        
+        start_users_following(self.at3, self.at1)
+        start_users_following(self.at3, self.at2)
+        start_users_following(self.at3, self.at3)
+
+        self.assertEquals(FollowRelation.objects.count(), 4) 
+        
+        print FollowRelation.objects.all()
+
+        
+        self.assertEquals(is_user_is_following(self.at3, self.at1), True)
+        self.assertEquals(is_user_is_following(self.at3, self.at2), True)
+        self.assertEquals(is_user_is_following(self.at3, self.at3), False)
+        
+        at1_followers_list = get_followers_list(self.at1)
+        print 'at1_followers_list',  at1_followers_list
+        self.assertEquals( self.at1 in at1_followers_list, False)
+        self.assertEquals( self.at2 in at1_followers_list, False)
+        self.assertEquals( self.at3 in at1_followers_list, True)
+        self.assertEquals( self.admin in at1_followers_list, False)
+        
+
+        at1_following_list = get_following_list(self.at1)
+        print 'at1_following_list', at1_following_list
+        self.assertEquals( self.at1 in at1_following_list, False)
+        self.assertEquals( self.at2 in at1_following_list, False)
+        self.assertEquals( self.at3 in at1_following_list, True)
+        self.assertEquals( self.admin in at1_following_list, True)
+
+
+        

@@ -537,4 +537,20 @@ class Viewer(models.Model):
     def print_content(self):
         print 'Viewer', self.user.username, 'views_counter', self.views_counter, 'updated_at', self.updated_at, 'views_counter_updated_at', self.views_counter_updated_at, 'is_a_follower', self.is_a_follower, 'is_allowed_to_participate', self.is_allowed_to_participate
 
+class FollowRelation(models.Model):
+    follower_user = models.ForeignKey(User, related_name='follower_user')
+    following_user = models.ForeignKey(User, related_name='following_user')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (
+            ('follower_user', 'following_user'),
+        )
+
+    def __unicode__(self):
+        return "{} is following {}".format(self.follower_user.username, self.following_user.username)
+
+    def print_content(self):
+        print self.follower_user.username , 'is following', self.following_user.username
         

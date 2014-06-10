@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from coplay import models
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
-    Viewer
+    Viewer, FollowRelation
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail.message import EmailMessage
+from django.core.urlresolvers import reverse
 from django.forms.extras.widgets import SelectDateWidget
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
@@ -17,7 +17,6 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
-from flask import logging
 import floppyforms as forms
 import kuterless.settings
 
@@ -221,7 +220,7 @@ def send_html_message(subject, html_content, from_email, to_list):
     msg.send()
 
 
-def discussion_email_updates(discussion, subject, logged_in_user, details = None, id = ''):
+def discussion_email_updates(discussion, subject, logged_in_user, details = None, url_id = ''):
     attending_list = discussion.get_followers_list()
     html_message = render_to_string("coplay/email_discussion_update.html",
                                     {'ROOT_URL': kuterless.settings.SITE_URL,
@@ -229,7 +228,7 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
                                      'html_title': string_to_email_subject(subject),
 #                                     'subject_debug':string_to_email_subject(subject),
                                      'details': details,
-                                     'id': id})
+                                     'id': url_id})
     
 
 #    with open( "output.html" , "w") as debug_file:
@@ -738,9 +737,7 @@ class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
     def form_valid(self, form):
 
         resp = super(UpdateDiscussionDescView, self).form_valid(form)  
-        subject_text = get_user_fullname_or_username(self.request.user) + u" עידכן/ה את היעדים של " + form.instance.title
         
-        details = subject_text + ":\n\n" + '"' + form.instance.description + '"\n'
 
         t = Template("""
         {{discussion.owner.get_full_name|default:discussion.owner.username}} עידכן/ה את המטרות של הפעילות והעזרה המבוקשת :\n
@@ -922,5 +919,64 @@ class CreateDecisionView(CreateView):
         
         return resp
 
+def get_followers_list( following_user):
+    
+    followers_list = []
+    
+    follow_relations_set = FollowRelation.objects.filter( following_user = following_user)
+    
+    for follow_relations in follow_relations_set:
+        followers_list.append(follow_relations.follower_user)
+        
+    return followers_list
+
+def get_following_list( follower_user):
+    
+    following_list = []
+    
+    follow_relations_set = FollowRelation.objects.filter( follower_user = follower_user)
+    
+    for follow_relations in follow_relations_set:
+        following_list.append(follow_relations.following_user)
+        
+    return following_list
 
 
+    
+def is_user_is_following( follower_user, following_user):
+    return FollowRelation.objects.filter( follower_user = follower_user, following_user = following_user).exists()
+
+def start_users_following( follower_user, following_user):
+    
+    if follower_user == following_user:
+        return
+    
+    FollowRelation.objects.get_or_create( follower_user = follower_user, following_user = following_user)
+
+def stop_users_following( follower_user, following_user):
+    if FollowRelation.objects.filter( follower_user = follower_user, following_user = following_user).exists():
+        deleted_follow_relation = FollowRelation.objects.get( follower_user = follower_user, following_user = following_user)
+        deleted_follow_relation.delete()
+            
+
+@login_required
+def start_follow_user(request, username):
+    try:
+        following_user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return HttpResponse('User not found')
+    
+    start_users_following( request.user, following_user)
+    
+    return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': following_user}))
+
+@login_required
+def stop_follow_user(request, username):
+    try:
+        following_user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return HttpResponse('User not found')
+    
+    stop_users_following( request.user, following_user)
+        
+    return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': following_user}))
