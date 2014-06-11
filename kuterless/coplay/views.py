@@ -194,6 +194,21 @@ def add_discussion(request):
                              _("Your activity was created successfully"))
             new_discussion.start_follow(user)
             
+            t = Template("""
+            {{discussion.owner.get_full_name|default:discussion.owner.username}} מבקש/ת את העזרה שלך ב :\n
+            "{{discussion.title}} "\n
+            """)
+            
+            trunkated_subject_and_detailes = t.render(Context({"discussion": new_discussion}))
+                                                                
+          
+            discussion_email_updates(new_discussion,
+                                             trunkated_subject_and_detailes,
+                                             new_discussion.owner,
+                                             trunkated_subject_and_detailes,
+                                             mailing_list = get_followers_list(new_discussion.owner))
+        
+            
             return redirect(new_discussion)
     else:
         form = NewDiscussionForm() # An unbound form
@@ -220,8 +235,9 @@ def send_html_message(subject, html_content, from_email, to_list):
     msg.send()
 
 
-def discussion_email_updates(discussion, subject, logged_in_user, details = None, url_id = ''):
-    attending_list = discussion.get_followers_list()
+def discussion_email_updates(discussion, subject, logged_in_user, details = None, url_id = '', mailing_list = None):
+    if mailing_list == None:
+        mailing_list = discussion.get_followers_list()
     html_message = render_to_string("coplay/email_discussion_update.html",
                                     {'ROOT_URL': kuterless.settings.SITE_URL,
                                      'discussion': discussion,
@@ -233,8 +249,8 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
 
 #    with open( "output.html" , "w") as debug_file:
 #        debug_file.write(html_message)
-
-    for attensdent in attending_list:
+    
+    for attensdent in mailing_list:
         if attensdent.email and attensdent != logged_in_user:
             send_html_message(subject, html_message,
                               'do-not-reply@kuterless.org.il',
@@ -690,6 +706,14 @@ def user_coplay_report(request, username=None):
     number_of_votes     = user.vote_set.all().count()
     number_of_task_closing = Task.objects.filter( closed_by = user ).count()
     number_of_aborted_tasks = Task.objects.filter( status=Task.ABORTED, responsible = user ).count()
+    
+    followers_list = get_followers_list(user)
+    following_list = get_following_list(user)
+    if request.user.is_authenticated():
+        is_following = is_user_is_following(request.user, user)
+    else:
+        is_following = False
+        
 
     return render(request, 'coplay/coplay_report.html',
                   {
@@ -707,6 +731,9 @@ def user_coplay_report(request, username=None):
                       'tasks_closed_by_reverse_time': user_closed_tasks_list,
                       'tasks_failed_by_reverse_update_time': failed_tasks_list,
                       'applicabale_user': user,
+                      'followers_list' :followers_list,
+                      'following_list' :following_list,
+                      'is_following'   :is_following,
                       'page_name': page_name})
 
 
@@ -726,7 +753,7 @@ class DiscussionOwnerView(object):
         self.discussion = self.get_object()
         if self.discussion.owner != request.user:
             return HttpResponse("Unauthorized", status=401)
-
+        
         return super(DiscussionOwnerView, self).dispatch(request, *args,
                                                               **kwargs)
 
@@ -952,10 +979,11 @@ def start_users_following( follower_user, following_user):
         return
     
     FollowRelation.objects.get_or_create( follower_user = follower_user, following_user = following_user)
+     
 
 def stop_users_following( follower_user, following_user):
     if FollowRelation.objects.filter( follower_user = follower_user, following_user = following_user).exists():
-        deleted_follow_relation = FollowRelation.objects.get( follower_user = follower_user, following_user = following_user)
+        deleted_follow_relation = FollowRelation.objects.get( follower_user = follower_user, following_user = following_user) 
         deleted_follow_relation.delete()
             
 

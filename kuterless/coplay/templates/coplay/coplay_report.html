@@ -10,7 +10,8 @@
 	<a class="btn btn-success" href="#DiscussionsLocked">פעילויות לא פעילות</a>
 	<a class="btn btn-success" href="#TasksClosed">משימות שהושלמו</a>
 	<a class="btn btn-success" href="#TasksFailedAll">משימות שנכשלו של כולם</a>
-	<a class="btn btn-success" href="{% url 'coplay:discussions_list' %}">רשימת כל הפעילויות</a>
+	<a class="btn btn-success" href="#FollwersList">עוקבים</a>	
+	<a class="btn btn-success" href="#FollowingList">עוקב/ת אחרי</a>	
 	
 	
 </center>
@@ -21,7 +22,15 @@
 			
             	<div class="container">
             	<center>
-            		<h1>{{ page_name}}</h1>
+            		<h1>{{ page_name}} 
+            			{% if user !=  applicabale_user %}
+	            			{% if is_following %}                
+	     		           		<a class="new btn btn-warning" href="{% url 'coplay:stop_follow_user'  applicabale_user.username %}">להפסיק לעקוב אחריו/ה</a> 
+	                		{% else %}
+	            	    		<a class="new btn btn-info" href="{% url 'coplay:start_follow_user'  applicabale_user.username %}">רוצה לעקוב אחריו/ה</a>   
+	                		{% endif %}
+                		{% endif %}
+            		</h1>
             		{{number_of_closed_tasks}} משימות שהושלמו
             	    {{number_of_closed_tasks_for_others}}  מתוכם למשתמשים אחרים 
             	    {{number_of_aborted_tasks}}  משימות שבוטלו בזמן 
@@ -238,6 +247,50 @@
 
             </div>
             
+
+
+            <div class="row">
+            	
+            	
+            	
+            	
+                <div class="col-sm-2 col-md-6" id = "FollwersList">
+    	<br>
+        <br>
+        <br>
+                	<center><h2>רשימת העוקבים/ות</h2></center>
+	               	<ul>
+					{% for follower in followers_list %}
+					
+					 		<li class="list-group-item">
+					 			<a  href="{% url 'coplay:user_coplay_report'  follower.username %}">{{ follower.get_full_name|default:follower.username }}</a>
+  				 		    </li>
+					{% empty %}
+					    <center><li class="list-group-item">אין</li></center>
+					{% endfor %}
+					</ul>
+				
+                </div>
+
+                <div class="col-sm-2 col-md-6" id = "FollowingList">
+    	<br>
+        <br>
+        <br>
+                	<center><h2>עוקב/ת אחרי</h2></center>
+	               	<ul>
+					{% for following in following_list %}
+					
+					 		<li class="list-group-item">
+					 			<a  href="{% url 'coplay:user_coplay_report'  following.username %}">{{ following.get_full_name|default:following.username }}</a>
+  				 		    </li>
+					{% empty %}
+					    <center><li class="list-group-item">אין</li></center>
+					{% endfor %}
+					</ul>
+                </div>
+
+
+            </div>
             
             
 		</div>
