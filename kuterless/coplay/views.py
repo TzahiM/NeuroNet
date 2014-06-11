@@ -130,6 +130,8 @@ def discussion_details(request, pk):
         add_task_form = AddTaskForm()
         is_a_follower = discussion.is_a_follower(request.user)
 
+    list_followers = discussion.get_followers_list()
+    
     page_name = u'עוזרים ב' + discussion.title
     
     #the response shall not indicate current user's view
@@ -149,7 +151,8 @@ def discussion_details(request, pk):
                    'like_levels': like_levels,
                    'list_viewers':list_viewers,
                    'page_name': page_name ,
-                   'is_a_follower': is_a_follower})
+                   'is_a_follower': is_a_follower,
+                   'list_followers': list_followers})
     
     #current view is recorded after response had been resolved
     if request.user.is_authenticated():
