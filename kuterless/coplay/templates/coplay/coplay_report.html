@@ -10,8 +10,8 @@
 	<a class="btn btn-success" href="#DiscussionsLocked">פעילויות לא פעילות</a>
 	<a class="btn btn-success" href="#TasksClosed">משימות שהושלמו</a>
 	<a class="btn btn-success" href="#TasksFailedAll">משימות שנכשלו של כולם</a>
-	<a class="btn btn-success" href="#FollwersList">עוזרים/ות רשומים/ות</a>	
-	<a class="btn btn-success" href="#FollowingList">עוזר/ת רשום/ה של</a>	
+	<a class="btn btn-success" href="#FollwersList">עוקבים</a>	
+	<a class="btn btn-success" href="#FollowingList">עוקב/ת אחרי</a>	
 	
 	
 </center>
@@ -25,9 +25,9 @@
             		<h1>{{ page_name}} 
             			{% if user !=  applicabale_user %}
 	            			{% if is_following %}                
-	     		           		<a class="new btn btn-warning" href="{% url 'coplay:stop_follow_user'  applicabale_user.username %}">להפסיק לעזור לו/ה</a> 
+	     		           		<a class="new btn btn-warning" href="{% url 'coplay:stop_follow_user'  applicabale_user.username %}">להפסיק לעקוב אחריו/ה</a> 
 	                		{% else %}
-	            	    		<a class="new btn btn-info" href="{% url 'coplay:start_follow_user'  applicabale_user.username %}">רוצה  לעזור לו/ה</a>   
+	            	    		<a class="new btn btn-info" href="{% url 'coplay:start_follow_user'  applicabale_user.username %}">רוצה  לעקוב אחריו/ה</a>   
 	                		{% endif %}
                 		{% endif %}
             		</h1>
@@ -258,7 +258,7 @@
     	<br>
         <br>
         <br>
-                	<center><h2>העוזרים הרשומים</h2></center>
+                	<center><h2>רשימת העוקבים</h2></center>
 	               	<ul>
 					{% for follower in followers_list %}
 					
@@ -276,7 +276,7 @@
     	<br>
         <br>
         <br>
-                	<center><h2>עוזר/ת רשום/ה של</h2></center>
+                	<center><h2>עוקב/ת אחרי</h2></center>
 	               	<ul>
 					{% for following in following_list %}
 					

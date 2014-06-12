@@ -237,6 +237,34 @@ def send_html_message(subject, html_content, from_email, to_list):
     msg.content_subtype = "html"  # Main content is now text/html
     msg.send()
 
+def user_follow_start_email_updates(follower_user, following_user, inverse_following):
+
+
+
+    t = Template("""
+        {{follower_user.get_full_name|default:follower_user.username}} התחיל/ה לעקוב אחרי פתיחת הפעילויות שלך
+        """)
+        
+    subject = t.render(Context({"follower_user": follower_user}))
+
+    
+    html_message = render_to_string("coplay/user_follow_email_update.html",
+                                    {'ROOT_URL': kuterless.settings.SITE_URL,
+                                     'follower_user': follower_user,
+                                     'html_title': string_to_email_subject(subject),
+                                     'details': subject,
+                                     'inverse_following': inverse_following})
+    
+
+#    with open( "output.html" , "w") as debug_file:
+#        debug_file.write(html_message)
+    
+    if following_user.email != None:
+        send_html_message(subject, html_message,
+                              'do-not-reply@kuterless.org.il',
+                              [following_user.email])
+
+
 
 def discussion_email_updates(discussion, subject, logged_in_user, details = None, url_id = '', mailing_list = None):
     if mailing_list == None:
@@ -981,7 +1009,14 @@ def start_users_following( follower_user, following_user):
     if follower_user == following_user:
         return
     
+    already_following = is_user_is_following( follower_user, following_user)
+    
+    inverse_following = is_user_is_following(following_user ,  follower_user )
+
     FollowRelation.objects.get_or_create( follower_user = follower_user, following_user = following_user)
+    
+    if not already_following:
+        user_follow_start_email_updates(follower_user, following_user, inverse_following)
      
 
 def stop_users_following( follower_user, following_user):
