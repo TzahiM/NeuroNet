@@ -21,6 +21,7 @@ class Discussion(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     locked_at = models.DateTimeField(default=None, blank=True, null=True)
+    is_restricted    = models.BooleanField(default = False)
 
     def __unicode__(self):
         return self.id
@@ -194,6 +195,44 @@ class Discussion(models.Model):
             viewer = self.viewer_set.get( user = viewing_user)
             return viewer.get_is_a_follower()
         return False
+
+    def is_user_invited(self, viewing_user) :
+                        
+        return self.viewer_set.all().filter( user = viewing_user, is_invited  = True).exists()
+            
+    def can_user_participate(self, viewing_user = None):
+        if not self.is_restricted:
+            return True
+        
+        if not viewing_user:
+            return False
+        
+        if self.owner == viewing_user:
+            return True
+            
+        return self.is_user_invited(viewing_user)
+        
+    def invite(self, invited_user):
+        if invited_user in User.objects.all():
+            viewer = self.viewer_set.get_or_create( user = invited_user)[0]
+            viewer.invite()
+
+
+    def cancel_invitation(self, invited_user):
+        if invited_user in User.objects.all():
+            viewer = self.viewer_set.get_or_create( user = invited_user)[0]
+            viewer.cancel_invitation()
+
+        
+    def get_invited_users_list(self):
+        
+        
+        invited_users_list = []
+        for viewer in self.viewer_set.all():
+            if viewer.get_is_invited():
+                invited_users_list.append(viewer.user)
+                
+        return invited_users_list
         
     def print_content(self):
         print 'Owner', self.owner.username
@@ -503,7 +542,7 @@ class Viewer(models.Model):
     views_counter = models.IntegerField(default = 0)
     views_counter_updated_at = models.DateTimeField(default=None, blank=True, null=True)
     is_a_follower = models.BooleanField(default = False)
-    is_allowed_to_participate    = models.BooleanField(default = False)
+    is_invited    = models.BooleanField(default = False)
 
     
     def increment_views_counter(self):
@@ -530,12 +569,25 @@ class Viewer(models.Model):
     def get_is_a_follower(self):
         return self.is_a_follower
 
+    def invite(self):
+        self.is_invited = True
+        self.save()
+
+
+    def cancel_invitation(self):
+        self.is_invited = False
+        self.save()
+
+    def get_is_invited(self):
+        return self.is_invited
+
+
 
     def __unicode__(self):
         return "{} - {}: {}".format(self.user, self.views_counter, self.discussion.title)
 
     def print_content(self):
-        print 'Viewer', self.user.username, 'views_counter', self.views_counter, 'updated_at', self.updated_at, 'views_counter_updated_at', self.views_counter_updated_at, 'is_a_follower', self.is_a_follower, 'is_allowed_to_participate', self.is_allowed_to_participate
+        print 'Viewer', self.user.username, 'views_counter', self.views_counter, 'updated_at', self.updated_at, 'views_counter_updated_at', self.views_counter_updated_at, 'is_a_follower', self.is_a_follower, 'is_invited', self.is_invited
 
 class FollowRelation(models.Model):
     follower_user = models.ForeignKey(User, related_name='follower_user')

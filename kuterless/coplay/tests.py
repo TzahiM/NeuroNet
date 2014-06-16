@@ -477,5 +477,47 @@ class CoPlayTest(TestCase):
         self.assertEquals( self.at3 in at1_following_list, True)
         self.assertEquals( self.admin in at1_following_list, True)
 
+    def test_discussion_invitations(self):
+        d = self.create_dicussion()
+        self.assertEquals(d.viewer_set.count(), 0) 
+        self.assertEquals(d.can_user_participate( self.at1), True)
+        d.is_restricted = True
+        d.save()
+        self.assertEquals(d.can_user_participate( self.at1), False)
+        self.assertEquals(d.viewer_set.count(), 0) 
+
+        
+        d.invite( self.at1)
+        self.assertEquals(d.can_user_participate( self.at1), True) 
+        self.assertEquals(d.viewer_set.count(), 1) 
+        
+        d.cancel_invitation( self.at1)
+        self.assertEquals(d.is_user_invited( self.at1), False) 
+        self.assertEquals(d.can_user_participate( self.at1), False)
+        self.assertEquals(d.viewer_set.count(), 1) 
+        
+        d.invite( self.at2)
+        self.assertEquals(d.is_user_invited( self.at2), True) 
+        self.assertEquals(d.viewer_set.count(), 2) 
+        
+        followers_list = d.get_followers_list()
+        self.assertEquals( self.at3 in followers_list , False)
+         
+        d.invite( self.at3)
+        
+        invited_users_list  = d.get_invited_users_list()
+        self.assertEquals( self.at3 in invited_users_list , True) 
+        
+        self.assertEquals( len(invited_users_list) , 2) 
+        self.assertEquals(d.viewer_set.count(), 3) 
+        
+        d.invite( self.at1)
+        invited_users_list = d.get_invited_users_list()
+        self.assertEquals( len(invited_users_list), 3)
+        
+        print 'invited_users_list', invited_users_list
+        d.cancel_invitation( self.at2)
+        d.print_content()
+        
 
         
