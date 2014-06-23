@@ -87,7 +87,7 @@
     </div>
 
     <div id="discussion-feedback"
-    {% if feedback_form and discussion.is_active %}
+    {% if discussion.is_active %}
         <p>
             <a class="btn btn-info"
                href="{% url 'coplay:create_feedback' discussion.id %}">{% trans "Create Feedback" %}</a>
