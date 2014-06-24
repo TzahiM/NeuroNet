@@ -9,9 +9,11 @@ dj-database-url==0.2.2
 dj-static==0.0.5
 django-classy-tags==0.4
 django-extensions==1.2.5
+django-filter==0.7
 django-mptt==0.6.0
 django-sekizai==0.7
 django-toolbelt==0.0.1
+djangorestframework==2.3.14
 ecdsa==0.10
 ipython==1.1.0
 itsdangerous==0.23

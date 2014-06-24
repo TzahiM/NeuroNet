@@ -605,4 +605,45 @@ class FollowRelation(models.Model):
 
     def print_content(self):
         print self.follower_user.username , 'is following', self.following_user.username
+
+        
+class Segment(models.Model):
+    title = models.CharField(_("title"), max_length=200)
+    description = models.TextField(_("Description"), blank=True, null=True,
+                                   validators=[MaxLengthValidator(MAX_TEXT)])
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return "{} {}".format(self.title, self.description)
+    
+    def is_in_segment(self, user):
+        return user.user_profile in self.user_profile_set.all()
+        
+    def print_content(self):
+        print 'segment', self.title, ':', self.description
+        print 'members are:'
+        for user_profile in self.user_profile_set.all():
+            print user_profile.print_content()
+         
+        
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, primary_key=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    segment = models.ForeignKey(Segment, null=True, blank=True)
+
+    def __unicode__(self):
+        return "{} ".format(self.user.username)
+    
+    def is_in_the_same_segment(self, another_user = None):
+        if self.segment:
+            return self.segment.is_in_segment(another_user)
+        return True
+
+    def print_content(self):
+        print self.user.username
+        if self.segment:
+            print 'belong to', self.segment.title
+            
         

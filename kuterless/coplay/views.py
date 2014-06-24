@@ -577,7 +577,7 @@ def update_task_description(request, pk):
                 
 
             return HttpResponseRedirect(
-                task.get_absolute_url()) # Redirect after POST
+                task.parent.get_absolute_url()) # Redirect after POST
 
     return HttpResponseRedirect('coplay_root') # Redirect after POST
 

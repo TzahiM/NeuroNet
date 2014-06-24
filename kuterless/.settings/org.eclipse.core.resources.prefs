@@ -6,6 +6,7 @@ encoding//coplay/migrations/0005_auto__add_viewer.py=utf-8
 encoding//coplay/migrations/0006_auto__add_field_viewer_views_counter_updated_at__add_field_viewer_is_a.py=utf-8
 encoding//coplay/migrations/0007_auto__add_followrelation__add_unique_followrelation_follower_user_foll.py=utf-8
 encoding//coplay/migrations/0008_auto__del_field_viewer_is_allowed_to_participate__add_field_viewer_is_.py=utf-8
+encoding//coplay/migrations/0009_auto__add_userprofile__add_segment.py=utf-8
 encoding//coplay/models.py=utf-8
 encoding//coplay/tests.py=utf-8
 encoding//coplay/views.py=utf-8

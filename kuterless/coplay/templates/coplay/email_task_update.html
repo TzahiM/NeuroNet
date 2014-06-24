@@ -11,6 +11,9 @@
   <p>
   	
       <a href="http://{{ROOT_URL}}{{task.get_absolute_url}}">לעדכון וצפיה  במשימה</a>
+      <br>
+      <a href="http://{{ROOT_URL}}{% url 'coplay:stop_follow'  task.parent.id %}">להפסיק לקבל עדכונים אודות הפעילות</a>
+      
    </p>
    <br>
    <br>

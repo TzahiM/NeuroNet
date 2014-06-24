@@ -11,6 +11,8 @@
   <p>
   	
       <a href="http://{{ROOT_URL}}{{discussion.get_absolute_url}}{{id}}">אל הפעילות המלאה</a>
+      <br>
+      <a href="http://{{ROOT_URL}}{% url 'coplay:stop_follow'  discussion.id %}">להפסיק לקבל עדכונים אודות הפעילות</a>
    </p>
    <br>
    <br>
