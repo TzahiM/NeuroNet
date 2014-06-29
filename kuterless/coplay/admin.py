@@ -1,4 +1,5 @@
-from coplay.models import Feedback, Task, Decision, Vote, Discussion
+from coplay.models import Feedback, Task, Decision, Vote, Discussion, Viewer, \
+    FollowRelation, Segment, UserProfile
 from django.contrib import admin
 
 # Register your models here.
@@ -21,11 +22,29 @@ class VoteAdmin(admin.ModelAdmin):
 class DecisionAdmin(admin.ModelAdmin):
     list_display = ( 'content','created_at')
 
+class ViewerAdmin(admin.ModelAdmin):
+    list_display = ('user', 'discussion')
+    
+class FollowRelationAdmin(admin.ModelAdmin):
+    list_display = ( 'follower_user', 'following_user')
 
+class SegmentAdmin(admin.ModelAdmin):
+    list_display = ('title', 'description')
+    
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'segment')
+
+        
 
 admin.site.register(Feedback, FeedbackAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Decision, DecisionAdmin)
 admin.site.register(Vote, VoteAdmin)
 admin.site.register(Discussion, DiscussionAdmin)
+
+admin.site.register(Viewer, ViewerAdmin)
+admin.site.register(FollowRelation, FollowRelationAdmin)
+admin.site.register(Segment, SegmentAdmin)
+admin.site.register(UserProfile, UserProfileAdmin)
+
 

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from coplay.models import Discussion, Feedback, Decision, LikeLevel, Vote, Task, \
-    FollowRelation
+    FollowRelation, Segment
 from coplay.views import is_user_is_following, start_users_following, \
     stop_users_following, get_followers_list, get_following_list
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
+from public_fulfillment.views import init_user_profile
 import datetime
 import time
 
@@ -519,5 +520,83 @@ class CoPlayTest(TestCase):
         d.cancel_invitation( self.at2)
         d.print_content()
         
+    def test_segments(self):
+        print 'test_segments start'
+        self.at4 = User.objects.create_user('at4', 'user1@example.com',
+                                              'secret')
+        self.at5 = User.objects.create_user('at5', 'user1@example.com',
+                                              'secret')
+        self.at6 = User.objects.create_user('at6', 'user1@example.com',
+                                              'secret')
+        
+        
+        init_user_profile(self.admin)
+        init_user_profile(self.at1)
+        init_user_profile(self.at2)
+        init_user_profile(self.at3)
+        init_user_profile(self.at4)
+        init_user_profile(self.at5)
+        init_user_profile(self.at6)
+
+        self.assertEquals(Segment.objects.count(), 0) 
+        
+        seg1 = Segment( title ='seg1')
+        seg1.save()
+        seg2 = Segment( title ='seg2')
+        seg2.save()
+        self.assertEquals(Segment.objects.count(), 2) 
+        
+        self.assertEquals( self.admin.userprofile.is_in_the_same_segment( self.at1), True)
+        self.admin.userprofile.set_segment()
+        self.assertEquals( self.admin.userprofile.is_in_the_same_segment( self.at1), True)
+        print seg1
+        self.admin.userprofile.set_segment( seg1)
+
+        self.at1.userprofile.print_content()
+        self.admin.userprofile.print_content()
+        
+        self.assertEquals( self.admin.userprofile.is_in_the_same_segment( self.at1), False)
+        
+        self.at1.userprofile.set_segment( seg1)
+        self.assertEquals( self.admin.userprofile.is_in_the_same_segment( self.at1), True)
+        
+        self.at2.userprofile.set_segment( seg1)
+        self.assertEquals( self.admin.userprofile.is_in_the_same_segment( self.at2), True)
+        
+        self.at2.userprofile.set_segment( seg2)
+        self.assertEquals( self.admin.userprofile.is_in_the_same_segment( self.at2), False)
+
+        self.assertEquals( self.at3.userprofile.is_in_the_same_segment( self.at2), False)
+        
+        self.at3.userprofile.set_segment( seg2)
+        
+        self.assertEquals( self.at3.userprofile.is_in_the_same_segment( self.at2), True)
+        
+        admin_all_users_in_same_segment_list = self.admin.userprofile.get_all_users_in_same_segment_list()
+        for user in admin_all_users_in_same_segment_list:
+            print user.userprofile.print_content
+        
+        at1_all_users_in_same_segment_list = self.at1.userprofile.get_all_users_in_same_segment_list()
+        at2_all_users_in_same_segment_list = self.at2.userprofile.get_all_users_in_same_segment_list()
+        at4_all_users_in_same_segment_list = self.at4.userprofile.get_all_users_in_same_segment_list()
+        
+        self.assertEquals( self.at1 in admin_all_users_in_same_segment_list, True)        
+        self.assertEquals( self.at2 in admin_all_users_in_same_segment_list, False)        
+        self.assertEquals( self.admin in at1_all_users_in_same_segment_list, True)        
+        self.assertEquals( self.at1 in at1_all_users_in_same_segment_list, False)        
+        self.assertEquals( self.at2 in at1_all_users_in_same_segment_list, False)        
+        self.assertEquals( self.at3 in at1_all_users_in_same_segment_list, False)        
+        self.assertEquals( self.at4 in at1_all_users_in_same_segment_list, False)        
+        
+        self.assertEquals( len(admin_all_users_in_same_segment_list), 1)        
+        self.assertEquals( len(at2_all_users_in_same_segment_list), 1)        
+        self.assertEquals( len(at4_all_users_in_same_segment_list), 2)
+                
+        d = self.create_dicussion()
+        
+        self.assertEquals(d.is_user_in_discussion_segment( self.admin), True) 
+        self.assertEquals(d.is_user_in_discussion_segment( self.at1), True) 
+        self.assertEquals(d.is_user_in_discussion_segment( self.at2), False) 
+        self.assertEquals(d.is_user_in_discussion_segment( self.at4), False) 
 
         

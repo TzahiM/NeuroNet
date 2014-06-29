@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from coplay.models import UserProfile
 from coplay.views import user_coplay_report
 from django import forms
 from django.contrib.auth import authenticate, login
@@ -162,7 +163,13 @@ class UpdateProfileUserForm(forms.Form):
     email = forms.EmailField( required = False, label='', 
         widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
 
-
+def init_user_profile(user):
+    user.save()    
+    user.userprofile = UserProfile(user = user)
+    user.userprofile.save()
+    
+    
+    
 def sign_up(request):
     if request.user.is_authenticated():
         return render(request, 'coplay/message.html', 
@@ -205,6 +212,7 @@ def sign_up(request):
 
             user.set_password(password)
             user.save()    
+            init_user_profile(user)
             user = authenticate(username=user_name, password=password)
             if user is not None:
                 if user.is_active:
@@ -244,6 +252,10 @@ def example(request):
         'rtl': 'dir="rtl"'
     })
 
+def privacy_policy(request):
+    return render(request, 'public_fulfillment/privacy_policy.html', {
+        'rtl': 'dir="rtl"'
+    })
 
 
 @login_required

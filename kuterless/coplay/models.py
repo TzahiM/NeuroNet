@@ -201,17 +201,35 @@ class Discussion(models.Model):
         return self.viewer_set.all().filter( user = viewing_user, is_invited  = True).exists()
             
     def can_user_participate(self, viewing_user = None):
+        
+        if self.owner == viewing_user:
+            return True
+                
         if not self.is_restricted:
             return True
         
         if not viewing_user:
             return False
         
-        if self.owner == viewing_user:
-            return True
-            
         return self.is_user_invited(viewing_user)
         
+    def is_user_in_discussion_segment(self, viewing_user = None):
+                
+        if not self.owner.userprofile.is_in_the_same_segment(viewing_user):
+            return False
+        
+        return True
+    
+    def can_user_access_discussion(self, viewing_user = None):
+                
+        if not self.is_user_in_discussion_segment(viewing_user):
+            return False
+
+        if not self.can_user_participate(viewing_user):
+            return False
+        
+        return True
+
     def invite(self, invited_user):
         if invited_user in User.objects.all():
             viewer = self.viewer_set.get_or_create( user = invited_user)[0]
@@ -618,29 +636,54 @@ class Segment(models.Model):
         return "{} {}".format(self.title, self.description)
     
     def is_in_segment(self, user):
-        return user.user_profile in self.user_profile_set.all()
+        return user.userprofile in self.userprofile_set.all()
         
     def print_content(self):
         print 'segment', self.title, ':', self.description
         print 'members are:'
-        for user_profile in self.user_profile_set.all():
+        for user_profile in self.userprofile_set.all():
             print user_profile.print_content()
          
-        
+       
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, primary_key=True)
+    user = models.OneToOneField(User, default = None, null=True, blank=True )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     segment = models.ForeignKey(Segment, null=True, blank=True)
-
+    recieve_notifications    = models.BooleanField(default = True)
+    recieve_updates    = models.BooleanField(default = False)
+    
     def __unicode__(self):
         return "{} ".format(self.user.username)
     
-    def is_in_the_same_segment(self, another_user = None):
-        if self.segment:
-            return self.segment.is_in_segment(another_user)
-        return True
-
+    def is_in_the_same_segment(self, another_user = None ):
+        if another_user is None:
+            if self.segment is None:
+                return True
+            return False
+         
+        if another_user not in User.objects.all():
+            return False
+        
+        return (self.segment == another_user.userprofile.segment)
+    
+    def set_segment(self, segment = None):
+            
+        self.segment = segment
+        if segment is not None:
+            segment.save()
+        self.save()
+        
+    def get_all_users_in_same_segment_list(self):
+        all_users_in_same_segment_list = []
+        for user in User.objects.all():
+            if self.is_in_the_same_segment( user):
+                all_users_in_same_segment_list.append(user)
+                
+        all_users_in_same_segment_list.remove(self.user)
+                 
+        return all_users_in_same_segment_list
+    
     def print_content(self):
         print self.user.username
         if self.segment:
