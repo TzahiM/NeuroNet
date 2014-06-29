@@ -98,7 +98,6 @@ def discussion_details(request, pk):
     except Discussion.DoesNotExist:
         return HttpResponseRedirect('coplay_root')
     
-    print request.user
 
     list_encourage = discussion.feedback_set.all().filter(
         feedbabk_type=Feedback.ENCOURAGE).order_by("-created_at")
