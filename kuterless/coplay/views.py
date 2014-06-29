@@ -22,6 +22,12 @@ import kuterless.settings
 
 MAX_MESSAGE_INPUT_CHARS = 900
 
+def can_user_acess_discussion(discussion, user):
+    if not user.is_authenticated():
+        return discussion.can_user_access_discussion(None)
+    
+    return discussion.can_user_access_discussion(user)
+        
 # Create your views here.
 def root(request):
     return render(request, 'coplay/co_play_root.html', {'rtl': 'dir="rtl"'})
@@ -98,6 +104,10 @@ def discussion_details(request, pk):
     except Discussion.DoesNotExist:
         return HttpResponseRedirect('coplay_root')
     
+    if not can_user_acess_discussion( discussion, request.user):
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'אינך מורשה לצפות בדיון',
+                       'rtl': 'dir="rtl"'})
 
     list_encourage = discussion.feedback_set.all().filter(
         feedbabk_type=Feedback.ENCOURAGE).order_by("-created_at")
