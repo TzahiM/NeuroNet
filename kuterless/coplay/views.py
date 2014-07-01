@@ -60,7 +60,13 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
         
-        return (active_discussions_by_urgancy_list + locked_discussions_by_relevancy_list)
+        all_discussions_list  = active_discussions_by_urgancy_list + locked_discussions_by_relevancy_list
+        allowed_all_discussions_list = []
+        for discussion in all_discussions_list:
+            if can_user_acess_discussion(discussion, self.request.user):
+                allowed_all_discussions_list.append(discussion)
+        
+        return (allowed_all_discussions_list)
 
 
 class AddFeedbackForm(forms.Form):
@@ -280,9 +286,10 @@ def user_follow_start_email_updates(follower_user, following_user, inverse_follo
 def discussion_email_updates(discussion, subject, logged_in_user, details = None, url_id = '', mailing_list = None):
     if mailing_list == None:
         mailing_list = discussion.get_followers_list()
+    allowed_users_list = []
     for user in mailing_list:
-        if not discussion.can_user_access_discussion( user):
-            mailing_list.remove(user)
+        if discussion.can_user_access_discussion( user):
+            allowed_users_list.append(user)
          
     html_message = render_to_string("coplay/email_discussion_update.html",
                                     {'ROOT_URL': kuterless.settings.SITE_URL,
@@ -296,7 +303,7 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
 #    with open( "output.html" , "w") as debug_file:
 #        debug_file.write(html_message)
     
-    for attensdent in mailing_list:
+    for attensdent in allowed_users_list:
         if attensdent.email and attensdent != logged_in_user:
             send_html_message(subject, html_message,
                               'do-not-reply@kuterless.org.il',
@@ -305,9 +312,13 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
 
 def discussion_task_email_updates(task, subject, logged_in_user, details = None):
     attending_list = task.parent.get_followers_list()
+    
+    allowed_users_list = []
+    
+    
     for user in attending_list:
-        if not task.parent.can_user_access_discussion( user):
-            attending_list.remove(user)
+        if task.parent.can_user_access_discussion( user):
+            allowed_users_list.append(user)
 
     html_message = render_to_string("coplay/email_task_update.html",
                                     {'ROOT_URL': kuterless.settings.SITE_URL,
@@ -319,7 +330,7 @@ def discussion_task_email_updates(task, subject, logged_in_user, details = None)
 #    with open( "output.html" , "w") as debug_file:
 #        debug_file.write(html_message)
 
-    for attensdent in attending_list:
+    for attensdent in allowed_users_list:
         if attensdent.email and attensdent != logged_in_user:
             send_html_message(subject, html_message,
                               'do-not-reply@kuterless.org.il',
