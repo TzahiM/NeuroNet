@@ -280,6 +280,10 @@ def user_follow_start_email_updates(follower_user, following_user, inverse_follo
 def discussion_email_updates(discussion, subject, logged_in_user, details = None, url_id = '', mailing_list = None):
     if mailing_list == None:
         mailing_list = discussion.get_followers_list()
+    for user in mailing_list:
+        if not discussion.can_user_access_discussion( user):
+            mailing_list.remove(user)
+         
     html_message = render_to_string("coplay/email_discussion_update.html",
                                     {'ROOT_URL': kuterless.settings.SITE_URL,
                                      'discussion': discussion,
@@ -301,6 +305,9 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
 
 def discussion_task_email_updates(task, subject, logged_in_user, details = None):
     attending_list = task.parent.get_followers_list()
+    for user in attending_list:
+        if not task.parent.can_user_access_discussion( user):
+            attending_list.remove(user)
 
     html_message = render_to_string("coplay/email_task_update.html",
                                     {'ROOT_URL': kuterless.settings.SITE_URL,
@@ -378,6 +385,12 @@ def start_follow(request, pk):
         discussion = Discussion.objects.get(id=int(pk))
     except Discussion.DoesNotExist:
         return HttpResponseRedirect('coplay_root')
+    
+    if not can_user_acess_discussion( discussion, request.user):
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'אינך מורשה לצפות בדיון',
+                       'rtl': 'dir="rtl"'})
+    
     discussion.start_follow(request.user)
     
     return HttpResponseRedirect(
@@ -389,6 +402,15 @@ def stop_follow(request, pk):
         discussion = Discussion.objects.get(id=int(pk))
     except Discussion.DoesNotExist:
         return HttpResponseRedirect('coplay_root')
+    
+    
+    if not can_user_acess_discussion( discussion, request.user):
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'אינך מורשה לצפות בדיון',
+                       'rtl': 'dir="rtl"'})
+    
+    
+    
     discussion.stop_follow(request.user)
     
     return HttpResponseRedirect(
@@ -465,16 +487,25 @@ def add_decision(request, pk):
 
 @login_required
 def vote(request, pk):
+    try:
+        decision = Decision.objects.get(id=int(pk))
+    except Decision.DoesNotExist:
+        return render(request, 'coplay/message.html',
+                              {'message': 'משימה לא ידועה',
+                               'rtl': 'dir="rtl"'})
+        
+    if not can_user_acess_discussion( decision.parent, request.user):
+        return render(request, 'coplay/message.html', 
+                                  {  'message'      :  'אינך מורשה לצפות בדיון',
+                                   'rtl': 'dir="rtl"'})    
+    
+    
+    
+    
     if request.method == 'POST': # If the form has been submitted...
         form = VoteForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            try:
-                decision = Decision.objects.get(id=int(pk))
-            except Discussion.DoesNotExist:
-                return render(request, 'coplay/message.html',
-                              {'message': 'משימה לא ידועה',
-                               'rtl': 'dir="rtl"'})
             user = request.user
             if user != decision.parent.owner:
                 decision.vote(user, int(form.cleaned_data['value']))
@@ -537,6 +568,11 @@ def task_details(request, pk):
     except Task.DoesNotExist:
         return render(request, 'coplay/message.html',
                       {'message': 'משימה שאיננה קיימת',
+                       'rtl': 'dir="rtl"'})
+        
+    if not can_user_acess_discussion( task.parent, request.user):
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'אינך מורשה לצפות בדיון',
                        'rtl': 'dir="rtl"'})
 
     close_possible = False
@@ -614,6 +650,12 @@ def close_task(request, pk):
         task = Task.objects.get(id=int(pk))
     except Task.DoesNotExist:
         return HttpResponse('Task not found')
+    
+    if not can_user_acess_discussion( task.parent, request.user):
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'אינך מורשה לצפות בדיון',
+                       'rtl': 'dir="rtl"'})
+    
     user = request.user
     if user != task.responsible:
         if task.close(user):
@@ -630,6 +672,13 @@ def abort_task(request, pk):
         task = Task.objects.get(id=int(pk))
     except Task.DoesNotExist:
         return HttpResponse('Task not found')
+    
+    if not can_user_acess_discussion( task.parent, request.user):
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'אינך מורשה לצפות בדיון',
+                       'rtl': 'dir="rtl"'})
+    
+    
     user = request.user
     if user != task.responsible:
         if task.abort(user):
@@ -645,6 +694,11 @@ def re_open_task(request, pk):
         task = Task.objects.get(id=int(pk))
     except Task.DoesNotExist:
         return HttpResponse('Task not found')
+    
+    if not can_user_acess_discussion( task.parent, request.user):
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'אינך מורשה לצפות בדיון',
+                       'rtl': 'dir="rtl"'})
     
     user = request.user
     if user != task.responsible:
@@ -682,9 +736,20 @@ def user_coplay_report(request, username=None):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            return HttpResponse('User not found')
+            return HttpResponse('User not found')        
     else:
         user = request.user
+        
+    if  request.user.is_authenticated():
+        if  not  user.userprofile.is_in_the_same_segment(request.user):
+            return render(request, 'coplay/message.html', 
+                      {  'message'      :  'משתמש ממודר',
+                       'rtl': 'dir="rtl"'})
+    else:
+        if user.userprofile.get_segment():
+            return render(request, 'coplay/message.html', 
+                      {  'message'      :  'משתמש ממודר',
+                       'rtl': 'dir="rtl"'})
 
     if user == request.user:
         page_name = u'הפעילות שלי '
@@ -700,7 +765,7 @@ def user_coplay_report(request, username=None):
     failed_tasks_list = []
     user_closed_tasks_list = []
 
-    for task in open_tasks_list_by_urgancy_list:
+    for task in open_tasks_list_by_urgancy_list:        
         if task.responsible == user:
             user_s_open_tasks_list.append(task)
         else:
@@ -1020,6 +1085,7 @@ def start_users_following( follower_user, following_user):
     if follower_user == following_user:
         return
     
+
     already_following = is_user_is_following( follower_user, following_user)
     
     inverse_following = is_user_is_following(following_user ,  follower_user )
@@ -1042,6 +1108,14 @@ def start_follow_user(request, username):
         following_user = User.objects.get(username=username)
     except User.DoesNotExist:
         return HttpResponse('User not found')
+    
+    
+    if not request.user.userprofile.is_in_the_same_segment(following_user):
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'משתמש ממודר',
+                       'rtl': 'dir="rtl"'})
+        
+    
     
     start_users_following( request.user, following_user)
     

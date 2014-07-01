@@ -674,6 +674,10 @@ class UserProfile(models.Model):
             segment.save()
         self.save()
         
+    def get_segment(self):
+            
+        return self.segment
+
     def get_all_users_in_same_segment_list(self):
         all_users_in_same_segment_list = []
         for user in User.objects.all():
