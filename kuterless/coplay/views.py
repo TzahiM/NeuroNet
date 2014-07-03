@@ -146,6 +146,8 @@ def discussion_details(request, pk):
 
         add_task_form = AddTaskForm()
         is_a_follower = discussion.is_a_follower(request.user)
+    else:
+        vote_form = VoteForm()
 
     list_followers = discussion.get_followers_list()
     

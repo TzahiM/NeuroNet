@@ -1,5 +1,6 @@
-from coplay import views
+from coplay import views, api
 from django.conf.urls import patterns, url
+from rest_framework.urlpatterns import format_suffix_patterns
 
 
 urlpatterns = patterns('',
@@ -57,11 +58,18 @@ urlpatterns = patterns('',
 # ex: labs/coplay/Tzahim/stop_follow_user
     url(r'^(?P<username>.+)/stop_follow_user/$', views.stop_follow_user, name='stop_follow_user'),
 
+    url(r'^api/discussions/$', api.DiscussionList.as_view(), name='api_discussion_list'),
+
+    url(r'^api/discussions/(?P<pk>[0-9]+)/$', api.DiscussionDetail.as_view(), name='api_discussion'),
+
+    url(r'^api/users/$', api.UserList.as_view(), name='api_discussion_list'),
+
+    url(r'^api/users/(?P<pk>[0-9]+)/$', api.UserDetail.as_view(), name='api_user'),
 
 )
 
 
-
+urlpatterns = format_suffix_patterns(urlpatterns)
     
     
     
