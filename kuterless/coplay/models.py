@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 from datetime import timedelta
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
