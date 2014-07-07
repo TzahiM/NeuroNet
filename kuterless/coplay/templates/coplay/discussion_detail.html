@@ -223,17 +223,16 @@
     	<br>
         <br>
         <br>
-
+            {% if add_decision_form and discussion.is_active%}
+                        <a class="new btn btn-info pull-right"
+                           href="{% url 'coplay:create_decision' discussion.id %}">הוספת רעיון נוסף להצבעה</a>
+            {% endif %}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     {% if user == discussion.owner %}
                         הרעיונות שהעמדת להצבעה  
                     {% else %}
                         רעיונות להצבעה
-                    {% endif %}
-                    {% if add_decision_form and discussion.is_active%}
-                        <a class="new btn btn-info pull-right"
-                           href="{% url 'coplay:create_decision' discussion.id %}">הוספת רעיון נוסף להצבעה</a>
                     {% endif %}
                 </div>
 
