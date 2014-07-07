@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+from coplay.control import post_update_to_user
 from coplay.models import Discussion, Feedback, Decision, LikeLevel, Vote, Task, \
-    FollowRelation, Segment
+    FollowRelation, Segment, UserUpdate
 from coplay.views import is_user_is_following, start_users_following, \
     stop_users_following, get_followers_list, get_following_list
 from django.contrib.auth.models import User
@@ -599,4 +600,20 @@ class CoPlayTest(TestCase):
         self.assertEquals(d.is_user_in_discussion_segment( self.at2), False) 
         self.assertEquals(d.is_user_in_discussion_segment( self.at4), False) 
 
+    def test_user_update(self):
+        print 'test_user_update start'
+        self.assertEquals(UserUpdate.objects.count(), 0)
+        d = self.create_dicussion()
+         
+        post_update_to_user(self.at1.id, header = 'כותרת', content = 'תוכן', discussion_id = d.id, sender_user_id = self.at2.id,  details_url = 'www.hp.com')
+        
+        post_update_to_user(self.at1.id, header = '3כותרת', content = '3תוכן', discussion_id = d.id, sender_user_id = self.at3.id,  details_url = 'www.hp.com')
+
+        post_update_to_user(self.at2.id, header = '4כותרת', content = '4תוכן', discussion_id = d.id, sender_user_id = self.at3.id,  details_url = 'www.hp.com')
+        
+        self.assertEquals(UserUpdate.objects.count(), 3)
+        for user_update in UserUpdate.objects.all():
+            user_update.print_content()
+        
+        
         

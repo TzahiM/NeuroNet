@@ -1,9 +1,9 @@
-from public_fulfillment.views import root
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django_notify.urls import get_pattern as get_notify_pattern
-from public_fulfillment.views import labs_root, about
+from public_fulfillment.views import labs_root, about, root
 from wiki.urls import get_pattern as get_wiki_pattern
+import notifications
 
 
 admin.autodiscover()
@@ -32,8 +32,7 @@ urlpatterns = patterns('',
         name="logout"),
                        
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    
-    
+       
     
 )
 

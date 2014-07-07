@@ -693,3 +693,45 @@ class UserProfile(models.Model):
             print 'belong to', self.segment.title
             
         
+
+class UserUpdate(models.Model):
+
+    recipient = models.ForeignKey(User, related_name='recipient')
+    discussion = models.ForeignKey(Discussion,  null=True, blank=True)
+    sender = models.ForeignKey(User, related_name='applicabale_sender', null=True, blank=True)
+    header = models.CharField( max_length=200)
+    content = models.TextField( blank=True, null=True,
+                                   validators=[MaxLengthValidator(MAX_TEXT)])
+    details_url = models.CharField( max_length=200,  blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return self.header
+
+    def can_user_access(self, viewing_user = None):
+        if self.discussion:
+            return self.discussion.can_user_access_discussion(viewing_user)
+        if not self.recipient.userprofile.is_in_the_same_segment(viewing_user):
+            return False
+        
+        if not self.recipient.userprofile.is_in_the_same_segment(viewing_user):
+            return False
+        
+        if self.sender:
+            if not self.sender.userprofile.is_in_the_same_segment(viewing_user):
+                return False
+            
+        return True
+
+    
+    def print_content(self):
+        print 'to:', self.recipient, 'head', self.header, 'content', self.content, 'from', self.sender, 'url', self.details_url
+        if self.discussion:
+            self.discussion.print_content()
+
+    def get_absolute_url(self):
+        return (
+        reverse('coplay:user_update_details', kwargs={'pk': str(self.id)}) )
+
+            

@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'floppyforms',
     'rest_framework',
+    'notifications',
 )
 
 MIDDLEWARE_CLASSES = (

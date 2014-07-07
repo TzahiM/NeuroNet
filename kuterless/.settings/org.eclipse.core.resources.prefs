@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//coplay/api.py=utf-8
+encoding//coplay/control.py=utf-8
 encoding//coplay/migrations/0001_initial.py=utf-8
 encoding//coplay/migrations/0002_auto__add_field_discussion_locked_at.py=utf-8
 encoding//coplay/migrations/0004_auto__add_field_discussion_locked_at.py=utf-8

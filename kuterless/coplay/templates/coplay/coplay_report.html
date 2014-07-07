@@ -3,49 +3,80 @@
 {% load humanize %}
 
 {% block content %}
-<center>
-	<a class="btn btn-success" href="#TasksOpen">משימות פתוחות אישיות</a>    
-	<a class="btn btn-success" href="#TasksOpenOthers">משימות פתוחות של אחרים  </a>
-	<a class="btn btn-success" href="#DiscussionsActive">פעילויות פעילות </a>
-	<a class="btn btn-success" href="#DiscussionsLocked">פעילויות לא פעילות</a>
-	<a class="btn btn-success" href="#TasksClosed">משימות שהושלמו</a>
-	<a class="btn btn-success" href="#TasksFailedAll">משימות שנכשלו של כולם</a>
-	<a class="btn btn-success" href="#FollwersList">עוקבים</a>	
-	<a class="btn btn-success" href="#FollowingList">עוקב/ת אחרי</a>	
-	
-	
-</center>
-
-
+<br>
 
         <div class="container" >
 			
-            	<div class="container">
-            	<center>
-            		<h1>{{ page_name}} 
-            			{% if user !=  applicabale_user %}
-	            			{% if is_following %}                
-	     		           		<a class="new btn btn-warning" href="{% url 'coplay:stop_follow_user'  applicabale_user.username %}">להפסיק לעקוב אחריו/ה</a> 
-	                		{% else %}
-	            	    		<a class="new btn btn-info" href="{% url 'coplay:start_follow_user'  applicabale_user.username %}">רוצה  לעקוב אחריו/ה</a>   
+            <div class="row">
+
+	        	<div class="col-sm-2 col-md-12" id = "Header">
+	
+	            	<center>
+	            		<h1>{{ page_name}} 
+	            			{% if user !=  applicabale_user %}
+		            			{% if is_following %}                
+		     		           		<a class="new btn btn-warning" href="{% url 'coplay:stop_follow_user'  applicabale_user.username %}">להפסיק לעקוב אחריו/ה</a> 
+		                		{% else %}
+		            	    		<a class="new btn btn-info" href="{% url 'coplay:start_follow_user'  applicabale_user.username %}">רוצה  לעקוב אחריו/ה</a>   
+		                		{% endif %}
 	                		{% endif %}
-                		{% endif %}
-            		</h1>
-            		{{number_of_closed_tasks}} משימות שהושלמו
-            	    {{number_of_closed_tasks_for_others}}  מתוכם למשתמשים אחרים 
-            	    {{number_of_aborted_tasks}}  משימות שבוטלו בזמן 
-            	    {{number_of_task_closing}} אישורי משימות
-            	    {{number_of_feedbacks}} תגובות בפעילויות של אחרים
-            	    {{number_of_votes}} הצבעות בפעילויות של אחרים
-            	    {{number_of_views}} צפיות בפעילויות של אחרים
-            	</center>
-            	
-            	
+	            		</h1>
+	            		{{number_of_closed_tasks}} משימות שהושלמו
+	            	    {{number_of_closed_tasks_for_others}}  מתוכם למשתמשים אחרים 
+	            	    {{number_of_aborted_tasks}}  משימות שבוטלו בזמן 
+	            	    {{number_of_task_closing}} אישורי משימות
+	            	    {{number_of_feedbacks}} תגובות בפעילויות של אחרים
+	            	    {{number_of_votes}} הצבעות בפעילויות של אחרים
+	            	    {{number_of_views}} צפיות בפעילויות של אחרים
+	            	</center>
+	            	<br>
+					<center>
+						<a class="btn btn-success" href="#UserUpdates">עדכונים</a>    
+						<a class="btn btn-success" href="#TasksOpen">משימות פתוחות אישיות</a>    
+						<a class="btn btn-success" href="#TasksOpenOthers">משימות פתוחות של אחרים  </a>
+						<a class="btn btn-success" href="#DiscussionsActive">פעילויות פעילות </a>
+						<a class="btn btn-success" href="#DiscussionsLocked">פעילויות לא פעילות</a>
+						<a class="btn btn-success" href="#TasksClosed">משימות שהושלמו</a>
+						<a class="btn btn-success" href="#TasksFailedAll">משימות שנכשלו של כולם</a>
+						<a class="btn btn-success" href="#FollwersList">עוקבים</a>	
+						<a class="btn btn-success" href="#FollowingList">עוקב/ת אחרי</a>	
+					</center>
                 </div>         
                 
-			<div class="row">
+            </div>         
+ 			<div class="row">
+                <div class="col-sm-2 col-md-4" id = "UserUpdates">
+    	<br>
+        <br>
+        <br>
+                	<center><h2>עדכונים</h2></center>
+	                	<ul>
+					{% for user_update in user_updates_that_viewer_can_access_list %}
+					
+					 		<li class="list-group-item">
+					 			<p>
+					        	{% if user_update.sender != user %}<h3>{% endif %}        	
+					 			{{ user_update.created_at|naturaltime }}
+					        	{% if user_update.content %}
+					       			{{ user_update.content |urlize|linebreaks}}
+					        	{% else %}
+					       			{{ user_update.header |urlize|linebreaks}}        		
+					        	{% endif %}
+					        	{% if user_update.details_url %}
+					        	<a class="btn btn-success"  href="{{user_update.details_url}}">להרחבה</a>
+					        	{% endif %}
+					        	{% if user_update.sender != user %}</h3>{% endif %}        	
+	
+					 		</li>
+					{% empty %}
+					    <li class="list-group-item">
+					    אין					    	
+					    </li>
+					{% endfor %}
+					</ul>
+                </div>
 
-                <div class="col-sm-2 col-md-6" id = "TasksOpen">
+                <div class="col-sm-2 col-md-4" id = "TasksOpen">
     	<br>
         <br>
         <br>
@@ -76,7 +107,7 @@
 					{% endfor %}
 					</ul>
                 </div>
-                <div class="col-sm-2 col-md-6" id = "TasksOpenOthers">
+                <div class="col-sm-2 col-md-4" id = "TasksOpenOthers">
     	<br>
         <br>
         <br>

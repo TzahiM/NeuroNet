@@ -1,5 +1,5 @@
 from coplay.models import Feedback, Task, Decision, Vote, Discussion, Viewer, \
-    FollowRelation, Segment, UserProfile
+    FollowRelation, Segment, UserProfile, UserUpdate
 from django.contrib import admin
 
 # Register your models here.
@@ -34,6 +34,9 @@ class SegmentAdmin(admin.ModelAdmin):
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'segment')
 
+    
+class UpdateAdmin(admin.ModelAdmin):
+    list_display = ('recipient', 'header')
         
 
 admin.site.register(Feedback, FeedbackAdmin)
@@ -46,5 +49,6 @@ admin.site.register(Viewer, ViewerAdmin)
 admin.site.register(FollowRelation, FollowRelationAdmin)
 admin.site.register(Segment, SegmentAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(UserUpdate, UpdateAdmin)
 
 

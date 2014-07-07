@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+from coplay.control import post_update_to_user
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
-    Viewer, FollowRelation
+    Viewer, FollowRelation, UserUpdate
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -217,7 +218,7 @@ def add_discussion(request):
             new_discussion.start_follow(user)
             
             t = Template("""
-            {{discussion.owner.get_full_name|default:discussion.owner.username}} מבקש/ת את העזרה שלך ב :\n
+            {{discussion.owner.get_full_name|default:discussion.owner.username}} ביקש/ה את העזרה שלך ב :
             "{{discussion.title}} "\n
             """)
             
@@ -251,6 +252,8 @@ def string_to_email_subject( string):
 
 
 def send_html_message(subject, html_content, from_email, to_list):
+#    with open( "output.html" , "w") as debug_file:
+#        debug_file.write(html_content)
     
     msg = EmailMessage(string_to_email_subject(subject), html_content, from_email, to_list)
     msg.content_subtype = "html"  # Main content is now text/html
@@ -283,6 +286,11 @@ def user_follow_start_email_updates(follower_user, following_user, inverse_follo
                               'do-not-reply@kuterless.org.il',
                               [following_user.email])
 
+    post_update_to_user(following_user.id, 
+                 header = string_to_email_subject(subject),
+                 content = subject, 
+                 sender_user_id = follower_user.id,  
+                 details_url = reverse('coplay:user_coplay_report', kwargs={'username': follower_user}))
 
 
 def discussion_email_updates(discussion, subject, logged_in_user, details = None, url_id = '', mailing_list = None):
@@ -306,10 +314,17 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
 #        debug_file.write(html_message)
     
     for attensdent in allowed_users_list:
-        if attensdent.email and attensdent != logged_in_user:
-            send_html_message(subject, html_message,
+        if attensdent != logged_in_user:
+            if attensdent.email:
+                send_html_message(subject, html_message,
                               'do-not-reply@kuterless.org.il',
                               [attensdent.email])
+            post_update_to_user(attensdent.id, 
+                     header = string_to_email_subject(subject),
+                     content = details, 
+                     sender_user_id = logged_in_user.id,  
+                     discussion_id = discussion.id,
+                     details_url = reverse('coplay:discussion_details', kwargs={'pk': str(discussion.id)}) + url_id )
 
 
 def discussion_task_email_updates(task, subject, logged_in_user, details = None):
@@ -333,10 +348,18 @@ def discussion_task_email_updates(task, subject, logged_in_user, details = None)
 #        debug_file.write(html_message)
 
     for attensdent in allowed_users_list:
-        if attensdent.email and attensdent != logged_in_user:
-            send_html_message(subject, html_message,
+        if attensdent != logged_in_user:
+            if attensdent.email:
+                send_html_message(subject, html_message,
                               'do-not-reply@kuterless.org.il',
                               [attensdent.email])
+
+            post_update_to_user(attensdent.id, 
+                     header = string_to_email_subject(subject),
+                     content = details, 
+                     sender_user_id = logged_in_user.id,  
+                     discussion_id = task.parent.id,
+                     details_url = reverse('coplay:task_details', kwargs={'pk': str(task.id)}))
 
 
 @login_required
@@ -754,11 +777,13 @@ def user_coplay_report(request, username=None):
         user = request.user
         
     if  request.user.is_authenticated():
+        viewer_user = request.user
         if  not  user.userprofile.is_in_the_same_segment(request.user):
             return render(request, 'coplay/message.html', 
                       {  'message'      :  'משתמש ממודר',
                        'rtl': 'dir="rtl"'})
     else:
+        viewer_user = None
         if user.userprofile.get_segment():
             return render(request, 'coplay/message.html', 
                       {  'message'      :  'משתמש ממודר',
@@ -778,19 +803,20 @@ def user_coplay_report(request, username=None):
     failed_tasks_list = []
     user_closed_tasks_list = []
 
-    for task in open_tasks_list_by_urgancy_list:        
-        if task.responsible == user:
-            user_s_open_tasks_list.append(task)
-        else:
-            discussion = task.parent
-            if user in discussion.get_followers_list():
-                other_users_open_tasks_list.append(task)
+    for task in open_tasks_list_by_urgancy_list:  
+        if task.parent.can_user_access_discussion(viewer_user):      
+            if task.responsible == user:
+                user_s_open_tasks_list.append(task)
+            else:
+                discussion = task.parent
+                if user in discussion.get_followers_list():
+                    other_users_open_tasks_list.append(task)
                 
     tasks_by_recent_updates = Task.objects.all().order_by("-updated_at")
     
     for task in tasks_by_recent_updates:
         discussion = task.parent
-        if user in discussion.get_followers_list():
+        if user in discussion.get_followers_list() and discussion.can_user_access_discussion(viewer_user):
             status = task.get_status()
             if status == Task.MISSED or status == Task.ABORTED:
                 failed_tasks_list.append(task)
@@ -806,11 +832,11 @@ def user_coplay_report(request, username=None):
     user_discussions_locked = []
 
     for discussion in active_discussions_by_urgancy_list:
-        if user in discussion.get_followers_list():
+        if user in discussion.get_followers_list() and discussion.can_user_access_discussion(viewer_user):
             user_discussions_active.append(discussion)
 
     for discussion in locked_discussions_by_relevancy_list:
-        if user in discussion.get_followers_list():
+        if user in discussion.get_followers_list() and discussion.can_user_access_discussion(viewer_user):
             user_discussions_locked.append(discussion)
             
     number_of_closed_tasks = len(user_closed_tasks_list)
@@ -834,7 +860,13 @@ def user_coplay_report(request, username=None):
     else:
         is_following = False
         
-
+    user_updates_query_set = user.recipient.all().order_by("-created_at")
+    user_updates_that_viewer_can_access_list = []
+    
+    for user_update in user_updates_query_set:
+        if user_update.can_user_access(viewer_user):
+            user_updates_that_viewer_can_access_list.append(user_update)
+            
     return render(request, 'coplay/coplay_report.html',
                   {
                       'number_of_closed_tasks'           : number_of_closed_tasks,
@@ -844,6 +876,7 @@ def user_coplay_report(request, username=None):
                       'number_of_views'                  : number_of_views       ,
                       'number_of_feedbacks'              : number_of_feedbacks   ,
                       'number_of_votes'                  : number_of_votes       ,
+                      'user_updates_that_viewer_can_access_list': user_updates_that_viewer_can_access_list,
                       'tasks_open_by_increased_time_left': user_s_open_tasks_list,
                       'tasks_others_open_by_increased_time_left': other_users_open_tasks_list,
                       'discussions_active_by_increase_time_left': user_discussions_active,
@@ -1120,7 +1153,9 @@ def start_follow_user(request, username):
     try:
         following_user = User.objects.get(username=username)
     except User.DoesNotExist:
-        return HttpResponse('User not found')
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'לא נמצא',
+                       'rtl': 'dir="rtl"'})
     
     
     if not request.user.userprofile.is_in_the_same_segment(following_user):
@@ -1139,8 +1174,34 @@ def stop_follow_user(request, username):
     try:
         following_user = User.objects.get(username=username)
     except User.DoesNotExist:
-        return HttpResponse('User not found')
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'לא נמצא',
+                       'rtl': 'dir="rtl"'})
     
     stop_users_following( request.user, following_user)
         
     return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': following_user}))
+
+def user_update_details(request, pk):
+    try:
+        user_update = UserUpdate.objects.get(id=int(pk))
+    except UserUpdate.DoesNotExist:
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'לא נמצא',
+                       'rtl': 'dir="rtl"'})
+    
+    if request.user.is_authenticated():
+        viewing_user = request.user
+    else:
+        viewing_user = None
+        
+    if not user_update.can_user_access(viewing_user):
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'אינך מורשה לצפות בעדכון',
+                       'rtl': 'dir="rtl"'})
+    
+    return render(request, 'coplay/user_update_detailes.html', 
+                      {  'user_update'      :  user_update,
+                       'rtl': 'dir="rtl"'})
+    
+    
