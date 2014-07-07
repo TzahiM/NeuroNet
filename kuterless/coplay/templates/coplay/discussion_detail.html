@@ -19,6 +19,9 @@
                     <a class="btn btn-danger pull-right"
                        href="{% url 'coplay:discussion_delete' discussion.id %}">
                        {% trans "Delete Discussion" %}</a>
+                       <a class="btn btn-info pull-right"
+                       href="{% url 'coplay:start_follow' discussion.id %}">
+                       קישור לשיתוף</a>
                     {% trans "Your Activity" %}
                 {% else %}
                     {% trans "Activity Of" %}

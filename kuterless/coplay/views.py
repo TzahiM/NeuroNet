@@ -429,8 +429,7 @@ def start_follow(request, pk):
     
     discussion.start_follow(request.user)
     
-    return HttpResponseRedirect(
-                discussion.get_absolute_url())    
+    return discussion_details(request, pk)    
     
 @login_required
 def stop_follow(request, pk):
