@@ -20,6 +20,7 @@ class Discussion(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     locked_at = models.DateTimeField(default=None, blank=True, null=True)
+    description_updated_at = models.DateTimeField(default=None, blank=True, null=True)
     is_restricted    = models.BooleanField(default = False)
 
     def __unicode__(self):
@@ -31,6 +32,7 @@ class Discussion(models.Model):
 
     def update_description(self, description):
         self.description = description
+        self.description_updated_at = timezone.now()
         self.save()#cause all previous fedbacks to be striked at
 
     def add_feedback(self, user, feedbabk_type, content):
@@ -558,12 +560,16 @@ class Viewer(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     views_counter = models.IntegerField(default = 0)
     views_counter_updated_at = models.DateTimeField(default=None, blank=True, null=True)
+    discussion_updated_at_on_last_view = models.DateTimeField(default=None, blank=True, null=True)
     is_a_follower = models.BooleanField(default = False)
     is_invited    = models.BooleanField(default = False)
 
     
     def increment_views_counter(self):
-        self.views_counter += 1
+        if self.discussion_updated_at_on_last_view != self.discussion.updated_at: 
+            self.views_counter += 1
+            self.discussion_updated_at_on_last_view = self.discussion.updated_at
+            
         self.views_counter_updated_at = timezone.now()
         self.save()
 

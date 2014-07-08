@@ -81,10 +81,11 @@
                 {% trans "Created:" %}
                 {{ discussion.created_at | naturaltime }}
                 &bull;
-
-
+                 היעדים עודכנו
+                 {{ discussion.description_updated_at | naturaltime }}
                 {% trans "Updated:" %}
                 {{ discussion.updated_at | naturaltime }}
+                
             </i>
         </p>
     </div>
@@ -110,7 +111,7 @@
                     {% for feedback in list_encourage %}
                         <li class="list-group-item">
                             <div
-                                    {% if feedback.created_at < discussion.updated_at %}
+                                    {% if feedback.created_at < discussion.description_updated_at %}
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
                             </div>
@@ -130,7 +131,7 @@
                     {% for feedback in list_cooperation %}
                         <li class="list-group-item">
                             <div
-                                    {% if feedback.created_at < discussion.updated_at %}
+                                    {% if feedback.created_at < discussion.description_updated_at %}
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
                             </div>
@@ -150,7 +151,7 @@
                     {% for feedback in list_intuition %}
                         <li class="list-group-item">
                             <div
-                                    {% if feedback.created_at < discussion.updated_at %}
+                                    {% if feedback.created_at < discussion.description_updated_at %}
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
                             </div>
@@ -170,7 +171,7 @@
                     {% for feedback in list_advice %}
                         <li class="list-group-item">
                             <div
-                                    {% if feedback.created_at < discussion.updated_at %}
+                                    {% if feedback.created_at < discussion.description_updated_at %}
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
                             </div>

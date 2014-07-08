@@ -213,6 +213,7 @@ def add_discussion(request):
                                         description=form.cleaned_data[
                                             'description'])
             new_discussion.clean()
+            new_discussion.description_updated_at = timezone.now()
             new_discussion.save()
             messages.success(request,
                              _("Your activity was created successfully"))
@@ -644,7 +645,7 @@ def update_task_description(request, pk):
             if user == task.responsible:
                 task.update_status_description(
                     form.cleaned_data['status_description'])
-                
+                task.parent.save()#verify that the entire disscusion is considered updated
                 t = Template("""
                 {{task.responsible.get_full_name|default:task.responsible.username}} הודיע/ה ש :\n
                 "{{task.get_status_description}} "\n
@@ -695,11 +696,11 @@ def close_task(request, pk):
     user = request.user
     if user != task.responsible:
         if task.close(user):
-            
+            task.parent.save() #verify that the entire discussion is considered updated            
             task_state_change_update( task,  u" השלימ/ה את ")
 
 
-    return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
+    return HttpResponseRedirect(task.parent.get_absolute_url()) # Redirect after POST
 
 
 @login_required
@@ -718,10 +719,10 @@ def abort_task(request, pk):
     user = request.user
     if user != task.responsible:
         if task.abort(user):
-            
+            task.parent.save() #verify that the entire discussion is considered updated            
             task_state_change_update( task,  u" ביטל/ה את ")
 
-    return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
+    return HttpResponseRedirect(task.parent.get_absolute_url()) # Redirect after POST
 
 
 @login_required
@@ -739,11 +740,11 @@ def re_open_task(request, pk):
     user = request.user
     if user != task.responsible:
         if task.re_open(user):
-            
+            task.parent.save() #verify that the entire discussion is considered updated            
             task_state_change_update( task,  u" עדיין לא השלים/ה את ")
 
 
-    return HttpResponseRedirect(task.get_absolute_url()) # Redirect after POST
+    return HttpResponseRedirect(task.parent.get_absolute_url()) # Redirect after POST
 
 
 
@@ -917,6 +918,9 @@ class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
     def form_valid(self, form):
 
         resp = super(UpdateDiscussionDescView, self).form_valid(form)  
+        form.instance.description_updated_at = timezone.now()
+        form.instance.save()
+
         
 
         t = Template("""
@@ -977,6 +981,7 @@ class CreateTaskView(CreateView):
         form.instance.parent = self.discussion
         form.instance.responsible = self.request.user
         resp = super(CreateTaskView, self).form_valid(form)
+        form.instance.parent.save() #verify that the entire discussion is considered updated
         form.instance.parent.unlock()
         
 
@@ -1030,6 +1035,7 @@ class CreateFeedbackView(CreateView):
         form.instance.discussion = self.discussion
         form.instance.user = self.request.user
         resp = super(CreateFeedbackView, self).form_valid(form)  
+        form.instance.discussion.save() #verify that the entire discussion is considered updated
 
         t = Template("""
         {{feedbabk.user.get_full_name|default:feedbabk.user.username}} פירסם/ה {{feedbabk.get_feedbabk_type_name}}:\n
@@ -1077,6 +1083,8 @@ class CreateDecisionView(CreateView):
     def form_valid(self, form):
         form.instance.parent = self.discussion
         resp = super(CreateDecisionView, self).form_valid(form)
+        form.instance.parent.save() #verify that the entire discussion is considered updated
+        
         # form.instance is the new decision
         
 
