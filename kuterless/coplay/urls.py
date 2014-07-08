@@ -55,6 +55,9 @@ urlpatterns = patterns('',
     url(r'^(?P<username>.+)/start_follow_user/$', views.start_follow_user, name='start_follow_user'),
     
    url(r'^user_update_details/(?P<pk>[0-9]+)/$', views.user_update_details, name='user_update_details'),
+
+   url(r'^user_update_mark_recipient_read/(?P<pk>[0-9]+)/$', views.user_update_mark_recipient_read, name='user_update_mark_recipient_read'),
+    
     
 # ex: labs/coplay/Tzahim/stop_follow_user
     url(r'^(?P<username>.+)/stop_follow_user/$', views.stop_follow_user, name='stop_follow_user'),

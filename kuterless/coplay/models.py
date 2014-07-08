@@ -705,6 +705,7 @@ class UserUpdate(models.Model):
     details_url = models.CharField( max_length=200,  blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    already_read    = models.BooleanField(default = False)
 
     def __unicode__(self):
         return self.header
@@ -723,7 +724,23 @@ class UserUpdate(models.Model):
                 return False
             
         return True
-
+    
+    def set_as_already_read(self):
+        self.already_read = True
+        self.save()
+        
+    def set_as_unread(self):
+        self.already_read = False
+        self.save()
+    
+    def get_if_already_read(self):
+        return self.already_read
+    
+    def get_if_long(self):
+        if self.header.endswith('...'):
+            return True
+        return False
+        
     
     def print_content(self):
         print 'to:', self.recipient, 'head', self.header, 'content', self.content, 'from', self.sender, 'url', self.details_url

@@ -54,19 +54,19 @@
 					{% for user_update in user_updates_that_viewer_can_access_list %}
 					
 					 		<li class="list-group-item">
-					 			<p>
-					        	{% if user_update.sender != user %}<h3>{% endif %}        	
+					 			{% if not user_update.get_if_already_read %}<strong>{% endif %}        	
+					        	{% if user_update.header %}
+					        		{{ user_update.header |urlize|linebreaks}}
+					        		{% if user_update.get_if_long %}
+					        			<a class="btn btn-success" href={{ user_update.get_absolute_url }} >להרחבה</a></p>
+					        		{% else%}
+					        			{% if user_update.details_url %}
+								        	<a class="btn btn-success"  href="{% url 'coplay:user_update_mark_recipient_read'  user_update.id %}">להרחבה</a>
+							        	{% endif %}
+					        		{% endif %}
+					        	{% endif %}
+					 			{% if not user_update.get_if_already_read %}</strong>{% endif %}
 					 			{{ user_update.created_at|naturaltime }}
-					        	{% if user_update.content %}
-					       			{{ user_update.content |urlize|linebreaks}}
-					        	{% else %}
-					       			{{ user_update.header |urlize|linebreaks}}        		
-					        	{% endif %}
-					        	{% if user_update.details_url %}
-					        	<a class="btn btn-success"  href="{{user_update.details_url}}">להרחבה</a>
-					        	{% endif %}
-					        	{% if user_update.sender != user %}</h3>{% endif %}        	
-	
 					 		</li>
 					{% empty %}
 					    <li class="list-group-item">
@@ -86,7 +86,7 @@
 					
 					 		<li class="list-group-item">
 					 			{% if  task.parent.owner == applicabale_user%}
-					 			<h3>
+					 			<strong>
 					 			{% endif %}
 					 			{{task.goal_description|urlize|linebreaks}}<br>
 					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
@@ -95,7 +95,7 @@
 					 			
 					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}
-					 			</h3>
+					 			</strong>
 					 			{% endif %}
 	
 					 		</li>
@@ -117,7 +117,7 @@
 					
 					 		<li class="list-group-item">
 					 			{% if  task.parent.owner == applicabale_user%}
-					 			<h3>
+					 			<strong>
 					 			{% endif %}
 					 			{{task.goal_description|urlize|linebreaks}}<br>
 					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
@@ -126,7 +126,7 @@
 					 			
 					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}
-					 			</h3>
+					 			</strong>
 					 			{% endif %}
 	
 					 		</li>
@@ -153,7 +153,7 @@
 					{% for discussion in discussions_active_by_increase_time_left %}
 					    <li  class="list-group-item">
 					    	{% if discussion.owner == applicabale_user %}
-					    	<h3>
+					    	<strong>
 					    	{% endif %}
 						    	<a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
 						    	  רוצה עזרה ב  
@@ -164,7 +164,7 @@
 					
 							<a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a>
 					    	{% if discussion.owner == applicabale_user %}
-					    	</h3>
+					    	</strong>
 					    	{% endif %}
 						</li> 
 					{% empty %}
@@ -185,7 +185,7 @@
 					{% for discussion in discussions_locked_by_increase_locked_at %}
 						<li class="list-group-item">
 					    	{% if discussion.owner == applicabale_user %}
-					    	<h3>
+					    	<strong>
 					    	{% endif %}
 
 							<a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>		    	
@@ -197,7 +197,7 @@
 						
 							<a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a>
 					    	{% if discussion.owner == applicabale_user %}
-					    	</h3>
+					    	</strong>
 					    	{% endif %}
 						</li> 
 					{% empty %}
@@ -225,7 +225,7 @@
 					
 					 		<li class="list-group-item">
 					 			{% if  task.parent.owner != applicabale_user%}
-					 			<h3>
+					 			<strong>
 					 			{% endif %}
 					 			
 					 			{{task.goal_description|urlize|linebreaks}}<br>
@@ -235,7 +235,7 @@
 					 			
 					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}
-					 			</h3>
+					 			</strong>
 					 			{% endif %}
 	
 					 		</li>
@@ -256,7 +256,7 @@
 					
 					 		<li class="list-group-item">
 					 			{% if  task.parent.owner == applicabale_user%}
-					 			<h3>
+					 			<strong>
 					 			{% endif %}
 					 			
 					 			{{task.goal_description|urlize|linebreaks}}<br>
@@ -265,7 +265,7 @@
 					 			
 					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}
-					 			</h3>
+					 			</strong>
 					 			{% endif %}
 	
 					 		</li>

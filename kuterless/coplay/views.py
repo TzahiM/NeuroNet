@@ -15,6 +15,7 @@ from django.template.context import Context
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.http import is_safe_url
 from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
@@ -1199,8 +1200,45 @@ def user_update_details(request, pk):
                       {  'message'      :  'אינך מורשה לצפות בעדכון',
                        'rtl': 'dir="rtl"'})
     
-    return render(request, 'coplay/user_update_detailes.html', 
+    render_result = render(request, 'coplay/user_update_detailes.html', 
                       {  'user_update'      :  user_update,
                        'rtl': 'dir="rtl"'})
+    
+    if viewing_user == user_update.recipient:
+        user_update.set_as_already_read()
+        
+    
+    return render_result
+
+
+def user_update_mark_recipient_read(request, pk):
+    try:
+        user_update = UserUpdate.objects.get(id=int(pk))
+    except UserUpdate.DoesNotExist:
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'לא נמצא',
+                       'rtl': 'dir="rtl"'})
+    
+    if request.user.is_authenticated():
+        viewing_user = request.user
+    else:
+        viewing_user = None
+        
+    if not user_update.can_user_access(viewing_user):
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'אינך מורשה לצפות בעדכון',
+                       'rtl': 'dir="rtl"'})
+
+
+        
+    redirect_to = user_update.details_url
+    if not is_safe_url(url=redirect_to, host=request.get_host()):
+        redirect_to = 'home'        
+        
+    if viewing_user == user_update.recipient:
+        user_update.set_as_already_read()
+        
+        
+    return HttpResponseRedirect(redirect_to) # Redirect after POST
     
     
