@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     'floppyforms',
     'rest_framework',
     'notifications',
+    'memecache',
 )
 
 MIDDLEWARE_CLASSES = (

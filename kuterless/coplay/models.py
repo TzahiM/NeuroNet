@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from datetime import timedelta
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -6,6 +7,8 @@ from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+
+import control
 
 MAX_TEXT = 2000
 
@@ -22,9 +25,12 @@ class Discussion(models.Model):
     locked_at = models.DateTimeField(default=None, blank=True, null=True)
     description_updated_at = models.DateTimeField(default=None, blank=True, null=True)
     is_restricted    = models.BooleanField(default = False)
+    is_viewing_require_login    = models.BooleanField(default = False)
 
     def __unicode__(self):
         return self.id
+    
+
 
     def get_absolute_url(self):
         return (
@@ -40,6 +46,9 @@ class Discussion(models.Model):
                             feedbabk_type=feedbabk_type, content=content)
         feedback.clean()
         feedback.save()
+        control.user_posted_a_feedback_in_another_other_user_s_discussion(user, feedback.get_absolute_url())
+        
+        
         return feedback
 
 
@@ -213,7 +222,10 @@ class Discussion(models.Model):
             return False
         
         return self.is_user_invited(viewing_user)
-        
+
+    def is_viewing_require_login(self):
+        return self.is_viewing_require_login
+    
     def is_user_in_discussion_segment(self, viewing_user = None):
                 
         if not self.owner.userprofile.is_in_the_same_segment(viewing_user):
@@ -222,6 +234,9 @@ class Discussion(models.Model):
         return True
     
     def can_user_access_discussion(self, viewing_user = None):
+        
+        if self.viewing_require_login and viewing_user == None:
+            return False
                 
         if not self.is_user_in_discussion_segment(viewing_user):
             return False
@@ -262,7 +277,9 @@ class Discussion(models.Model):
             print 'active, time left', time_left
         else:
             print 'inactivated'
-
+        
+        print 'is_restricted', self.is_restricted, 'is_viewing_require_login', self.is_viewing_require_login
+        
         print 'attending:'
         attending_list = self.get_followers_list()
         for user in attending_list:
@@ -302,6 +319,7 @@ class Feedback(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+        
     def __unicode__(self):
         return self.content
 
@@ -353,6 +371,8 @@ class Decision(models.Model):
         return self.vote_set.count()
 
     def vote(self, voater, value):
+        if voater == self.parent.owner:
+            return
         if (self.vote_set.filter(voater=voater).count() == 0):
             new_vote = Vote(decision=self, voater=voater, value=value)
             new_vote.save()
@@ -365,6 +385,8 @@ class Decision(models.Model):
             current_vote.save()
 
         self.save()
+        
+        control.user_voted_for_an_idea_in_another_user_s_discussion(voater , self.get_absolute_url())
 
     def get_vote_sum(self):
         return (self.value)
@@ -422,6 +444,8 @@ class Vote(models.Model):
             ('voater', 'decision'),
         )
 
+
+
     def __unicode__(self):
         return "{} - {}: {}".format(self.decision, self.voater, self.value)
 
@@ -454,6 +478,7 @@ class Task(models.Model):
     status = models.IntegerField(choices=STATUS_CHOICES, default=STARTED)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    final_state    = models.BooleanField(default = False)
 
     def __unicode__(self):
         return self.goal_description
@@ -464,7 +489,8 @@ class Task(models.Model):
 
 
     def update_status_description(self, status_description):
-        if (self.target_date < timezone.now() ):
+        self.refresh_status()
+        if self.final_state:
             return False
         self.status_description = status_description
         self.save()
@@ -474,73 +500,64 @@ class Task(models.Model):
         self.refresh_status()
         return self.status_description
 
-    def abort(self, closing_user):
-        if self.responsible is closing_user:
-            return False
-        now  = timezone.now()
-        if (self.target_date < now ):
-            return False
-        self.refresh_status()
-        if (self.status == self.MISSED):
-            return False
 
-        if (self.status != self.ABORTED):
-            self.status = self.ABORTED
-            self.closed_at = now
-            self.closed_by = closing_user
-            self.save()
-            return True #task abortion had been performed
-        return False
-
-    def re_open(self, closing_user):
-        if self.responsible is closing_user:
-            return False
+    def set_state(self, new_state, closing_user): 
         now  = timezone.now()
-        if (self.target_date < now ):
-            return False
+        
         self.refresh_status()
-        if (self.status == self.MISSED):
+        if self.final_state:
+            return False
+        if self.responsible is closing_user:
             return False
         
-
-        if (self.status != self.STARTED):
-            self.status = self.STARTED
+        
+        if (self.status != new_state):
+            self.status = new_state
             self.closed_at = now
             self.closed_by = closing_user
             self.save()
             return True #task abortion had been performed
         return False
 
-    def close(self, closing_user):
-        if self.responsible is closing_user:
-            return False
-        now  = timezone.now()
-        if (self.target_date < now ):
-            return False
-        self.refresh_status()
-        if (self.status == self.MISSED):
-            return False
+    def abort(self, closing_user):
+        
+        return self.set_state(self.ABORTED, closing_user)
+        
 
-        if (self.status != self.CLOSED):
-            self.status = self.CLOSED
-            self.closed_at = now
-            self.closed_by = closing_user
-            self.save()
-            return True #task closing had been performed
-        return False
+    def re_open(self, closing_user):
+        
+        return self.set_state(self.STARTED, closing_user)
+
+
+    def close(self, closing_user):
+        
+        return self.set_state(self.CLOSED, closing_user)
+        
 
 
     def get_time_until_target(self):
         now = timezone.now()
-        if ( self.target_date >= now):
-            return self.target_date - now
-        return 0
+        self.refresh_status()
+        if self.final_state:
+            return 0
+        
+        return self.target_date - now
 
     def refresh_status(self):
-
-        if ((self.target_date < timezone.now() ) and (self.status == self.STARTED)):
-            self.status = self.MISSED
+        now = timezone.now()
+        if self.target_date < now and not self.final_state:
+            self.final_state = True
+            if self.status == self.STARTED:
+                self.status = self.MISSED
+            else:
+                control.user_confirmed_a_state_update_in_another_user_s_mission(self.closed_by)
+                if self.status == self.CLOSED:
+                    if self.responsible == self.parent.owner:
+                        control.user_completed_a_mission_for_his_own_s_discussion( self.responsible)
+                                
             self.save()
+            
+                    
 
     def get_status(self):
         self.refresh_status()
@@ -550,7 +567,7 @@ class Task(models.Model):
     def print_content(self):
         print 'create', self.created_at, 'update', self.updated_at, 'status:', self.get_status_display(), 'now', timezone.now(), 'GoalDescription:', self.goal_description, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closed_at, self.status_description
         
-        
+
 
 class Viewer(models.Model):
     user = models.ForeignKey(User)
@@ -567,8 +584,14 @@ class Viewer(models.Model):
     
     def increment_views_counter(self):
         if self.discussion_updated_at_on_last_view != self.discussion.updated_at: 
-            self.views_counter += 1
+            self.views_counter += 1            
             self.discussion_updated_at_on_last_view = self.discussion.updated_at
+            glimpse = self.glimpse_set.create( viewer = self)
+            glimpse.clean()
+            glimpse.save()
+            if self.user != self.discussion.owner:
+                control.user_glimpsed_another_user_s_discussion(self.user, self.discussion.get_absolute_url())
+            
             
         self.views_counter_updated_at = timezone.now()
         self.save()
@@ -611,6 +634,23 @@ class Viewer(models.Model):
 
     def print_content(self):
         print 'Viewer', self.user.username, 'views_counter', self.views_counter, 'updated_at', self.updated_at, 'views_counter_updated_at', self.views_counter_updated_at, 'is_a_follower', self.is_a_follower, 'is_invited', self.is_invited
+        for glimpse in self.glimpse_set.all().order_by("-created_at"):
+            glimpse.print_content()
+        
+
+        
+class Glimpse(models.Model):
+    viewer = models.ForeignKey(Viewer)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    
+    def __unicode__(self):
+        return "{}: {} - {}".format( self.created_at, self.viewer.user.username, self.viewer.discussion.title)
+
+    def print_content(self):
+        print 'at',  self.created_at,  self.viewer.user.username, 'looked at', self.viewer.discussion.title 
+
 
 class FollowRelation(models.Model):
     follower_user = models.ForeignKey(User, related_name='follower_user')
@@ -657,7 +697,9 @@ class UserProfile(models.Model):
     segment = models.ForeignKey(Segment, null=True, blank=True)
     recieve_notifications    = models.BooleanField(default = True)
     recieve_updates    = models.BooleanField(default = False)
-    
+    can_limit_discussion_access    = models.BooleanField(default = False)
+    can_limit_discussion_to_login_users_only    = models.BooleanField(default = False)
+
     def __unicode__(self):
         return "{} ".format(self.user.username)
     
@@ -675,8 +717,6 @@ class UserProfile(models.Model):
     def set_segment(self, segment = None):
             
         self.segment = segment
-        if segment is not None:
-            segment.save()
         self.save()
         
     def get_segment(self):

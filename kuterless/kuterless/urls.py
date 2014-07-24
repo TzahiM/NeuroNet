@@ -23,6 +23,9 @@ urlpatterns = patterns('',
 
     url(r'^labs/coplay/', include('coplay.urls', namespace="coplay")),
     
+    url(r'^labs/memecache/', include('memecache.urls', namespace="memecache")),
+
+    
     url(r'^login/$',
         'django.contrib.auth.views.login',
         {'template_name': 'login.html'}, name="login"),

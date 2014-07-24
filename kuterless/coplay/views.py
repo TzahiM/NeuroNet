@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from coplay.control import post_update_to_user
+from coplay.control import post_update_to_user, user_started_a_new_discussion, \
+    user_posted_a_feedback_in_another_other_user_s_discussion, \
+    user_post_a_decision_for_vote_regarding_his_own_discussion
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
     Viewer, FollowRelation, UserUpdate
 from django.contrib import messages
@@ -111,6 +113,9 @@ def discussion_details(request, pk):
         discussion = Discussion.objects.get(id=int(pk))
     except Discussion.DoesNotExist:
         return HttpResponseRedirect('coplay_root')
+    
+    if discussion.is_viewing_require_login() and not request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('login', kwargs={'next': request.path}))        
     
     if not can_user_acess_discussion( discussion, request.user):
         return render(request, 'coplay/message.html', 
@@ -233,7 +238,8 @@ def add_discussion(request):
                                              trunkated_subject_and_detailes,
                                              mailing_list = get_followers_list(new_discussion.owner))
         
-            
+            user_started_a_new_discussion( new_discussion.owner)
+
             return redirect(new_discussion)
     else:
         form = NewDiscussionForm() # An unbound form
@@ -549,7 +555,7 @@ def vote(request, pk):
                 decision.parent.start_follow(user)
 
             return HttpResponseRedirect(
-                decision.parent.get_absolute_url()) # Redirect after POST
+                decision.parent.get_absolute_url() + '#Decisions') # Redirect after POST
         return render(request, 'coplay/message.html',
                       {'message': 'Please select a vote value'})
 
@@ -1053,6 +1059,9 @@ class CreateFeedbackView(CreateView):
         
         form.instance.discussion.start_follow(self.request.user)
         
+        user_posted_a_feedback_in_another_other_user_s_discussion(form.instance.user, form.instance.get_absolute_url())
+
+        
         return resp
 
 
@@ -1105,6 +1114,8 @@ class CreateDecisionView(CreateView):
         
         form.instance.parent.start_follow(self.request.user)
         
+        user_post_a_decision_for_vote_regarding_his_own_discussion( form.instance.parent.owner, form.instance.get_absolute_url())
+
         return resp
 
 def get_followers_list( following_user):

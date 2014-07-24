@@ -10,8 +10,13 @@ encoding//coplay/migrations/0007_auto__add_followrelation__add_unique_followrela
 encoding//coplay/migrations/0008_auto__del_field_viewer_is_allowed_to_participate__add_field_viewer_is_.py=utf-8
 encoding//coplay/migrations/0009_auto__add_userprofile__add_segment.py=utf-8
 encoding//coplay/migrations/0012_auto__add_userprofile.py=utf-8
+encoding//coplay/migrations/0014_auto__add_field_userupdate_already_read.py=utf-8
 encoding//coplay/models.py=utf-8
 encoding//coplay/serializers.py=utf-8
 encoding//coplay/tests.py=utf-8
 encoding//coplay/views.py=utf-8
+encoding//memecache/control.py=utf-8
+encoding//memecache/models.py=utf-8
+encoding//memecache/tests.py=utf-8
+encoding//memecache/views.py=utf-8
 encoding//public_fulfillment/views.py=utf-8

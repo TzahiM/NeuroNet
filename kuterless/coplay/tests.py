@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from coplay.control import post_update_to_user
 from coplay.models import Discussion, Feedback, Decision, LikeLevel, Vote, Task, \
-    FollowRelation, Segment, UserUpdate
+    FollowRelation, Segment, UserUpdate, Glimpse
 from coplay.views import is_user_is_following, start_users_following, \
     stop_users_following, get_followers_list, get_following_list
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
+from memecache.control import init_user_account
 from public_fulfillment.views import init_user_profile
 import datetime
 import time
@@ -24,12 +25,37 @@ class CoPlayTest(TestCase):
                                               'secret')
         self.at3 = User.objects.create_user('at3', 'user1@example.com',
                                               'secret')
-
+        
+        self.at4 = User.objects.create_user('at4', 'user1@example.com',
+                                              'secret')
+        self.at5 = User.objects.create_user('at5', 'user1@example.com',
+                                              'secret')
+        self.at6 = User.objects.create_user('at6', 'user1@example.com',
+                                              'secret')
+        
+        
+        
+        
+        init_user_profile(self.admin)
+        init_user_profile(self.at1)
+        init_user_profile(self.at2)
+        init_user_profile(self.at3)
+        init_user_profile(self.at4)
+        init_user_profile(self.at5)
+        init_user_profile(self.at6)
+        
+        init_user_account(self.admin)
+        init_user_account(self.at1)
+        init_user_account(self.at2)
+        init_user_account(self.at3)
+        init_user_account(self.at4)
+        init_user_account(self.at5)
+        init_user_account(self.at6)
+        
+"""
 
     def create_dicussion(self):
-        d = Discussion()
-        d.owner = self.admin
-        d.title = "Visit the moon"
+        d = Discussion( owner = self.admin, title = "Visit the moon")
         d.full_clean()
         d.save()
         return d
@@ -264,11 +290,11 @@ class CoPlayTest(TestCase):
 
     def test_discussion_iniactivation(self):
         
-        """
+        
         I cannot test this feature as is since the time relolution of Discussion.is_active_and_time_to_inactivation()
         is days
         so i copied the same lines of code here for test with a seconds resolution.        
-        """
+        
         self.assertEquals(0, Task.objects.count())
         d = self.create_dicussion()
         task1 = d.add_task(self.at1, 'shall start', timezone.now() +  datetime.timedelta(seconds =4))
@@ -371,13 +397,20 @@ class CoPlayTest(TestCase):
     def test_viewers(self):
         d = self.create_dicussion()
         self.assertEquals(d.viewer_set.count(), 0) 
-        d.record_a_view(self.at1)      
-        d.record_a_view(self.at2)      
-        d.record_a_view(self.at3)      
-        d.record_a_view(self.at1)      
-        d.record_a_view(self.at2)      
-        d.record_a_view(self.at2)      
+        d.record_a_view(self.at1) 
+        d.save()     
         d.record_a_view(self.at2) 
+        d.save()     
+        d.record_a_view(self.at3) 
+        d.save()     
+        d.record_a_view(self.at1) 
+        d.save()     
+        d.record_a_view(self.at2) 
+        d.save()     
+        d.record_a_view(self.at2) 
+        d.save()     
+        d.record_a_view(self.at2) 
+        d.save()
         at1_view = d.viewer_set.get( user = self.at1)
         at2_view = d.viewer_set.get( user = self.at2)
         at3_view = d.viewer_set.get( user = self.at3)
@@ -523,21 +556,6 @@ class CoPlayTest(TestCase):
         
     def test_segments(self):
         print 'test_segments start'
-        self.at4 = User.objects.create_user('at4', 'user1@example.com',
-                                              'secret')
-        self.at5 = User.objects.create_user('at5', 'user1@example.com',
-                                              'secret')
-        self.at6 = User.objects.create_user('at6', 'user1@example.com',
-                                              'secret')
-        
-        
-        init_user_profile(self.admin)
-        init_user_profile(self.at1)
-        init_user_profile(self.at2)
-        init_user_profile(self.at3)
-        init_user_profile(self.at4)
-        init_user_profile(self.at5)
-        init_user_profile(self.at6)
 
         self.assertEquals(Segment.objects.count(), 0) 
         
@@ -615,5 +633,40 @@ class CoPlayTest(TestCase):
         for user_update in UserUpdate.objects.all():
             user_update.print_content()
         
+        
+    def test_user_glimpse_a_discussion(self):
+        print 'test_user_glimpse_a_discussion'
+        d = self.create_dicussion()
+        self.assertEquals(d.viewer_set.count(), 0) 
+        d.record_a_view(self.at1)#no following save - counters shall not incremented     
+        
+        at1_view = d.viewer_set.get( user = self.at1)
+        self.assertEquals(d.viewer_set.count(), 1) 
+        self.assertEquals(at1_view.glimpse_set.count(), 1) 
+        d.record_a_view(self.at1)        
+        at1_view = d.viewer_set.get( user = self.at1)
+        self.assertEquals(at1_view.glimpse_set.count(), 1)
+        self.assertEquals(at1_view.get_views_counter(), 1)
+        d.save() 
+        d.record_a_view(self.at1)        
+        at1_view = d.viewer_set.get( user = self.at1)
+        self.assertEquals(at1_view.glimpse_set.count(), 2)
+        self.assertEquals(at1_view.get_views_counter(), 2)        
+
+        d.save() 
+        d.record_a_view(self.at2)        
+        d.save() 
+        d.record_a_view(self.at3)        
+        d.save() 
+        d.record_a_view(self.at1)
+        self.assertEquals(Glimpse.objects.count(), 5)
+        for glimpse in Glimpse.objects.all().order_by("-created_at"):
+            glimpse.print_content()
+
+"""        
+                
+        
+                
+         
         
         

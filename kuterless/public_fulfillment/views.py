@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from coplay.control import init_user_profile
 from coplay.models import UserProfile
 from coplay.views import user_coplay_report
 from django import forms
@@ -11,6 +12,7 @@ from django.shortcuts import render, resolve_url
 from django.utils.http import is_safe_url
 from django.views.generic.edit import CreateView
 from kuterless import settings
+from memecache.control import init_user_account
 
 # Create your views here.
 
@@ -176,10 +178,6 @@ class UpdateProfileUserForm(forms.Form):
     email = forms.EmailField( required = False, label='', 
         widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
 
-def init_user_profile(user):
-    user.save()    
-    user.userprofile = UserProfile(user = user)
-    user.userprofile.save()
     
     
     
@@ -226,6 +224,7 @@ def sign_up(request):
             user.set_password(password)
             user.save()    
             init_user_profile(user)
+            init_user_account(user)
             user = authenticate(username=user_name, password=password)
             if user is not None:
                 if user.is_active:
