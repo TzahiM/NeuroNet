@@ -56,6 +56,7 @@ class Discussion(models.Model):
         decision = Decision(parent=self, content=content)
         decision.clean()
         decision.save()
+        control.user_post_a_decision_for_vote_regarding_his_own_discussion( decision.parent.owner, decision.get_absolute_url())
         return decision
 
 
@@ -278,7 +279,11 @@ class Discussion(models.Model):
         else:
             print 'inactivated'
         
-        print 'is_restricted', self.is_restricted, 'is_viewing_require_login', self.is_viewing_require_login
+        if self.is_restricted:
+            print 'is_restricted. only invited users can view and participate'
+        
+        if self.is_viewing_require_login:
+            print 'is_viewing_require_login. only logged in users may view'
         
         print 'attending:'
         attending_list = self.get_followers_list()
@@ -429,7 +434,7 @@ class Decision(models.Model):
             vote.print_content()
 
     def get_absolute_url(self):
-        return self.parent.get_absolute_url()
+        return self.parent.get_absolute_url() + '#Decisions'
 
 
 class Vote(models.Model):
@@ -507,6 +512,7 @@ class Task(models.Model):
         self.refresh_status()
         if self.final_state:
             return False
+        
         if self.responsible is closing_user:
             return False
         
@@ -516,7 +522,7 @@ class Task(models.Model):
             self.closed_at = now
             self.closed_by = closing_user
             self.save()
-            return True #task abortion had been performed
+            return True
         return False
 
     def abort(self, closing_user):
@@ -550,10 +556,19 @@ class Task(models.Model):
             if self.status == self.STARTED:
                 self.status = self.MISSED
             else:
-                control.user_confirmed_a_state_update_in_another_user_s_mission(self.closed_by)
+                control.user_confirmed_a_state_update_in_another_user_s_mission(self.closed_by, self.get_absolute_url())
                 if self.status == self.CLOSED:
                     if self.responsible == self.parent.owner:
-                        control.user_completed_a_mission_for_his_own_s_discussion( self.responsible)
+                        control.user_completed_a_mission_for_his_own_s_discussion( self.responsible, self.get_absolute_url())
+                    else:
+                        control.user_completed_a_mission_for_another_user_s_discussion( self.responsible, self.get_absolute_url())
+                else:
+                    if self.status == self.ABORTED:
+                        if self.responsible == self.parent.owner:
+                            control.user_aborted_a_mission_for_his_own_s_discussion( self.responsible, self.get_absolute_url())
+                        else:
+                            control.user_aborted_a_mission_for_another_user_s_discussion( self.responsible, self.get_absolute_url())
+                        
                                 
             self.save()
             
@@ -737,7 +752,19 @@ class UserProfile(models.Model):
         print self.user.username
         if self.segment:
             print 'belong to', self.segment.title
+        if self.segment:
+            print 'belong to segment', self.segment.title
+        else:
+            print 'belong to the default public segment'
             
+        if self.recieve_notifications :
+            print 'recieve_notifications'
+        if self.recieve_updates :
+            print 'recieve_updates'
+        if self.can_limit_discussion_access :
+            print 'can_limit_discussion_access'
+        if self.can_limit_discussion_to_login_users_only :
+            print 'can_limit_discussion_to_login_users_only'
         
 
 class UserUpdate(models.Model):

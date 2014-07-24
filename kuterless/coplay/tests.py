@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from coplay.control import post_update_to_user
+from coplay.control import post_update_to_user, user_started_a_new_discussion
 from coplay.models import Discussion, Feedback, Decision, LikeLevel, Vote, Task, \
     FollowRelation, Segment, UserUpdate, Glimpse
 from coplay.views import is_user_is_following, start_users_following, \
@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
 from memecache.control import init_user_account
+from memecache.models import Account
 from public_fulfillment.views import init_user_profile
 import datetime
 import time
@@ -52,10 +53,11 @@ class CoPlayTest(TestCase):
         init_user_account(self.at5)
         init_user_account(self.at6)
         
-"""
+
 
     def create_dicussion(self):
         d = Discussion( owner = self.admin, title = "Visit the moon")
+        user_started_a_new_discussion( d.owner)
         d.full_clean()
         d.save()
         return d
@@ -290,11 +292,11 @@ class CoPlayTest(TestCase):
 
     def test_discussion_iniactivation(self):
         
-        
+        """
         I cannot test this feature as is since the time relolution of Discussion.is_active_and_time_to_inactivation()
         is days
         so i copied the same lines of code here for test with a seconds resolution.        
-        
+        """        
         self.assertEquals(0, Task.objects.count())
         d = self.create_dicussion()
         task1 = d.add_task(self.at1, 'shall start', timezone.now() +  datetime.timedelta(seconds =4))
@@ -663,10 +665,38 @@ class CoPlayTest(TestCase):
         for glimpse in Glimpse.objects.all().order_by("-created_at"):
             glimpse.print_content()
 
-"""        
+       
                 
         
-                
-         
         
+
+    def test_rewards(self):    
+        print 'test_rewards'
+        d = self.create_dicussion()
+        d.add_feedback(self.at1, Feedback.ENCOURAGE, "like this")
+        
+        
+        des1 = d.add_decision( 'אולי מלמטה?')
+        des1.vote( self.at1 ,  LikeLevel.EXCELLENT)
+        task2 = d.add_task(self.at1, 'shall close', timezone.now() +  datetime.timedelta(seconds =1))
+        task2.close(self.admin)
+        task4 = d.add_task(self.admin, 'shall close', timezone.now() +  datetime.timedelta(seconds =1))
+        task4.close(self.at1)
+        
+        task5 = d.add_task(self.at1, 'shall abort', timezone.now() +  datetime.timedelta(seconds =1))
+        task5.abort(self.admin)
+        task6 = d.add_task(self.admin, 'shall shall abort', timezone.now() +  datetime.timedelta(seconds =1))
+        task6.abort(self.at1)
+        
+        time.sleep(3)        
+        
+        d.record_a_view(self.at1)
+        d.print_content()
+        self.admin.account = Account.objects.get(id = self.admin.account.id)
+        self.at1.account = Account.objects.get(id = self.at1.account.id)
+        self.admin.account.print_content()
+        self.at1.account.print_content()        
+        
+        self.assertEquals(84,  self.admin.account.get_credit())
+        self.assertEquals(76,  self.at1.account.get_credit())
         
