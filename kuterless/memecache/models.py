@@ -19,7 +19,7 @@ class Account(models.Model):
     credit     = models.PositiveIntegerField(default = 0)
     
     def __unicode__(self):
-        return "id {}:{}- {} left ".format(self.id, self.user.username. self.credit)
+        return "id {}:{}- {} left ".format(self.id, self.user.username, self.credit)
     
     def get_absolute_url(self):
         return (

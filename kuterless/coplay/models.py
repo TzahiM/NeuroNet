@@ -382,6 +382,7 @@ class Decision(models.Model):
             new_vote = Vote(decision=self, voater=voater, value=value)
             new_vote.save()
             self.value += value
+            control.user_voted_for_an_idea_in_another_user_s_discussion(voater , self.get_absolute_url())
         else:
             current_vote = self.vote_set.get(voater=voater)
             self.value -= current_vote.value
@@ -391,7 +392,6 @@ class Decision(models.Model):
 
         self.save()
         
-        control.user_voted_for_an_idea_in_another_user_s_discussion(voater , self.get_absolute_url())
 
     def get_vote_sum(self):
         return (self.value)
@@ -553,7 +553,7 @@ class Task(models.Model):
         now = timezone.now()
         if self.target_date < now and not self.final_state:
             self.final_state = True
-            if self.status == self.STARTED:
+            if self.status == self.STARTED or self.status == self.MISSED:
                 self.status = self.MISSED
             else:
                 control.user_confirmed_a_state_update_in_another_user_s_mission(self.closed_by, self.get_absolute_url())
@@ -714,6 +714,7 @@ class UserProfile(models.Model):
     recieve_updates    = models.BooleanField(default = False)
     can_limit_discussion_access    = models.BooleanField(default = False)
     can_limit_discussion_to_login_users_only    = models.BooleanField(default = False)
+#    recieve_personal_messages_from_users    = models.BooleanField(default = False)
 
     def __unicode__(self):
         return "{} ".format(self.user.username)

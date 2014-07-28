@@ -4,6 +4,8 @@ from memecache import views
 
 urlpatterns = patterns('',
     url(r'^shop_details/(?P<pk>[0-9]+)/$', views.shop_details, name='shop_details'),
+#    url(r'^product_create/(?P<pk>[0-9]+)/$', views.CreateProduct.as_view(), name='product_create'),
+#    url(r'^product_update/(?P<pk>[0-9]+)/$', views.UpdateProduct.as_view(), name='product_update'),
     url(r'^product_details/(?P<pk>[0-9]+)/$', views.product_details, name='product_details'),
     url(r'^cart_details/(?P<pk>[0-9]+)/$', views.cart_details, name='cart_details'),
     url(r'^account_details/(?P<pk>[0-9]+)/$', views.account_details, name='account_details'),

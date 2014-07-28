@@ -555,7 +555,7 @@ def vote(request, pk):
                 decision.parent.start_follow(user)
 
             return HttpResponseRedirect(
-                decision.parent.get_absolute_url() + '#Decisions') # Redirect after POST
+                decision.get_absolute_url()) # Redirect after POST
         return render(request, 'coplay/message.html',
                       {'message': 'Please select a vote value'})
 

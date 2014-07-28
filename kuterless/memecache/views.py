@@ -39,3 +39,19 @@ def purchase_details(request, pk):
 def item_voucher_details(request, pk):
     return HttpResponse('item_voucher_details ' + int(pk))
 
+"""
+memcache Ooosh
+product list
+product create
+product update
+product details
+product selection
+cart
+my coupons
+coupon details
+
+
+
+
+
+"""

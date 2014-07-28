@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+            	<div class="jumbotron">
+            	<center><h1>So, what is your feedback?</h1></center>
+            	<br><br><br><br>       
+                </div>         
+            
+								
+				<form action= "{% url 'coplay:add_feedback' discussion.id %}" method="post">{% csrf_token %}
+					{% for field in form %}
+				        <div class="fieldWrapper">
+				            {{ field.errors }}
+				            {{ field.label_tag }} {{ field }}
+				        </div>
+				    {% endfor %}
+					<button type="submit" >Submit</button>
+				</form>
+            
+{% endblock %}
+
