@@ -152,7 +152,7 @@ class CoPlayTest(TestCase):
         self.assertEquals(task1.MISSED, task7.get_status())
                         
         new_stat_desc = "fjfj"
-        task1.update_status_description(new_stat_desc)
+        self.assertEquals( True, task1.update_status_description(new_stat_desc))
         self.assertEquals(task1.get_status_description(), new_stat_desc)
         new_stat_desc = "dfasgg"
         task1.close(self.admin)

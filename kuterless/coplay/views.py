@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from coplay.control import post_update_to_user, user_started_a_new_discussion, \
     user_posted_a_feedback_in_another_other_user_s_discussion, \
-    user_post_a_decision_for_vote_regarding_his_own_discussion
+    user_post_a_decision_for_vote_regarding_his_own_discussion, \
+    string_to_email_subject, send_html_message, get_user_fullname_or_username
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
     Viewer, FollowRelation, UserUpdate
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.mail.message import EmailMessage
 from django.core.urlresolvers import reverse
 from django.forms.extras.widgets import SelectDateWidget
 from django.http.response import HttpResponse, HttpResponseRedirect
@@ -21,6 +21,7 @@ from django.utils.http import is_safe_url
 from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
+from kuterless import settings
 import floppyforms as forms
 import kuterless.settings
 
@@ -114,8 +115,8 @@ def discussion_details(request, pk):
     except Discussion.DoesNotExist:
         return HttpResponseRedirect('coplay_root')
     
-    if discussion.is_viewing_require_login() and not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('login', kwargs={'next': request.path}))        
+    if discussion.get_is_viewing_require_login() and not request.user.is_authenticated():
+        return HttpResponseRedirect( reverse('login') + '?next=' + request.path)        
     
     if not can_user_acess_discussion( discussion, request.user):
         return render(request, 'coplay/message.html', 
@@ -135,6 +136,12 @@ def discussion_details(request, pk):
     like_levels = LikeLevel.level
     list_viewers = discussion.viewer_set.all().exclude(
         views_counter= 0 ).order_by("-views_counter_updated_at")
+        
+    list_anonymous_viewers = discussion.anonymousviewer_set.all().exclude(
+        views_counter= 0 ).order_by("-views_counter_updated_at")
+
+
+
 
     vote_form = None
     feedback_form = None
@@ -176,6 +183,7 @@ def discussion_details(request, pk):
                    'add_task_form': add_task_form,
                    'like_levels': like_levels,
                    'list_viewers':list_viewers,
+                   'list_anonymous_viewers':list_anonymous_viewers,
                    'page_name': page_name ,
                    'is_a_follower': is_a_follower,
                    'list_followers': list_followers})
@@ -183,6 +191,8 @@ def discussion_details(request, pk):
     #current view is recorded after response had been resolved
     if request.user.is_authenticated():
         discussion.record_a_view(request.user)
+    
+    discussion.record_anonymous_view(request)
         
     return return_response
 
@@ -249,24 +259,6 @@ def add_discussion(request):
         'rtl': 'dir="rtl"'
     })
 
-EMAIL_MAX_SUBJECT_LENGTH = 130 #255 is the limit on some ticketing products (Jira for example) and seems to be the limit on outlook, thunderbird and gmail seem to truncate after 130. –  reconbot Jan 12 '11 at 15:39
-
-def string_to_email_subject( string):
-    string = string.replace( "\n", " ").replace( "\r", " ")
-    string_size = len(string)
-    if string_size > EMAIL_MAX_SUBJECT_LENGTH:
-        return string[:EMAIL_MAX_SUBJECT_LENGTH] + '...'
-    return string
-
-
-def send_html_message(subject, html_content, from_email, to_list):
-#    with open( "output.html" , "w") as debug_file:
-#        debug_file.write(html_content)
-    
-    msg = EmailMessage(string_to_email_subject(subject), html_content, from_email, to_list)
-    msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
-
 def user_follow_start_email_updates(follower_user, following_user, inverse_following):
 
 
@@ -289,9 +281,9 @@ def user_follow_start_email_updates(follower_user, following_user, inverse_follo
 #    with open( "output.html" , "w") as debug_file:
 #        debug_file.write(html_message)
     
-    if following_user.email != None:
+    if following_user.email != None and following_user.userprofile.recieve_updates:
         send_html_message(subject, html_message,
-                              'do-not-reply@kuterless.org.il',
+                              'kuterless-no-reply@kuterless.org.il',
                               [following_user.email])
 
     post_update_to_user(following_user.id, 
@@ -323,9 +315,9 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
     
     for attensdent in allowed_users_list:
         if attensdent != logged_in_user:
-            if attensdent.email:
+            if attensdent.email and attensdent.userprofile.recieve_updates:
                 send_html_message(subject, html_message,
-                              'do-not-reply@kuterless.org.il',
+                              'kuterless-no-reply@kuterless.org.il',
                               [attensdent.email])
             post_update_to_user(attensdent.id, 
                      header = string_to_email_subject(subject),
@@ -357,9 +349,9 @@ def discussion_task_email_updates(task, subject, logged_in_user, details = None)
 
     for attensdent in allowed_users_list:
         if attensdent != logged_in_user:
-            if attensdent.email:
+            if attensdent.email and attensdent.userprofile.recieve_updates:
                 send_html_message(subject, html_message,
-                              'do-not-reply@kuterless.org.il',
+                              'kuterless-no-reply@kuterless.org.il',
                               [attensdent.email])
 
             post_update_to_user(attensdent.id, 
@@ -766,12 +758,6 @@ def get_tasks_lists():
 
     return open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, missed_tasks_list_by_relevancy_list
 
-
-def get_user_fullname_or_username(user):
-    full_name = user.get_full_name()
-    if full_name:
-        return full_name
-    return user.username
 
 
 def user_coplay_report(request, username=None):

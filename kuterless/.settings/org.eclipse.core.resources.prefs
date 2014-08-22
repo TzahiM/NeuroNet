@@ -11,6 +11,10 @@ encoding//coplay/migrations/0008_auto__del_field_viewer_is_allowed_to_participat
 encoding//coplay/migrations/0009_auto__add_userprofile__add_segment.py=utf-8
 encoding//coplay/migrations/0012_auto__add_userprofile.py=utf-8
 encoding//coplay/migrations/0014_auto__add_field_userupdate_already_read.py=utf-8
+encoding//coplay/migrations/0016_auto__add_field_viewer_discussion_updated_at_on_last_view.py=utf-8
+encoding//coplay/migrations/0017_auto__add_glimpse__add_field_task_final_state__add_field_userprofile_c.py=utf-8
+encoding//coplay/migrations/0018_auto__add_field_userprofile_can_limit_discussion_to_login_users_only.py=utf-8
+encoding//coplay/migrations/0019_auto__add_anonymousviewer__add_field_userprofile_a_player__add_field_g.py=utf-8
 encoding//coplay/models.py=utf-8
 encoding//coplay/serializers.py=utf-8
 encoding//coplay/tests.py=utf-8

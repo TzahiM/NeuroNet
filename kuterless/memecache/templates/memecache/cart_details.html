@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{%  load humanize %}
+
+{% block content %}
+ 			<div class="row">
+ 				<div class="col-sm-2 col-md-12" id = "Title">
+ 					
+ 					
+ 				</div>
+ 			</div>
+ 			<div class="row">
+ 				<div class="col-sm-3 col-md-12" id = "Products">
+ 					<div class="table-responsive">
+				   <table class="table">
+				      <caption><h1>מה שלקחתי עד עכשיו</h1></caption>
+				      <thead>
+				         <tr>
+				            <th>לקחתי</th>
+				            <th>כמה</th>
+				            <th>במחיר של</th>
+				            <th>סך הכל</th>
+				            <th></th>
+				         </tr> 
+				      </thead>
+				      <tbody>
+				      	{% for product_selection_row in procduct_selection_rows %}
+				         <tr>
+				            <td>{{ product_selection_row.product_name}}</td>
+				            <td>{{ product_selection_row.number_of_selected_items}}</td>
+				            <td>{{ product_selection_row.unit_price}} </td>
+				            <td>{{ product_selection_row.total_price}}</td>				            
+				         </tr>
+				         {% endfor %}
+				         <tr>
+				            <td></td>
+				            <td></td>
+				            <td>סך הכל</td>
+				            <td>{{cart.get_total_price}} {{cart.shop.currency_name}}</td>				            
+				         </tr>
+				      </tbody>
+				   </table>
+				   נשארו לי עוד {{cart.get_ramaining_customer_credit}} {{cart.shop.currency_name}}
+				   <a class="btn btn-success"  href="{% url 'memecache:products_list' cart.shop.id %}">לקנות עוד</a>
+				   <a class="btn btn-info"  href="{% url 'memecache:cart_checkout' cart.id %}">לקופה</a>
+				</div> 
+ 			</div>
+ 			
+{% endblock %}
+
+

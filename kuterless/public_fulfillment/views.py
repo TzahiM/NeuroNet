@@ -26,6 +26,8 @@ def about(request):
 
 def root(request):
     if request.user.is_authenticated():
+        if request.user.userprofile.a_player:
+            return HttpResponseRedirect(reverse('memecache:root'))            
         return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
     
     return about(request)
@@ -47,8 +49,15 @@ def labs_root(request):
 """
 
     version_description = """
+22/8/2014:
+הוספת יכולת לבטל את שליחת המיילים
+רישום כל התעדכנות בכל עילות של משתמשים
+תיעוד צפיות אנונימיות של משתמשים  - ראה בכל פעילות את חלק הצפיות האנונימיות
+שיוך צפיה של משתמש בהיותו אנונימי למשתמש
+הוספת מודל תגמול הכולל חנות פרסים ומימושם
+
 9/7/2014:
-ניקודי הצפיה יצאפשרו רק אם באמת היו שינויים בפעילות
+ניקודי הצפיה יתאפשרו רק אם באמת היו שינויים בפעילות
 8/7/2014:
 בעמוד המשתמש, כל הפניה מעדכון, עוברת ישירות לקישור המבוקש
 בעוד שהודעות ארוכות עוברות דרך פירוט של התוכן.
@@ -160,6 +169,9 @@ class AddUserForm(forms.Form):
     email = forms.EmailField( required = False, label='', 
         widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
 
+    recieve_email_updates = forms.BooleanField( initial = True)
+
+
 
 
 class UpdateProfileUserForm(forms.Form):
@@ -178,6 +190,7 @@ class UpdateProfileUserForm(forms.Form):
     email = forms.EmailField( required = False, label='', 
         widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
 
+    recieve_email_updates = forms.BooleanField( required = False, initial = True)
     
     
     
@@ -225,6 +238,9 @@ def sign_up(request):
             user.save()    
             init_user_profile(user)
             init_user_account(user)
+            user.userprofile.recieve_updates = form.cleaned_data['recieve_email_updates']
+            user.userprofile.save()
+            
             user = authenticate(username=user_name, password=password)
             if user is not None:
                 if user.is_active:
@@ -308,18 +324,39 @@ def update_profile(request):
             
             if email:
                 user.email = email
+                
+            user.userprofile.recieve_updates = form.cleaned_data['recieve_email_updates']
             user.save()
 
         return HttpResponseRedirect(redirect_to) # Redirect after POST
                                 
     else:
-        form = UpdateProfileUserForm() # An unbound form
-
+        form = UpdateProfileUserForm( initial=
+                                      {'first_name': user.first_name,
+                                       'last_name' : user.last_name,
+                                       'email'     : user.email,
+                                       'recieve_email_updates': user.userprofile.recieve_updates}
+                                      )
 
     return render(request, 'public_fulfillment/update_user.html', {
         'form': form,
         'next': redirect_to,
         'rtl': 'dir="rtl"'
     })
+    
+
+@login_required
+def stop_email(request):
+    user = request.user
+    user.userprofile.recieve_updates = False
+    user.userprofile.save()
+    user.save()
+
+    return render(request, 'coplay/message.html', 
+                      {  'message'      :  'הופסקה קבלת המיילים',
+                       'rtl': 'dir="rtl"'})
+    
+
+    
     
     

@@ -17,6 +17,8 @@ class Account(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     credit     = models.PositiveIntegerField(default = 0)
+    total_earn    = models.PositiveIntegerField(default = 0)
+    total_spent   = models.PositiveIntegerField(default = 0)
     
     def __unicode__(self):
         return "id {}:{}- {} left ".format(self.id, self.user.username, self.credit)
@@ -37,7 +39,12 @@ class Account(models.Model):
         if calculated_credit < 0:
             return None
         
-        self.credit = calculated_credit        
+        self.credit = calculated_credit
+
+        if total_price > 0:
+            self.total_earn =  self.total_earn + total_price
+        else:
+            self.total_spent = self.total_spent - total_price                 
         self.clean()
         self.save()
         
@@ -65,7 +72,7 @@ class Account(models.Model):
 
             
     def print_content(self):
-        print 'Account for user', self.user.username, 'credit', self.credit , 'updated_at', self.updated_at, 'created_at', self.created_at 
+        print 'Account for user', self.user.username, 'credit', self.credit , 'updated_at', self.updated_at, 'created_at', self.created_at, 'total_earn', self.total_earn, 'total_spent', self.total_spent 
         for tranaction in self.transaction_set.all().order_by("-created_at"):
             tranaction.print_content()
             
@@ -120,9 +127,9 @@ class Purchase(models.Model):
 class Shop(models.Model):
     segment = models.ForeignKey(Segment, default = None, null=True, blank=True)
     admin_user         = models.ForeignKey(User)    
-    title = models.CharField(_("title"), max_length=200)
-    currency_name = models.CharField(_("currency_name"), default = 'MemeCache', max_length=200)
-    description = models.TextField(_("Description"), blank=True, null=True,
+    title = models.CharField(_(u"שם החנות"), max_length=200)
+    currency_name = models.CharField(_(u"שם המטבע"), default = 'MemeCache', max_length=200)
+    description = models.TextField(_(u"תאור"), blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -228,16 +235,16 @@ class Shop(models.Model):
             
 class Product(models.Model):
     shop = models.ForeignKey(Shop)
-    title = models.CharField(_("title"), max_length=200)
-    description = models.TextField(_("Description"), blank=True, null=True,
+    title = models.CharField(_(u"שם המוצר"), max_length=200)
+    description = models.TextField(_(u"תאור"), blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
-    item_price  = models.PositiveIntegerField(default = 0)
-    number_of_abailabale_items  = models.PositiveIntegerField(default = 0)
+    item_price  = models.PositiveIntegerField(_(u"מחיר"),default = 0)
+    number_of_abailabale_items  = models.PositiveIntegerField(_(u"כמה במלאי"),default = 0)
     number_of_selected_items    = models.PositiveIntegerField(default = 0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    end_of_sale_at = models.DateTimeField(null=True, blank=True,default = None)
-    end_of_use_at  = models.DateTimeField(null=True, blank=True,default = None)
+    end_of_sale_at = models.DateTimeField(_(u"סיום המכירה"),null=True, blank=True,default = None)
+    end_of_use_at  = models.DateTimeField(_(u"תקף עד"),null=True, blank=True,default = None)
     
     def __unicode__(self):
         return "id {}:{} {}".format( self.id, self.title, self.item_price)
@@ -252,7 +259,7 @@ class Product(models.Model):
         if self.end_of_sale_at:
             if self.end_of_sale_at < timezone.now():
                 return False
-        return True
+        return self.can_use()
     
     def can_use(self):
         if self.end_of_use_at:
@@ -283,7 +290,6 @@ class Product(models.Model):
         if self.get_number_of_selected_items()  >= number_of_sold_items:         
             self.number_of_selected_items -= number_of_sold_items
             self.save() 
-            print self.title, 'number_of_selected_items', self.number_of_selected_items
     
     def print_content(self):
         print 'product name' ,self.title , 'item_price', self.item_price, 'shop', self.shop.title, 'description', self.description, 'availabale items:', self.number_of_abailabale_items, 'selected', self.number_of_selected_items,  'sold', self.itemvoucher_set.filter(used = False).count(), 'used', self.itemvoucher_set.filter(used = True).count()
@@ -347,7 +353,11 @@ class Cart(models.Model):
         
         remaining_items = product.get_number_of_availabale_items() 
         
-        remainind_items_to_select_whithin_credit = int (self.get_ramaining_customer_credit() /  product.item_price)
+        if self.get_ramaining_customer_credit() >= product.item_price and product.item_price != 0:
+            remainind_items_to_select_whithin_credit = int (self.get_ramaining_customer_credit() /  product.item_price) 
+        else:
+            remainind_items_to_select_whithin_credit = 0
+            
         
         if remaining_items < remainind_items_to_select_whithin_credit:
             return remaining_items
@@ -411,7 +421,7 @@ class ProductSelection(models.Model):
         )
 
     def __unicode__(self):
-        return "id {}:{} {} {}".format( self.id, self.customer.username, self.product.title, self.self.number_of_selected_items)
+        return "id {}:{} {} {}".format( self.id, self.cart.customer.username, self.product.title, self.number_of_selected_items)
         
     def print_content(self):
         print 'product selection of', self.product.title, 'user', self.cart.customer.username, 'selected items', self.number_of_selected_items

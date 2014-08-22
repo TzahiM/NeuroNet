@@ -48,6 +48,8 @@
             <a href="#Followers">מקבלי/ות העדכונים</a>
             &bull;
             <a href="#Views">{% trans "Discussion Views" %}</a>
+            &bull;
+            <a href="#AnonymousViews">צפייה אנונימית</a>
         </div>
     </div>
 
@@ -275,7 +277,7 @@
     </div>    
     <div class="row" >
     	
-        <div class="col-md-6" id="Followers">
+        <div class="col-md-4" id="Followers">
     	<br>
         <br>
         <br>
@@ -300,7 +302,7 @@
         </div>
 
         
-        <div class="col-md-6" id="Views">
+        <div class="col-md-4" id="Views">
     	<br>
         <br>
         <br>
@@ -329,6 +331,40 @@
             </div>
         </div>
 
+        <div class="col-md-4" id="AnonymousViews">
+    	<br>
+        <br>
+        <br>
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">צפייה אנונימית
+                </div>
+
+
+                <ul class="list-group">
+                    {% for viewer in list_anonymous_viewers %}
+
+                        <li class="list-group-item">
+                            {% trans "Recent View was at" %}   {{ viewer.views_counter_updated_at | naturaltime }}
+                            {% trans "By" %}
+                            {% if viewer.user %}
+                            ככל הנראה
+                            	<a href="{% url 'coplay:user_coplay_report'  viewer.user.username %}">{{ viewer.user.get_full_name|default:viewer.user.username }}</a>
+                            	{{viewer.id}} 
+                            {% else %}
+                            אנונימי {{viewer.id}}
+                            {% endif %}
+                            {% trans "Total" %}
+                            {{ viewer.get_views_counter }} 
+                            {% trans "Views" %} 
+                        </li>
+                    {% endfor %}
+                </ul>
+
+
+            </div>
+        </div>
         
         
     </div>

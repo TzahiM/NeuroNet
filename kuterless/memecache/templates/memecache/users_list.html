@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{%  load humanize %}
+
+{% block content %}
+ 			<div class="row">
+ 				<div class="col-sm-3 col-md-12" id = "UserList">
+ 					<br>
+ 					<br>
+ 					<br>
+ 					<h1><center>מי משתתף ב{{segment_name}}?</center></h1>
+ 					<br>
+ 					<br>
+ 				<div class="table-responsive">
+				   <table class="table">
+				      <caption></caption>
+				      <thead>
+				         <tr>
+				            <th><center>במקום  מספר</center></th>
+				            <th>נמצא/ת</th>
+				            <th>שהרויח/ה</th>
+				         </tr>
+				      </thead>
+				      <tbody>
+				      	{% for user_row in users_rows_list %}
+				         <tr>
+				         	<td><center>{{user_row.place}}</center></td>
+				            <td><a  href="{% url 'coplay:user_coplay_report'  user_row.user.username %}">{{ user_row.user.get_full_name|default:user_row.user.username }}</a></td>
+				            <td>{{ user_row.total_earn}} {{currency_name}}</td>
+				         </tr>
+				         {% empty %}
+				         <tr>
+						 </tr>
+					    	</tbody>
+				         {% endfor %}
+				      </tbody>
+				   </table>
+				</div> 
+ 			</div>
+ 			
+{% endblock %}
+
+

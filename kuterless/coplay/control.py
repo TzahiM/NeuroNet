@@ -5,7 +5,38 @@ This file contain the control services, used for all views
 
 #from coplay.models import UserProfile, Discussion, UserUpdate
 from django.contrib.auth.models import User
+from django.core.mail.message import EmailMessage
 import models
+
+
+
+EMAIL_MAX_SUBJECT_LENGTH = 130 #255 is the limit on some ticketing products (Jira for example) and seems to be the limit on outlook, thunderbird and gmail seem to truncate after 130. –  reconbot Jan 12 '11 at 15:39
+
+def string_to_email_subject( string):
+    string = string.replace( "\n", " ").replace( "\r", " ")
+    string_size = len(string)
+    if string_size > EMAIL_MAX_SUBJECT_LENGTH:
+        return string[:EMAIL_MAX_SUBJECT_LENGTH] + '...'
+    return string
+
+def send_html_message(subject, html_content, from_email, to_list):
+#    with open( "output.html" , "w") as debug_file:
+#        debug_file.write(html_content)
+    
+    msg = EmailMessage(string_to_email_subject(subject), html_content, from_email, to_list)
+    msg.content_subtype = "html"  # Main content is now text/html
+    msg.send()
+
+
+def send_html_message_to_users(subject, html_content, to_users_list):
+#    with open( "output.html" , "w") as debug_file:
+#        debug_file.write(html_content)
+    to_list = []
+    for user in to_users_list:
+        if user.userprofile.recieve_updates and user.email:
+            to_list.append(user.email)
+    
+    send_html_message(subject, html_content, 'kuterless-no-reply@kuterless.org.il', to_list)
 
 
 def get_all_users_visiabale_for_a_user_list(user_id_or_none_when_anoynymous = None):
@@ -29,6 +60,9 @@ def post_update_to_user(recipient_user_id, header, content = None, discussion_id
     except User.DoesNotExist:
         return
 
+    if not recipient_user.userprofile.recieve_notifications:
+        return
+    
     if discussion_id:
         try:
             discussion = models.Discussion.objects.get(id=discussion_id)
@@ -57,6 +91,12 @@ def post_update_to_user(recipient_user_id, header, content = None, discussion_id
     user_update.save()
 
 
+
+def get_user_fullname_or_username(user):
+    full_name = user.get_full_name()
+    if full_name:
+        return full_name
+    return user.username
 
 def user_started_a_new_discussion( user, url = None):
 

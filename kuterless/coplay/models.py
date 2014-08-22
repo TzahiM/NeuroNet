@@ -188,6 +188,37 @@ class Discussion(models.Model):
         if viewing_user in User.objects.all():
             viewer = self.viewer_set.get_or_create( user = viewing_user)[0]
             viewer.increment_views_counter()
+
+    def record_anonymous_view(self, request):
+        if 'anonymous_viewer_id' in request.session:
+            if request.user.is_authenticated():
+                maybe_now_undisclaused_viewer = self.anonymousviewer_set.get( id = int(request.session['anonymous_viewer_id']))
+                if self.anonymousviewer_set.filter( user = request.user).exists():
+                    anonymous_viewer =  self.anonymousviewer_set.get( user = request.user)
+                    if anonymous_viewer != maybe_now_undisclaused_viewer:
+                        for glimpse in maybe_now_undisclaused_viewer.glimpse_set.all():
+                            glimpse.anonymous_viewer = anonymous_viewer
+                            glimpse.save()
+                        anonymous_viewer.views_counter += maybe_now_undisclaused_viewer.views_counter
+                        anonymous_viewer.views_counter_updated_at = maybe_now_undisclaused_viewer.views_counter_updated_at
+                        maybe_now_undisclaused_viewer.delete()
+                else:
+                    maybe_now_undisclaused_viewer.user = request.user
+                    anonymous_viewer = self.anonymousviewer_set.create(discussion = self, user = request.user)            
+            else:
+                anonymous_viewer = self.anonymousviewer_set.get_or_create(id = int(request.session['anonymous_viewer_id']))[0]
+                anonymous_viewer.increment_views_counter()
+        else:
+            if request.user.is_authenticated():
+                anonymous_viewer = self.anonymousviewer_set.get_or_create( user = request.user)[0]            
+            else:
+                anonymous_viewer = self.anonymousviewer_set.create()            
+                anonymous_viewer.increment_views_counter()
+        
+        anonymous_viewer.save()
+                        
+        request.session['anonymous_viewer_id'] = anonymous_viewer.id         
+
             
     def start_follow(self, viewing_user):
         if viewing_user in User.objects.all():
@@ -224,7 +255,7 @@ class Discussion(models.Model):
         
         return self.is_user_invited(viewing_user)
 
-    def is_viewing_require_login(self):
+    def get_is_viewing_require_login(self):
         return self.is_viewing_require_login
     
     def is_user_in_discussion_segment(self, viewing_user = None):
@@ -236,7 +267,7 @@ class Discussion(models.Model):
     
     def can_user_access_discussion(self, viewing_user = None):
         
-        if self.viewing_require_login and viewing_user == None:
+        if self.is_viewing_require_login and viewing_user == None:
             return False
                 
         if not self.is_user_in_discussion_segment(viewing_user):
@@ -303,6 +334,9 @@ class Discussion(models.Model):
         for viewer in viewers:
             viewer.print_content()
 
+        anonymous_viewers = self.anonymousviewer_set.all()
+        for anonymous_viewer in anonymous_viewers:
+            anonymous_viewer.print_content()
 
 class Feedback(models.Model):
     ENCOURAGE = 1
@@ -319,8 +353,8 @@ class Feedback(models.Model):
 
     discussion = models.ForeignKey(Discussion)
     user = models.ForeignKey(User)
-    feedbabk_type = models.IntegerField(choices=FEEDBACK_TYPES)
-    content = models.TextField(validators=[MaxLengthValidator(MAX_TEXT)])
+    feedbabk_type = models.IntegerField(_(u"סוג התגובה"),choices=FEEDBACK_TYPES)
+    content = models.TextField(_(u"תוכן התגובה"),validators=[MaxLengthValidator(MAX_TEXT)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -642,29 +676,81 @@ class Viewer(models.Model):
     def get_is_invited(self):
         return self.is_invited
 
+    def print_content(self):
+        print 'user', self.user.username, 'views_counter', self.views_counter, 'updated_at', self.updated_at, 'views_counter_updated_at', self.views_counter_updated_at, 'is_a_follower', self.is_a_follower, 'is_invited', self.is_invited
+        for glimpse in self.glimpse_set.all().order_by("-created_at"):
+            glimpse.print_content()
+        
 
+
+
+
+
+class AnonymousViewer(models.Model):
+    user = models.ForeignKey(User, default = None,  null=True, blank=True)
+    discussion = models.ForeignKey(Discussion)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    views_counter = models.IntegerField(default = 0)
+    views_counter_updated_at = models.DateTimeField(default=None, blank=True, null=True)
+    discussion_updated_at_on_last_view = models.DateTimeField(default=None, blank=True, null=True)
+
+    
+    def increment_views_counter(self):
+        if self.discussion_updated_at_on_last_view != self.discussion.updated_at: 
+            self.views_counter += 1            
+            self.discussion_updated_at_on_last_view = self.discussion.updated_at
+            glimpse = self.glimpse_set.create( anonymous_viewer = self)
+            glimpse.clean()
+            glimpse.save()            
+            
+            
+        self.views_counter_updated_at = timezone.now()
+        self.save()
+
+    def clear_views_counter(self):
+        self.views_counter = 0
+        self.save()
+        
+    def get_views_counter(self):
+        return self.views_counter
 
     def __unicode__(self):
-        return "{} - {}: {}".format(self.user, self.views_counter, self.discussion.title)
+        return "{} - {}: {}".format(self.id, self.views_counter, self.discussion.title)
 
     def print_content(self):
-        print 'Viewer', self.user.username, 'views_counter', self.views_counter, 'updated_at', self.updated_at, 'views_counter_updated_at', self.views_counter_updated_at, 'is_a_follower', self.is_a_follower, 'is_invited', self.is_invited
+        if self.user:
+            ident_string = self.user.username
+        else:
+            ident_string = None
+        print 'AnonymousViewer', 'id', self.id, 'user', ident_string, 'views_counter', self.views_counter, 'updated_at', self.updated_at, 'views_counter_updated_at', self.views_counter_updated_at, 'is_a_follower', self.is_a_follower, 'is_invited', self.is_invited
         for glimpse in self.glimpse_set.all().order_by("-created_at"):
             glimpse.print_content()
         
 
         
 class Glimpse(models.Model):
-    viewer = models.ForeignKey(Viewer)
+    viewer = models.ForeignKey(Viewer, default = None,  null=True, blank=True)
+    anonymous_viewer = models.ForeignKey(AnonymousViewer, default = None,  null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     
     def __unicode__(self):
-        return "{}: {} - {}".format( self.created_at, self.viewer.user.username, self.viewer.discussion.title)
+        return "{}: {}".format( self.created_at, self.id)
 
     def print_content(self):
-        print 'at',  self.created_at,  self.viewer.user.username, 'looked at', self.viewer.discussion.title 
+        ident_string = ''
+        discussion_title = ''
+        if self.anonymous_viewer:
+            ident_string = None
+            discussion_title = self.anonymous_viewer.discussion.title
+        if self.viewer:
+            ident_string = self.viewer.user.username
+            discussion_title = self.viewer.discussion.title
+            
+        print 'at',  self.created_at, 'user', ident_string , 'looked at', discussion_title 
 
 
 class FollowRelation(models.Model):
@@ -686,8 +772,8 @@ class FollowRelation(models.Model):
 
         
 class Segment(models.Model):
-    title = models.CharField(_("title"), max_length=200)
-    description = models.TextField(_("Description"), blank=True, null=True,
+    title = models.CharField(_(u"שם"), max_length=200)
+    description = models.TextField(_(u"תאור"), blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -711,9 +797,10 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     segment = models.ForeignKey(Segment, null=True, blank=True)
     recieve_notifications    = models.BooleanField(default = True)
-    recieve_updates    = models.BooleanField(default = False)
+    recieve_updates    = models.BooleanField(default = True)
     can_limit_discussion_access    = models.BooleanField(default = False)
     can_limit_discussion_to_login_users_only    = models.BooleanField(default = False)
+    a_player    = models.BooleanField(default = False)
 #    recieve_personal_messages_from_users    = models.BooleanField(default = False)
 
     def __unicode__(self):
@@ -738,6 +825,13 @@ class UserProfile(models.Model):
     def get_segment(self):
             
         return self.segment
+
+    def get_segment_title(self):
+            
+        if self.get_segment() :
+            return self.segment.title
+        return u'אתר הציבורי'
+
 
     def get_all_users_in_same_segment_list(self):
         all_users_in_same_segment_list = []

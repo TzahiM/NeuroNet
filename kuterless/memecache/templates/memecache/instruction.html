@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if message %}<p><strong>{{ message }}</strong>
+	<br>
+	<br>
+<h1>כמה {{shop.currency_name}} מקבלים ?</h1>
+	<br>
+	<p>{{instructions_text |urlize|linebreaks}}</p>
 	<br>
 	<br>
 	<a class="btn btn-success"  href="{% url 'home' %}">לעמוד הראשי</a>
-</p>{% endif %}
+
 {% endblock %}
 

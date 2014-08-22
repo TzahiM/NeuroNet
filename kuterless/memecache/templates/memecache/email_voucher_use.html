@@ -1,0 +1,24 @@
+{% extends "coplay/email_base.html" %}
+
+{% block content %}
+    <br>
+    {% if details %}
+     <p>
+  		{{details|urlize|linebreaks }}    	
+    </p>
+  	{% endif %}
+
+  <p>
+  	   {{sender_name}}התקבל פרס למימוש מ
+      <br>
+      <br>
+      
+      <a href="http://{{ROOT_URL}}{{item_voucher.get_absolute_url}}{{id}}">לאישור המימוש</a>
+      <br>
+   </p>
+   <br>
+   <br>
+      
+
+{% endblock %}
+

@@ -58,6 +58,11 @@ class MemeCacheTest(TestCase):
         self.assertEquals(330 , self.at1.account.get_credit())
         self.assertEquals(700 , self.at2.account.get_credit())
         
+#        self.assertEquals(0 , self.at1.account.total_earn)
+#        self.assertEquals(0 , self.at1.account.total_spent)
+#        self.assertEquals(0 , self.at2.account.total_earn)
+#        self.assertEquals(0 , self.at2.account.total_spent)
+        
         self.at1.account.print_content()
         self.at2.account.print_content()
         

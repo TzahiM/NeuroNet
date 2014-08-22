@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% load humanize %}
+
+{% block content %}
+    <div class="row">
+        <div id="product-detail" class="col-md-12">
+            
+            <div class="title"><h1>{{ product.title }}</h1></div>
+
+            <div class="admin">
+                {% if user == product.shop.admin_user %}
+                    <a class="btn btn-danger pull-right"
+                       href="{% url 'memecache:product_delete' product.id %}">
+                       למחיקת המוצר</a>
+                       <a class="btn btn-info pull-right"
+                       href="{% url 'memecache:product_update' product.id %}">
+                       לעריכת המוצר</a>
+                {% endif %}
+        
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+		<div class="col-sm-6 col-md-6" >
+			תאור {{product.description}}			
+	    </div>
+		<div class="col-sm-6 col-md-6" >
+			   <table class="table">
+			      <thead>
+			         <tr>
+			            <th>כמה {{shop.currenncy_name}} זה עולה?</th>
+			            <th>כמה {{shop.currenncy_name}} נשאר לך?</th>
+			            <th>כמה {{product.title}}  עוד אפשר לקנות?</th>
+			            <th>כמה {{product.title}}  לקחת?</th>
+			         </tr>
+			      </thead>
+			      <tbody>
+			         <tr>
+			            <td>{{product.item_price}}</td>
+			            <td>{{cart.get_ramaining_customer_credit}} {{shop.currenncy_name}}</td>
+			            <td>{{additional_items_to_select}}</td>
+			            <td>
+				            <form action= "{% url 'memecache:update_product_selection' product.id %}" method="post">{% csrf_token %}
+								{% for field in product_selection_form %}
+									<div class="fieldWrapper">
+									{{ field.errors }}
+										{{ field.label_tag }} {{ field }}
+									</div>
+								{% endfor %}
+								<br>
+								<input type="submit" value="להוסיף לעגלה" />
+							</form>
+						<br>
+						<a class="btn btn-success"  href="{% url 'memecache:products_list' shop.id %}">לקנות עוד</a>
+						</td>
+					 </tr>
+				  </tbody>
+			</table>
+			<a class="glyphicon glyphicon-shopping-cart"
+                       href="{% url 'memecache:cart_details' cart.id %}">
+                       מה כבר לקחתי</a>
+	    </div>
+	</div>
+
+{% endblock %}
