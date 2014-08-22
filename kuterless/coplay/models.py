@@ -190,6 +190,7 @@ class Discussion(models.Model):
             viewer.increment_views_counter()
 
     def record_anonymous_view(self, request):
+        return #until design bug is fixed
         if 'anonymous_viewer_id' in request.session:
             if request.user.is_authenticated():
                 maybe_now_undisclaused_viewer = self.anonymousviewer_set.get( id = int(request.session['anonymous_viewer_id']))

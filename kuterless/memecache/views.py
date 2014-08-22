@@ -184,7 +184,8 @@ def products_list(request, pk):
 MAX_PRODUCT_SELECTION = 0
 class SelectItemsForm(forms.Form):
 #    number_of_selected_items = forms.IntegerField(label = u'מספר פריטים', min_value = 0, max_value = MAX_PRODUCT_SELECTION)
-    number_of_selected_items = forms.IntegerField(label = '')
+    max_value = 0
+    number_of_selected_items = forms.IntegerField(label = '',  min_value = 0)
 
 
 @login_required
@@ -239,7 +240,8 @@ def product_details(request, pk):
 
     MAX_PRODUCT_SELECTION = max_availabale_items  
     
-    product_selection_form = SelectItemsForm( initial={'number_of_selected_items': cart.get_cart_number_of_selected_items(product)}  )
+    product_selection_form = SelectItemsForm( initial={'number_of_selected_items': cart.get_cart_number_of_selected_items(product),
+                                                       'max_value': max_availabale_items}  )
 
     return render(request, 'memecache/product_details.html',
                   {'product': product,

@@ -22,12 +22,12 @@
  				<div class="col-sm-3 col-md-12" id = "Products">
  					<div class="table-responsive">
 				   <table class="table">
-				      <caption><h1>מה אפשר לקנות ב {{shop.title}}?</h1></caption>
+				      <caption><h1>מה אפשר לקנות ב{{shop.title}}?</h1></caption>
 				      <thead>
 				         <tr>
 				            <th>שם</th>
-				            <th>כמה עולה?</th>
-				            <th>כמה נשאר?</th>
+				            <th>עולה</th>
+				            <th>אפשר לקנות עוד</th>
 				            <th>עד מתי אפשר לקנות?</th>
 				            <th></th>
 				         </tr>
@@ -43,7 +43,7 @@
 				            	 	{% if product.end_of_sale_at %}
 				            	 		{{ product.end_of_sale_at |naturaltime }}
 				            	 	{% else%}
-				            	 		מתי שרוצים
+				            	 		עד מתי שרוצים
 				            	 	{% endif %}
 				            	 {% else%}
 				            	 	כבר אי אפשר לקנות
