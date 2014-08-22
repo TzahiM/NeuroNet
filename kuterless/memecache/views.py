@@ -162,7 +162,8 @@ def prize_bag(request):
         
     return render(request, 'memecache/prize_bag.html',
                   {'product_prize_list': product_prize_list})
-
+    
+@login_required
 def products_list(request, pk):
     shop = get_shop(request.user, pk)
     if None == shop:
