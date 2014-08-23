@@ -972,6 +972,10 @@ class CreateTaskView(CreateView):
                                'rtl': 'dir="rtl"'})
         form.instance.parent = self.discussion
         form.instance.responsible = self.request.user
+        if Task.objects.filter( parent = self.discussion,  responsible = form.instance.responsible,  goal_description = form.instance.goal_description).exists():
+            task = Task.objects.get( goal_description = form.instance.goal_description)
+            return HttpResponseRedirect(
+                    task.get_absolute_url())
         resp = super(CreateTaskView, self).form_valid(form)
         form.instance.parent.save() #verify that the entire discussion is considered updated
         form.instance.parent.unlock()
@@ -1026,8 +1030,9 @@ class CreateFeedbackView(CreateView):
     def form_valid(self, form):
         form.instance.discussion = self.discussion
         form.instance.user = self.request.user
-        if Feedback.objects.filter( content = form.instance.content).exists():
-            return
+        if Feedback.objects.filter( discussion = self.discussion, feedbabk_type = form.instance.feedbabk_type, content = form.instance.content).exists():
+            return HttpResponseRedirect(
+                    self.discussion.get_absolute_url())
         resp = super(CreateFeedbackView, self).form_valid(form)  
         form.instance.discussion.save() #verify that the entire discussion is considered updated
 
@@ -1079,6 +1084,9 @@ class CreateDecisionView(CreateView):
 
     def form_valid(self, form):
         form.instance.parent = self.discussion
+        if Decision.objects.filter( parent = self.discussion, content = form.instance.content).exists():
+            return HttpResponseRedirect(
+                    self.discussion.get_absolute_url())
         resp = super(CreateDecisionView, self).form_valid(form)
         form.instance.parent.save() #verify that the entire discussion is considered updated
         
