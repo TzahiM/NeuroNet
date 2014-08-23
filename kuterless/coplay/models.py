@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 from datetime import timedelta
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -7,8 +8,8 @@ from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-
 import control
+
 
 MAX_TEXT = 2000
 
@@ -189,36 +190,34 @@ class Discussion(models.Model):
             viewer = self.viewer_set.get_or_create( user = viewing_user)[0]
             viewer.increment_views_counter()
 
+
     def record_anonymous_view(self, request):
-        return #until design bug is fixed
-        if 'anonymous_viewer_id' in request.session:
-            if request.user.is_authenticated():
-                maybe_now_undisclaused_viewer = self.anonymousviewer_set.get( id = int(request.session['anonymous_viewer_id']))
-                if self.anonymousviewer_set.filter( user = request.user).exists():
-                    anonymous_viewer =  self.anonymousviewer_set.get( user = request.user)
-                    if anonymous_viewer != maybe_now_undisclaused_viewer:
-                        for glimpse in maybe_now_undisclaused_viewer.glimpse_set.all():
-                            glimpse.anonymous_viewer = anonymous_viewer
-                            glimpse.save()
-                        anonymous_viewer.views_counter += maybe_now_undisclaused_viewer.views_counter
-                        anonymous_viewer.views_counter_updated_at = maybe_now_undisclaused_viewer.views_counter_updated_at
-                        maybe_now_undisclaused_viewer.delete()
-                else:
-                    maybe_now_undisclaused_viewer.user = request.user
-                    anonymous_viewer = self.anonymousviewer_set.create(discussion = self, user = request.user)            
+        
+                
+        if 'anonymous_user_id' in request.session:
+            if AnonymousVisitor.objects.filter( id = int(request.session['anonymous_user_id'])).exists():
+                anonymous_user = AnonymousVisitor.objects.get( id = int(request.session['anonymous_user_id']))
             else:
-                anonymous_viewer = self.anonymousviewer_set.get_or_create(id = int(request.session['anonymous_viewer_id']))[0]
+                anonymous_user = AnonymousVisitor()
+                anonymous_user.save()
+            
+            anonymous_viewer = self.anonymousvisitorviewer_set.get_or_create( anonymous_visitor = anonymous_user)[0]
+            
+            if request.user.is_authenticated():
+                anonymous_user.user = request.user;
+                anonymous_user.save()
+            else:
                 anonymous_viewer.increment_views_counter()
         else:
             if request.user.is_authenticated():
-                anonymous_viewer = self.anonymousviewer_set.get_or_create( user = request.user)[0]            
-            else:
-                anonymous_viewer = self.anonymousviewer_set.create()            
-                anonymous_viewer.increment_views_counter()
+                return
+            anonymous_user = AnonymousVisitor()
+            anonymous_user.save()
+            anonymous_viewer = self.anonymousvisitorviewer_set.get_or_create( anonymous_visitor = anonymous_user)[0]
+            anonymous_viewer.increment_views_counter()
+            
         
-        anonymous_viewer.save()
-                        
-        request.session['anonymous_viewer_id'] = anonymous_viewer.id         
+        request.session['anonymous_user_id'] = anonymous_user.id
 
             
     def start_follow(self, viewing_user):
@@ -686,9 +685,26 @@ class Viewer(models.Model):
 
 
 
-
-class AnonymousViewer(models.Model):
+class AnonymousVisitor(models.Model):
     user = models.ForeignKey(User, default = None,  null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return "{}".format(self.id)
+
+    def print_content(self):
+        if self.user:
+            ident_string = self.user.username
+        else:
+            ident_string = None
+        print 'AnonymousVisitor', 'id', self.id, 'user', ident_string, 'updated_at', self.updated_at
+        
+
+
+
+class AnonymousVisitorViewer(models.Model):
+    anonymous_visitor = models.ForeignKey(AnonymousVisitor)
     discussion = models.ForeignKey(Discussion)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -702,7 +718,7 @@ class AnonymousViewer(models.Model):
         if self.discussion_updated_at_on_last_view != self.discussion.updated_at: 
             self.views_counter += 1            
             self.discussion_updated_at_on_last_view = self.discussion.updated_at
-            glimpse = self.glimpse_set.create( anonymous_viewer = self)
+            glimpse = self.glimpse_set.create( anonymous_visitor_viewer = self)
             glimpse.clean()
             glimpse.save()            
             
@@ -716,7 +732,10 @@ class AnonymousViewer(models.Model):
         
     def get_views_counter(self):
         return self.views_counter
-
+    
+    def get_user(self):
+        return self.anonymous_visitor.user
+    
     def __unicode__(self):
         return "{} - {}: {}".format(self.id, self.views_counter, self.discussion.title)
 
@@ -725,7 +744,7 @@ class AnonymousViewer(models.Model):
             ident_string = self.user.username
         else:
             ident_string = None
-        print 'AnonymousViewer', 'id', self.id, 'user', ident_string, 'views_counter', self.views_counter, 'updated_at', self.updated_at, 'views_counter_updated_at', self.views_counter_updated_at, 'is_a_follower', self.is_a_follower, 'is_invited', self.is_invited
+        print 'AnonymousVisitorViewer', 'id', self.id, 'user', ident_string, 'views_counter', self.views_counter, 'updated_at', self.updated_at, 'views_counter_updated_at', self.views_counter_updated_at, 'is_a_follower', self.is_a_follower, 'is_invited', self.is_invited
         for glimpse in self.glimpse_set.all().order_by("-created_at"):
             glimpse.print_content()
         
@@ -733,7 +752,7 @@ class AnonymousViewer(models.Model):
         
 class Glimpse(models.Model):
     viewer = models.ForeignKey(Viewer, default = None,  null=True, blank=True)
-    anonymous_viewer = models.ForeignKey(AnonymousViewer, default = None,  null=True, blank=True)
+    anonymous_visitor_viewer = models.ForeignKey(AnonymousVisitorViewer, default = None,  null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -744,7 +763,7 @@ class Glimpse(models.Model):
     def print_content(self):
         ident_string = ''
         discussion_title = ''
-        if self.anonymous_viewer:
+        if self.anonymous_visitor_viewer:
             ident_string = None
             discussion_title = self.anonymous_viewer.discussion.title
         if self.viewer:

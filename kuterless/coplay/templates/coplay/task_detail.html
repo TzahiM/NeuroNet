@@ -67,10 +67,12 @@
 						{{ field.label_tag }} {{ field }}
 					</div>
 				{% endfor %}
-				<input type="submit" value=" עדכון המשתתפים על המצב של המשימה ובקשה  שיסגרו או יבטלו או יפתחו אותה מחדש" />
+				<br>
+				<br>
+				<input type="submit" class="btn btn-success" value=" עדכון המשתתפים על המצב של המשימה ובקשה  שיסגרו או יבטלו או יפתחו אותה מחדש" />
 		</form>
 	{% endif %}
-	
+	<br>
 	
 	{% if task.parent %}
 	<p>  :המשימה קשורה לפעילות בנושא {{task.parent.title |urlize|linebreaks}} <br>

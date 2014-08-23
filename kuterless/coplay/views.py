@@ -137,7 +137,7 @@ def discussion_details(request, pk):
     list_viewers = discussion.viewer_set.all().exclude(
         views_counter= 0 ).order_by("-views_counter_updated_at")
         
-    list_anonymous_viewers = discussion.anonymousviewer_set.all().exclude(
+    list_anonymous_viewers = discussion.anonymousvisitorviewer_set.all().exclude(
         views_counter= 0 ).order_by("-views_counter_updated_at")
 
 
@@ -1026,6 +1026,8 @@ class CreateFeedbackView(CreateView):
     def form_valid(self, form):
         form.instance.discussion = self.discussion
         form.instance.user = self.request.user
+        if Feedback.objects.filter( content = form.instance.content).exists():
+            return
         resp = super(CreateFeedbackView, self).form_valid(form)  
         form.instance.discussion.save() #verify that the entire discussion is considered updated
 

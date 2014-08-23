@@ -348,12 +348,12 @@
                         <li class="list-group-item">
                             {% trans "Recent View was at" %}   {{ viewer.views_counter_updated_at | naturaltime }}
                             {% trans "By" %}
-                            {% if viewer.user %}
+                            {% if viewer.get_user %}
                             ככל הנראה
-                            	<a href="{% url 'coplay:user_coplay_report'  viewer.user.username %}">{{ viewer.user.get_full_name|default:viewer.user.username }}</a>
-                            	{{viewer.id}} 
+                            	<a href="{% url 'coplay:user_coplay_report'  viewer.get_user.username %}">{{ viewer.get_user.get_full_name|default:viewer.get_user.username }}</a>
+                            	{{viewer.anonymous_visitor.id}} 
                             {% else %}
-                            אנונימי {{viewer.id}}
+                            אנונימי {{viewer.anonymous_visitor.id}}
                             {% endif %}
                             {% trans "Total" %}
                             {{ viewer.get_views_counter }} 

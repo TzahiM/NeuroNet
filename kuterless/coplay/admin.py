@@ -1,5 +1,5 @@
 from coplay.models import Feedback, Task, Decision, Vote, Discussion, Viewer, \
-    FollowRelation, Segment, UserProfile, UserUpdate, AnonymousViewer
+    FollowRelation, Segment, UserProfile, UserUpdate, AnonymousVisitorViewer
 from django.contrib import admin
 
 # Register your models here.
@@ -25,7 +25,7 @@ class DecisionAdmin(admin.ModelAdmin):
 class ViewerAdmin(admin.ModelAdmin):
     list_display = ('updated_at' ,)
 
-class AnonymousViewerAdmin(admin.ModelAdmin):
+class AnonymousVisitorViewerAdmin(admin.ModelAdmin):
     list_display = ( 'created_at',)
     
 
@@ -49,7 +49,7 @@ admin.site.register(Decision, DecisionAdmin)
 admin.site.register(Vote, VoteAdmin)
 admin.site.register(Discussion, DiscussionAdmin)
 admin.site.register(Viewer, ViewerAdmin)
-admin.site.register(AnonymousViewer, AnonymousViewerAdmin)
+admin.site.register(AnonymousVisitorViewer, AnonymousVisitorViewerAdmin)
 admin.site.register(FollowRelation, FollowRelationAdmin)
 admin.site.register(Segment, SegmentAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
