@@ -13,6 +13,7 @@ from django.utils.http import is_safe_url
 from django.views.generic.edit import CreateView
 from kuterless import settings
 from memecache.control import init_user_account
+from django.utils.translation import ugettext as _
 
 # Create your views here.
 
@@ -49,6 +50,8 @@ def labs_root(request):
 """
 
     version_description = """
+26/8/2014:
+תיקון בעיה בעדכון מצב קבלת מיילים
 23/8/2014:
 תיקון בעיה בתיעוד צפיות אנונימיות
 תיקון הכנסה כפולה של משימות ותגובות ורעיונות
@@ -172,7 +175,7 @@ class AddUserForm(forms.Form):
     email = forms.EmailField( required = False, label='', 
         widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
 
-    recieve_email_updates = forms.BooleanField( initial = True)
+    recieve_email_updates = forms.BooleanField(label=_(u"קבלת מיילים"), initial = True)
 
 
 
@@ -193,7 +196,7 @@ class UpdateProfileUserForm(forms.Form):
     email = forms.EmailField( required = False, label='', 
         widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
 
-    recieve_email_updates = forms.BooleanField( required = False, initial = True)
+    recieve_email_updates = forms.BooleanField(label=u'קבלת מיילים מהאתר', required = False, initial = True)
     
     
     
@@ -329,6 +332,9 @@ def update_profile(request):
                 user.email = email
                 
             user.userprofile.recieve_updates = form.cleaned_data['recieve_email_updates']
+            
+            user.userprofile.save()
+            
             user.save()
 
         return HttpResponseRedirect(redirect_to) # Redirect after POST

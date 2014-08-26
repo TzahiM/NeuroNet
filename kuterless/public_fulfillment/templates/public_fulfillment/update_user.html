@@ -4,19 +4,21 @@
 <br><br>
 
 <br><br><br>
-<div class="col-xs-12 col-md-4">
-	<form action= "{% url 'public_fulfillment:update_profile' %}" method="post">{% csrf_token %}
-		{% for field in form %}
-		<div class="fieldWrapper">
-			{{ field.errors }}
-			{{ field.label_tag }} {{ field }}
-		</div>
-		{% endfor %}
-		<br>
-		<input type="submit" value="אלו הפרטים המעודכנים" class="btn btn-primary" />
-		<input type="hidden" name="next" value="{{ next }}" />
-	</form>
-</div>	
+<div class="row">
+	<div class="col-xs-12 col-md-4">
+		<form action= "{% url 'public_fulfillment:update_profile' %}" method="post">{% csrf_token %}
+			{% for field in form %}
+			<div class="fieldWrapper">
+				{{ field.errors }}
+				{{ field.label_tag }} {{ field }}
+			</div>
+			{% endfor %}
+			<br>
+			<input type="submit" value="אלו הפרטים המעודכנים" class="btn btn-primary" />
+			<input type="hidden" name="next" value="{{ next }}" />
+		</form>
+	</div>	
+</div>
 {% endblock %}
 
 
