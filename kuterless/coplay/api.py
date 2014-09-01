@@ -39,12 +39,12 @@ class UserList(APIView):
 class UserDetail(APIView):
     def get_object(self, pk):
             try:
-                return Discussion.objects.get(pk = pk)
-            except Discussion.DoesNotExist:
+                return User.objects.get(pk = pk)
+            except User.DoesNotExist:
                 raise Http404
             
     def get(self, request, pk, format = None):
         users = self.get_object(pk)
-        serialized_user = DiscussionSerializer(users)
+        serialized_user = UserSerializer(users)
         return Response(serialized_user.data)
         
