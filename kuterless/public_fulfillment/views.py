@@ -50,6 +50,8 @@ def labs_root(request):
 """
 
     version_description = """
+6/9/2014:
+מימוש API לכל אובייקטי coplay
 26/8/2014:
 תיקון בעיה בעדכון מצב קבלת מיילים
 23/8/2014:

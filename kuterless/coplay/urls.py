@@ -62,13 +62,60 @@ urlpatterns = patterns('',
 # ex: labs/coplay/Tzahim/stop_follow_user
     url(r'^(?P<username>.+)/stop_follow_user/$', views.stop_follow_user, name='stop_follow_user'),
 
-    url(r'^api/discussions/$', api.DiscussionList.as_view(), name='api_discussion_list'),
+    url(r'^api/discussions/$', api.DiscussionList.as_view(), name='api_discussions_list'),
 
-    url(r'^api/discussions/(?P<pk>[0-9]+)/$', api.DiscussionDetail.as_view(), name='api_discussion'),
+    url(r'^api/discussion/(?P<pk>[0-9]+)/$', api.DiscussionDetails.as_view(), name='api_discussion'),
 
-    url(r'^api/users/$', api.UserList.as_view(), name='api_discussion_list'),
+    url(r'^api/users/$', api.UserList.as_view(), name='api_users_list'),
+    url(r'^api/user/(?P<pk>[0-9]+)/$', api.UserDetails.as_view(), name='api_user'),
 
-    url(r'^api/users/(?P<pk>[0-9]+)/$', api.UserDetail.as_view(), name='api_user'),
+    url(r'^api/feedbacks/$', api.FeedbackList.as_view(), name='api_feedbacks_list'),
+    url(r'^api/feedback/(?P<pk>[0-9]+)/$', api.FeedbackDetails.as_view(), name='api_feedback'),
+
+
+    url(r'^api/decisions/$', api.DecisionList.as_view(), name='api_decisions_list'),
+    url(r'^api/decision/(?P<pk>[0-9]+)/$', api.DecisionDetails.as_view(), name='api_decision'),
+    
+    url(r'^api/votes/$', api.VoteList.as_view(), name='api_votes_list'),
+    url(r'^api/vote/(?P<pk>[0-9]+)/$', api.VoteDetails.as_view(), name='api_vote'),
+
+    url(r'^api/tasks/$', api.TaskList.as_view(), name='api_tasks_list'),
+    url(r'^api/task/(?P<pk>[0-9]+)/$', api.TaskDetails.as_view(), name='api_task'),
+
+
+    url(r'^api/viewers/$', api.ViewerList.as_view(), name='api_viewers_list'),
+    url(r'^api/viewer/(?P<pk>[0-9]+)/$', api.ViewerDetails.as_view(), name='api_viewer'),
+
+
+    url(r'^api/anonymousvisitors/$', api.AnonymousVisitorList.as_view(), name='api_anonymousvisitors_list'),
+    url(r'^api/anonymousvisitor/(?P<pk>[0-9]+)/$', api.AnonymousVisitorDetails.as_view(), name='api_anonymousvisitor'),
+
+
+    url(r'^api/anonymousvisitorvviewers/$', api.AnonymousVisitorViewerList.as_view(), name='api_anonymousvisitorvviewers_list'),
+    url(r'^api/anonymousvisitorvviewer/(?P<pk>[0-9]+)/$', api.AnonymousVisitorViewerDetails.as_view(), name='api_anonymousvisitorvviewer'),
+
+
+    url(r'^api/glimpses/$', api.GlimpseList.as_view(), name='api_glimpses_list'),
+    url(r'^api/glimpse/(?P<pk>[0-9]+)/$', api.GlimpseDetails.as_view(), name='api_glimpse'),
+
+
+    url(r'^api/followrelations/$', api.FollowRelationList.as_view(), name='api_s_list'),
+    url(r'^api/followrelation/(?P<pk>[0-9]+)/$', api.FollowRelationDetails.as_view(), name='api_'),
+
+
+    url(r'^api/userprofiles/$', api.UserProfileList.as_view(), name='api_userprofiles_list'),
+    url(r'^api/userprofile/(?P<pk>[0-9]+)/$', api.UserProfileDetails.as_view(), name='api_userprofile'),
+
+
+    url(r'^api/userupdates/$', api.UserUpdateList.as_view(), name='api_s_list'),
+    url(r'^api/userupdate/(?P<pk>[0-9]+)/$', api.UserUpdateDetails.as_view(), name='api_'),
+
+
+    url(r'^api/decision_whole/(?P<pk>[0-9]+)/$', api.DecisionWhole.as_view(), name='api_decision_whole'),
+    
+    url(r'^api/discussion_whole/(?P<pk>[0-9]+)/$', api.DiscussionWhole.as_view(), name='api_discussion_whole'),
+    
+    url(r'^api/example_view/$', api.example_view, name='api_example_view'),
 
 )
 
