@@ -107,8 +107,9 @@ urlpatterns = patterns('',
     url(r'^api/userprofile/(?P<pk>[0-9]+)/$', api.UserProfileDetails.as_view(), name='api_userprofile'),
 
 
-    url(r'^api/userupdates/$', api.UserUpdateList.as_view(), name='api_s_list'),
-    url(r'^api/userupdate/(?P<pk>[0-9]+)/$', api.UserUpdateDetails.as_view(), name='api_'),
+    url(r'^api/userupdates/$', api.UserUpdateList.as_view(), name='api_userupdates_list'),
+    
+    url(r'^api/userupdate/(?P<pk>[0-9]+)/$', api.UserUpdateDetails.as_view(), name='api_userupdate'),
 
 
     url(r'^api/decision_whole/(?P<pk>[0-9]+)/$', api.DecisionWhole.as_view(), name='api_decision_whole'),

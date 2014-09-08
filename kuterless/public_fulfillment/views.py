@@ -27,8 +27,8 @@ def about(request):
 
 def root(request):
     if request.user.is_authenticated():
-        if request.user.userprofile.a_player:
-            return HttpResponseRedirect(reverse('memecache:root'))            
+#        if request.user.userprofile.a_player:
+#            return HttpResponseRedirect(reverse('memecache:root'))            
         return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
     
     return about(request)
@@ -50,6 +50,8 @@ def labs_root(request):
 """
 
     version_description = """
+8/9/2014:
+גם שחקנים יתחילו מעמוד המשתמש שלהם
 6/9/2014:
 מימוש API לכל אובייקטי coplay
 26/8/2014:
