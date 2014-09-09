@@ -143,9 +143,9 @@ def discussion_details(request, pk):
     for task in discussion.task_set.all():
         task.refresh_status()        
 
-    list_tasks_open = discussion.task_set.all().order_by("target_date").filter(final_state = False)
-
-    list_tasks_closed_and_aborted = discussion.task_set.all().exclude(status = task.MISSED).filter(final_state = True).order_by("-closed_at")
+    list_tasks_open = discussion.task_set.all().order_by("target_date").filter(status = Task.STARTED)
+    
+    list_tasks_closed_and_aborted = discussion.task_set.all().exclude(status = Task.MISSED).filter(final_state = True).order_by("-closed_at")
 
     list_tasks = list(list_tasks_open) + list( list_tasks_closed_and_aborted)
     
