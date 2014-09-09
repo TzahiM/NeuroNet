@@ -140,15 +140,15 @@ def discussion_details(request, pk):
     list_anonymous_viewers = discussion.anonymousvisitorviewer_set.all().exclude(
         views_counter= 0 ).order_by("-views_counter_updated_at")
 
-    closed_and_aboted_tasks = []
-    for task in Task.objects.all():
-        status = task.get_status()        
-        if status == task.CLOSED or status == task.ABORTED:
-            closed_and_aboted_tasks.append(task)
+    for task in discussion.task_set.all():
+        task.refresh_status()        
 
+    list_tasks_open = discussion.task_set.all().order_by("target_date").filter(final_state = False)
 
+    list_tasks_closed_and_aborted = discussion.task_set.all().exclude(status = task.MISSED).filter(final_state = True).order_by("-closed_at")
 
-
+    list_tasks = list(list_tasks_open) + list( list_tasks_closed_and_aborted)
+    
     vote_form = None
     feedback_form = None
     description_form = None
@@ -181,7 +181,7 @@ def discussion_details(request, pk):
                    'list_intuition': list_intuition,
                    'list_advice': list_advice,
                    'list_decision': list_decision,
-                   'list_tasks': closed_and_aboted_tasks,
+                   'list_tasks': list_tasks,
                    'feedback_form': feedback_form,
                    'description_form': description_form,
                    'add_decision_form': add_decision_form,
@@ -811,9 +811,9 @@ def user_coplay_report(request, username=None):
                 if user in discussion.get_followers_list():
                     other_users_open_tasks_list.append(task)
                 
-    tasks_by_recent_updates = Task.objects.all().order_by("-updated_at")
-    
-    for task in tasks_by_recent_updates:
+    tasks_by_recent_closed_at_date = Task.objects.all().exclude(status = task.MISSED).order_by("-closed_at")
+
+    for task in tasks_by_recent_closed_at_date:
         discussion = task.parent
         if user in discussion.get_followers_list() and discussion.can_user_access_discussion(viewer_user):
             status = task.get_status()

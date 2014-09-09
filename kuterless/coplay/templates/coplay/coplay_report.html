@@ -261,8 +261,8 @@
 					 			
 					 			{{task.goal_description|urlize|linebreaks}}<br>
 					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
-					 			{{task.get_status_display}}  {{task.updated_at | naturaltime }}
-					 			
+					 			{{task.get_status_display}}  {{task.closed_at | naturaltime }}
+					 			על ידי: {{ task.closed_by.get_full_name|default:task.closed_by.username}}
 					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}
 					 			</strong>

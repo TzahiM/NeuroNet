@@ -207,9 +207,12 @@
                         <li class="list-group-item">
                             {{ task.goal_description|urlize|linebreaks }}<br>{% trans "Responsibility" %}
                             <a href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a>
-
-                            {{ task.get_status_display }} {{ task.target_date | naturaltime }}
-
+							{% if task.final_state %}							
+                            	{{ task.get_status_display }} {{ task.closed_at | naturaltime }}
+                            {% else %}
+								   {{ task.get_status_display }} {{ task.target_date | naturaltime }}
+								   תסתיים    
+							{% endif %}
                             <a class="btn btn-success" href={{ task.get_absolute_url }}>
                                     {% trans "Details" %}</a>
                             
