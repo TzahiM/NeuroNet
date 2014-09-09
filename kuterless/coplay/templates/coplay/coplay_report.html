@@ -36,8 +36,8 @@
 						<a class="btn btn-success" href="#TasksOpenOthers">משימות פתוחות של אחרים  </a>
 						<a class="btn btn-success" href="#DiscussionsActive">פעילויות פעילות </a>
 						<a class="btn btn-success" href="#DiscussionsLocked">פעילויות לא פעילות</a>
-						<a class="btn btn-success" href="#TasksClosed">משימות שהושלמו</a>
-						<a class="btn btn-success" href="#TasksFailedAll">משימות שנכשלו של כולם</a>
+						<a class="btn btn-success" href="#TasksClosed">משימות שהושלמו בזמן</a>
+						<a class="btn btn-success" href="#TasksFailedAll">משימות שבוטלו בזמן של כולם</a>
 						<a class="btn btn-success" href="#FollwersList">עוקבים</a>	
 						<a class="btn btn-success" href="#FollowingList">עוקב/ת אחרי</a>	
 					</center>
@@ -250,7 +250,7 @@
     	<br>
         <br>
         <br>
-                	<center><h2>משימות שלא הצליחו</h2></center>
+                	<center><h2>משימות שבוטלו בזמן של כולם</h2></center>
 	                	<ul>
 					{% for task in tasks_failed_by_reverse_update_time  %}
 					

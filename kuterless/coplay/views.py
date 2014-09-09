@@ -140,6 +140,12 @@ def discussion_details(request, pk):
     list_anonymous_viewers = discussion.anonymousvisitorviewer_set.all().exclude(
         views_counter= 0 ).order_by("-views_counter_updated_at")
 
+    closed_and_aboted_tasks = []
+    for task in Task.objects.all():
+        status = task.get_status()        
+        if status == task.CLOSED or status == task.ABORTED:
+            closed_and_aboted_tasks.append(task)
+
 
 
 
@@ -175,7 +181,7 @@ def discussion_details(request, pk):
                    'list_intuition': list_intuition,
                    'list_advice': list_advice,
                    'list_decision': list_decision,
-                   'list_tasks': list_tasks,
+                   'list_tasks': closed_and_aboted_tasks,
                    'feedback_form': feedback_form,
                    'description_form': description_form,
                    'add_decision_form': add_decision_form,
@@ -811,7 +817,7 @@ def user_coplay_report(request, username=None):
         discussion = task.parent
         if user in discussion.get_followers_list() and discussion.can_user_access_discussion(viewer_user):
             status = task.get_status()
-            if status == Task.MISSED or status == Task.ABORTED:
+            if status == Task.ABORTED:
                 failed_tasks_list.append(task)
 
     number_of_closed_tasks_for_others = 0
