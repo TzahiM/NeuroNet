@@ -3,7 +3,7 @@ from django.contrib import admin
 from django_notify.urls import get_pattern as get_notify_pattern
 from public_fulfillment.views import labs_root, about, root
 from wiki.urls import get_pattern as get_wiki_pattern
-import notifications
+from rest_framework.authtoken.views import  obtain_auth_token
 
 
 admin.autodiscover()
@@ -36,7 +36,10 @@ urlpatterns = patterns('',
                        
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
        
-    
+    url(r'^api-token-auth/', obtain_auth_token),
+        
+
+
 )
 
 

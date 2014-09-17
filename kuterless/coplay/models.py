@@ -334,7 +334,7 @@ class Discussion(models.Model):
         for viewer in viewers:
             viewer.print_content()
 
-        anonymous_viewers = self.anonymousviewer_set.all()
+        anonymous_viewers = self.anonymousvisitorviewer_set.all()
         for anonymous_viewer in anonymous_viewers:
             anonymous_viewer.print_content()
 
@@ -764,7 +764,7 @@ class Glimpse(models.Model):
         ident_string = ''
         discussion_title = ''
         if self.anonymous_visitor_viewer:
-            ident_string = None
+            ident_string = 'AnonymousVisitorViewer ' + int(self.id)
             discussion_title = self.anonymous_viewer.discussion.title
         if self.viewer:
             ident_string = self.viewer.user.username

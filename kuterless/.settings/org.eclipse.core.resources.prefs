@@ -23,4 +23,6 @@ encoding//memecache/control.py=utf-8
 encoding//memecache/models.py=utf-8
 encoding//memecache/tests.py=utf-8
 encoding//memecache/views.py=utf-8
+encoding//public_fulfillment/control.py=utf-8
+encoding//public_fulfillment/tests.py=utf-8
 encoding//public_fulfillment/views.py=utf-8

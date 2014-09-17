@@ -2,8 +2,6 @@
 """
 This file contain the control services, used for all views
 """
-from coplay.models import UserProfile, Discussion, UserUpdate
-from django.contrib.auth.models import User
 from memecache.models import Account, Shop, Product
 
 def get_shop( user, pk):

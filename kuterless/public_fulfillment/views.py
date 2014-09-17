@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-from coplay.control import init_user_profile
-from coplay.models import UserProfile
-from coplay.views import user_coplay_report
 from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -10,10 +7,10 @@ from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, resolve_url
 from django.utils.http import is_safe_url
+from django.utils.translation import ugettext as _
 from django.views.generic.edit import CreateView
 from kuterless import settings
-from memecache.control import init_user_account
-from django.utils.translation import ugettext as _
+from public_fulfillment.control import create_kuterless_user
 
 # Create your views here.
 
@@ -50,6 +47,8 @@ def labs_root(request):
 """
 
     version_description = """
+18/9/2014:
+הוספת יכולת לקבלת Token דרך /api-token-auth/
 8/9/2014:
 אין הצגה של משימות שפוספסו
 8/9/2014:
@@ -231,27 +230,17 @@ def sign_up(request):
                 
             user_name =  form.cleaned_data['user_name']
             
-            if User.objects.filter( username = user_name ).exists():
-                return render(request, 'coplay/message.html', 
-                      {  'message'      :  'משתמש %s קיים.' % (user_name),
-                       'rtl': 'dir="rtl"'})
                 
             first_name = form.cleaned_data['first_name']
             last_name =  form.cleaned_data['last_name']
             email     =  form.cleaned_data['email']
-            user = User(
-                    username=user_name,
-                    email=email,
-                    first_name=first_name,
-                    last_name=last_name
-                )
 
-            user.set_password(password)
-            user.save()    
-            init_user_profile(user)
-            init_user_account(user)
-            user.userprofile.recieve_updates = form.cleaned_data['recieve_email_updates']
-            user.userprofile.save()
+            
+            recieve_updates = form.cleaned_data['recieve_email_updates']
+            
+            
+            user = create_kuterless_user(  user_name, password, last_name , email , recieve_updates)
+            
             
             user = authenticate(username=user_name, password=password)
             if user is not None:
