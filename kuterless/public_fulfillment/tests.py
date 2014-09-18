@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from coplay import api
 from coplay.models import UserProfile
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -57,5 +58,16 @@ class PublicFulfillmentTest(TestCase):
         request = self.factory.post('/api-token-auth/', {'username': self.user.username, 'password':'wrong password'}, format='json')
         response = obtain_auth_token(request)
         self.assertEquals(  response.data, {u'non_field_errors': [u'Unable to login with provided credentials.']})
+        
+        request = self.factory.get('/labs/coplay/api/example_view/', 'Authorization Token  50f11a214652fda8f005801133f163d6ab80fc78', format='json')
+        print request
+        
+        response = api.example_view(request)
+        
+        print response.data
+
+
+
+        
         
         
