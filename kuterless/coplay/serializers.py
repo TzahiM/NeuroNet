@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from coplay import models
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
     Viewer, FollowRelation, UserUpdate, Vote, Glimpse, AnonymousVisitor, \
-    AnonymousVisitorViewer, UserProfile
+    AnonymousVisitorViewer, UserProfile, MAX_TEXT
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
@@ -241,4 +242,39 @@ class DiscussionWholeSerializer(serializers.ModelSerializer):
         
 
 
+class CreateFeedback(object):
+    ENCOURAGE = 1
+    COOPERATION = 2
+    INTUITION = 3
+    ADVICE = 4
 
+    FEEDBACK_TYPES = (
+        (ENCOURAGE, 'encourage'),
+        (COOPERATION, 'cooporation'),
+        (INTUITION, 'intuition'),
+        (ADVICE, 'advice'),
+    )
+    
+    def __init__(self, feedback_type, content):
+        self.feedback_type = feedback_type
+        self.content = content
+ 
+
+class AddFeedBackSerializer(serializers.Serializer):
+        
+    feedback_type = serializers.ChoiceField(choices=CreateFeedback.FEEDBACK_TYPES)
+    
+    content = serializers.CharField(max_length=MAX_TEXT, min_length=None)
+
+    def restore_object(self, attrs, instance=None):
+        """
+        Given a dictionary of deserialized field values, either update
+        an existing model instance, or create a new model instance.
+        """
+        if instance is not None:
+            instance.feedback_type = attrs.get('feedback_type', instance.feedback_type)
+            instance.content = attrs.get('content', instance.content)
+            return instance
+        
+        return CreateFeedback(**attrs)
+    

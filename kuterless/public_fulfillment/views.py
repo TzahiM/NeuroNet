@@ -47,6 +47,8 @@ def labs_root(request):
 """
 
     version_description = """
+28/9/2014:
+הוספת API להוספת תגובות
 18/9/2014:
 הוספת יכולת לקבלת Token דרך /api-token-auth/
 8/9/2014:
@@ -239,7 +241,7 @@ def sign_up(request):
             recieve_updates = form.cleaned_data['recieve_email_updates']
             
             
-            user = create_kuterless_user(  user_name, password, last_name , email , recieve_updates)
+            user = create_kuterless_user(  user_name, password, first_name, last_name , email , recieve_updates)
             
             
             user = authenticate(username=user_name, password=password)
@@ -311,14 +313,8 @@ def update_profile(request):
                 user.set_password(password)
                         
             
-            first_name = form.cleaned_data['first_name']
-            
-            if first_name:
-                user.first_name = first_name
-            last_name =  form.cleaned_data['last_name']
-            
-            if last_name:
-                user.last_name = last_name                    
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']                  
             email =  form.cleaned_data['email']
             
             

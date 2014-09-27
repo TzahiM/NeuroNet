@@ -1,23 +1,67 @@
 # -*- coding: utf-8 -*-
-from coplay.control import post_update_to_user, user_started_a_new_discussion
+from coplay import api
+from coplay.control import init_user_profile, post_update_to_user, \
+    user_started_a_new_discussion
 from coplay.models import Discussion, Feedback, Decision, LikeLevel, Vote, Task, \
     FollowRelation, Segment, UserUpdate, Glimpse
+from coplay.serializers import CreateFeedback
 from coplay.views import is_user_is_following, start_users_following, \
     stop_users_following, get_followers_list, get_following_list
 from django.contrib.auth.models import User
+from django.core.serializers import json
 from django.test import TestCase
 from django.utils import timezone
 from memecache.control import init_user_account
 from memecache.models import Account
-from coplay.control import init_user_profile
+from public_fulfillment.control import create_kuterless_user, simple_auth_token
+from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework.test import APIRequestFactory, force_authenticate
 import datetime
 import time
 
-"""
+
 
 
 class CoPlayTest(TestCase):
+    
+    def setUp(self):
+        
+        self.factory = APIRequestFactory()
+        self.admin = create_kuterless_user('admin', '1234','john', 'doo','user1@example.com',False)
 
+        self.at1 = create_kuterless_user('at1', '1234','john', 'doo','user1@example.com',False)
+
+
+    def create_dicussion(self):
+        d = Discussion( owner = self.admin, title = "Visit the moon")
+        user_started_a_new_discussion( d.owner)
+        d.full_clean()
+        d.save()
+        return d
+        
+    def create_user(self):
+        
+        self.user = create_kuterless_user('zugu', '1234', 'john', 'doo', 'ee@dd.com', False)
+        
+        
+        
+    def test_api_add_feedback(self):
+        
+        self.create_user()
+
+        d = self.create_dicussion()
+ 
+        pk = str(d.id)
+#        request = self.factory.post('/labs/coplay/api/create_feedback/' + pk, {'feedback_type':2,  'content':  'sssss'}, format='json')
+        request = self.factory.post('/labs/coplay/api/create_feedback/' + pk,{"feedback_type":2,  "content":  "sssss"}, content_type='application/json')
+        request.user = self.at1
+        print 'fff'
+        print request.body
+        view = api.AddFeedBackView()
+        response = api.AddFeedBackView.post(view, request, pk)
+        print response.data       
+        
+"""
     def setUp(self):
         self.admin = User.objects.create_user('admin', 'user1@example.com',
                                               'secret')

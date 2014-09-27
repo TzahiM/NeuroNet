@@ -38,4 +38,18 @@ def create_kuterless_user(  user_name, password, first_name = None, last_name = 
     user.userprofile.save()
     
     return user
+
+
+def simple_auth_token( key):
+    if key is None:
+        return None
+    
+    for user in User.objects.all():
+        if user.auth_token.key == key:
+            return user        
+    return None
+        
+    
+
+
     

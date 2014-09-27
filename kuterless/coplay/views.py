@@ -1039,6 +1039,7 @@ class CreateFeedbackView(CreateView):
         if Feedback.objects.filter( discussion = self.discussion, feedbabk_type = form.instance.feedbabk_type, content = form.instance.content).exists():
             return HttpResponseRedirect(
                     self.discussion.get_absolute_url())
+            
         resp = super(CreateFeedbackView, self).form_valid(form)  
         form.instance.discussion.save() #verify that the entire discussion is considered updated
 

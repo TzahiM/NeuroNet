@@ -345,7 +345,7 @@ class Feedback(models.Model):
     ADVICE = 4
 
     FEEDBACK_TYPES = (
-        (ENCOURAGE, 'עידוד'),
+        (ENCOURAGE, 'encourage'),
         (COOPERATION, 'שיתוף פעולה'),
         (INTUITION, 'אינטואיציה'),
         (ADVICE, 'עצה'),

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from coplay.control import \
+    user_posted_a_feedback_in_another_other_user_s_discussion
 from coplay.models import Discussion, Feedback, Decision, Vote, Task, Viewer, \
     AnonymousVisitor, AnonymousVisitorViewer, Glimpse, FollowRelation, UserProfile, \
     UserUpdate
@@ -6,16 +8,29 @@ from coplay.serializers import DiscussionSerializer, UserSerializer, \
     FeedbackSerializer, DecisionSerializer, VoteSerializer, TaskSerializer, \
     ViewerSerializer, AnonymousVisitorSerializer, AnonymousVisitorViewerSerializer, \
     GlimpseSerializer, FollowRelationSerializer, UserProfileSerializer, \
-    UserUpdateSerializer, DiscussionWholeSerializer, DecisionWholeSerializer
+    UserUpdateSerializer, DiscussionWholeSerializer, DecisionWholeSerializer, \
+    AddFeedBackSerializer
+from coplay.views import discussion_email_updates
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.signing import loads
 from django.http.response import Http404
+from django.template.base import Template
+from django.template.context import Context
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import serializers, parsers, renderers
 from rest_framework.authentication import SessionAuthentication, \
     BasicAuthentication, TokenAuthentication
+from rest_framework.compat import StringIO
 from rest_framework.decorators import api_view, authentication_classes, \
     permission_classes
+from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
+
 
 
 class DiscussionList(APIView):
@@ -338,4 +353,89 @@ def example_view(request, format=None):
     
     return Response(content)
 
+
+class AddFeedBackView(APIView):
+    parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
+    renderer_classes = (renderers.JSONRenderer,)
+    
+    
+    def dispatch(self, *args, **kwargs):
+        return super(AddFeedBackView, self).dispatch(*args, **kwargs)
+        
+    def get_object(self, pk):
+            try:
+                return Discussion.objects.get(pk = pk)
+            except Discussion.DoesNotExist:
+                raise Http404
+            
+
+    def post(self, request, pk, format = None,csrf_exempt = True):
+        discussion = self.get_object(pk)
+#        if not discussion.can_user_access_discussion():
+#            return Response(status=HTTP_401_UNAUTHORIZED )
+    
+#        data = JSONParser().parse(StringIO(request.body))
+#        data = JSONParser().parse(request.body)
+#        created_feedback_serializer = AddFeedBackSerializer(data=data)
+#        created_feedback_serializer = AddFeedBackSerializer(data={"content": "sssss","feedback_type":1})
+        
+#         data1={"content": "sssss","feedback_type":1}
+#         print 'ok'
+#         print data1
+#         data1=request.body
+#         print 'data=request.body'
+#         print data1
+        
+        created_feedback_serializer = AddFeedBackSerializer(data=request.POST)
+        if not created_feedback_serializer.is_valid():
+            return Response(created_feedback_serializer.errors)
+             
+        if(request.user != discussion.owner and discussion.can_user_access_discussion(request.user) and discussion.is_active()):
+            feedback = discussion.add_feedback(request.user, created_feedback_serializer.object.feedback_type, created_feedback_serializer.object.content)         
+            serialized_feedback = FeedbackSerializer(feedback)     
+            discussion.save() #verify that the entire discussion is considered updated
+    
+            t = Template("""
+            {{feedbabk.user.get_full_name|default:feedbabk.user.username}} פירסם/ה {{feedbabk.get_feedbabk_type_name}}:\n
+            "{{feedbabk.content}} "\n
+            """)
+    
+            trunkated_subject_and_detailes = t.render(Context({"feedbabk": feedback}))
+            
+                                                                
+                                                                
+            discussion_email_updates(discussion,
+                                             trunkated_subject_and_detailes,
+                                             self.request.user,
+                                             trunkated_subject_and_detailes)            
+            discussion.start_follow(request.user)            
+            user_posted_a_feedback_in_another_other_user_s_discussion(request.user, feedback.get_absolute_url())                        
+            return Response(serialized_feedback.data)
+        
+        return Response(status=HTTP_400_BAD_REQUEST)
+
+@csrf_exempt
+def create_feedback_view(request,pk):
+    return AddFeedBackView.as_view()(request,pk)
+
+class Comment(object):
+    def __init__(self, email, content):
+        self.email = email
+        self.content = content
+
+class CommentSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    content = serializers.CharField(max_length=200)
+
+    def restore_object(self, attrs, instance=None):
+        """
+        Given a dictionary of deserialized field values, either update
+        an existing model instance, or create a new model instance.
+        """
+        if instance is not None:
+            instance.email = attrs.get('email', instance.email)
+            instance.content = attrs.get('content', instance.content)
+            return instance
+        return Comment(**attrs)
+    
         
