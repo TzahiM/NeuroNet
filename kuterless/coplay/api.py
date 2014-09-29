@@ -394,21 +394,21 @@ class AddFeedBackView(APIView):
 #         stream = StringIO(request.body)
 #         data = JSONParser().parse(stream)
 #        print 'request'        
-        print 'request.DATA'
-        print request.DATA
-        print request.META['HTTP_AUTHORIZATION']
+#         print 'request.DATA'
+#         print request.DATA
+#         print request.META['HTTP_AUTHORIZATION']
         created_feedback_serializer = AddFeedBackSerializer(data=request.DATA)        
-        print created_feedback_serializer.errors
-        print created_feedback_serializer.is_valid()
+#         print created_feedback_serializer.errors
+#         print created_feedback_serializer.is_valid()
         
         
         if not created_feedback_serializer.is_valid():
 #             print 'created_feedback_serializer.errors'
 #            print created_feedback_serializer.errors
             return Response(created_feedback_serializer.errors)
-        print created_feedback_serializer.object.feedback_type
-        print created_feedback_serializer.object.content
-        print request.user
+#         print created_feedback_serializer.object.feedback_type
+#         print created_feedback_serializer.object.content
+#         print request.user
         if(request.user != discussion.owner and discussion.can_user_access_discussion(request.user) and discussion.is_active()):
             feedback = discussion.add_feedback(request.user, created_feedback_serializer.object.feedback_type, created_feedback_serializer.object.content)         
             serialized_feedback = FeedbackSerializer(feedback)     
