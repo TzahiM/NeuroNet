@@ -53,13 +53,17 @@ class CoPlayTest(TestCase):
  
         pk = str(d.id)
 #        request = self.factory.post('/labs/coplay/api/create_feedback/' + pk, {'feedback_type':2,  'content':  'sssss'}, format='json')
-        request = self.factory.post('/labs/coplay/api/create_feedback/' + pk,{"feedback_type":2,  "content":  "sssss"}, content_type='application/json')
+#        request = self.factory.post('/labs/coplay/api/create_feedback/' + pk,{"feedback_type":2,  "content":  "sssss"}, content_type='application/json')
+        request = self.factory.post('/labs/coplay/api/create_feedback/' + pk,{"content": "ggg2",  "feedback_type":  2 }, content_type='application/json')
         request.user = self.at1
         print 'fff'
         print request.body
         view = api.AddFeedBackView()
         response = api.AddFeedBackView.post(view, request, pk)
-        print response.data       
+        print response.data   
+        if Feedback.objects.count() == 1:
+            Feedback.objects.first().print_ocntent()
+                
         
 """
     def setUp(self):

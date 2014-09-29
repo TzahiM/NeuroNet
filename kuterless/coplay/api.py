@@ -385,11 +385,30 @@ class AddFeedBackView(APIView):
 #         data1=request.body
 #         print 'data=request.body'
 #         print data1
+#         print 'request.POST'
+#         print request.POST
+#         print 'request.body'
+#         print request.body
         
-        created_feedback_serializer = AddFeedBackSerializer(data=request.POST)
+#        created_feedback_serializer = AddFeedBackSerializer(data=request.body)
+#         stream = StringIO(request.body)
+#         data = JSONParser().parse(stream)
+#        print 'request'        
+        print 'request.DATA'
+        print request.DATA
+        print request.META['HTTP_AUTHORIZATION']
+        created_feedback_serializer = AddFeedBackSerializer(data=request.DATA)        
+        print created_feedback_serializer.errors
+        print created_feedback_serializer.is_valid()
+        
+        
         if not created_feedback_serializer.is_valid():
+#             print 'created_feedback_serializer.errors'
+#            print created_feedback_serializer.errors
             return Response(created_feedback_serializer.errors)
-             
+        print created_feedback_serializer.object.feedback_type
+        print created_feedback_serializer.object.content
+        print request.user
         if(request.user != discussion.owner and discussion.can_user_access_discussion(request.user) and discussion.is_active()):
             feedback = discussion.add_feedback(request.user, created_feedback_serializer.object.feedback_type, created_feedback_serializer.object.content)         
             serialized_feedback = FeedbackSerializer(feedback)     
@@ -409,7 +428,9 @@ class AddFeedBackView(APIView):
                                              self.request.user,
                                              trunkated_subject_and_detailes)            
             discussion.start_follow(request.user)            
-            user_posted_a_feedback_in_another_other_user_s_discussion(request.user, feedback.get_absolute_url())                        
+            user_posted_a_feedback_in_another_other_user_s_discussion(request.user, feedback.get_absolute_url())
+#             print 'serialized_feedback.data'
+#             print serialized_feedback.data                        
             return Response(serialized_feedback.data)
         
         return Response(status=HTTP_400_BAD_REQUEST)
