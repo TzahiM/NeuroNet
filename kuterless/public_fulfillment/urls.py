@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url
 from public_fulfillment import views
+from public_fulfillment import api
 
 
 urlpatterns = patterns('',
@@ -11,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^stop_email/$', views.stop_email, name='stop_email'),     
     url(r'^example/$', views.example, name='example'), 
     url(r'^privacy_policy/$', views.privacy_policy, name='privacy_policy'), 
+    url(r'^api/get_server_time/$', api.get_server_time, name='get_server_time'), 
                           
 )
 

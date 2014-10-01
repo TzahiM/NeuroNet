@@ -24,48 +24,48 @@ import time
 
 class CoPlayTest(TestCase):
     
-    def setUp(self):
+#     def setUp(self):
+#         
+#         self.factory = APIRequestFactory()
+#         self.admin = create_kuterless_user('admin', '1234','john', 'doo','user1@example.com',False)
+# 
+#         self.at1 = create_kuterless_user('at1', '1234','john', 'doo','user1@example.com',False)
+# 
+# 
+#     def create_dicussion(self):
+#         d = Discussion( owner = self.admin, title = "Visit the moon")
+#         user_started_a_new_discussion( d.owner)
+#         d.full_clean()
+#         d.save()
+#         return d
+#         
+#     def create_user(self):
+#         
+#         self.user = create_kuterless_user('zugu', '1234', 'john', 'doo', 'ee@dd.com', False)
+#         
+#         
+#         
+#     def test_api_add_feedback(self):
+#         
+#         self.create_user()
+# 
+#         d = self.create_dicussion()
+#  
+#         pk = str(d.id)
+# #        request = self.factory.post('/labs/coplay/api/create_feedback/' + pk, {'feedback_type':2,  'content':  'sssss'}, format='json')
+# #        request = self.factory.post('/labs/coplay/api/create_feedback/' + pk,{"feedback_type":2,  "content":  "sssss"}, content_type='application/json')
+#         request = self.factory.post('/labs/coplay/api/create_feedback/' + pk,{"content": "ggg2",  "feedback_type":  2 }, content_type='application/json')
+#         request.user = self.at1
+#         print 'fff'
+#         print request.body
+#         view = api.AddFeedBackView()
+#         response = api.AddFeedBackView.post(view, request, pk)
+#         print response.data   
+#         if Feedback.objects.count() == 1:
+#             Feedback.objects.first().print_ocntent()
+#                 
         
-        self.factory = APIRequestFactory()
-        self.admin = create_kuterless_user('admin', '1234','john', 'doo','user1@example.com',False)
 
-        self.at1 = create_kuterless_user('at1', '1234','john', 'doo','user1@example.com',False)
-
-
-    def create_dicussion(self):
-        d = Discussion( owner = self.admin, title = "Visit the moon")
-        user_started_a_new_discussion( d.owner)
-        d.full_clean()
-        d.save()
-        return d
-        
-    def create_user(self):
-        
-        self.user = create_kuterless_user('zugu', '1234', 'john', 'doo', 'ee@dd.com', False)
-        
-        
-        
-    def test_api_add_feedback(self):
-        
-        self.create_user()
-
-        d = self.create_dicussion()
- 
-        pk = str(d.id)
-#        request = self.factory.post('/labs/coplay/api/create_feedback/' + pk, {'feedback_type':2,  'content':  'sssss'}, format='json')
-#        request = self.factory.post('/labs/coplay/api/create_feedback/' + pk,{"feedback_type":2,  "content":  "sssss"}, content_type='application/json')
-        request = self.factory.post('/labs/coplay/api/create_feedback/' + pk,{"content": "ggg2",  "feedback_type":  2 }, content_type='application/json')
-        request.user = self.at1
-        print 'fff'
-        print request.body
-        view = api.AddFeedBackView()
-        response = api.AddFeedBackView.post(view, request, pk)
-        print response.data   
-        if Feedback.objects.count() == 1:
-            Feedback.objects.first().print_ocntent()
-                
-        
-"""
     def setUp(self):
         self.admin = User.objects.create_user('admin', 'user1@example.com',
                                               'secret')
@@ -184,10 +184,10 @@ class CoPlayTest(TestCase):
         task5.close(self.admin)
         task6.abort(self.admin)
         task6.re_open(self.admin)
-        self.assertEquals(task6.STARTED, task1.get_status())
+        self.assertEquals(task6.STARTED, task6.get_status())
         task7.close(self.admin)
         task7.re_open(self.admin)
-        self.assertEquals(task7.STARTED, task1.get_status())
+        self.assertEquals(task7.STARTED, task7.get_status())
         time.sleep(2)
         self.assertEquals(self.admin, task2.closed_by)
         self.assertEquals(self.admin, task4.closed_by)
@@ -341,11 +341,13 @@ class CoPlayTest(TestCase):
 
     def test_discussion_iniactivation(self):
         
-        
+        """       
         I cannot test this feature as is since the time relolution of Discussion.is_active_and_time_to_inactivation()
+                
+        
         is days
         so i copied the same lines of code here for test with a seconds resolution.        
-        
+        """
         self.assertEquals(0, Task.objects.count())
         d = self.create_dicussion()
         task1 = d.add_task(self.at1, 'shall start', timezone.now() +  datetime.timedelta(seconds =4))
@@ -748,5 +750,3 @@ class CoPlayTest(TestCase):
         
         self.assertEquals(84,  self.admin.account.get_credit())
         self.assertEquals(76,  self.at1.account.get_credit())
-        
-"""
