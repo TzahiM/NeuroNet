@@ -112,6 +112,8 @@ urlpatterns = patterns('',
     
     url(r'^api/userupdate/(?P<pk>[0-9]+)/$', api.UserUpdateDetails.as_view(), name='api_userupdate'),
 
+    url(r'^api/userupdates/unread/$', api.UserUpdateListUnRead.as_view(), name='api_userupdates_list_unread'),
+
 
     url(r'^api/decision_whole/(?P<pk>[0-9]+)/$', api.DecisionWhole.as_view(), name='api_decision_whole'),
     

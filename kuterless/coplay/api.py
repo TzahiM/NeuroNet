@@ -293,10 +293,20 @@ class UserProfileDetails(APIView):
 
 class UserUpdateList(APIView):
     def get(self, request,format = None):
-        userupdates = UserUpdate.objects.all()
+        userupdates = UserUpdate.objects.order_by("-created_at")
         serialized_userupdates =UserUpdateSerializer(userupdates, many = True)
         return Response(serialized_userupdates.data)
 
+
+
+class UserUpdateListUnRead(APIView):
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request,format = None):
+        userupdates = UserUpdate.objects.filter(recipient = request.user, already_read = False).order_by("-created_at")
+        serialized_userupdates =UserUpdateSerializer(userupdates, many = True)
+        return Response(serialized_userupdates.data)
 
 
 class UserUpdateDetails(APIView):
@@ -343,7 +353,7 @@ class DiscussionWhole(APIView):
 
         
 @api_view(['GET'])
-@authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
+@authentication_classes((SessionAuthentication, TokenAuthentication))
 @permission_classes((IsAuthenticated,))
 def example_view(request, format=None):
     content = {
@@ -438,25 +448,3 @@ class AddFeedBackView(APIView):
 @csrf_exempt
 def create_feedback_view(request,pk):
     return AddFeedBackView.as_view()(request,pk)
-
-class Comment(object):
-    def __init__(self, email, content):
-        self.email = email
-        self.content = content
-
-class CommentSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    content = serializers.CharField(max_length=200)
-
-    def restore_object(self, attrs, instance=None):
-        """
-        Given a dictionary of deserialized field values, either update
-        an existing model instance, or create a new model instance.
-        """
-        if instance is not None:
-            instance.email = attrs.get('email', instance.email)
-            instance.content = attrs.get('content', instance.content)
-            return instance
-        return Comment(**attrs)
-    
-        
