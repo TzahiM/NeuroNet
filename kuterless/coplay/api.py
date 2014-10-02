@@ -322,7 +322,20 @@ class UserUpdateDetails(APIView):
         return Response(serialized_userupdate.data)
     
 
-
+@api_view(['POST'])
+@authentication_classes((SessionAuthentication, TokenAuthentication))
+@permission_classes((IsAuthenticated,))
+def userupdate_read_notification(request, pk,format=None):
+    try:
+        user_update = UserUpdate.objects.get(pk = pk)
+    except UserUpdate.DoesNotExist:
+        return Response({'response': "user update not found"})
+    if user_update.recipient != request.user:
+        return Response({'response': "update does not belong to authenticated user"})
+    
+    user_update.set_as_already_read()
+    
+    return Response({'response': "OK"})
 
 class DecisionWhole(APIView):
     def get_object(self, pk):

@@ -47,10 +47,16 @@ def labs_root(request):
 """
 
     version_description = """
+3/10/2014:
+הוספת ממשק לשם דיווח קריאה של המשתמש
+/labs/coplay/api/userupdate/read_notification/<user__update_is>/
+example :  /labs/coplay/api/userupdate/read_notification/1117/    
 1/10/2014:
 הוספת ממשק לקריאת הזמן של השרת
 adding /public_fulfillment/api/get_server_time/ that is responsed with server time.
 example: {"server_time": "2014-10-01T21:32:30.302Z"} 
+הוספת ממשק לקריאת העדכונים האישיים שלא נקראו
+/labs/coplay/api/userupdates/unread/
 28/9/2014:
 הוספת API להוספת תגובות
 18/9/2014:

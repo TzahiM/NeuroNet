@@ -109,10 +109,12 @@ urlpatterns = patterns('',
 
 
     url(r'^api/userupdates/$', api.UserUpdateList.as_view(), name='api_userupdates_list'),
+
+    url(r'^api/userupdates/unread/$', api.UserUpdateListUnRead.as_view(), name='api_userupdates_list_unread'),
     
     url(r'^api/userupdate/(?P<pk>[0-9]+)/$', api.UserUpdateDetails.as_view(), name='api_userupdate'),
 
-    url(r'^api/userupdates/unread/$', api.UserUpdateListUnRead.as_view(), name='api_userupdates_list_unread'),
+    url(r'^api/userupdate/read_notification/(?P<pk>[0-9]+)/$', api.userupdate_read_notification, name='api_userupdate_read_notification'),
 
 
     url(r'^api/decision_whole/(?P<pk>[0-9]+)/$', api.DecisionWhole.as_view(), name='api_decision_whole'),
