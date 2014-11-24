@@ -894,7 +894,8 @@ def user_coplay_report(request, username=None):
                       'followers_list' :followers_list,
                       'following_list' :following_list,
                       'is_following'   :is_following,
-                      'page_name': page_name})
+                      'page_name': page_name,
+                      'description': user.userprofile.description})
 
 
 class UpdateDiscussionDescForm(forms.ModelForm):

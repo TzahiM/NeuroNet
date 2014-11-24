@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from coplay.views import MAX_MESSAGE_INPUT_CHARS
 from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -194,6 +195,9 @@ class AddUserForm(forms.Form):
 
     recieve_email_updates = forms.BooleanField(label=_(u"קבלת מיילים"), initial = True)
 
+    description = forms.CharField(label=_("description"),required = False,
+                                  max_length=MAX_MESSAGE_INPUT_CHARS,
+                                  widget=forms.Textarea)
 
 
 
@@ -215,6 +219,9 @@ class UpdateProfileUserForm(forms.Form):
 
     recieve_email_updates = forms.BooleanField(label=u'קבלת מיילים מהאתר', required = False, initial = True)
     
+    description = forms.CharField(label=_("description"),required = False,
+                                  max_length=MAX_MESSAGE_INPUT_CHARS,
+                                  widget=forms.Textarea)
     
     
 def sign_up(request):
@@ -250,8 +257,9 @@ def sign_up(request):
             
             recieve_updates = form.cleaned_data['recieve_email_updates']
             
+            description = form.cleaned_data['description']
             
-            user = create_kuterless_user(  user_name, password, first_name, last_name , email , recieve_updates)
+            user = create_kuterless_user(  user_name, password, first_name, last_name , email , recieve_updates, description)
             
             
             user = authenticate(username=user_name, password=password)
@@ -334,6 +342,10 @@ def update_profile(request):
                 
             user.userprofile.recieve_updates = form.cleaned_data['recieve_email_updates']
             
+            description = form.cleaned_data['description']
+            if description:
+                user.userprofile.description = description
+                
             user.userprofile.save()
             
             user.save()
@@ -345,7 +357,8 @@ def update_profile(request):
                                       {'first_name': user.first_name,
                                        'last_name' : user.last_name,
                                        'email'     : user.email,
-                                       'recieve_email_updates': user.userprofile.recieve_updates}
+                                       'recieve_email_updates': user.userprofile.recieve_updates,
+                                       'description': user.userprofile.description}
                                       )
 
     return render(request, 'public_fulfillment/update_user.html', {

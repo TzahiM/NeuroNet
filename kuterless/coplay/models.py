@@ -836,6 +836,8 @@ class UserProfile(models.Model):
     latitude    = models.FloatField(default=None, blank=True, null=True)
     longitude   = models.FloatField(default=None, blank=True, null=True)
 #    recieve_personal_messages_from_users    = models.BooleanField(default = False)
+    description = models.TextField(_("Description"), blank=True, null=True,
+                                   validators=[MaxLengthValidator(MAX_TEXT)])
 
     def __unicode__(self):
         return "{} ".format(self.user.username)
