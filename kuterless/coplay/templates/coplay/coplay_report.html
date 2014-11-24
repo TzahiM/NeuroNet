@@ -21,6 +21,13 @@
 		                		{% endif %}
 	                		{% endif %}
 	            		</h1>
+	            	    {% if description%}
+	            	    <p>{{ description|urlize|linebreaks }}</p>
+	            	    {% endif %}
+	                {% if location_desc  %}
+	                	<p><a href="https://www.google.co.il/maps/place/{{location_desc}}" target="_blank">{{location_desc}}</a></p> 
+	                {% endif %}      
+	            	    
 	            		{{number_of_closed_tasks}} משימות שהושלמו
 	            	    {{number_of_closed_tasks_for_others}}  מתוכם למשתמשים אחרים 
 	            	    {{number_of_aborted_tasks}}  משימות שבוטלו בזמן 
@@ -28,9 +35,6 @@
 	            	    {{number_of_feedbacks}} תגובות בפעילויות של אחרים
 	            	    {{number_of_votes}} הצבעות בפעילויות של אחרים
 	            	    {{number_of_views}} צפיות בפעילויות של אחרים
-	            	    {% if description%}
-	            	    <p>{{ description|urlize|linebreaks }}</p>
-	            	    {% endif %}
 	            	</center>
 	            	<br>
 					<center>

@@ -17,7 +17,11 @@
                     עלול להינעל
                     {{ discussion.locked_at|naturaltime }}</span>
                 {% if discussion.latitude and discussion.longitude %}
-                	<a href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">מיקום</a> 
+                	<a class="new btn btn-info" href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">מיקום</a>
+                {% else %} 
+	                {% if discussion.location_desc  %}
+	                	<a class="new btn btn-info" href="https://www.google.co.il/maps/place/{{discussion.location_desc}}" target="_blank">{{discussion.location_desc}}</a> 
+	                {% endif %}                
                 {% endif %}                
                 </li>
             {% else %}
@@ -31,7 +35,11 @@
                     הפעילות הוקפאה עקב חוסר נוכחי במשימות חדשות 
                     {{ discussion.locked_at|naturaltime }}
                 {% if discussion.latitude and discussion.longitude %}
-                	<a href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">מיקום</a> 
+                	<a class="new btn btn-info" href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">מיקום</a>
+                {% else %} 
+	                {% if discussion.location_desc  %}
+	                	<a class="new btn btn-info" href="https://www.google.co.il/maps/place/{{discussion.location_desc}}" target="_blank">{{discussion.location_desc}}</a> 
+	                {% endif %}                
                 {% endif %}                
                 </li>
             {% endif %}

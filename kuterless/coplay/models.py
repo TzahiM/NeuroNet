@@ -20,7 +20,7 @@ class Location(models.Model):
     num = models.IntegerField()
     street = models.CharField(max_length=100, default=None, blank=True, null=True)
     city = models.CharField(max_length=100, default=None, blank=True, null=True)
-    state = models.CharField(max_length=2, default = u'ישראל', blank=True)
+    state = models.CharField(max_length=20, default = u'ישראל', blank=True)
     latitude    = models.FloatField(default=None, blank=True, null=True)
     longitude   = models.FloatField(default=None, blank=True, null=True)
 
@@ -38,6 +38,7 @@ class Discussion(models.Model):
     location                    = models.ForeignKey(Location, null=True, blank=True)
     latitude    = models.FloatField(default=None, blank=True, null=True)
     longitude   = models.FloatField(default=None, blank=True, null=True)
+    location_desc = models.CharField( max_length=200,default=None, blank=True, null=True)
     
     def __unicode__(self):
         return self.id
@@ -838,6 +839,7 @@ class UserProfile(models.Model):
 #    recieve_personal_messages_from_users    = models.BooleanField(default = False)
     description = models.TextField(_("Description"), blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
+    location_desc = models.CharField( max_length=200,default=None, blank=True, null=True)
 
     def __unicode__(self):
         return "{} ".format(self.user.username)

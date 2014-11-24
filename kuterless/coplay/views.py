@@ -212,6 +212,9 @@ class NewDiscussionForm(forms.Form):
                                   widget=forms.Textarea)
     latitude    = forms.FloatField(required=False)
     longitude   = forms.FloatField(required=False)
+    location_desc = forms.CharField(label=u'כתובת',
+                                  max_length=MAX_MESSAGE_INPUT_CHARS,
+                                  widget=forms.Textarea)
 
 
 @login_required
@@ -240,7 +243,12 @@ def add_discussion(request):
                 new_discussion.latitude = latitude;
             longitude=form.cleaned_data['longitude']
             if longitude:
-                new_discussion.longitude = longitude;
+                new_discussion.longitude = longitude
+                
+            location_desc=form.cleaned_data['location_desc']
+            if location_desc:
+                new_discussion.location_desc = location_desc;
+                
             new_discussion.clean()
             new_discussion.description_updated_at = timezone.now()
             new_discussion.save()
@@ -895,7 +903,8 @@ def user_coplay_report(request, username=None):
                       'following_list' :following_list,
                       'is_following'   :is_following,
                       'page_name': page_name,
-                      'description': user.userprofile.description})
+                      'description': user.userprofile.description,
+                      'location_desc': user.userprofile.location_desc})
 
 
 class UpdateDiscussionDescForm(forms.ModelForm):
@@ -904,7 +913,8 @@ class UpdateDiscussionDescForm(forms.ModelForm):
         fields = (
             'description',
             'latitude',  
-            'longitude', 
+            'longitude',
+            'location_desc', 
         )
 
 

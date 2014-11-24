@@ -198,6 +198,10 @@ class AddUserForm(forms.Form):
     description = forms.CharField(label=_("description"),required = False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
+    
+    location_desc = forms.CharField(label=u'כתובת',
+                                  max_length=MAX_MESSAGE_INPUT_CHARS,
+                                  widget=forms.Textarea)
 
 
 
@@ -219,7 +223,11 @@ class UpdateProfileUserForm(forms.Form):
 
     recieve_email_updates = forms.BooleanField(label=u'קבלת מיילים מהאתר', required = False, initial = True)
     
-    description = forms.CharField(label=_("description"),required = False,
+    description = forms.CharField(label=u'מידע נוסף',required = False,
+                                  max_length=MAX_MESSAGE_INPUT_CHARS,
+                                  widget=forms.Textarea)
+    
+    location_desc = forms.CharField(label=u'כתובת',
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
     
@@ -259,7 +267,9 @@ def sign_up(request):
             
             description = form.cleaned_data['description']
             
-            user = create_kuterless_user(  user_name, password, first_name, last_name , email , recieve_updates, description)
+            location_desc = form.cleaned_data['location_desc']
+            
+            user = create_kuterless_user(  user_name, password, first_name, last_name , email , recieve_updates, description, location_desc)
             
             
             user = authenticate(username=user_name, password=password)
@@ -346,6 +356,10 @@ def update_profile(request):
             if description:
                 user.userprofile.description = description
                 
+            location_desc = form.cleaned_data['location_desc']
+            if location_desc:
+                user.userprofile.location_desc = location_desc
+                
             user.userprofile.save()
             
             user.save()
@@ -358,7 +372,8 @@ def update_profile(request):
                                        'last_name' : user.last_name,
                                        'email'     : user.email,
                                        'recieve_email_updates': user.userprofile.recieve_updates,
-                                       'description': user.userprofile.description}
+                                       'description': user.userprofile.description,
+                                       'location_desc': user.userprofile.location_desc}
                                       )
 
     return render(request, 'public_fulfillment/update_user.html', {

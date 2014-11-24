@@ -15,7 +15,7 @@ def init_user_token(user):
     Token.objects.get_or_create(user=user)
 
 
-def create_kuterless_user(  user_name, password, first_name = None, last_name = None, email = None, recieve_updates = True, description= None):
+def create_kuterless_user(  user_name, password, first_name = None, last_name = None, email = None, recieve_updates = True, description= None, location_desc = None):
     
                 
     if User.objects.filter( username = user_name ).exists():
@@ -36,6 +36,7 @@ def create_kuterless_user(  user_name, password, first_name = None, last_name = 
     init_user_token(user)
     user.userprofile.recieve_updates = recieve_updates
     user.userprofile.description = description
+    user.userprofile.location_desc = location_desc
     user.userprofile.save()
     
     return user
