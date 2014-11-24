@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<br>
+
+        <div class="container" >
+			
+ 			<div class="row">
+                <div class="col-sm-1 col-md-12" id = "EarnPrizes">
+                	<br>
+                	<br>                	
+                	<center>
+                			<a class="btn btn-success"  href="{% url 'coplay:discussions_list' %}">רוצה לעזור</a>
+                	</center>
+                </div>
+            </div>   
+            <div class="row">
+                	<center>
+                	<br>
+                	<br>
+                	</center>
+            </div>         
+ 			<div class="row">
+                <div class="col-sm-3 col-md-12" id = "Shop">
+                </div>
+            </div>         
+ 			<div class="row">
+                <div class="col-sm-3 col-md-12" id = "PrizeBag">
+                	<br>
+                	<center>
+						<a class="btn btn-success"  href="{% url 'coplay:add_discussion' %}">רוצה עזרה</a>
+					</center>
+                	<br>
+                </div>
+            </div>   
+                	<br>
+                	<br>
+            		<center>
+            			<a class="btn btn-success" align ="center" href="{% url 'memecache:users_list'  %}"> מי משתתף ?</a>
+            		</center>
+		
+
+
+{% endblock %}
+

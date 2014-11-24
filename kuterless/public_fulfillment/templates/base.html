@@ -96,7 +96,11 @@
                         למשתמש קיים</a></li>
                 {% endif %}
             	<li>
-                        <a href="{% url 'home' %}">ראשי</a>
+            		{% if user.is_authenticated %}
+            		<a href="{% url 'coplay:user_coplay_report'  user.username %}">עמוד אישי</a>
+            		{% else %}
+            		<a href="{% url 'home' %}">ראשי</a>
+            		{% endif %}
                 </li>
 
 

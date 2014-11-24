@@ -18,16 +18,17 @@ from public_fulfillment.control import create_kuterless_user
 
 def about(request):
     text_block_0 = ''
-    return render(request, 'public_fulfillment/public_fulfillment_root.html', {
+#    return render(request, 'public_fulfillment/public_fulfillment_root.html', {
+    return render(request, 'public_fulfillment/root.html', {
         'text_block_0': text_block_0,
         'rtl': 'dir="rtl"'
     })
 
 def root(request):
-    if request.user.is_authenticated():
+#    if request.user.is_authenticated():
 #        if request.user.userprofile.a_player:
 #            return HttpResponseRedirect(reverse('memecache:root'))            
-        return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
+#        return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
     
     return about(request)
     
