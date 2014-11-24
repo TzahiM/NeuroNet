@@ -27,6 +27,9 @@
                     {% trans "Activity Of" %}
                     <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
                 {% endif %}
+                {% if discussion.latitude and discussion.longitude %}
+                	<a class="new btn btn-info" href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">מיקום</a> 
+                {% endif %}                
                 {% if is_a_follower %}                
                 	<a class="new btn btn-warning" href="{% url 'coplay:stop_follow' discussion.id %}">להפסיק לקבל עדכונים</a> 
                 {% else %}
@@ -61,8 +64,8 @@
         </div>
     {% else %}
         <div class="alert alert-error">
-        	{% trans "Discussion Locked" %}
-            לפתיחה  קח/י יוזמה והמשך/י ב<a class="new btn btn-info"
+        	הפעילות הוקפאה
+            להפשרה  קח/י יוזמה והמשך/י ב<a class="new btn btn-info"
                href="{% url 'coplay:create_task' discussion.id %}">{% trans "Create Task" %}</a>   
         </div>
     {% endif %}

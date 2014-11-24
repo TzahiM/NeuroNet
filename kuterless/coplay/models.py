@@ -16,6 +16,14 @@ MAX_TEXT = 2000
 MAX_INACTIVITY_SECONDS = 7 * 24 * 3600
 
 
+class Location(models.Model):
+    num = models.IntegerField()
+    street = models.CharField(max_length=100, default=None, blank=True, null=True)
+    city = models.CharField(max_length=100, default=None, blank=True, null=True)
+    state = models.CharField(max_length=2, default = u'ישראל', blank=True)
+    latitude    = models.FloatField(default=None, blank=True, null=True)
+    longitude   = models.FloatField(default=None, blank=True, null=True)
+
 class Discussion(models.Model):
     owner = models.ForeignKey(User)
     title = models.CharField(_("title"), max_length=200)
@@ -27,7 +35,10 @@ class Discussion(models.Model):
     description_updated_at = models.DateTimeField(default=None, blank=True, null=True)
     is_restricted    = models.BooleanField(default = False)
     is_viewing_require_login    = models.BooleanField(default = False)
-
+    location                    = models.ForeignKey(Location, null=True, blank=True)
+    latitude    = models.FloatField(default=None, blank=True, null=True)
+    longitude   = models.FloatField(default=None, blank=True, null=True)
+    
     def __unicode__(self):
         return self.id
     
@@ -821,6 +832,9 @@ class UserProfile(models.Model):
     can_limit_discussion_access    = models.BooleanField(default = False)
     can_limit_discussion_to_login_users_only    = models.BooleanField(default = False)
     a_player    = models.BooleanField(default = False)
+    location    = models.ForeignKey(Location, null=True, blank=True)
+    latitude    = models.FloatField(default=None, blank=True, null=True)
+    longitude   = models.FloatField(default=None, blank=True, null=True)
 #    recieve_personal_messages_from_users    = models.BooleanField(default = False)
 
     def __unicode__(self):

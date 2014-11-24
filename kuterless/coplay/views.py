@@ -210,6 +210,8 @@ class NewDiscussionForm(forms.Form):
     description = forms.CharField(label=_("description"),
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
+    latitude    = forms.FloatField(required=False)
+    longitude   = forms.FloatField(required=False)
 
 
 @login_required
@@ -233,6 +235,12 @@ def add_discussion(request):
                                         title=form.cleaned_data['title'],
                                         description=form.cleaned_data[
                                             'description'])
+            latitude=form.cleaned_data['latitude']
+            if latitude:
+                new_discussion.latitude = latitude;
+            longitude=form.cleaned_data['longitude']
+            if longitude:
+                new_discussion.longitude = longitude;
             new_discussion.clean()
             new_discussion.description_updated_at = timezone.now()
             new_discussion.save()
@@ -894,6 +902,8 @@ class UpdateDiscussionDescForm(forms.ModelForm):
         model = Discussion
         fields = (
             'description',
+            'latitude',  
+            'longitude', 
         )
 
 
