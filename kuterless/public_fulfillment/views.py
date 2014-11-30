@@ -49,7 +49,13 @@ def labs_root(request):
 """
 
     version_description = """
-3/10/2014:
+30/11.2014:
+תיקון בטופס פעילות חדשה
+24/11/2014:
+הוספת מיקום לפעילויות
+הוספת מיקום למשתמש
+הוספת שדה תיאור למשתמש
+הוספת ממשק לשם דיווח קריאה של המשתמש3/10/2014:
 הוספת ממשק לשם דיווח קריאה של המשתמש
 /labs/coplay/api/userupdate/read_notification/<user__update_is>/
 example :  /labs/coplay/api/userupdate/read_notification/1117/    

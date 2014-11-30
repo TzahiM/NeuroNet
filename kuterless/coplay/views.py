@@ -206,15 +206,16 @@ def discussion_details(request, pk):
 class NewDiscussionForm(forms.Form):
     title = forms.CharField(label=_("title"), max_length=200,
                             widget=forms.Textarea(
-                                attrs={'rows': '1', 'cols': '50'}))
+                                attrs={'rows': '1', 'cols': '100'}))
     description = forms.CharField(label=_("description"),
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
     latitude    = forms.FloatField(required=False)
     longitude   = forms.FloatField(required=False)
-    location_desc = forms.CharField(label=u'כתובת',
+    location_desc = forms.CharField(label=u'כתובת',required=False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
-                                  widget=forms.Textarea)
+                                  widget=forms.Textarea(
+                                attrs={'rows': '1', 'cols': '100'}))
 
 
 @login_required
