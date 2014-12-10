@@ -21,7 +21,10 @@ class DiscussionSerializer(serializers.ModelSerializer):
                   'updated_at',
                   'locked_at',
                   'is_restricted',
-                  'is_viewing_require_login'
+                  'is_viewing_require_login',
+                  'latitude',
+                  'longitude',
+                  'location_desc'
                   )
 
 class UserSerializer(serializers.ModelSerializer):
@@ -180,7 +183,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
                     'recieve_updates',
                     'can_limit_discussion_access',
                     'can_limit_discussion_to_login_users_only',
-                    'a_player'                    
+                    'a_player',
+                    'longitude',
+                    'latitude',
+                    'location_desc',
+                    'description'
                     )
 
 
@@ -234,6 +241,9 @@ class DiscussionWholeSerializer(serializers.ModelSerializer):
                   'locked_at',
                   'is_restricted',
                   'is_viewing_require_login',
+                  'latitude',
+                  'longitude',
+                  'location_desc',                  
                   'feedback_set',
                   'task_set',
                   'decision_set',
