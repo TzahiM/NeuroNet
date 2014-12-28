@@ -49,6 +49,8 @@ def labs_root(request):
 """
 
     version_description = """
+28/12/2014"
+ביטול הדרישה למילוי מיקום בעת ההרשמה
 10/12/2014:
 הוספת שדות מיקום ותיאור מיקום לממשק הנתונים של פעילות
 הוספת שדה תיאור לממשק הנתונים של פרופיל המשתמש
@@ -210,6 +212,7 @@ class AddUserForm(forms.Form):
                                   widget=forms.Textarea)
     
     location_desc = forms.CharField(label=u'כתובת',
+                                  required = False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
 
