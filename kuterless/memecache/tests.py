@@ -10,7 +10,6 @@ import time
 
 
 # Create your tests here.
-"""
 class MemeCacheTest(TestCase):
 
     def setUp(self):
@@ -311,7 +310,9 @@ class MemeCacheTest(TestCase):
         
         p1.end_of_sale_at = timezone.now() + timezone.timedelta( seconds=5 )
         p1.save()
-
+        
+        at2_cart = shop.get_cart( self.at2)
+        
         self.assertEquals(True, at2_cart.can_take_items( p1, 10) )
         
         items = ItemVoucher.objects.all()
@@ -332,4 +333,3 @@ class MemeCacheTest(TestCase):
         self.assertEquals(True, shop.can_item_voucher_be_marked_as_used( items[1]) )
 
      
-"""        

@@ -169,7 +169,7 @@ class CoPlayTest(TestCase):
     def test_action(self):    
         self.assertEquals(0, Task.objects.count())
         d = self.create_dicussion()
-        task1 = d.add_task(self.at1, 'shall start', timezone.now() +  datetime.timedelta(seconds =4))
+        task1 = d.add_task(self.at1, 'shall start', timezone.now() +  datetime.timedelta(seconds =5))
         task2 = d.add_task(self.at2, 'shall close', timezone.now() +  datetime.timedelta(seconds =2))
         task3= d.add_task(self.admin, 'shall missed', timezone.now() +  datetime.timedelta(seconds =2))
         task4 = d.add_task(self.at2, 'shall abort', timezone.now() +  datetime.timedelta(seconds =2))
@@ -191,7 +191,7 @@ class CoPlayTest(TestCase):
         time.sleep(2)
         self.assertEquals(self.admin, task2.closed_by)
         self.assertEquals(self.admin, task4.closed_by)
-        self.assertEquals(False, task1.close(self.at1))
+        self.assertEquals(False, task1.close(self.at1))#due to task owner cannot clos its own task
         self.assertEquals(task1.STARTED, task1.get_status())
         self.assertEquals(task1.CLOSED, task2.get_status())
         self.assertEquals(task1.MISSED, task3.get_status())
@@ -206,14 +206,11 @@ class CoPlayTest(TestCase):
         new_stat_desc = "dfasgg"
         task1.close(self.admin)
         time.sleep(2)
-        task1.update_status_description(new_stat_desc)
+        status_description = task1.update_status_description(new_stat_desc)
+        self.assertEquals( False, status_description)        
         self.assertNotEquals(task1.get_status_description(), new_stat_desc)
         d.print_content()
         
-
-        
-        
-
     def test_whole_discussion(self):    
         d = self.create_dicussion()
         d.add_feedback(self.at1, Feedback.ENCOURAGE, "like this")
@@ -461,7 +458,16 @@ class CoPlayTest(TestCase):
         d.record_a_view(self.at2) 
         d.save()     
         d.record_a_view(self.at2) 
-        d.save()     
+        d.save()
+        
+        at2_view = d.viewer_set.get( user = self.at2)
+        self.assertEquals(at2_view.views_counter, 3)         
+        
+             
+        d.record_a_view(self.at2) 
+        d.record_a_view(self.at2) 
+        d.record_a_view(self.at2) 
+        d.record_a_view(self.at2) 
         d.record_a_view(self.at2) 
         d.save()
         at1_view = d.viewer_set.get( user = self.at1)

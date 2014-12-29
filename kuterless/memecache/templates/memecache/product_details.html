@@ -27,7 +27,7 @@
 		<div class="col-sm-6 col-md-6" >
 			{% if product.description%}
 				<h3>תאור:</h3>
-			 	{{product.description}}
+			 	{{product.description|urlize|linebreaks}}
 			 {% endif %}			
 	    </div>
 		<div class="col-sm-6 col-md-6" >

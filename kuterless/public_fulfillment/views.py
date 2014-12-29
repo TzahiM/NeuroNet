@@ -49,7 +49,9 @@ def labs_root(request):
 """
 
     version_description = """
-28/12/2014"
+29/12/2014:
+שינויים קטנים בעיצוב
+28/12/2014:
 ביטול הדרישה למילוי מיקום בעת ההרשמה
 10/12/2014:
 הוספת שדות מיקום ותיאור מיקום לממשק הנתונים של פעילות
@@ -207,7 +209,7 @@ class AddUserForm(forms.Form):
 
     recieve_email_updates = forms.BooleanField(label=_(u"קבלת מיילים"), initial = True)
 
-    description = forms.CharField(label=_("description"),required = False,
+    description = forms.CharField(label=u'כל דבר שתרצה/י להוסיף',required = False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
     
@@ -236,7 +238,7 @@ class UpdateProfileUserForm(forms.Form):
 
     recieve_email_updates = forms.BooleanField(label=u'קבלת מיילים מהאתר', required = False, initial = True)
     
-    description = forms.CharField(label=u'מידע נוסף',required = False,
+    description = forms.CharField(label=u'כל דבר שתרצה/י להוסיף',required = False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
     
