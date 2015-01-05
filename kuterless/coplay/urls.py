@@ -1,5 +1,5 @@
 from coplay import views, api
-from coplay.api import create_feedback_view, AddFeedBackView
+from coplay.api import create_feedback_view, AddFeedBackView, create_task_view
 from django.conf.urls import patterns, url
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -124,6 +124,9 @@ urlpatterns = patterns('',
     url(r'^api/example_view/$', api.example_view, name='api_example_view'),
 
     url(r'^api/create_feedback/(?P<pk>[0-9]+)/$', create_feedback_view, name='api_create_feedback'),
+    
+    url(r'^api/create_task/(?P<pk>[0-9]+)/$', create_task_view, name='api_create_task'),
+    
     
 )
 

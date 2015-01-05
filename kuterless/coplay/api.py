@@ -9,14 +9,15 @@ from coplay.serializers import DiscussionSerializer, UserSerializer, \
     ViewerSerializer, AnonymousVisitorSerializer, AnonymousVisitorViewerSerializer, \
     GlimpseSerializer, FollowRelationSerializer, UserProfileSerializer, \
     UserUpdateSerializer, DiscussionWholeSerializer, DecisionWholeSerializer, \
-    AddFeedBackSerializer
-from coplay.views import discussion_email_updates
+    AddFeedBackSerializer, AddTaskSerializer
+from coplay.views import discussion_email_updates, discussion_task_email_updates
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.signing import loads
 from django.http.response import Http404
 from django.template.base import Template
 from django.template.context import Context
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers, parsers, renderers
@@ -30,7 +31,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
-
 
 
 class DiscussionList(APIView):
@@ -394,45 +394,21 @@ class AddFeedBackView(APIView):
 
     def post(self, request, pk, format = None,csrf_exempt = True):
         discussion = self.get_object(pk)
-#        if not discussion.can_user_access_discussion():
-#            return Response(status=HTTP_401_UNAUTHORIZED )
-    
-#        data = JSONParser().parse(StringIO(request.body))
-#        data = JSONParser().parse(request.body)
-#        created_feedback_serializer = AddFeedBackSerializer(data=data)
-#        created_feedback_serializer = AddFeedBackSerializer(data={"content": "sssss","feedback_type":1})
-        
-#         data1={"content": "sssss","feedback_type":1}
-#         print 'ok'
-#         print data1
-#         data1=request.body
-#         print 'data=request.body'
-#         print data1
-#         print 'request.POST'
-#         print request.POST
-#         print 'request.body'
-#         print request.body
-        
-#        created_feedback_serializer = AddFeedBackSerializer(data=request.body)
-#         stream = StringIO(request.body)
-#         data = JSONParser().parse(stream)
-#        print 'request'        
-#         print 'request.DATA'
-#         print request.DATA
-#         print request.META['HTTP_AUTHORIZATION']
         created_feedback_serializer = AddFeedBackSerializer(data=request.DATA)        
-#         print created_feedback_serializer.errors
-#         print created_feedback_serializer.is_valid()
-        
         
         if not created_feedback_serializer.is_valid():
-#             print 'created_feedback_serializer.errors'
-#            print created_feedback_serializer.errors
             return Response(created_feedback_serializer.errors)
-#         print created_feedback_serializer.object.feedback_type
-#         print created_feedback_serializer.object.content
-#         print request.user
-        if(request.user != discussion.owner and discussion.can_user_access_discussion(request.user) and discussion.is_active()):
+
+        if not discussion.is_active():
+            return Response({'response': "discussion is not active"})
+            
+        if request.user != discussion.owner:
+            return Response({'response': "discussion owner cannot post a feedback"})
+        
+        if Feedback.objects.filter( discussion = discussion, feedbabk_type = created_feedback_serializer.object.feedback_type, content = created_feedback_serializer.object.content).exists():
+            return Response({'response': "feedback already exists"})
+        
+        if discussion.can_user_access_discussion(request.user):
             feedback = discussion.add_feedback(request.user, created_feedback_serializer.object.feedback_type, created_feedback_serializer.object.content)         
             serialized_feedback = FeedbackSerializer(feedback)     
             discussion.save() #verify that the entire discussion is considered updated
@@ -452,12 +428,67 @@ class AddFeedBackView(APIView):
                                              trunkated_subject_and_detailes)            
             discussion.start_follow(request.user)            
             user_posted_a_feedback_in_another_other_user_s_discussion(request.user, feedback.get_absolute_url())
-#             print 'serialized_feedback.data'
-#             print serialized_feedback.data                        
             return Response(serialized_feedback.data)
         
         return Response(status=HTTP_400_BAD_REQUEST)
 
+
+class AddTaskView(APIView):
+    parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
+    renderer_classes = (renderers.JSONRenderer,)
+    
+    
+    def dispatch(self, *args, **kwargs):
+        return super(AddTaskView, self).dispatch(*args, **kwargs)
+        
+    def get_object(self, pk):
+            try:
+                return Discussion.objects.get(pk = pk)
+            except Discussion.DoesNotExist:
+                raise Http404
+            
+
+    def post(self, request, pk, format = None,csrf_exempt = True):
+        discussion = self.get_object(pk)
+        created_task_serializer = AddTaskSerializer(data=request.DATA)        
+        
+        if not created_task_serializer.is_valid():
+            return Response(created_task_serializer.errors)
+
+        if created_task_serializer.object.target_date <= timezone.now():
+            return Response({'response': "target date should be in the future"})
+        
+        tasks_list = Task.objects.all().filter(responsible=request.user,
+                                               goal_description=  created_task_serializer.object.goal_description,
+                                               parent=discussion)
+        if tasks_list.count() != 0:
+            return Response({'response': "task already exsist"})
+
+        if discussion.can_user_access_discussion(request.user):
+            task = discussion.add_task(request.user, 
+                                       created_task_serializer.object.goal_description,
+                                       created_task_serializer.object.target_date
+                                       )         
+            serialized_task = TaskSerializer(task)     
+            
+            discussion.save() #verify that the entire discussion is considered updated
+
+            discussion.start_follow(request.user)
+            
+            discussion_task_email_updates(task,
+                                          'נוספה משימה חדשה בפעילות שבהשתתפותך',
+                                          request.user)
+                        
+            return Response(serialized_task.data)
+        
+        return Response(status=HTTP_401_UNAUTHORIZED)
+
+
 @csrf_exempt
 def create_feedback_view(request,pk):
     return AddFeedBackView.as_view()(request,pk)
+
+@csrf_exempt
+def create_task_view(request,pk):
+    return AddTaskView.as_view()(request,pk)
+

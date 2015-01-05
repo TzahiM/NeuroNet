@@ -25,5 +25,6 @@ encoding//memecache/tests.py=utf-8
 encoding//memecache/views.py=utf-8
 encoding//public_fulfillment/api.py=utf-8
 encoding//public_fulfillment/control.py=utf-8
+encoding//public_fulfillment/serializers.py=utf-8
 encoding//public_fulfillment/tests.py=utf-8
 encoding//public_fulfillment/views.py=utf-8

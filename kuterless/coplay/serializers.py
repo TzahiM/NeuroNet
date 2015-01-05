@@ -268,6 +268,14 @@ class CreateFeedback(object):
     def __init__(self, feedback_type, content):
         self.feedback_type = feedback_type
         self.content = content
+
+
+class CreateTask(object):
+    
+    def __init__(self, goal_description, target_date):
+        self.goal_description = goal_description
+        self.target_date = target_date
+
  
 
 class AddFeedBackSerializer(serializers.Serializer):
@@ -287,4 +295,20 @@ class AddFeedBackSerializer(serializers.Serializer):
             return instance
          
         return CreateFeedback(**attrs)
+    
+class AddTaskSerializer(serializers.Serializer):
+    goal_description = serializers.CharField(max_length = MAX_TEXT)
+    target_date =  serializers.DateTimeField()
+
+    def restore_object(self, attrs, instance=None):
+        """
+        Given a dictionary of deserialized field values, either update
+        an existing model instance, or create a new model instance.
+        """
+        if instance is not None:
+            instance.goal_description = attrs.get('goal_description', instance.goal_description)
+            instance.target_date = attrs.get('target_date', instance.target_date)
+            return instance
+                
+        return CreateTask( **attrs)
     
