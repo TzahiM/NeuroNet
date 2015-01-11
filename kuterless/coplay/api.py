@@ -474,11 +474,20 @@ class AddTaskView(APIView):
             discussion.save() #verify that the entire discussion is considered updated
 
             discussion.start_follow(request.user)
+
+    
+            t = Template("""
+            {{task.responsible.get_full_name|default:task.responsible.username}} הבטיח/ה ש :\n
+            "{{task.goal_description}} "\n  עד {{task.target_date | date:"d/n/Y H:i"}}
+            """)
             
-            discussion_task_email_updates(task,
-                                          'נוספה משימה חדשה בפעילות שבהשתתפותך',
-                                          request.user)
-                        
+            trunkated_subject_and_detailes = t.render(Context({"task": task}))
+          
+            discussion_task_email_updates(discussion,
+                                             trunkated_subject_and_detailes,
+                                             self.request.user,
+                                             trunkated_subject_and_detailes)
+                                        
             return Response(serialized_task.data)
         
         return Response(status=HTTP_401_UNAUTHORIZED)
