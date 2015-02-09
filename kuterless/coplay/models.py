@@ -357,10 +357,10 @@ class Feedback(models.Model):
     ADVICE = 4
 
     FEEDBACK_TYPES = (
-        (ENCOURAGE, 'encourage'),
-        (COOPERATION, 'שיתוף פעולה'),
-        (INTUITION, 'אינטואיציה'),
-        (ADVICE, 'עצה'),
+        (ENCOURAGE, u'עידוד'),
+        (COOPERATION, u'שיתוף פעולה'),
+        (INTUITION, u'אינטואיציה'),
+        (ADVICE, u'עצה'),
     )
 
     discussion = models.ForeignKey(Discussion)
@@ -651,8 +651,9 @@ class Viewer(models.Model):
             glimpse.clean()
             glimpse.save()
             if self.user != self.discussion.owner:
-                control.user_glimpsed_another_user_s_discussion(self.user, self.discussion.get_absolute_url())
-            
+                control.user_glimpsed_another_user_s_discussion( user = self.user, 
+                                                                 discussion =  self.discussion, 
+                                                                 views_counter = self.views_counter)
             
         self.views_counter_updated_at = timezone.now()
         self.save()

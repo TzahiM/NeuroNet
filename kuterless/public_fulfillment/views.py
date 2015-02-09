@@ -49,6 +49,8 @@ def labs_root(request):
 """
 
     version_description = """
+9/2/2015:
+הוספת עדכונים של צפיות של משתמשים
 5/1/2015:
 הוספת ממשק להוספת הבטחה
 29/12/2014:
@@ -211,11 +213,11 @@ class AddUserForm(forms.Form):
 
     recieve_email_updates = forms.BooleanField(label=_(u"קבלת מיילים"), initial = True)
 
-    description = forms.CharField(label=u'כל דבר שתרצה/י להוסיף',required = False,
+    description = forms.CharField(label=u'כל דבר שתרצה/י להוסיף לרבות איך ליצור איתך קשר - לא חובה',required = False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
     
-    location_desc = forms.CharField(label=u'כתובת',
+    location_desc = forms.CharField(label=u'כתובת - לא חובה',
                                   required = False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)

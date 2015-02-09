@@ -11,9 +11,9 @@
   <p>
   	{% if inverse_following %}
 	  	את/ה כבר עוקב/ת אחרי  {{follower_user.get_full_name|default:follower_user.username}}
-	    <a href="http://{{ROOT_URL}}{% url 'coplay:stop_follow_user'  follower_user.username %}">לביטול העקיבה אחרי{{follower_user.get_full_name|default:follower_user.username}}  </a>  	 
+	    <a href="http://{{ROOT_URL}}{% url 'coplay:stop_follow_user'  follower_user.username %}">לביטול העקיבה אחרי {{follower_user.get_full_name|default:follower_user.username}}  </a>  	 
   	{% else %}
-	    <a href="http://{{ROOT_URL}}{% url 'coplay:start_follow_user'  follower_user.username %}">לעקיבה אחרי פתיחת הפעילויות של {{follower_user.get_full_name|default:follower_user.username}}  </a>
+	    <a href="http://{{ROOT_URL}}{% url 'coplay:start_follow_user'  follower_user.username %}">לעקיבה אחרי פתיחת הפעילויות של  {{follower_user.get_full_name|default:follower_user.username}}  </a>
   	{% endif %}
   	
 <br>  	

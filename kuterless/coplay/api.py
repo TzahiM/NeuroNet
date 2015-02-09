@@ -17,20 +17,17 @@ from django.core.signing import loads
 from django.http.response import Http404
 from django.template.base import Template
 from django.template.context import Context
-from django.utils import timezone
-from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import serializers, parsers, renderers
+from rest_framework import parsers, renderers
 from rest_framework.authentication import SessionAuthentication, \
-    BasicAuthentication, TokenAuthentication
-from rest_framework.compat import StringIO
+    TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, \
     permission_classes
-from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
+from django.utils import timezone
 
 
 class DiscussionList(APIView):
@@ -143,10 +140,14 @@ class VoteDetails(APIView):
 
 class TaskList(APIView):
     def get(self, request,format = None):
+        not_missed_tasks = []
         tasks = Task.objects.all()
         for task in tasks:
-            task.refresh_status()
-        serialized_tasks =TaskSerializer(tasks, many = True)
+            status = task.get_status()
+            if status != task.MISSED:
+                not_missed_tasks.append(task)
+        
+        serialized_tasks =TaskSerializer(not_missed_tasks, many = True)
         return Response(serialized_tasks.data)
 
 
@@ -154,7 +155,10 @@ class TaskList(APIView):
 class TaskDetails(APIView):
     def get_object(self, pk):
             try:
-                return Task.objects.get(pk = pk)
+                task = Task.objects.get(pk = pk)
+                if task.get_status() != task.MISSED:
+                    return task
+                raise Http404
             except Task.DoesNotExist:
                 raise Http404
             
@@ -423,9 +427,10 @@ class AddFeedBackView(APIView):
                                                                 
                                                                 
             discussion_email_updates(discussion,
-                                             trunkated_subject_and_detailes,
-                                             self.request.user,
-                                             trunkated_subject_and_detailes)            
+                                     trunkated_subject_and_detailes,
+                                     self.request.user,
+                                     trunkated_subject_and_detailes)           
+             
             discussion.start_follow(request.user)            
             user_posted_a_feedback_in_another_other_user_s_discussion(request.user, feedback.get_absolute_url())
             return Response(serialized_feedback.data)

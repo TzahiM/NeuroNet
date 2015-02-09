@@ -17,6 +17,7 @@ encoding//coplay/migrations/0018_auto__add_field_userprofile_can_limit_discussio
 encoding//coplay/migrations/0019_auto__add_anonymousviewer__add_field_userprofile_a_player__add_field_g.py=utf-8
 encoding//coplay/models.py=utf-8
 encoding//coplay/serializers.py=utf-8
+encoding//coplay/services.py=utf-8
 encoding//coplay/tests.py=utf-8
 encoding//coplay/views.py=utf-8
 encoding//memecache/control.py=utf-8

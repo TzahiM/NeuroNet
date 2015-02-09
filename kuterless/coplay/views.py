@@ -2,9 +2,12 @@
 from coplay.control import post_update_to_user, user_started_a_new_discussion, \
     user_posted_a_feedback_in_another_other_user_s_discussion, \
     user_post_a_decision_for_vote_regarding_his_own_discussion, \
-    string_to_email_subject, send_html_message, get_user_fullname_or_username
+    string_to_email_subject, send_html_message, get_user_fullname_or_username, \
+    discussion_task_email_updates, discussion_email_updates, \
+    user_follow_start_email_updates
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
     Viewer, FollowRelation, UserUpdate
+from coplay.services import update_task_status_description, update_task_state
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -21,7 +24,6 @@ from django.utils.http import is_safe_url
 from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
-from kuterless import settings
 import floppyforms as forms
 import kuterless.settings
 
@@ -266,10 +268,10 @@ def add_discussion(request):
                                                                 
           
             discussion_email_updates(new_discussion,
-                                             trunkated_subject_and_detailes,
-                                             new_discussion.owner,
-                                             trunkated_subject_and_detailes,
-                                             mailing_list = get_followers_list(new_discussion.owner))
+                                     trunkated_subject_and_detailes,
+                                     new_discussion.owner,
+                                     trunkated_subject_and_detailes,
+                                     mailing_list = get_followers_list(new_discussion.owner))
         
             user_started_a_new_discussion( new_discussion.owner)
 
@@ -282,107 +284,6 @@ def add_discussion(request):
         'rtl': 'dir="rtl"'
     })
 
-def user_follow_start_email_updates(follower_user, following_user, inverse_following):
-
-
-
-    t = Template("""
-        {{follower_user.get_full_name|default:follower_user.username}} התחיל/ה לעקוב אחרי פתיחת הפעילויות שלך
-        """)
-        
-    subject = t.render(Context({"follower_user": follower_user}))
-
-    
-    html_message = render_to_string("coplay/user_follow_email_update.html",
-                                    {'ROOT_URL': kuterless.settings.SITE_URL,
-                                     'follower_user': follower_user,
-                                     'html_title': string_to_email_subject(subject),
-                                     'details': subject,
-                                     'inverse_following': inverse_following})
-    
-
-#    with open( "output.html" , "w") as debug_file:
-#        debug_file.write(html_message)
-    
-    if following_user.email != None and following_user.userprofile.recieve_updates:
-        send_html_message(subject, html_message,
-                              'kuterless-no-reply@kuterless.org.il',
-                              [following_user.email])
-
-    post_update_to_user(following_user.id, 
-                 header = string_to_email_subject(subject),
-                 content = subject, 
-                 sender_user_id = follower_user.id,  
-                 details_url = reverse('coplay:user_coplay_report', kwargs={'username': follower_user}))
-
-
-def discussion_email_updates(discussion, subject, logged_in_user, details = None, url_id = '', mailing_list = None):
-    if mailing_list == None:
-        mailing_list = discussion.get_followers_list()
-    allowed_users_list = []
-    for user in mailing_list:
-        if discussion.can_user_access_discussion( user):
-            allowed_users_list.append(user)
-         
-    html_message = render_to_string("coplay/email_discussion_update.html",
-                                    {'ROOT_URL': kuterless.settings.SITE_URL,
-                                     'discussion': discussion,
-                                     'html_title': string_to_email_subject(subject),
-#                                     'subject_debug':string_to_email_subject(subject),
-                                     'details': details,
-                                     'id': url_id})
-    
-
-#    with open( "output.html" , "w") as debug_file:
-#        debug_file.write(html_message)
-    
-    for attensdent in allowed_users_list:
-        if attensdent != logged_in_user:
-            if attensdent.email and attensdent.userprofile.recieve_updates:
-                send_html_message(subject, html_message,
-                              'kuterless-no-reply@kuterless.org.il',
-                              [attensdent.email])
-            post_update_to_user(attensdent.id, 
-                     header = string_to_email_subject(subject),
-                     content = details, 
-                     sender_user_id = logged_in_user.id,  
-                     discussion_id = discussion.id,
-                     details_url = reverse('coplay:discussion_details', kwargs={'pk': str(discussion.id)}) + url_id )
-
-
-def discussion_task_email_updates(task, subject, logged_in_user, details = None):
-    attending_list = task.parent.get_followers_list()
-    
-    allowed_users_list = []
-    
-    
-    for user in attending_list:
-        if task.parent.can_user_access_discussion( user):
-            allowed_users_list.append(user)
-
-    html_message = render_to_string("coplay/email_task_update.html",
-                                    {'ROOT_URL': kuterless.settings.SITE_URL,
-                                     'task': task,
-                                     'html_title': string_to_email_subject(subject),
-#                                     'subject_debug':string_to_email_subject(subject),
-                                     'details': details})
-    
-#    with open( "output.html" , "w") as debug_file:
-#        debug_file.write(html_message)
-
-    for attensdent in allowed_users_list:
-        if attensdent != logged_in_user:
-            if attensdent.email and attensdent.userprofile.recieve_updates:
-                send_html_message(subject, html_message,
-                              'kuterless-no-reply@kuterless.org.il',
-                              [attensdent.email])
-
-            post_update_to_user(attensdent.id, 
-                     header = string_to_email_subject(subject),
-                     content = details, 
-                     sender_user_id = logged_in_user.id,  
-                     discussion_id = task.parent.id,
-                     details_url = reverse('coplay:task_details', kwargs={'pk': str(task.id)}))
 
 
 @login_required
@@ -658,50 +559,19 @@ def update_task_description(request, pk):
         form = UpdateTaskForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            try:
-                task = Task.objects.get(id=int(pk))
-            except Task.DoesNotExist:
-                return HttpResponse('Task not found')
-            user = request.user
-            if user == task.responsible:
-                task.update_status_description(
-                    form.cleaned_data['status_description'])
-                task.parent.save()#verify that the entire disscusion is considered updated
-                t = Template("""
-                {{task.responsible.get_full_name|default:task.responsible.username}} הודיע/ה ש :\n
-                "{{task.get_status_description}} "\n
-                """)
+            success, updated_task, error_string =   update_task_status_description( task_id = int(pk), 
+                                                    description = form.cleaned_data['status_description'], 
+                                                    user = request.user)
+            
+            if success:
+                return HttpResponseRedirect(
+                    updated_task.parent.get_absolute_url()) # Redirect after POST
                 
-                trunkated_subject_and_detailes = t.render(Context({"task": task}))
-                
-                discussion_task_email_updates(task,
-                                              trunkated_subject_and_detailes,
-                                              request.user,
-                                              trunkated_subject_and_detailes)
-                
-                
-
-            return HttpResponseRedirect(
-                task.parent.get_absolute_url()) # Redirect after POST
+            return render(request, 'coplay/message.html',
+                                          {'message': error_string,
+                                           'rtl': 'dir="rtl"'})            
 
     return HttpResponseRedirect('coplay_root') # Redirect after POST
-
-def task_state_change_update(task, state_change_description):
-    t = Template("""
-                {{task.responsible.get_full_name|default:task.responsible.username}} {{state_change_description}} :\n
-                 "{{task.goal_description}} "\nאושר על ידי {{task.closed_by.get_full_name|default:task.closed_by.username}}
-                 """)
-                
-    trunkated_subject_and_detailes = t.render(Context({"task": task, 'state_change_description': state_change_description}))
-
-
-                
-    discussion_task_email_updates(task,
-                                    trunkated_subject_and_detailes,
-                                    task.closed_by,
-                                    trunkated_subject_and_detailes)
-
-
 @login_required
 def close_task(request, pk):
     try:
@@ -716,9 +586,16 @@ def close_task(request, pk):
     
     user = request.user
     if user != task.responsible:
-        if task.close(user):
-            task.parent.save() #verify that the entire discussion is considered updated            
-            task_state_change_update( task,  u" השלימ/ה את ")
+        success, updated_task, error_string = update_task_state( task_id = int(pk), 
+                                                                 new_state = task.CLOSED, 
+                                                                 user = user)
+        
+        if not success:
+            return render(request, 'coplay/message.html',
+              {'message': error_string,
+               'rtl': 'dir="rtl"',
+               'next_url' : task.parent.get_absolute_url(),
+               'next_text'  : u"חזרה לפעילות"})
 
 
     return HttpResponseRedirect(task.parent.get_absolute_url()) # Redirect after POST
@@ -739,10 +616,17 @@ def abort_task(request, pk):
     
     user = request.user
     if user != task.responsible:
-        if task.abort(user):
-            task.parent.save() #verify that the entire discussion is considered updated            
-            task_state_change_update( task,  u" ביטל/ה את ")
-
+        success, updated_task, error_string = update_task_state( task_id = int(pk), 
+                                                                 new_state = task.ABORTED, 
+                                                                 user = user)
+        
+        if not success:
+            return render(request, 'coplay/message.html',
+              {'message': error_string,
+               'rtl': 'dir="rtl"',
+               'next_url' : task.parent.get_absolute_url(),
+               'next_text'  : u"חזרה לפעילות"})
+            
     return HttpResponseRedirect(task.parent.get_absolute_url()) # Redirect after POST
 
 
@@ -760,10 +644,16 @@ def re_open_task(request, pk):
     
     user = request.user
     if user != task.responsible:
-        if task.re_open(user):
-            task.parent.save() #verify that the entire discussion is considered updated            
-            task_state_change_update( task,  u" עדיין לא השלים/ה את ")
-
+        success, updated_task, error_string = update_task_state( task_id = int(pk), 
+                                                                 new_state = task.STARTED, 
+                                                                 user = user)
+        
+        if not success:
+            return render(request, 'coplay/message.html',
+              {'message': error_string,
+               'rtl': 'dir="rtl"',
+               'next_url' : task.parent.get_absolute_url(),
+               'next_text'  : u"חזרה לפעילות"})
 
     return HttpResponseRedirect(task.parent.get_absolute_url()) # Redirect after POST
 

@@ -18,13 +18,13 @@
         <td>{{ form.password }}</td>
     </tr>
     </table>
-    
+    <br>
     <input type="submit" value="להתחבר" />
-    
+    <br>
     <input type="hidden" name="next" value="{{ next }}" />
     </form>
     <br>
-    <a href="{% url 'public_fulfillment:sign_up' %}?next={{ next }}">הרשמה
+    <a href="{% url 'public_fulfillment:sign_up' %}?next={{ next }}">להרשמה
                 ראשונה</a>
 
 {% endblock %}
