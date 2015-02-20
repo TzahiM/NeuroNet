@@ -213,7 +213,7 @@ class AddUserForm(forms.Form):
 
     recieve_email_updates = forms.BooleanField(label=_(u"קבלת מיילים"), initial = True)
 
-    description = forms.CharField(label=u'כל דבר שתרצה/י להוסיף לרבות איך ליצור איתך קשר - לא חובה',required = False,
+    description = forms.CharField(label=u'לא חובה:כל דבר שתרצה/י להוסיף לרבות איך ליצור איתך קשר',required = False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
     
