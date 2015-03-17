@@ -15,7 +15,7 @@ def init_user_token(user):
     Token.objects.get_or_create(user=user)
 
 
-def create_kuterless_user(  user_name, password, first_name = None, last_name = None, email = None, recieve_updates = True, description= None, location_desc = None):
+def create_kuterless_user(  user_name, password, first_name = None, last_name = None, email = None, recieve_updates = True, description= None, location_desc = None, followed_discussions_tags = None):
     
                 
     if User.objects.filter( username = user_name ).exists():

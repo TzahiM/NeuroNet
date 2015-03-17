@@ -6,6 +6,11 @@
 <br>
 <div class="row">
 <div class="col-xs-12 col-md-4">
+	<br>
+	<br>
+	<br>
+	<br>
+	<h1>כל הפעילות באתר היא פומבית לחלוטין ואין ערובה לאבטחה או גיבויים. כל מידע שתמסור הוא על אחריותך בלבד</h1>
 	<form action= "{% url 'public_fulfillment:sign_up' %}" method="post">{% csrf_token %}
 	{% for field in form %}
         <div class="fieldWrapper">

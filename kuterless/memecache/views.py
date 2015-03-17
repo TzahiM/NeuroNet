@@ -22,6 +22,7 @@ from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
 from memecache.control import get_shop, get_product
 from memecache.models import Product, Shop, Account, Cart, ItemVoucher
+from taggit.models import Tag
 import floppyforms as forms
 import kuterless
 
@@ -64,7 +65,8 @@ class UsersTableRow():
 
     
 
-def users_list(request):
+def users_list(request, pk = None):
+    
     if request.user.is_authenticated():
         segment_name = request.user.userprofile.get_segment_title()
         segment = request.user.userprofile.segment
@@ -78,12 +80,29 @@ def users_list(request):
                       {  'message'      :  'עוד לא הוגדרה חנות',
                        'rtl': 'dir="rtl"'})
         
+    page_name = u'רשימת המשתתפים ב' + segment_name
+    
+
+    if pk is not None:
+        try:
+            tag_to_filter_by = Tag.objects.get(id = int(pk))
+            page_name += u' בקטגורית ' + tag_to_filter_by.name
+        except Tag.DoesNotExist:
+            tag_to_filter_by = None
+    
+        
     currency_name = shop.currency_name
     account_list = Account.objects.order_by("-total_earn")
     users_rows_list = []
     place = 0
+    
     for account in account_list:
-        if account.user.userprofile.segment == segment:
+        
+        add_user = True
+        if account.user.userprofile.segment != segment:
+            add_user = False
+                            
+        if add_user:
             row = UsersTableRow()
             place += 1
             row.place = place
@@ -94,7 +113,9 @@ def users_list(request):
     return render(request, 'memecache/users_list.html',
                   {'currency_name': currency_name,
                    'segment_name':  segment_name,
-                   'users_rows_list': users_rows_list})
+                   'users_rows_list': users_rows_list,
+                   'page_name': page_name})
+
 
 def instructions(request):
     if request.user.is_authenticated():

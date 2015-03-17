@@ -24,6 +24,13 @@
 	            	    {% if description%}
 	            	    <p>{{ description|urlize|linebreaks }}</p>
 	            	    {% endif %}
+	            	    {% if followed_discussions_tags%}
+	            	    מתענין/ת ב
+						{% for tag in followed_discussions_tags %}
+                			<a class="btn btn-primary " href="{% url 'coplay:discussion_tag_list'  tag.id %}">{{ tag.name }}</a>
+		        		{% endfor %}
+		        		<br>
+		        		{% endif %}
 	                {% if location_desc  %}
 	                	<p><a href="https://www.google.co.il/maps/place/{{location_desc}}" target="_blank">{{location_desc}}</a></p> 
 	                {% endif %}      

@@ -4,7 +4,7 @@ from coplay.control import post_update_to_user, user_started_a_new_discussion, \
     user_post_a_decision_for_vote_regarding_his_own_discussion, \
     string_to_email_subject, send_html_message, get_user_fullname_or_username, \
     discussion_task_email_updates, discussion_email_updates, \
-    user_follow_start_email_updates
+    user_follow_start_email_updates, get_discussions_lists
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
     Viewer, FollowRelation, UserUpdate
 from coplay.services import update_task_status_description, update_task_state
@@ -18,12 +18,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.base import Template
 from django.template.context import Context
 from django.template.loader import render_to_string
-from django.utils import timezone
+from django.utils import six, timezone
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
 from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
+from taggit.forms import TagField, TagWidget
+from taggit.models import Tag
+from taggit.utils import edit_string_for_tags
 import floppyforms as forms
 import kuterless.settings
 
@@ -35,28 +38,19 @@ def can_user_acess_discussion(discussion, user):
     
     return discussion.can_user_access_discussion(user)
         
+
+class TagWidgetBig(forms.Textarea):
+    def render(self, name, value, attrs=None):
+        if value is not None and not isinstance(value, six.string_types):
+            value = edit_string_for_tags([
+                o.tag for o in value.select_related("tag")])
+        return super(TagWidgetBig, self).render(name, value, attrs)
+        
 # Create your views here.
 def root(request):
+    if( request.user.is_authenticated()):
+        return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))        
     return render(request, 'coplay/co_play_root.html', {'rtl': 'dir="rtl"'})
-#hi assaf
-def get_discussions_lists():
-    sorted_discussions_by_inverse_locket_at_list = Discussion.objects.all().order_by(
-        "-locked_at")
-    sorted_discussions_by_locket_at_list = Discussion.objects.all().order_by(
-        "locked_at")
-
-    active_discussions_by_urgancy_list = []
-    locked_discussions_by_relevancy_list = []
-
-    for discussion in sorted_discussions_by_inverse_locket_at_list:
-        if not discussion.is_active():
-            locked_discussions_by_relevancy_list.append(discussion)
-
-    for discussion in sorted_discussions_by_locket_at_list:
-        if discussion.is_active():
-            active_discussions_by_urgancy_list.append(discussion)
-
-    return active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list
 
 class IndexView(generic.ListView):
     model = Discussion
@@ -75,7 +69,7 @@ class IndexView(generic.ListView):
         
         return (allowed_all_discussions_list)
 
-
+    
 class AddFeedbackForm(forms.Form):
     content = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS,
                               widget=forms.Textarea(attrs={'rows': '3'}))
@@ -84,7 +78,10 @@ class AddFeedbackForm(forms.Form):
 
 class UpdateDiscussionForm(forms.Form):
     description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS,
-                                  widget=forms.Textarea(attrs={'rows': '3'}))
+                                  label = u'תאור הפעילות' , help_text = u'תאור היעד ואיזו עזרה מבוקשת', widget=forms.Textarea(attrs={'rows': '3',
+                                     'cols' : '40'}))
+    m_tags = TagField(required=False, label = 'תגיות' , help_text = u'רשימה של תגים מופרדת עם פסיקים.', widget=forms.Textarea(attrs={'rows': '3',
+                                     'cols' : '40'}))
 
 
 class AddDecisionForm(forms.Form):
@@ -109,7 +106,6 @@ class UpdateTaskForm(forms.Form):
     status_description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS,
                                          widget=forms.Textarea(
                                              attrs={'rows': '3'}))
-
 
 def discussion_details(request, pk):
     try:
@@ -211,17 +207,20 @@ class NewDiscussionForm(forms.Form):
                                 attrs={'rows': '1', 'cols': '100'}))
     description = forms.CharField(label=_("description"),
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
-                                  widget=forms.Textarea)
-    latitude    = forms.FloatField(required=False)
-    longitude   = forms.FloatField(required=False)
+                                  widget=forms.Textarea(
+                                attrs={'rows': '6', 'cols': '100'}))
+#     latitude    = forms.FloatField(required=False)
+#     longitude   = forms.FloatField(required=False)
     location_desc = forms.CharField(label=u'כתובת',required=False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea(
                                 attrs={'rows': '1', 'cols': '100'}))
+    
+    tags = forms.CharField( required=False, label=u'תגיות מופרדות בפסיקים', widget = TagWidgetBig(attrs={'rows': 3 ,'cols' : 40} )  )
 
 
 @login_required
-def add_discussion(request):
+def add_discussion(request, pk = None):
     if request.method == 'POST': # If the form has been submitted...
         form = NewDiscussionForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
@@ -240,18 +239,20 @@ def add_discussion(request):
             new_discussion = Discussion(owner=user,
                                         title=form.cleaned_data['title'],
                                         description=form.cleaned_data[
-                                            'description'])
-            latitude=form.cleaned_data['latitude']
-            if latitude:
-                new_discussion.latitude = latitude;
-            longitude=form.cleaned_data['longitude']
-            if longitude:
-                new_discussion.longitude = longitude
+                                            'description']
+                                        )
                 
             location_desc=form.cleaned_data['location_desc']
             if location_desc:
-                new_discussion.location_desc = location_desc;
+                new_discussion.location_desc = location_desc
                 
+            new_discussion.save()
+            tags = form.cleaned_data['tags']
+            if tags:
+                tags_list =  tags.split(',')
+                for tag in tags_list:
+                    new_discussion.tags.add( tag)
+                                
             new_discussion.clean()
             new_discussion.description_updated_at = timezone.now()
             new_discussion.save()
@@ -277,7 +278,18 @@ def add_discussion(request):
 
             return redirect(new_discussion)
     else:
-        form = NewDiscussionForm() # An unbound form
+        if pk:
+            try:
+                tag = Tag.objects.get(id=int(pk))
+            except Tag.DoesNotExist:
+                return render(request, 'coplay/message.html',
+                              {'message': 'הנושא איננו קיים',
+                               'rtl': 'dir="rtl"'})
+            form = NewDiscussionForm(initial={'tags': tag.name}) # An unbound form
+            request.user.userprofile.followed_discussions_tags.add( tag.name)
+            request.user.userprofile.save()
+        else:
+            form = NewDiscussionForm() # An unbound form
 
     return render(request, 'coplay/new_discussion.html', {
         'form': form,
@@ -313,6 +325,8 @@ def update_discussion(request, pk):
             return render(request, 'coplay/message.html',
                           {'message': 'רק בעל הדיון מורשה לעדכן אותו',
                            'rtl': 'dir="rtl"'})
+    else:
+        form = UpdateDiscussionForm(initial={'m_tags': form.instance.tag}) # An unbound form
 
     return render(request, 'coplay/message.html',
                   {'message': '  לא הוזן תיאור חדש או שהוזן תיאור ארוך מדי ',
@@ -572,6 +586,7 @@ def update_task_description(request, pk):
                                            'rtl': 'dir="rtl"'})            
 
     return HttpResponseRedirect('coplay_root') # Redirect after POST
+
 @login_required
 def close_task(request, pk):
     try:
@@ -795,18 +810,29 @@ def user_coplay_report(request, username=None):
                       'is_following'   :is_following,
                       'page_name': page_name,
                       'description': user.userprofile.description,
-                      'location_desc': user.userprofile.location_desc})
-
+                      'location_desc': user.userprofile.location_desc,
+                      'followed_discussions_tags': user.userprofile.followed_discussions_tags.all() } )
 
 class UpdateDiscussionDescForm(forms.ModelForm):
+    
+#     m_tags = TagField( label = 'תגיות' , help_text = u'רשימה של תגים מופרדת עם פסיקים.', widget=forms.Textarea(attrs={'rows': '3',
+#                                      'cols' : '40'}))
     class Meta:
         model = Discussion
         fields = (
             'description',
-            'latitude',  
-            'longitude',
-            'location_desc', 
+            'location_desc',
+            'tags',
         )
+        
+        widgets = {
+            'description': forms.Textarea( attrs={'rows': 5 ,'cols' : 40}),
+            'location_desc': forms.Textarea(attrs={'rows': 1 ,'cols' : 40}),
+            'tags': TagWidgetBig(attrs={'rows': 3 ,'cols' : 40}),
+        }
+        
+        
+        
 
 
 class DiscussionOwnerView(object):
@@ -829,6 +855,9 @@ class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
 
         resp = super(UpdateDiscussionDescView, self).form_valid(form)  
         form.instance.description_updated_at = timezone.now()
+#         m_tags = form.cleaned_data['m_tags']  
+#         for m_tag in m_tags:
+#             form.instance.tags.add(m_tag)      
         form.instance.save()
 
         
@@ -1145,6 +1174,7 @@ def user_update_details(request, pk):
     return render_result
 
 
+@login_required
 def user_update_mark_recipient_read(request, pk):
     try:
         user_update = UserUpdate.objects.get(id=int(pk))
@@ -1176,3 +1206,81 @@ def user_update_mark_recipient_read(request, pk):
     return HttpResponseRedirect(redirect_to) # Redirect after POST
     
     
+
+def discussion_tag_list(request, pk = None):
+    followers = []
+    
+    if pk:
+        try:
+            tag = Tag.objects.get(id=int(pk))
+        except Tag.DoesNotExist:
+            return render(request, 'coplay/message.html',
+                          {'message': 'הנושא איננו קיים',
+                           'rtl': 'dir="rtl"'})
+        page_name = u'רשימת פעילויות בנושא: ' + tag.name
+        
+        for user in User.objects.all():
+            if tag.name in user.userprofile.followed_discussions_tags.names():
+                followers.append(user)
+    else:
+        page_name = u'מי צריך עזרה?'
+        tag = None
+    
+
+    tags_set = set ()
+    active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
+    
+    all_discussions_list  = active_discussions_by_urgancy_list + locked_discussions_by_relevancy_list
+    allowed_all_discussions_list = []
+    for discussion in all_discussions_list:
+        if can_user_acess_discussion(discussion, request.user):
+            for tag_iter in discussion.tags.all():
+                tags_set.add(tag_iter)
+            if tag:
+                if tag in discussion.tags.all():
+                    allowed_all_discussions_list.append(discussion)
+            else:
+                allowed_all_discussions_list.append(discussion)
+               
+    is_following = False
+    if request.user.is_authenticated() and tag and tag in request.user.userprofile.followed_discussions_tags.all():
+        is_following = True           
+        
+    
+    return render(request, 'coplay/discussion_list.html',
+                  {'latest_discussion_list': allowed_all_discussions_list,
+                   'tag': tag,
+                   'page_name': page_name,
+                   'tags_list': tags_set,
+                   'tag': tag,
+                   'is_following': is_following,
+                   'followers': followers})
+
+@login_required
+def start_follow_tag( request, pk):
+    try:
+        tag = Tag.objects.get(id=int(pk))
+    except Tag.DoesNotExist:
+        return render(request, 'coplay/message.html',
+                      {'message': 'הנושא איננו קיים',
+                       'rtl': 'dir="rtl"'})
+        
+    request.user.userprofile.followed_discussions_tags.add( tag.name)
+    request.user.userprofile.save()
+    
+    return HttpResponseRedirect(reverse('coplay:discussion_tag_list', kwargs={'pk': tag.id}))
+
+    
+@login_required
+def stop_follow_tag( request, pk):
+    try:
+        tag = Tag.objects.get(id=int(pk))
+    except Tag.DoesNotExist:
+        return render(request, 'coplay/message.html',
+                      {'message': 'הנושא איננו קיים',
+                       'rtl': 'dir="rtl"'})
+        
+    request.user.userprofile.followed_discussions_tags.remove( tag.name)
+    request.user.userprofile.save()
+
+    return HttpResponseRedirect(reverse('coplay:discussion_tag_list', kwargs={'pk': tag.id}))

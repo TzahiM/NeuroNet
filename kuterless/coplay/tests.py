@@ -188,7 +188,7 @@ class CoPlayTest(TestCase):
         task7.close(self.admin)
         task7.re_open(self.admin)
         self.assertEquals(task7.STARTED, task7.get_status())
-        time.sleep(2)
+        time.sleep(4)
         self.assertEquals(self.admin, task2.closed_by)
         self.assertEquals(self.admin, task4.closed_by)
         self.assertEquals(False, task1.close(self.at1))#due to task owner cannot clos its own task

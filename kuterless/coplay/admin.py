@@ -1,3 +1,4 @@
+from classytags.core import Tag
 from coplay.models import Feedback, Task, Decision, Vote, Discussion, Viewer, \
     FollowRelation, Segment, UserProfile, UserUpdate, AnonymousVisitorViewer
 from django.contrib import admin
@@ -42,6 +43,9 @@ class UserProfileAdmin(admin.ModelAdmin):
 class UpdateAdmin(admin.ModelAdmin):
     list_display = ('recipient', 'header')
         
+    
+
+
 
 admin.site.register(Feedback, FeedbackAdmin)
 admin.site.register(Task, TaskAdmin)

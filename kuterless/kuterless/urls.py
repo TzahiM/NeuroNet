@@ -24,7 +24,6 @@ urlpatterns = patterns('',
     url(r'^labs/coplay/', include('coplay.urls', namespace="coplay")),
     
     url(r'^labs/memecache/', include('memecache.urls', namespace="memecache")),
-
     
     url(r'^login/$',
         'django.contrib.auth.views.login',
@@ -34,6 +33,8 @@ urlpatterns = patterns('',
         'django.contrib.auth.views.logout',
         name="logout"),
                        
+    url(r'^password_reset/', include('password_reset.urls')),
+                            
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
        
     url(r'^api-token-auth/', obtain_auth_token),

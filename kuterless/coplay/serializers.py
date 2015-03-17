@@ -24,7 +24,7 @@ class DiscussionSerializer(serializers.ModelSerializer):
                   'is_viewing_require_login',
                   'latitude',
                   'longitude',
-                  'location_desc'
+                  'location_desc',
                   )
 
 class UserSerializer(serializers.ModelSerializer):

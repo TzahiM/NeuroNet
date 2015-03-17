@@ -8,6 +8,8 @@ from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+from taggit.managers import TaggableManager
+from taggit.models import TaggedItemBase
 import control
 
 
@@ -39,6 +41,7 @@ class Discussion(models.Model):
     latitude    = models.FloatField(default=None, blank=True, null=True)
     longitude   = models.FloatField(default=None, blank=True, null=True)
     location_desc = models.CharField( max_length=200,default=None, blank=True, null=True)
+    tags = TaggableManager(blank=True)
     
     def __unicode__(self):
         return self.id
@@ -823,6 +826,14 @@ class Segment(models.Model):
         for user_profile in self.userprofile_set.all():
             print user_profile.print_content()
          
+
+class TaggedDiscussions(TaggedItemBase):
+    content_object = models.ForeignKey('Discussion')
+
+
+class TaggedUsers(TaggedItemBase):
+    content_object = models.ForeignKey('UserProfile')
+
        
 class UserProfile(models.Model):
     user = models.OneToOneField(User, default = None, null=True, blank=True )
@@ -841,7 +852,13 @@ class UserProfile(models.Model):
     description = models.TextField(_("Description"), blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
     location_desc = models.CharField( max_length=200,default=None, blank=True, null=True)
-
+    
+#     tags                        = TaggableManager()
+    
+#     followed_users_tags = TaggableManager(through=TaggedUsers, related_name = "followed_users_tags")
+        
+    followed_discussions_tags = TaggableManager( blank=True)
+    
     def __unicode__(self):
         return "{} ".format(self.user.username)
     

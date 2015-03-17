@@ -7,9 +7,18 @@ from rest_framework.urlpatterns import format_suffix_patterns
 urlpatterns = patterns('',
     url(r'root/$', views.root, name='coplay_root'),
 #/list
-    url(r'list/$', views.IndexView.as_view(), name='discussions_list'),
+#     url(r'list/$', views.IndexView.as_view(), name='discussions_list'),
+    url(r'list/$', views.discussion_tag_list, name='discussions_list'),
+#/list
+    url(r'^discussion_tag_list/(?P<pk>[0-9]+)/$', views.discussion_tag_list, name='discussion_tag_list'),
+
+#     url(r'list/$', views.IndexView.as_view(), name='discussions_list'),
+
 #/add
     url(r'add/$', views.add_discussion, name='add_discussion'),
+
+    url(r'add_with_tag/(?P<pk>[0-9]+)/$', views.add_discussion, name='add_with_tag'),
+
 #pk (of discussion)/details
     url(r'^(?P<pk>\d+)/details/$', views.discussion_details, name='discussion_details'),
     url(r'^(?P<pk>\d+)/update/$', views.UpdateDiscussionDescView.as_view(), name='discussion_update'),
@@ -59,6 +68,9 @@ urlpatterns = patterns('',
 
    url(r'^user_update_mark_recipient_read/(?P<pk>[0-9]+)/$', views.user_update_mark_recipient_read, name='user_update_mark_recipient_read'),
     
+    url(r'^start_follow_tag/(?P<pk>[0-9]+)/$', views.start_follow_tag, name='start_follow_tag'),
+
+    url(r'^stop_follow_tag/(?P<pk>[0-9]+)/$', views.stop_follow_tag, name='stop_follow_tag'),
     
 # ex: labs/coplay/Tzahim/stop_follow_user
     url(r'^(?P<username>.+)/stop_follow_user/$', views.stop_follow_user, name='stop_follow_user'),

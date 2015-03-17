@@ -60,6 +60,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'memecache',
+    'taggit',
+    'password_reset',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -148,6 +150,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         )
 }
+
+
+SOUTH_MIGRATION_MODULES = {
+    'taggit': 'taggit.south_migrations',
+}
+
 
 try:
     from local_settings import *

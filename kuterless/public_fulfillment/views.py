@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from coplay.views import MAX_MESSAGE_INPUT_CHARS
+from coplay.views import MAX_MESSAGE_INPUT_CHARS, TagWidgetBig
 from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -25,10 +25,8 @@ def about(request):
     })
 
 def root(request):
-#    if request.user.is_authenticated():
-#        if request.user.userprofile.a_player:
-#            return HttpResponseRedirect(reverse('memecache:root'))            
-#        return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
     
     return about(request)
     
@@ -49,6 +47,9 @@ def labs_root(request):
 """
 
     version_description = """
+17/3/2015:
+הוספת יכולת לתייג נושאים
+הוספת יכולת לשיחזור סיסמה
 9/2/2015:
 הוספת עדכונים של צפיות של משתמשים
 5/1/2015:
@@ -213,6 +214,8 @@ class AddUserForm(forms.Form):
 
     recieve_email_updates = forms.BooleanField(label=_(u"קבלת מיילים"), initial = True)
 
+#     followed_discussions_tags = forms.CharField( label=u'נושאים שיענינו אותך', widget = TagWidgetBig(attrs={'rows': 3 ,'cols' : 40} )  )
+    
     description = forms.CharField(label=u'לא חובה:כל דבר שתרצה/י להוסיף לרבות איך ליצור איתך קשר',required = False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
@@ -221,6 +224,7 @@ class AddUserForm(forms.Form):
                                   required = False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
+
 
 
 
@@ -241,6 +245,8 @@ class UpdateProfileUserForm(forms.Form):
         widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
 
     recieve_email_updates = forms.BooleanField(label=u'קבלת מיילים מהאתר', required = False, initial = True)
+    
+#     followed_discussions_tags = forms.CharField( label=u'נושאים שיענינו אותך', widget = TagWidgetBig(attrs={'rows': 3 ,'cols' : 40} )  )
     
     description = forms.CharField(label=u'כל דבר שתרצה/י להוסיף',required = False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
@@ -288,7 +294,15 @@ def sign_up(request):
             
             location_desc = form.cleaned_data['location_desc']
             
-            user = create_kuterless_user(  user_name, password, first_name, last_name , email , recieve_updates, description, location_desc)
+
+            user = create_kuterless_user(  user_name, 
+                                           password, 
+                                           first_name, 
+                                           last_name,  
+                                           email, 
+                                           recieve_updates, 
+                                           description, 
+                                           location_desc)
             
             
             user = authenticate(username=user_name, password=password)
@@ -363,13 +377,10 @@ def update_profile(request):
             user.first_name = form.cleaned_data['first_name']
             user.last_name = form.cleaned_data['last_name']                  
             email =  form.cleaned_data['email']
-            
-            
-            
-            if email:
-                user.email = email
                 
             user.userprofile.recieve_updates = form.cleaned_data['recieve_email_updates']
+            
+#             user.userprofile.followed_discussions_tags.set(form.cleaned_data['followed_discussions_tags'])
             
             description = form.cleaned_data['description']
             if description:
@@ -392,7 +403,8 @@ def update_profile(request):
                                        'email'     : user.email,
                                        'recieve_email_updates': user.userprofile.recieve_updates,
                                        'description': user.userprofile.description,
-                                       'location_desc': user.userprofile.location_desc}
+                                       'location_desc': user.userprofile.location_desc,
+                                       'followed_discussions_tags': user.userprofile.followed_discussions_tags.names}
                                       )
 
     return render(request, 'public_fulfillment/update_user.html', {

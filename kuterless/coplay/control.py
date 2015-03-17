@@ -6,12 +6,13 @@ This file contain the control services, used for all views
 #from coplay.models import UserProfile, Discussion, UserUpdate
 from django.contrib.auth.models import User
 from django.core.mail.message import EmailMessage
-import models
 from django.core.urlresolvers import reverse
-from django.template.loader import render_to_string
-import kuterless.settings
 from django.template.base import Template
 from django.template.context import Context
+from django.template.loader import render_to_string
+from taggit.models import Tag
+import kuterless.settings
+import models
 
 
 EMAIL_MAX_SUBJECT_LENGTH = 130 #255 is the limit on some ticketing products (Jira for example) and seems to be the limit on outlook, thunderbird and gmail seem to truncate after 130. –  reconbot Jan 12 '11 at 15:39
@@ -126,9 +127,19 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
     if mailing_list == []:
         mailing_list = discussion.get_followers_list()
     allowed_users_list = []
-    for user in mailing_list:
+    
+    for user in User.objects.all():
         if discussion.can_user_access_discussion( user):
-            allowed_users_list.append(user)
+            if user in mailing_list:
+                allowed_users_list.append(user)
+            else:
+                to_append = False
+                for tag_iter in user.userprofile.followed_discussions_tags.all():
+                    if tag_iter.name in discussion.tags.names():
+                        to_append = True
+                if to_append:
+                    allowed_users_list.append(user)
+            
          
     html_message = render_to_string("coplay/email_discussion_update.html",
                                     {'ROOT_URL': kuterless.settings.SITE_URL,
@@ -350,4 +361,23 @@ def init_user_profile(user, segment = None):
     user.userprofile = models.UserProfile(user = user, segment = segment)
     user.userprofile.save()
     user.save()    
+    
+def get_discussions_lists( filter_func = None):
+    sorted_discussions_by_inverse_locket_at_list = models.Discussion.objects.all().order_by(
+        "-locked_at")
+    sorted_discussions_by_locket_at_list = models.Discussion.objects.all().order_by(
+        "locked_at")
+
+    active_discussions_by_urgancy_list = []
+    locked_discussions_by_relevancy_list = []
+
+    for discussion in sorted_discussions_by_inverse_locket_at_list:
+        if not discussion.is_active():            
+            locked_discussions_by_relevancy_list.append(discussion)
+
+    for discussion in sorted_discussions_by_locket_at_list:
+        if discussion.is_active():
+            active_discussions_by_urgancy_list.append(discussion)
+
+    return active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list
     

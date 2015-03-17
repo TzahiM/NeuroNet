@@ -3,11 +3,16 @@
 
 {% block content %}
  			<div class="row">
- 				<div class="col-sm-3 col-md-12" id = "UserList">
+ 				<div class="col-sm-3 col-md-12" id = "UserList">					
  					<br>
+					{% if tags_list %}
+				        {% for tag in tags_list %}
+				        <a class="btn btn-primary " href="{% url 'memecache:users_tag_list'  tag.id %}">{{ tag.name }}</a>
+				    		
+						{% endfor %}
+					{% endif %}
  					<br>
- 					<br>
- 					<h1><center>מי משתתף ב{{segment_name}}?</center></h1>
+ 					<h1><center>{{page_name}}</center></h1>
  					<br>
  					<br>
  				<div class="table-responsive">

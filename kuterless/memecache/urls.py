@@ -5,6 +5,7 @@ from memecache import views
 urlpatterns = patterns('',
     url(r'root/$', views.root, name='root'),
     url(r'users_list/$', views.users_list, name='users_list'),
+    url(r'^users_tag_list/(?P<pk>[0-9]+)/$', views.users_list, name='users_tag_list'),    
     url(r'instructions/$', views.instructions, name='instructions'),
     url(r'^shop_create/$', views.CreateShopView.as_view(), name='shop_create'),
     url(r'^shop_details/(?P<pk>[0-9]+)/$', views.shop_details, name='shop_details'),
