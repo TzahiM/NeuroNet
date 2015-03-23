@@ -196,7 +196,7 @@ class CreateUserView(CreateView):
 
 class AddUserForm(forms.Form):
     
-    approved_discaimer = forms.BooleanField(label=_(u"קראתי והסכמתי למדיניות הפרטיות"), initial = False)
+    approved_discaimer = forms.BooleanField(label=_(u"קראתי והסכמתי למדיניות הפרטיות"), required = False,initial = False)
     
     user_name = forms.CharField( label='', 
         widget=forms.TextInput(attrs={'placeholder': 'שם משתמש', 'class': 'form-control'}))
@@ -274,6 +274,12 @@ def sign_up(request):
         form = AddUserForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Ensure the user-originating redirection url is safe.
+            
+            if False is form.cleaned_data['approved_discaimer']:
+                return render(request, 'coplay/message.html', 
+                      {  'message'      :  'עליך לאשר את מדיניות הפרטיות',
+                       'rtl': 'dir="rtl"'})
+                
 
             
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
