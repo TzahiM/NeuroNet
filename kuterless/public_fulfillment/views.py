@@ -47,6 +47,8 @@ def labs_root(request):
 """
 
     version_description = """
+23/3/2015:
+תיקון טעינת עמודי המשתמש
 17/3/2015:
 הוספת יכולת לתייג נושאים
 הוספת יכולת לשיחזור סיסמה
@@ -193,6 +195,8 @@ class CreateUserView(CreateView):
     
 
 class AddUserForm(forms.Form):
+    
+    approved_discaimer = forms.BooleanField(label=_(u"קראתי והסכמתי למדיניות הפרטיות"), initial = False)
     
     user_name = forms.CharField( label='', 
         widget=forms.TextInput(attrs={'placeholder': 'שם משתמש', 'class': 'form-control'}))

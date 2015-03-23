@@ -781,7 +781,7 @@ def user_coplay_report(request, username=None):
     else:
         is_following = False
         
-#     user_updates_query_set = user.recipient.all().order_by("-created_at")
+    user_updates_query_set = user.recipient.all().order_by("-created_at")
 #     user_updates_that_viewer_can_access_list = []
     
 #     for user_update in user_updates_query_set:
@@ -798,6 +798,7 @@ def user_coplay_report(request, username=None):
                       'number_of_feedbacks'              : number_of_feedbacks   ,
                       'number_of_votes'                  : number_of_votes       ,
 #                       'user_updates_that_viewer_can_access_list': user_updates_that_viewer_can_access_list,
+                      'user_updates_that_viewer_can_access_list': user_updates_query_set,
                       'tasks_open_by_increased_time_left': user_s_open_tasks_list,
                       'tasks_others_open_by_increased_time_left': other_users_open_tasks_list,
                       'discussions_active_by_increase_time_left': user_discussions_active,
