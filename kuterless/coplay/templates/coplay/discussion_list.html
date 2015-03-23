@@ -3,9 +3,8 @@
 
 {% block content %}  
     <div class="row">
-	<a class="btn btn-success " href="{% url 'coplay:discussions_list' %}">כל הפעילויות</a>
      
-    <a class="btn btn-success " href="#Tags">רשימת הנושאים</a>
+    <a class="btn btn-success " href="#Tags">לרשימת הנושאים</a>
      
     	{% if tag %}
 						<a class="btn btn-success"  href="{% url 'coplay:add_with_tag'  tag.id %}"> לפתיחת פעילות חדשה שקשורה ל {{tag.name}}</a>    	 
@@ -105,6 +104,8 @@
         <br>
                 	<center><h2>רשימת הנושאים</h2></center>
     
+		<a class="btn btn-success " href="{% url 'coplay:discussions_list' %}">רשימת כל הפעילויות</a>
+		 
         {% for tag in tags_list %}
         <a class="btn btn-primary " href="{% url 'coplay:discussion_tag_list'  tag.id %}">{{ tag.name }}</a>
     		
