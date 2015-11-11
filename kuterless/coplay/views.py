@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-from coplay.control import post_update_to_user, user_started_a_new_discussion, \
-    user_posted_a_feedback_in_another_other_user_s_discussion, \
-    user_post_a_decision_for_vote_regarding_his_own_discussion, \
-    string_to_email_subject, send_html_message, get_user_fullname_or_username, \
-    discussion_task_email_updates, discussion_email_updates, \
-    user_follow_start_email_updates, get_discussions_lists
+from coplay.control import get_discussions_lists, get_tasks_lists
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
-    Viewer, FollowRelation, UserUpdate
-from coplay.services import update_task_status_description, update_task_state
+    Viewer, UserUpdate
+from coplay.services import update_task_status_description, update_task_state, \
+    start_users_following, stop_users_following, start_tag_following, \
+    stop_tag_following, create_discussion, discussion_add_task, decision_vote, \
+    discussion_record_a_view, discussion_record_anonymous_view, \
+    discussion_add_decision, discussion_add_feedback, get_user_fullname_or_username, \
+    get_followers_list, get_following_list, is_user_is_following, \
+    poll_for_task_complition, discussion_update, can_user_acess_discussion, \
+    is_in_the_same_segment, task_get_status
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -17,26 +19,21 @@ from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.base import Template
 from django.template.context import Context
-from django.template.loader import render_to_string
 from django.utils import six, timezone
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
 from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
-from taggit.forms import TagField, TagWidget
+from taggit.forms import TagField
 from taggit.models import Tag
 from taggit.utils import edit_string_for_tags
 import floppyforms as forms
-import kuterless.settings
+from django.core.context_processors import request
+
 
 MAX_MESSAGE_INPUT_CHARS = 900
 
-def can_user_acess_discussion(discussion, user):
-    if not user.is_authenticated():
-        return discussion.can_user_access_discussion(None)
-    
-    return discussion.can_user_access_discussion(user)
         
 
 class TagWidgetBig(forms.Textarea):
@@ -131,15 +128,14 @@ def discussion_details(request, pk):
         feedbabk_type=Feedback.ADVICE).order_by("-created_at")
     list_decision = discussion.decision_set.all().order_by("-created_at")
     list_tasks = discussion.task_set.all().order_by("-target_date")
+    for task in list_tasks:
+        poll_for_task_complition(task)
     like_levels = LikeLevel.level
     list_viewers = discussion.viewer_set.all().exclude(
         views_counter= 0 ).order_by("-views_counter_updated_at")
         
     list_anonymous_viewers = discussion.anonymousvisitorviewer_set.all().exclude(
         views_counter= 0 ).order_by("-views_counter_updated_at")
-
-    for task in discussion.task_set.all():
-        task.refresh_status()        
 
     list_tasks_open = discussion.task_set.all().order_by("target_date").filter(status = Task.STARTED)
     
@@ -152,21 +148,18 @@ def discussion_details(request, pk):
     description_form = None
     add_decision_form = None
     add_task_form = None
-    is_a_follower = False
-    if request.user.is_authenticated():
-        if discussion.is_active():
-            if request.user == discussion.owner:
-                description_form = UpdateDiscussionForm()
-                add_decision_form = AddDecisionForm()
-            else:
-                feedback_form = AddFeedbackForm()
-                vote_form = VoteForm()
 
-        add_task_form = AddTaskForm()
-        is_a_follower = discussion.is_a_follower(request.user)
+    is_a_follower = discussion.is_a_follower(request.user)
+    
+    add_task_form = AddTaskForm()        
+    if request.user == discussion.owner:
+        if discussion.is_active():
+            description_form = UpdateDiscussionForm()
+            add_decision_form = AddDecisionForm()
     else:
         vote_form = VoteForm()
-
+        feedback_form = AddFeedbackForm()
+ 
     list_followers = discussion.get_followers_list()
     
     page_name = u'עוזרים ב' + discussion.title
@@ -194,10 +187,14 @@ def discussion_details(request, pk):
     
     #current view is recorded after response had been resolved
     if request.user.is_authenticated():
-        discussion.record_a_view(request.user)
-    
-    discussion.record_anonymous_view(request)
-        
+        success, error_string = discussion_record_a_view (discussion, request.user)
+        if success == False:
+            return render(request, 'coplay/message.html', 
+                      {  'message'      :  error_string,
+                       'rtl': 'dir="rtl"'})
+
+    discussion_record_anonymous_view (discussion, request)
+            
     return return_response
 
 
@@ -209,8 +206,6 @@ class NewDiscussionForm(forms.Form):
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea(
                                 attrs={'rows': '6', 'cols': '100'}))
-#     latitude    = forms.FloatField(required=False)
-#     longitude   = forms.FloatField(required=False)
     location_desc = forms.CharField(label=u'כתובת',required=False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea(
@@ -219,65 +214,48 @@ class NewDiscussionForm(forms.Form):
     tags = forms.CharField( required=False, label=u'תגיות מופרדות בפסיקים', widget = TagWidgetBig(attrs={'rows': 3 ,'cols' : 40} )  )
 
 
+#     parent_url = forms.URLInput(label=u"דף קשור", max_length=200,
+#                             widget=forms.Textarea(
+#                                 attrs={'rows': '1', 'cols': '100'}))
+    parent_url = forms.URLField(label=u'קישור לדף רלוונטי. לדוגמה http://hp.com',
+                                required=False)
+    
+    parent_url_text = forms.CharField(  label=u"שם הדף הקשור", 
+                                        required=False,
+                                        max_length=200,
+                                        widget=forms.Textarea(
+                                            attrs={'rows': '1', 'cols': '100'}))
+
 @login_required
 def add_discussion(request, pk = None):
     if request.method == 'POST': # If the form has been submitted...
         form = NewDiscussionForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
-            # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            user = request.user
-
-            discussions_list = Discussion.objects.all().filter(owner=user,
-                                                               title=
-                                                               form.cleaned_data[
-                                                                   'title'])
-            if discussions_list.count() != 0:
-                return render(request, 'coplay/message.html',
-                              {'message': 'כבר קיים עבורך דיון באותו נושא',
-                               'rtl': 'dir="rtl"'})
-
-            new_discussion = Discussion(owner=user,
-                                        title=form.cleaned_data['title'],
-                                        description=form.cleaned_data[
-                                            'description']
-                                        )
-                
-            location_desc=form.cleaned_data['location_desc']
-            if location_desc:
-                new_discussion.location_desc = location_desc
-                
-            new_discussion.save()
-            tags = form.cleaned_data['tags']
-            if tags:
-                tags_list =  tags.split(',')
-                for tag in tags_list:
-                    new_discussion.tags.add( tag)
-                                
-            new_discussion.clean()
-            new_discussion.description_updated_at = timezone.now()
-            new_discussion.save()
-            messages.success(request,
-                             _("Your activity was created successfully"))
-            new_discussion.start_follow(user)
             
-            t = Template("""
-            {{discussion.owner.get_full_name|default:discussion.owner.username}} ביקש/ה את העזרה שלך ב :
-            "{{discussion.title}} "\n
-            """)
+            new_discussion, error_string = create_discussion( user             = request.user, 
+                                                       title            = form.cleaned_data['title'], 
+                                                       description      = form.cleaned_data['description'],                       
+                                                       location_desc    = form.cleaned_data['location_desc'],
+                                                       tags_string      = form.cleaned_data['tags'],
+                                                       parent_url       = form.cleaned_data['parent_url'],
+                                                       parent_url_text  = form.cleaned_data['parent_url_text'])
             
-            trunkated_subject_and_detailes = t.render(Context({"discussion": new_discussion}))
-                                                                
-          
-            discussion_email_updates(new_discussion,
-                                     trunkated_subject_and_detailes,
-                                     new_discussion.owner,
-                                     trunkated_subject_and_detailes,
-                                     mailing_list = get_followers_list(new_discussion.owner))
-        
-            user_started_a_new_discussion( new_discussion.owner)
-
-            return redirect(new_discussion)
+            if new_discussion:
+                messages.success(request,_("Your activity was created successfully"))
+                return redirect(new_discussion)
+                
+            messages.error(request, error_string)
     else:
+        parent_url = request.REQUEST.get('parent_url', '')
+        parent_url_text = request.REQUEST.get('parent_url_text', '')
+        if parent_url:
+            form = NewDiscussionForm(initial={'parent_url': parent_url,
+                                              'parent_url_text': parent_url_text}) # An unbound form
+            return render(request, 'coplay/new_discussion.html', {
+                'form': form,
+                'rtl': 'dir="rtl"'
+            })
+            
         if pk:
             try:
                 tag = Tag.objects.get(id=int(pk))
@@ -298,39 +276,39 @@ def add_discussion(request, pk = None):
 
 
 
-@login_required
-def update_discussion(request, pk):
-    try:
-        discussion = Discussion.objects.get(id=int(pk))
-    except Discussion.DoesNotExist:
-        return render(request, 'coplay/message.html',
-                      {'message': 'הדיון איננו קיים',
-                       'rtl': 'dir="rtl"'})
-
-    if request.method == 'POST': # If the form has been submitted...
-        form = UpdateDiscussionForm(
-            request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
-            # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            user = request.user
-            if user == discussion.owner:
-                discussion.update_description(
-                    form.cleaned_data['description'])
-                discussion_email_updates(discussion,
-                                         'עידכון מטרות בפעילות שבהשתתפותך',
-                                         request.user)
-
-                return HttpResponseRedirect(
-                    discussion.get_absolute_url()) # Redirect after POST
-            return render(request, 'coplay/message.html',
-                          {'message': 'רק בעל הדיון מורשה לעדכן אותו',
-                           'rtl': 'dir="rtl"'})
-    else:
-        form = UpdateDiscussionForm(initial={'m_tags': form.instance.tag}) # An unbound form
-
-    return render(request, 'coplay/message.html',
-                  {'message': '  לא הוזן תיאור חדש או שהוזן תיאור ארוך מדי ',
-                   'rtl': 'dir="rtl"'})
+# @login_required
+# def update_discussion(request, pk):
+#     try:
+#         discussion = Discussion.objects.get(id=int(pk))
+#     except Discussion.DoesNotExist:
+#         return render(request, 'coplay/message.html',
+#                       {'message': 'הדיון איננו קיים',
+#                        'rtl': 'dir="rtl"'})
+# 
+#     if request.method == 'POST': # If the form has been submitted...
+#         form = UpdateDiscussionForm(
+#             request.POST) # A form bound to the POST data
+#         if form.is_valid(): # All validation rules pass
+#             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
+#             user = request.user
+#             if user == discussion.owner:
+#                 discussion.update_description(
+#                     form.cleaned_data['description'])
+#                 discussion_email_updates(discussion,
+#                                          'עידכון מטרות בפעילות שבהשתתפותך',
+#                                          request.user)
+# 
+#                 return HttpResponseRedirect(
+#                     discussion.get_absolute_url()) # Redirect after POST
+#             return render(request, 'coplay/message.html',
+#                           {'message': 'רק בעל הדיון מורשה לעדכן אותו',
+#                            'rtl': 'dir="rtl"'})
+#     else:
+#         form = UpdateDiscussionForm(initial={'m_tags': form.instance.tag}) # An unbound form
+# 
+#     return render(request, 'coplay/message.html',
+#                   {'message': '  לא הוזן תיאור חדש או שהוזן תיאור ארוך מדי ',
+#                    'rtl': 'dir="rtl"'})
 
 
 @login_required
@@ -390,72 +368,6 @@ def stop_follow(request, pk):
                 discussion.get_absolute_url())    
     
 
-@login_required
-def add_feedback(request, pk):
-    if request.method == 'POST': # If the form has been submitted...
-        form = AddFeedbackForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
-            # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            user = request.user
-            try:
-                discussion = Discussion.objects.get(id=int(pk))
-            except Discussion.DoesNotExist:
-                return HttpResponse('Discussion not found')
-            if user != discussion.owner and form.cleaned_data[
-                'feedbabk_type'] and form.cleaned_data['content']:
-                feedback = discussion.add_feedback(user,
-                                        form.cleaned_data['feedbabk_type'],
-                                        form.cleaned_data['content'])
-                subject_text = u""
-                
-                discussion_email_updates(discussion,
-                                         'התקבלה תגובה חדשה בפעילות שבהשתתפותך',
-                                         request.user)
-
-            return HttpResponseRedirect(
-                discussion.get_absolute_url()) # Redirect after POST
-        return render(request, 'coplay/message.html',
-                      {'message': 'לא הזנת תגובה',
-                       'rtl': 'dir="rtl"'})
-    return HttpResponse('Request NA')
-
-
-@login_required
-def add_decision(request, pk):
-    if request.method == 'POST': # If the form has been submitted...
-        form = AddDecisionForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
-            # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            try:
-                discussion = Discussion.objects.get(id=int(pk))
-            except Discussion.DoesNotExist:
-                return HttpResponse('Discussion not found')
-            user = request.user
-            if user == discussion.owner:
-                decisions_list = Decision.objects.all().filter(
-                    content=form.cleaned_data['content'], parent=discussion)
-                if decisions_list.count() != 0:
-                    return render(request, 'coplay/message.html',
-                                  {
-                                      'message': 'כבר רשומה עבורך החלטה באותו נושא',
-                                      'rtl': 'dir="rtl"'})
-
-                discussion.add_decision(form.cleaned_data['content'])
-                discussion_email_updates(discussion,
-                                         'התקבלה התלבטות חדשה בפעילות שבהשתתפותך',
-                                         request.user)
-
-
-
-            else:
-                return HttpResponse('Forbidden access')
-            return HttpResponseRedirect(
-                discussion.get_absolute_url()) # Redirect after POST
-        else:
-            return render(request, 'coplay/message.html',
-                          {'message': 'בחר אחת מהאפשרויות',
-                           'rtl': 'dir="rtl"'})
-    return HttpResponseRedirect('coplay_root') # Redirect after POST
 
 
 @login_required
@@ -472,68 +384,19 @@ def vote(request, pk):
                                   {  'message'      :  'אינך מורשה לצפות בדיון',
                                    'rtl': 'dir="rtl"'})    
     
-    
-    
-    
     if request.method == 'POST': # If the form has been submitted...
         form = VoteForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            user = request.user
-            if user != decision.parent.owner:
-                decision.vote(user, int(form.cleaned_data['value']))
-                decision.parent.start_follow(user)
-
+            success, error_string = decision_vote( decision, request, int(form.cleaned_data['value']))
+            if success == False:
+                return render(request, 'coplay/message.html',
+                      {'message': error_string})
+                
             return HttpResponseRedirect(
                 decision.get_absolute_url()) # Redirect after POST
-        return render(request, 'coplay/message.html',
-                      {'message': 'Please select a vote value'})
 
     return ( HttpResponse('Forbidden request not via form'))
-
-
-@login_required
-def add_task(request, pk):
-    if request.method == 'POST': # If the form has been submitted...
-        form = AddTaskForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
-            # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            user = request.user
-            try:
-                discussion = Discussion.objects.get(id=int(pk))
-            except Discussion.DoesNotExist:
-                return HttpResponse('Discussion not found')
-            target_date = form.cleaned_data['target_date']
-            if target_date <= timezone.now():
-                return render(request, 'coplay/message.html',
-                              {'message': 'תאריך היעד חייב להיות בעתיד' + str(
-                                  target_date),
-                               'rtl': 'dir="rtl"'})
-
-            tasks_list = Task.objects.all().filter(responsible=user,
-                                                   goal_description=
-                                                   form.cleaned_data[
-                                                       'goal_description'],
-                                                   parent=discussion)
-            if tasks_list.count() != 0:
-                return render(request, 'coplay/message.html',
-                              {'message': 'כבר רשומה עבורך משימה באותו נושא',
-                               'rtl': 'dir="rtl"'})
-
-            new_task = discussion.add_task(user,
-                                           form.cleaned_data[
-                                               'goal_description'],
-                                           form.cleaned_data['target_date'])
-
-            discussion_task_email_updates(new_task,
-                                          'נוספה משימה חדשה בפעילות שבהשתתפותך',
-                                          request.user)
-
-            return HttpResponseRedirect(
-                new_task.get_absolute_url()) # Redirect after POST
-
-    return HttpResponseRedirect('coplay_root') # Redirect after POST
-
 
 def task_details(request, pk):
     try:
@@ -569,26 +432,31 @@ def task_details(request, pk):
 
 @login_required
 def update_task_description(request, pk):
+    try:
+        task = Task.objects.get(id=int(pk))
+    except Task.DoesNotExist:
+        return HttpResponse('Task not found')
     if request.method == 'POST': # If the form has been submitted...
         form = UpdateTaskForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            success, updated_task, error_string =   update_task_status_description( task_id = int(pk), 
-                                                    description = form.cleaned_data['status_description'], 
-                                                    user = request.user)
+            success, error_string =   update_task_status_description(   task, 
+                                                                        description = form.cleaned_data['status_description'], 
+                                                                        user = request.user)
             
-            if success:
+            if success == False:
                 return HttpResponseRedirect(
-                    updated_task.parent.get_absolute_url()) # Redirect after POST
+                    task.parent.get_absolute_url()) # Redirect after POST
                 
             return render(request, 'coplay/message.html',
                                           {'message': error_string,
-                                           'rtl': 'dir="rtl"'})            
+                                           'rtl': 'dir="rtl"',
+                                           'next_url':task.get_absolute_url(),
+                                           'next_text': u'בחזרה ל:' + task.goal_description})            
 
     return HttpResponseRedirect('coplay_root') # Redirect after POST
 
-@login_required
-def close_task(request, pk):
+def set_task_state(request, pk, new_state):
     try:
         task = Task.objects.get(id=int(pk))
     except Task.DoesNotExist:
@@ -601,11 +469,11 @@ def close_task(request, pk):
     
     user = request.user
     if user != task.responsible:
-        success, updated_task, error_string = update_task_state( task_id = int(pk), 
-                                                                 new_state = task.CLOSED, 
-                                                                 user = user)
+        updated_task, error_string = update_task_state( task, 
+                                                        new_state = new_state, 
+                                                        user = user)
         
-        if not success:
+        if updated_task == None:
             return render(request, 'coplay/message.html',
               {'message': error_string,
                'rtl': 'dir="rtl"',
@@ -614,77 +482,21 @@ def close_task(request, pk):
 
 
     return HttpResponseRedirect(task.parent.get_absolute_url()) # Redirect after POST
+
+@login_required
+def close_task(request, pk):
+    return set_task_state( request, pk, Task.CLOSED)
 
 
 @login_required
 def abort_task(request, pk):
-    try:
-        task = Task.objects.get(id=int(pk))
-    except Task.DoesNotExist:
-        return HttpResponse('Task not found')
-    
-    if not can_user_acess_discussion( task.parent, request.user):
-        return render(request, 'coplay/message.html', 
-                      {  'message'      :  'אינך מורשה לצפות בדיון',
-                       'rtl': 'dir="rtl"'})
-    
-    
-    user = request.user
-    if user != task.responsible:
-        success, updated_task, error_string = update_task_state( task_id = int(pk), 
-                                                                 new_state = task.ABORTED, 
-                                                                 user = user)
-        
-        if not success:
-            return render(request, 'coplay/message.html',
-              {'message': error_string,
-               'rtl': 'dir="rtl"',
-               'next_url' : task.parent.get_absolute_url(),
-               'next_text'  : u"חזרה לפעילות"})
-            
-    return HttpResponseRedirect(task.parent.get_absolute_url()) # Redirect after POST
+    return set_task_state( request, pk, Task.ABORTED)
 
 
 @login_required
 def re_open_task(request, pk):
-    try:
-        task = Task.objects.get(id=int(pk))
-    except Task.DoesNotExist:
-        return HttpResponse('Task not found')
-    
-    if not can_user_acess_discussion( task.parent, request.user):
-        return render(request, 'coplay/message.html', 
-                      {  'message'      :  'אינך מורשה לצפות בדיון',
-                       'rtl': 'dir="rtl"'})
-    
-    user = request.user
-    if user != task.responsible:
-        success, updated_task, error_string = update_task_state( task_id = int(pk), 
-                                                                 new_state = task.STARTED, 
-                                                                 user = user)
-        
-        if not success:
-            return render(request, 'coplay/message.html',
-              {'message': error_string,
-               'rtl': 'dir="rtl"',
-               'next_url' : task.parent.get_absolute_url(),
-               'next_text'  : u"חזרה לפעילות"})
+    return set_task_state( request, pk, Task.STARTED)
 
-    return HttpResponseRedirect(task.parent.get_absolute_url()) # Redirect after POST
-
-
-
-def get_tasks_lists():
-    for task in Task.objects.all():
-        task.refresh_status()
-    open_tasks_list_by_urgancy_list = Task.objects.all().filter(
-        status=Task.STARTED).order_by("target_date")
-    closed_tasks_list_by_relevancy_list = Task.objects.all().filter(
-        status=Task.CLOSED).order_by("-closed_at")
-    missed_tasks_list_by_relevancy_list = Task.objects.all().filter(
-        status=Task.MISSED).order_by("-target_date")
-
-    return open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, missed_tasks_list_by_relevancy_list
 
 
 
@@ -697,18 +509,10 @@ def user_coplay_report(request, username=None):
     else:
         user = request.user
         
-    if  request.user.is_authenticated():
-        viewer_user = request.user
-        if  not  user.userprofile.is_in_the_same_segment(request.user):
-            return render(request, 'coplay/message.html', 
-                      {  'message'      :  'משתמש ממודר',
-                       'rtl': 'dir="rtl"'})
-    else:
-        viewer_user = None
-        if user.userprofile.get_segment():
-            return render(request, 'coplay/message.html', 
-                      {  'message'      :  'משתמש ממודר',
-                       'rtl': 'dir="rtl"'})
+    if not is_in_the_same_segment( user, request.user):
+        return render(request, 'coplay/message.html', 
+                  {  'message'      :  'משתמש ממודר',
+                   'rtl': 'dir="rtl"'})
 
     if user == request.user:
         page_name = u'הפעילות שלי '
@@ -725,7 +529,7 @@ def user_coplay_report(request, username=None):
     user_closed_tasks_list = []
 
     for task in open_tasks_list_by_urgancy_list:  
-        if task.parent.can_user_access_discussion(viewer_user):      
+        if can_user_acess_discussion(task.parent, request.user):      
             if task.responsible == user:
                 user_s_open_tasks_list.append(task)
             else:
@@ -737,8 +541,8 @@ def user_coplay_report(request, username=None):
 
     for task in tasks_by_recent_closed_at_date:
         discussion = task.parent
-        if user in discussion.get_followers_list() and discussion.can_user_access_discussion(viewer_user):
-            status = task.get_status()
+        if user in discussion.get_followers_list() and can_user_acess_discussion(discussion, request.user):
+            status = task_get_status(task)
             if status == Task.ABORTED:
                 failed_tasks_list.append(task)
 
@@ -753,11 +557,11 @@ def user_coplay_report(request, username=None):
     user_discussions_locked = []
 
     for discussion in active_discussions_by_urgancy_list:
-        if user in discussion.get_followers_list() and discussion.can_user_access_discussion(viewer_user):
+        if user in discussion.get_followers_list() and can_user_acess_discussion( discussion, request.user):
             user_discussions_active.append(discussion)
 
     for discussion in locked_discussions_by_relevancy_list:
-        if user in discussion.get_followers_list() and discussion.can_user_access_discussion(viewer_user):
+        if user in discussion.get_followers_list() and can_user_acess_discussion( discussion, request.user):
             user_discussions_locked.append(discussion)
             
     number_of_closed_tasks = len(user_closed_tasks_list)
@@ -782,11 +586,6 @@ def user_coplay_report(request, username=None):
         is_following = False
         
     user_updates_query_set = user.recipient.all().order_by("-created_at")
-#     user_updates_that_viewer_can_access_list = []
-    
-#     for user_update in user_updates_query_set:
-#         if user_update.can_user_access(viewer_user):
-#             user_updates_that_viewer_can_access_list.append(user_update)
             
     return render(request, 'coplay/coplay_report.html',
                   {
@@ -797,7 +596,6 @@ def user_coplay_report(request, username=None):
                       'number_of_views'                  : number_of_views       ,
                       'number_of_feedbacks'              : number_of_feedbacks   ,
                       'number_of_votes'                  : number_of_votes       ,
-#                       'user_updates_that_viewer_can_access_list': user_updates_that_viewer_can_access_list,
                       'user_updates_that_viewer_can_access_list': user_updates_query_set,
                       'tasks_open_by_increased_time_left': user_s_open_tasks_list,
                       'tasks_others_open_by_increased_time_left': other_users_open_tasks_list,
@@ -816,25 +614,27 @@ def user_coplay_report(request, username=None):
 
 class UpdateDiscussionDescForm(forms.ModelForm):
     
-#     m_tags = TagField( label = 'תגיות' , help_text = u'רשימה של תגים מופרדת עם פסיקים.', widget=forms.Textarea(attrs={'rows': '3',
-#                                      'cols' : '40'}))
     class Meta:
         model = Discussion
         fields = (
+            'title',
             'description',
             'location_desc',
             'tags',
+            'parent_url',
+            'parent_url_text',
         )
         
         widgets = {
-            'description': forms.Textarea( attrs={'rows': 5 ,'cols' : 40}),
+            'title': forms.Textarea( attrs={'rows': 1 ,'cols' : 40}),
+            'description': forms.Textarea( attrs={'rows': 10 ,'cols' : 40}),
             'location_desc': forms.Textarea(attrs={'rows': 1 ,'cols' : 40}),
             'tags': TagWidgetBig(attrs={'rows': 3 ,'cols' : 40}),
+            'parent_url': forms.Textarea(attrs={'rows': 1 ,'cols' : 40}),
+            'parent_url_text': forms.Textarea(attrs={'rows': 1 ,'cols' : 40}),
         }
         
         
-        
-
 
 class DiscussionOwnerView(object):
     model = Discussion
@@ -854,31 +654,31 @@ class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
     
     def form_valid(self, form):
 
-        resp = super(UpdateDiscussionDescView, self).form_valid(form)  
-        form.instance.description_updated_at = timezone.now()
-#         m_tags = form.cleaned_data['m_tags']  
-#         for m_tag in m_tags:
-#             form.instance.tags.add(m_tag)      
-        form.instance.save()
+#         resp = super(UpdateDiscussionDescView, self).form_valid(form)  
+        
+        tags_string = ''
+        found = False
+        for name in form.instance.tags.names():
+            if found:
+                tags_string += ','
+            tags_string += name
+            found = True
+        
+        discussion, error_string = discussion_update(  form.instance, 
+                                                       self.request.user, 
+                                                       form.instance.description, 
+                                                       tags_string = tags_string, 
+                                                       location_desc = form.instance.location_desc, 
+                                                       parent_url = form.instance.parent_url,
+                                                       parent_url_text = form.instance.parent_url_text)
+        
+        if discussion:
+            return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
 
         
-
-        t = Template("""
-        {{discussion.owner.get_full_name|default:discussion.owner.username}} עידכן/ה את המטרות של הפעילות והעזרה המבוקשת :\n
-        "{{discussion.description}} "\n
-        """)
-        
-        trunkated_subject_and_detailes = t.render(Context({"discussion": form.instance}))
-                                                            
-      
-        discussion_email_updates(form.instance,
-                                         trunkated_subject_and_detailes,
-                                         self.request.user,
-                                         trunkated_subject_and_detailes)
-        form.instance.start_follow(self.request.user)
-        
-        return resp
-    
+        return render(self.request, 'coplay/message.html',
+                              {'message': error_string,
+                               'rtl': 'dir="rtl"'})
 
 
 class DeleteDiscussionView(DiscussionOwnerView, DeleteView):
@@ -913,38 +713,17 @@ class CreateTaskView(CreateView):
                                                               **kwargs)
 
     def form_valid(self, form):
-        if form.instance.target_date <= timezone.now():
-            return render(self.request, 'coplay/message.html',
-                              {'message': 'תאריך היעד חייב להיות בעתיד' + str(
-                                  form.instance.target_date),
-                               'rtl': 'dir="rtl"'})
-        form.instance.parent = self.discussion
-        form.instance.responsible = self.request.user
-        if Task.objects.filter( parent = self.discussion,  responsible = form.instance.responsible,  goal_description = form.instance.goal_description).exists():
-            task = Task.objects.get( goal_description = form.instance.goal_description)
+        task, error_string = discussion_add_task(self.discussion, 
+                                                 self.request.user, 
+                                                 form.instance.goal_description, 
+                                                 form.instance.target_date)        
+        if task:
             return HttpResponseRedirect(
                     task.get_absolute_url())
-        resp = super(CreateTaskView, self).form_valid(form)
-        form.instance.parent.save() #verify that the entire discussion is considered updated
-        form.instance.parent.unlock()
-        
-
-        t = Template("""
-        {{task.responsible.get_full_name|default:task.responsible.username}} הבטיח/ה ש :\n
-        "{{task.goal_description}} "\n  עד {{task.target_date | date:"d/n/Y H:i"}}
-        """)
-        
-        trunkated_subject_and_detailes = t.render(Context({"task": form.instance}))
-      
-        discussion_task_email_updates(form.instance,
-                                         trunkated_subject_and_detailes,
-                                         self.request.user,
-                                         trunkated_subject_and_detailes)
-        
-        self.discussion.start_follow(self.request.user)
-        
-        
-        return resp
+            
+        return render(self.request, 'coplay/message.html',
+                              {'message': error_string,
+                               'rtl': 'dir="rtl"'})
 
 
 class CreateFeedbackForm(forms.ModelForm):
@@ -982,26 +761,14 @@ class CreateFeedbackView(CreateView):
             return HttpResponseRedirect(
                     self.discussion.get_absolute_url())
             
-        resp = super(CreateFeedbackView, self).form_valid(form)  
-        form.instance.discussion.save() #verify that the entire discussion is considered updated
-
-        t = Template("""
-        {{feedbabk.user.get_full_name|default:feedbabk.user.username}} פירסם/ה {{feedbabk.get_feedbabk_type_name}}:\n
-        "{{feedbabk.content}} "\n
-        """)
-
-        trunkated_subject_and_detailes = t.render(Context({"feedbabk": form.instance}))
-        
-                                                            
-                                                            
-        discussion_email_updates(form.instance.discussion,
-                                         trunkated_subject_and_detailes,
-                                         self.request.user,
-                                         trunkated_subject_and_detailes)
-        
-        form.instance.discussion.start_follow(self.request.user)
-        
-        user_posted_a_feedback_in_another_other_user_s_discussion(form.instance.user, form.instance.get_absolute_url())
+        resp = super(CreateFeedbackView, self).form_valid(form) 
+         
+        feedback, error_string = discussion_add_feedback( discussion    = self.discussion, 
+                                                         user           = self.request.user   ,
+                                                         feedbabk_type  = form.instance.feedbabk_type, 
+                                                         content        = form.instance.content)
+        if feedback == None:
+            return HttpResponse( error_string)
 
         
         return resp
@@ -1032,84 +799,17 @@ class CreateDecisionView(CreateView):
                                                               **kwargs)
 
     def form_valid(self, form):
-        form.instance.parent = self.discussion
-        if Decision.objects.filter( parent = self.discussion, content = form.instance.content).exists():
-            return HttpResponseRedirect(
-                    self.discussion.get_absolute_url())
-        resp = super(CreateDecisionView, self).form_valid(form)
-        form.instance.parent.save() #verify that the entire discussion is considered updated
         
-        # form.instance is the new decision
-        
+        decision, error_string = discussion_add_decision(self.discussion, 
+                                                         self.request.user,
+                                                         form.instance.content)
 
-        t = Template("""
-        {{decision.parent.owner.get_full_name|default:decision.parent.owner.username}} מבקש/ת שתצביע/י על :\n
-        "{{decision.content}} "\nלהצבעה צריך להיכנס אל הפעילות המלאה...
-        """)
-        
-        trunkated_subject_and_detailes = t.render(Context({"decision": form.instance}))
-                                                            
-      
-        
-        discussion_email_updates(form.instance.parent,
-                                         trunkated_subject_and_detailes,
-                                         self.request.user,
-                                         trunkated_subject_and_detailes,
-                                         "#Decisions")
-        
-        form.instance.parent.start_follow(self.request.user)
-        
-        user_post_a_decision_for_vote_regarding_his_own_discussion( form.instance.parent.owner, form.instance.get_absolute_url())
+        if decision == None:
+            return HttpResponse( error_string)
+            
+        resp = super(CreateDecisionView, self).form_valid(form)
 
         return resp
-
-def get_followers_list( following_user):
-    
-    followers_list = []
-    
-    follow_relations_set = FollowRelation.objects.filter( following_user = following_user)
-    
-    for follow_relations in follow_relations_set:
-        followers_list.append(follow_relations.follower_user)
-        
-    return followers_list
-
-def get_following_list( follower_user):
-    
-    following_list = []
-    
-    follow_relations_set = FollowRelation.objects.filter( follower_user = follower_user)
-    
-    for follow_relations in follow_relations_set:
-        following_list.append(follow_relations.following_user)
-        
-    return following_list
-
-
-    
-def is_user_is_following( follower_user, following_user):
-    return FollowRelation.objects.filter( follower_user = follower_user, following_user = following_user).exists()
-
-def start_users_following( follower_user, following_user):
-    
-    if follower_user == following_user:
-        return
-    
-
-    already_following = is_user_is_following( follower_user, following_user)
-    
-    inverse_following = is_user_is_following(following_user ,  follower_user )
-
-    FollowRelation.objects.get_or_create( follower_user = follower_user, following_user = following_user)
-    
-    if not already_following:
-        user_follow_start_email_updates(follower_user, following_user, inverse_following)
-     
-
-def stop_users_following( follower_user, following_user):
-    if FollowRelation.objects.filter( follower_user = follower_user, following_user = following_user).exists():
-        deleted_follow_relation = FollowRelation.objects.get( follower_user = follower_user, following_user = following_user) 
-        deleted_follow_relation.delete()
             
 
 @login_required
@@ -1122,12 +822,10 @@ def start_follow_user(request, username):
                        'rtl': 'dir="rtl"'})
     
     
-    if not request.user.userprofile.is_in_the_same_segment(following_user):
+    if not is_in_the_same_segment(request.user, following_user):
         return render(request, 'coplay/message.html', 
                       {  'message'      :  'משתמש ממודר',
                        'rtl': 'dir="rtl"'})
-        
-    
     
     start_users_following( request.user, following_user)
     
@@ -1205,8 +903,7 @@ def user_update_mark_recipient_read(request, pk):
         
         
     return HttpResponseRedirect(redirect_to) # Redirect after POST
-    
-    
+        
 
 def discussion_tag_list(request, pk = None):
     followers = []
@@ -1257,6 +954,38 @@ def discussion_tag_list(request, pk = None):
                    'is_following': is_following,
                    'followers': followers})
 
+
+def discussion_url_list(request):
+    search_url = request.REQUEST.get('search_url', '')
+    if search_url:
+        active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
+         
+        all_discussions_list  = active_discussions_by_urgancy_list + locked_discussions_by_relevancy_list
+        list_title_min_length = 10000
+        list_title = None
+        applicabale_discussions_list = []
+        for discussion in all_discussions_list:
+            if can_user_acess_discussion(discussion, request.user):
+                if search_url in discussion.parent_url:
+                    applicabale_discussions_list.append(discussion)
+                    if len(discussion.parent_url) < list_title_min_length:
+                        list_title_min_length = len(discussion.parent_url)
+                        list_title = discussion.parent_url_text
+        if list_title:
+            page_name = u'פעילויות שקשורות ל' + list_title
+        else:
+            page_name = u'פעילויות שקשורות ל' + search_url
+             
+                         
+        return render(request, 'coplay/discussion_url_list.html',
+                      {'applicabale_discussions_list': applicabale_discussions_list,
+                       'list_title': page_name,
+                       'page_name': page_name})
+             
+    return HttpResponseRedirect(reverse('coplay:discussions_list'))
+
+
+
 @login_required
 def start_follow_tag( request, pk):
     try:
@@ -1265,10 +994,9 @@ def start_follow_tag( request, pk):
         return render(request, 'coplay/message.html',
                       {'message': 'הנושא איננו קיים',
                        'rtl': 'dir="rtl"'})
-        
-    request.user.userprofile.followed_discussions_tags.add( tag.name)
-    request.user.userprofile.save()
-    
+                
+    start_tag_following( request.user, tag)
+            
     return HttpResponseRedirect(reverse('coplay:discussion_tag_list', kwargs={'pk': tag.id}))
 
     
@@ -1281,7 +1009,9 @@ def stop_follow_tag( request, pk):
                       {'message': 'הנושא איננו קיים',
                        'rtl': 'dir="rtl"'})
         
-    request.user.userprofile.followed_discussions_tags.remove( tag.name)
-    request.user.userprofile.save()
+    stop_tag_following( request.user, tag )
 
     return HttpResponseRedirect(reverse('coplay:discussion_tag_list', kwargs={'pk': tag.id}))
+
+    
+    

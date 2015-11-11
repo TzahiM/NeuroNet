@@ -39,7 +39,7 @@ class SegmentAdmin(admin.ModelAdmin):
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'segment')
 
-    
+
 class UpdateAdmin(admin.ModelAdmin):
     list_display = ('recipient', 'header')
         

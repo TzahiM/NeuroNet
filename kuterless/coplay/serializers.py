@@ -20,11 +20,14 @@ class DiscussionSerializer(serializers.ModelSerializer):
                   'created_at',
                   'updated_at',
                   'locked_at',
+                  'description_updated_at',
                   'is_restricted',
                   'is_viewing_require_login',
                   'latitude',
                   'longitude',
                   'location_desc',
+                  'parent_url',
+                  'parent_url_text',
                   )
 
 class UserSerializer(serializers.ModelSerializer):

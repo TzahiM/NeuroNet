@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from coplay.views import MAX_MESSAGE_INPUT_CHARS, TagWidgetBig
+# from coplay.views import MAX_MESSAGE_INPUT_CHARS
+from coplay.views import MAX_MESSAGE_INPUT_CHARS
 from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -11,7 +12,7 @@ from django.utils.http import is_safe_url
 from django.utils.translation import ugettext as _
 from django.views.generic.edit import CreateView
 from kuterless import settings
-from public_fulfillment.control import create_kuterless_user
+from public_fulfillment.services import create_kuterless_user
 
 # Create your views here.
 
@@ -199,7 +200,7 @@ class AddUserForm(forms.Form):
     approved_discaimer = forms.BooleanField(label=_(u"קראתי והסכמתי למדיניות הפרטיות"), required = False,initial = False)
     
     user_name = forms.CharField( label='', 
-        widget=forms.TextInput(attrs={'placeholder': 'שם משתמש', 'class': 'form-control'}))
+        widget=forms.TextInput(attrs={'placeholder': 'שם משתמש באנגלית בלבד', 'class': 'form-control'}))
 
     password  = forms.CharField( label='', 
         widget=forms.PasswordInput(attrs={'placeholder': 'סיסמא', 'class': 'form-control'}))

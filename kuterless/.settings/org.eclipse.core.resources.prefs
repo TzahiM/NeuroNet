@@ -15,6 +15,7 @@ encoding//coplay/migrations/0016_auto__add_field_viewer_discussion_updated_at_on
 encoding//coplay/migrations/0017_auto__add_glimpse__add_field_task_final_state__add_field_userprofile_c.py=utf-8
 encoding//coplay/migrations/0018_auto__add_field_userprofile_can_limit_discussion_to_login_users_only.py=utf-8
 encoding//coplay/migrations/0019_auto__add_anonymousviewer__add_field_userprofile_a_player__add_field_g.py=utf-8
+encoding//coplay/migrations/0030_auto__add_taggeddiscussions__add_taggedusers.py=utf-8
 encoding//coplay/models.py=utf-8
 encoding//coplay/serializers.py=utf-8
 encoding//coplay/services.py=utf-8
@@ -27,5 +28,6 @@ encoding//memecache/views.py=utf-8
 encoding//public_fulfillment/api.py=utf-8
 encoding//public_fulfillment/control.py=utf-8
 encoding//public_fulfillment/serializers.py=utf-8
+encoding//public_fulfillment/services.py=utf-8
 encoding//public_fulfillment/tests.py=utf-8
 encoding//public_fulfillment/views.py=utf-8

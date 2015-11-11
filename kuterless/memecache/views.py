@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from coplay.control import post_update_to_user, string_to_email_subject, \
-    get_user_fullname_or_username, send_html_message_to_users
+# from coplay.control import post_update_to_user, string_to_email_subject, \
+#     get_user_fullname_or_username, send_html_message_to_users
+from coplay.control import send_html_message_to_users, post_update_to_user
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
     Viewer, FollowRelation, UserUpdate
+from coplay.services import get_user_fullname_or_username
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, User

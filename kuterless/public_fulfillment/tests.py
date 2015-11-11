@@ -4,7 +4,8 @@ from coplay.models import UserProfile
 from django.contrib.auth.models import User
 from django.test import TestCase
 from memecache.models import Account
-from public_fulfillment.control import create_kuterless_user, simple_auth_token
+from public_fulfillment.control import simple_auth_token
+from public_fulfillment.services import create_kuterless_user
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.test import APIRequestFactory

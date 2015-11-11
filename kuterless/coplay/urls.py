@@ -12,12 +12,16 @@ urlpatterns = patterns('',
 #/list
     url(r'^discussion_tag_list/(?P<pk>[0-9]+)/$', views.discussion_tag_list, name='discussion_tag_list'),
 
-#     url(r'list/$', views.IndexView.as_view(), name='discussions_list'),
+    url(r'^discussion_url_list/$', views.discussion_url_list, name='discussion_url_list'),
 
 #/add
     url(r'add/$', views.add_discussion, name='add_discussion'),
 
     url(r'add_with_tag/(?P<pk>[0-9]+)/$', views.add_discussion, name='add_with_tag'),
+
+# http://127.0.0.1:8000/labs/coplay/add_with_url/?parent_url=http://www.ynet.co.il/articles/0,7340,L-4722534,00.html&parent_url_text=hi hi
+    url(r'add_with_url/$', views.add_discussion, name='add_with_url'),
+
 
 #pk (of discussion)/details
     url(r'^(?P<pk>\d+)/details/$', views.discussion_details, name='discussion_details'),
@@ -30,14 +34,8 @@ urlpatterns = patterns('',
 #pk (of discussion)/stop_follow
     url(r'^(?P<pk>\d+)/stop_follow/$', views.stop_follow, name='stop_follow'),
 
-#pk (of discussion)/feedback_for
-    url(r'^(?P<pk>\d+)/feedback/$', views.add_feedback, name='add_feedback'),
-#pk (of discussion)/update_goals
-    url(r'^(?P<pk>\d+)/update_goals/$', views.update_discussion, name='update_goals'),
 #pk (of discussion)/delete_discussion
     url(r'^(?P<pk>\d+)/delete_discussion/$', views.delete_discussion, name='delete_discussion'),
-#pk (of discussion)/add_decision
-    url(r'^(?P<pk>\d+)/add_decision/$', views.add_decision, name='add_decision'),
 #pk (of decision)/vote
     url(r'^(?P<pk>\d+)/vote/$', views.vote, name='vote'),
 
@@ -45,7 +43,6 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/create-decision/$', views.CreateDecisionView.as_view(), name='create_decision'),
     url(r'^(?P<pk>\d+)/create-feedback/$', views.CreateFeedbackView.as_view(), name='create_feedback'),
     url(r'^(?P<pk>\d+)/create-task/$', views.CreateTaskView.as_view(), name='create_task'),
-    url(r'^(?P<pk>\d+)/add_task/$', views.add_task, name='add_task'),
 
 #pk (of task)/task_details
     url(r'^(?P<pk>\d+)/task_details/$', views.task_details, name='task_details'),

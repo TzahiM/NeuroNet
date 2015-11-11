@@ -1,0 +1,23 @@
+{% extends "coplay/email_base.html" %}
+
+{% block content %}
+    <br>
+    {% if details %}
+     <p>
+  		{{details|urlize|linebreaks }}    	
+    
+  	{% endif %}
+
+  <p>
+  	
+<br>  	
+<br>  	
+      <a href="http://{{ROOT_URL}}{% url 'coplay:user_coplay_report'  follower_user.username %}"> צפיה בפרופיל של {{follower_user.get_full_name|default:follower_user.username}}</a>
+   <br>
+   <br>
+         <a href="http://{{ROOT_URL}}{% url 'coplay:user_coplay_report'  follower_user.username %}"> צפיה בפעילויות בנושא {{tag.name}}</a>
+   </p>
+      
+
+{% endblock %}
+
