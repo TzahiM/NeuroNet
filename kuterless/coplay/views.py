@@ -185,7 +185,7 @@ def discussion_details(request, pk):
                    'page_name': page_name ,
                    'is_a_follower': is_a_follower,
                    'list_followers': list_followers,
-                   'ROOT_URL': SITE_URL})
+                   'ROOT_URL': 'http://' + SITE_URL})
     
     #current view is recorded after response had been resolved
     if request.user.is_authenticated():
