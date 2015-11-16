@@ -70,7 +70,8 @@
             {{ discussion.locked_at | timeuntil }}
         </div>
         
-                        <a class="new btn btn-success" href="http://127.0.0.1:8000/labs/coplay/add_with_url/?parent_url=http://127.0.0.1:8000{{ request.path }}&parent_url_text={{page_name}}">לפתיחה פעילות קשורה</a>
+                        <!-- <a class="new btn btn-success" href="{{ROOT_URL}}"/labs/coplay/add_with_url/?parent_url="{{ROOT_URL}}{{ request.path }}&parent_url_text={{page_name}}">לפתיחה פעילות קשורה</a> -->
+
     {% else %}
         <div class="alert alert-error">
         	הפעילות הוקפאה
@@ -78,7 +79,9 @@
                href="{% url 'coplay:create_task' discussion.id %}">{% trans "Create Task" %}</a>   
         </div>
     {% endif %}
-    </div>
+                                                <!-- <a class="new btn btn-success" href="http://127.0.0.1:8000/labs/coplay/add_with_url/?parent_url=http://127.0.0.1:8000{{ request.path }}&parent_url_text={{page_name}}">לפתיחה פעילות קשורה</a> -->
+                                                 <a class="new btn btn-success" href="/labs/coplay/add_with_url/?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{page_name}}">לפתיחה פעילות קשורה</a>
+   </div>
 
     <div id="discussion-body" class="well">
         {% if user == discussion.owner and discussion.is_active%}

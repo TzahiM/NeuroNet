@@ -13,6 +13,7 @@ from coplay.services import update_task_status_description, update_task_state, \
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.context_processors import request
 from django.core.urlresolvers import reverse
 from django.forms.extras.widgets import SelectDateWidget
 from django.http.response import HttpResponse, HttpResponseRedirect
@@ -25,11 +26,11 @@ from django.utils.http import is_safe_url
 from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
+from kuterless.settings import SITE_URL
 from taggit.forms import TagField
 from taggit.models import Tag
 from taggit.utils import edit_string_for_tags
 import floppyforms as forms
-from django.core.context_processors import request
 
 
 MAX_MESSAGE_INPUT_CHARS = 900
@@ -183,7 +184,8 @@ def discussion_details(request, pk):
                    'list_anonymous_viewers':list_anonymous_viewers,
                    'page_name': page_name ,
                    'is_a_follower': is_a_follower,
-                   'list_followers': list_followers})
+                   'list_followers': list_followers,
+                   'ROOT_URL': SITE_URL})
     
     #current view is recorded after response had been resolved
     if request.user.is_authenticated():
