@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
-import control
+# import control
 
 
 MAX_TEXT = 2000
@@ -42,6 +42,8 @@ class Discussion(models.Model):
     longitude   = models.FloatField(default=None, blank=True, null=True)
     location_desc = models.CharField( max_length=200,default=None, blank=True, null=True)
     tags = TaggableManager(blank=True)
+    parent_url      = models.URLField( max_length=200,default=None, blank=True, null=True)
+    parent_url_text = models.CharField( max_length=200,default=None, blank=True, null=True)
     
     def __unicode__(self):
         return self.id
@@ -52,31 +54,35 @@ class Discussion(models.Model):
         return (
         reverse('coplay:discussion_details', kwargs={'pk': str(self.id)}) )
 
-    def update_description(self, description):
+    def update_description_obs(self, description, location_desc = None, tags_string = None):
         self.description = description
+        self.location_desc = location_desc
+        tags_list =  tags_string.split(',')
+        for tag in tags_list:
+            self.tags.add( tag)
+        
         self.description_updated_at = timezone.now()
         self.save()#cause all previous fedbacks to be striked at
 
-    def add_feedback(self, user, feedbabk_type, content):
+    def add_feedback_obs(self, user, feedbabk_type, content):
         feedback = Feedback(discussion=self, user=user,
                             feedbabk_type=feedbabk_type, content=content)
         feedback.clean()
         feedback.save()
-        control.user_posted_a_feedback_in_another_other_user_s_discussion(user, feedback.get_absolute_url())
+#         control.user_posted_a_feedback_in_another_other_user_s_discussion(user, feedback.get_absolute_url())
         
         
         return feedback
 
 
-    def add_decision(self, content):
+    def add_decision_obs(self, content):
         decision = Decision(parent=self, content=content)
         decision.clean()
         decision.save()
-        control.user_post_a_decision_for_vote_regarding_his_own_discussion( decision.parent.owner, decision.get_absolute_url())
         return decision
 
 
-    def add_task(self, responsible, goal_description, target_date,
+    def add_task_obs(self, responsible, goal_description, target_date,
                  max_inactivity_seconds=MAX_INACTIVITY_SECONDS):
         
         
@@ -200,13 +206,13 @@ class Discussion(models.Model):
 
         return followers_list
 
-    def record_a_view(self, viewing_user):
+    def record_a_view_obs(self, viewing_user):
         if viewing_user in User.objects.all():
             viewer = self.viewer_set.get_or_create( user = viewing_user)[0]
             viewer.increment_views_counter()
 
 
-    def record_anonymous_view(self, request):
+    def record_anonymous_view_obs(self, request):
         
                 
         if 'anonymous_user_id' in request.session:
@@ -235,12 +241,12 @@ class Discussion(models.Model):
         request.session['anonymous_user_id'] = anonymous_user.id
 
             
-    def start_follow(self, viewing_user):
+    def start_follow_obs( self, viewing_user):
         if viewing_user in User.objects.all():
             viewer = self.viewer_set.get_or_create( user = viewing_user)[0]
-            viewer.start_follow()
+            viewer.start_follow_obs()
 
-    def stop_follow(self, viewing_user):
+    def stop_follow_obs(self, viewing_user):
         if viewing_user in User.objects.all():
             viewer = self.viewer_set.get_or_create( user = viewing_user)[0]
             viewer.stop_follow()
@@ -293,28 +299,30 @@ class Discussion(models.Model):
         
         return True
 
-    def invite(self, invited_user):
+    def invite_obs(self, invited_user):
         if invited_user in User.objects.all():
             viewer = self.viewer_set.get_or_create( user = invited_user)[0]
             viewer.invite()
 
 
-    def cancel_invitation(self, invited_user):
+    def cancel_invitation_obs(self, invited_user):
         if invited_user in User.objects.all():
             viewer = self.viewer_set.get_or_create( user = invited_user)[0]
-            viewer.cancel_invitation()
+            viewer.cancel_invitation_obs()
 
         
     def get_invited_users_list(self):
-        
-        
+
         invited_users_list = []
         for viewer in self.viewer_set.all():
             if viewer.get_is_invited():
                 invited_users_list.append(viewer.user)
                 
         return invited_users_list
-        
+
+    def get_discussion(self):
+        return self
+            
     def print_content(self):
         print 'Owner', self.owner.username
         print 'Title:', self.title
@@ -394,6 +402,9 @@ class Feedback(models.Model):
 
     def get_absolute_url(self):
         return self.discussion.get_absolute_url()
+    
+    def get_discussion(self):
+        return self.discussion
 
 
 class LikeLevel(object):
@@ -424,23 +435,24 @@ class Decision(models.Model):
     def get_number_of_votes(self):
         return self.vote_set.count()
 
-    def vote(self, voater, value):
+    def vote_obs(self, voater, value):
         if voater == self.parent.owner:
-            return
+            return False
         if (self.vote_set.filter(voater=voater).count() == 0):
             new_vote = Vote(decision=self, voater=voater, value=value)
             new_vote.save()
             self.value += value
-            control.user_voted_for_an_idea_in_another_user_s_discussion(voater , self.get_absolute_url())
-        else:
-            current_vote = self.vote_set.get(voater=voater)
-            self.value -= current_vote.value
-            current_vote.value = value
-            self.value += current_vote.value
-            current_vote.save()
+            self.save()
+            return True
+#             control.user_voted_for_an_idea_in_another_user_s_discussion(voater , self.get_absolute_url())
+        current_vote = self.vote_set.get(voater=voater)
+        self.value -= current_vote.value
+        current_vote.value = value
+        self.value += current_vote.value
+        current_vote.save()
 
         self.save()
-        
+        return False
 
     def get_vote_sum(self):
         return (self.value)
@@ -485,6 +497,8 @@ class Decision(models.Model):
     def get_absolute_url(self):
         return self.parent.get_absolute_url() + '#Decisions'
 
+    def get_discussion(self):
+        return self.parent
 
 class Vote(models.Model):
     voater = models.ForeignKey(User)
@@ -506,12 +520,19 @@ class Vote(models.Model):
     def print_content(self):
         print 'voater', self.voater.username, 'value', self.value
 
+    def get_discussion(self):
+        return self.decision.parent
 
 class Task(models.Model):
     STARTED = 1
     CLOSED = 2
     MISSED = 3
     ABORTED = 4
+    DISCUSSION_OWNER_COMPLETED = 6
+    OTHER_COMPLETED = 7
+    DISCUSSION_OWNER_ABORTED = 8
+    OTHER_ABORTED = 9
+    OTHER_CONFIRMED = 10
     
     STATUS_CHOICES = (
         (STARTED, 'פעילה'),
@@ -542,8 +563,8 @@ class Task(models.Model):
         return ( reverse('coplay:task_details', kwargs={'pk': str(self.id)}) )
 
 
-    def update_status_description(self, status_description):
-        self.refresh_status()
+    def update_status_description_obs(self, status_description):
+#         self.refresh_status()
         if self.final_state:
             return False
         self.status_description = status_description
@@ -551,14 +572,12 @@ class Task(models.Model):
         return True
 
     def get_status_description(self):
-        self.refresh_status()
+#         self.refresh_status()
         return self.status_description
 
 
-    def set_state(self, new_state, closing_user): 
-        now  = timezone.now()
-        
-        self.refresh_status()
+    def set_state_obs(self, new_state, closing_user):         
+#         self.refresh_status()
         if self.final_state:
             return False
         
@@ -568,69 +587,78 @@ class Task(models.Model):
         
         if (self.status != new_state):
             self.status = new_state
-            self.closed_at = now
+            self.closed_at = timezone.now()
             self.closed_by = closing_user
             self.save()
             return True
         return False
 
-    def abort(self, closing_user):
+    def abort_obs(self, closing_user):
         
         return self.set_state(self.ABORTED, closing_user)
         
 
-    def re_open(self, closing_user):
+    def re_open_obs(self, closing_user):
         
         return self.set_state(self.STARTED, closing_user)
 
 
-    def close(self, closing_user):
+    def close_obs(self, closing_user):
         
         return self.set_state(self.CLOSED, closing_user)
         
 
 
     def get_time_until_target(self):
-        now = timezone.now()
-        self.refresh_status()
+#         self.refresh_status()
         if self.final_state:
             return 0
         
-        return self.target_date - now
+        return self.target_date - timezone.now()
+    
 
-    def refresh_status(self):
+    def poll_status(self):
         now = timezone.now()
+        events = []
         if self.target_date < now and not self.final_state:
             self.final_state = True
             if self.status == self.STARTED or self.status == self.MISSED:
                 self.status = self.MISSED
             else:
-                control.user_confirmed_a_state_update_in_another_user_s_mission(self.closed_by, self.get_absolute_url())
+                events.append(self.OTHER_CONFIRMED)
+#                 control.user_confirmed_a_state_update_in_another_user_s_mission(self.closed_by, self.get_absolute_url())
                 if self.status == self.CLOSED:
                     if self.responsible == self.parent.owner:
-                        control.user_completed_a_mission_for_his_own_s_discussion( self.responsible, self.get_absolute_url())
+                        events.append(self.DISCUSSION_OWNER_COMPLETED)
+#                 control.user_confirmed_a_state_u
+#                         control.user_completed_a_mission_for_his_own_s_discussion( self.responsible, self.get_absolute_url())
                     else:
-                        control.user_completed_a_mission_for_another_user_s_discussion( self.responsible, self.get_absolute_url())
+                        events.append(self.OTHER_COMPLETED)
+#                         control.user_completed_a_mission_for_another_user_s_discussion( self.responsible, self.get_absolute_url())
                 else:
                     if self.status == self.ABORTED:
                         if self.responsible == self.parent.owner:
-                            control.user_aborted_a_mission_for_his_own_s_discussion( self.responsible, self.get_absolute_url())
+                            events.append(self.DISCUSSION_OWNER_ABORTED)
+#                             control.user_aborted_a_mission_for_his_own_s_discussion( self.responsible, self.get_absolute_url())
                         else:
-                            control.user_aborted_a_mission_for_another_user_s_discussion( self.responsible, self.get_absolute_url())
+                            events.append(self.OTHER_ABORTED)
+#                             control.user_aborted_a_mission_for_another_user_s_discussion( self.responsible, self.get_absolute_url())
                         
                                 
             self.save()
             
+        return events    
                     
 
-    def get_status(self):
-        self.refresh_status()
+    def get_status_obs(self):
         return self.status
 
 
     def print_content(self):
         print 'create', self.created_at, 'update', self.updated_at, 'status:', self.get_status_display(), 'now', timezone.now(), 'GoalDescription:', self.goal_description, 'target_date:', self.target_date, 'remaining', self.get_time_until_target(), 'closing_date:', self.closed_at, self.status_description
         
+    def get_discussion(self):
+        return self.parent
 
 
 class Viewer(models.Model):
@@ -646,21 +674,6 @@ class Viewer(models.Model):
     is_invited    = models.BooleanField(default = False)
 
     
-    def increment_views_counter(self):
-        if self.discussion_updated_at_on_last_view != self.discussion.updated_at: 
-            self.views_counter += 1            
-            self.discussion_updated_at_on_last_view = self.discussion.updated_at
-            glimpse = self.glimpse_set.create( viewer = self)
-            glimpse.clean()
-            glimpse.save()
-            if self.user != self.discussion.owner:
-                control.user_glimpsed_another_user_s_discussion( user = self.user, 
-                                                                 discussion =  self.discussion, 
-                                                                 views_counter = self.views_counter)
-            
-        self.views_counter_updated_at = timezone.now()
-        self.save()
-
     def clear_views_counter(self):
         self.views_counter = 0
         self.save()
@@ -668,24 +681,23 @@ class Viewer(models.Model):
     def get_views_counter(self):
         return self.views_counter
 
-    def start_follow(self):
+    def start_follow_obs(self):
         self.is_a_follower = True
         self.save()
 
 
-    def stop_follow(self):
+    def stop_follow_obs(self):
         self.is_a_follower = False
         self.save()
 
     def get_is_a_follower(self):
         return self.is_a_follower
 
-    def invite(self):
+    def invite_obs(self):
         self.is_invited = True
         self.save()
 
-
-    def cancel_invitation(self):
+    def cancel_invitation_obs(self):
         self.is_invited = False
         self.save()
 
@@ -698,6 +710,8 @@ class Viewer(models.Model):
             glimpse.print_content()
         
 
+    def get_discussion(self):
+        return self.discussion
 
 
 
@@ -730,7 +744,7 @@ class AnonymousVisitorViewer(models.Model):
     discussion_updated_at_on_last_view = models.DateTimeField(default=None, blank=True, null=True)
 
     
-    def increment_views_counter(self):
+    def increment_views_counter_obs(self):
         if self.discussion_updated_at_on_last_view != self.discussion.updated_at: 
             self.views_counter += 1            
             self.discussion_updated_at_on_last_view = self.discussion.updated_at
@@ -763,6 +777,9 @@ class AnonymousVisitorViewer(models.Model):
         print 'AnonymousVisitorViewer', 'id', self.id, 'user', ident_string, 'views_counter', self.views_counter, 'updated_at', self.updated_at, 'views_counter_updated_at', self.views_counter_updated_at, 'is_a_follower', self.is_a_follower, 'is_invited', self.is_invited
         for glimpse in self.glimpse_set.all().order_by("-created_at"):
             glimpse.print_content()
+            
+    def get_discussion(self):
+        return self.discussion
         
 
         
@@ -787,6 +804,11 @@ class Glimpse(models.Model):
             discussion_title = self.viewer.discussion.title
             
         print 'at',  self.created_at, 'user', ident_string , 'looked at', discussion_title 
+        
+    def get_discussion(self):
+        if self.viewer != None:
+            return self.viewer.discussion
+        return None
 
 
 class FollowRelation(models.Model):
@@ -975,4 +997,6 @@ class UserUpdate(models.Model):
         return (
         reverse('coplay:user_update_details', kwargs={'pk': str(self.id)}) )
 
+    def get_discussion(self):
+        return self.discussion
             

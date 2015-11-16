@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 
-
 class DiscussionSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -20,11 +19,14 @@ class DiscussionSerializer(serializers.ModelSerializer):
                   'created_at',
                   'updated_at',
                   'locked_at',
+                  'description_updated_at',
                   'is_restricted',
                   'is_viewing_require_login',
                   'latitude',
                   'longitude',
                   'location_desc',
+                  'parent_url',
+                  'parent_url_text',
                   )
 
 class UserSerializer(serializers.ModelSerializer):
@@ -36,6 +38,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'first_name',
                   'last_name'
                   )
+
 
 class FeedbackSerializer(serializers.ModelSerializer):
     

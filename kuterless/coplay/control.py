@@ -4,12 +4,15 @@ This file contain the control services, used for all views
 """
 
 #from coplay.models import UserProfile, Discussion, UserUpdate
+from coplay.models import FollowRelation, Task
 from django.contrib.auth.models import User
 from django.core.mail.message import EmailMessage
 from django.core.urlresolvers import reverse
 from django.template.base import Template
 from django.template.context import Context
 from django.template.loader import render_to_string
+from django.utils import timezone
+from rest_framework.authtoken.models import Token
 from taggit.models import Tag
 import kuterless.settings
 import models
@@ -81,13 +84,6 @@ def post_update_to_user(recipient_user_id, header, content = None, discussion_id
     user_update.save()
 
 
-
-def get_user_fullname_or_username(user):
-    full_name = user.get_full_name()
-    if full_name:
-        return full_name
-    return user.username
-
 def get_user_url(user):
     return reverse('coplay:user_coplay_report', kwargs={'username': user.username})
 
@@ -126,19 +122,20 @@ def user_follow_start_email_updates(follower_user, following_user, inverse_follo
 def discussion_email_updates(discussion, subject, logged_in_user, details = None, url_id = '', mailing_list = []):
     if mailing_list == []:
         mailing_list = discussion.get_followers_list()
-    allowed_users_list = []
     
-    for user in User.objects.all():
-        if discussion.can_user_access_discussion( user):
-            if user in mailing_list:
-                allowed_users_list.append(user)
-            else:
-                to_append = False
-                for tag_iter in user.userprofile.followed_discussions_tags.all():
-                    if tag_iter.name in discussion.tags.names():
-                        to_append = True
-                if to_append:
-                    allowed_users_list.append(user)
+#     allowed_users_list = []
+#     
+#     for user in User.objects.all():
+#         if discussion.can_user_access_discussion( user):
+#             if user in mailing_list:
+#                 allowed_users_list.append(user)
+#             else:
+#                 to_append = False
+#                 for tag_iter in user.userprofile.followed_discussions_tags.all():
+#                     if tag_iter.name in discussion.tags.names():
+#                         to_append = True
+#                 if to_append:
+#                     allowed_users_list.append(user)
             
          
     html_message = render_to_string("coplay/email_discussion_update.html",
@@ -154,13 +151,13 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
 #     with open( "duguoutput.html" , "w") as debug_file:
 #         debug_file.write(html_message)
     
-    for attensdent in allowed_users_list:
-        if attensdent != logged_in_user:
-            if attensdent.email and attensdent.userprofile.recieve_updates:
+    for user in mailing_list:
+        if user != logged_in_user:
+            if user.email and user.userprofile.recieve_updates:
                 send_html_message(subject, html_message,
                               'kuterless-no-reply@kuterless.org.il',
-                              [attensdent.email])
-            post_update_to_user(attensdent.id, 
+                              [user.email])
+            post_update_to_user(user.id, 
                      header = string_to_email_subject(subject),
                      content = details, 
                      sender_user_id = logged_in_user.id,  
@@ -258,20 +255,6 @@ def task_state_change_update(task, state_change_description):
 
 
 
-def get_all_users_visiabale_for_a_user_list(user_id_or_none_when_anoynymous = None):
-    if user_id_or_none_when_anoynymous != None:
-        try:
-            known_user = User.objects.get(id=user_id_or_none_when_anoynymous)
-        except User.DoesNotExist:
-            return []
-        return known_user.userprofile.get_all_users_in_same_segment_list()
-    all_users_visiabale_for_a_user_list = []
-    for user_profile in models.UserProfile.objects.all():
-        if user_profile.segment == None:
-            all_users_visiabale_for_a_user_list.append(user_profile.user)
-            
-    return all_users_visiabale_for_a_user_list
-
 
 def user_started_a_new_discussion( user, url = None):
 
@@ -357,11 +340,6 @@ def user_glimpsed_another_user_s_discussion( user, discussion , views_counter = 
                                                        positive_item_price = 2, 
                                                        url = discussion.get_absolute_url()) 
     
-def init_user_profile(user, segment = None):
-    user.userprofile = models.UserProfile(user = user, segment = segment)
-    user.userprofile.save()
-    user.save()    
-    
 def get_discussions_lists( filter_func = None):
     sorted_discussions_by_inverse_locket_at_list = models.Discussion.objects.all().order_by(
         "-locked_at")
@@ -380,4 +358,78 @@ def get_discussions_lists( filter_func = None):
             active_discussions_by_urgancy_list.append(discussion)
 
     return active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list
+
     
+def viewer_increment_views_counter( viewer):
+    if viewer.discussion_updated_at_on_last_view != viewer.discussion.updated_at: 
+        viewer.views_counter += 1            
+        viewer.discussion_updated_at_on_last_view = viewer.discussion.updated_at
+        glimpse = viewer.glimpse_set.create( viewer = viewer)
+        glimpse.clean()
+        glimpse.save()
+        if viewer.user != viewer.discussion.owner:
+            user_glimpsed_another_user_s_discussion( user           = viewer.user, 
+                                                             discussion     = viewer.discussion, 
+                                                             views_counter  = viewer.views_counter)
+        
+    viewer.views_counter_updated_at = timezone.now()
+    viewer.save()
+      
+    
+def anonymous_user_increment_views_counter(anonymous_user):
+    if anonymous_user.discussion_updated_at_on_last_view != anonymous_user.discussion.updated_at: 
+        anonymous_user.views_counter += 1            
+        anonymous_user.discussion_updated_at_on_last_view = anonymous_user.discussion.updated_at
+        glimpse = anonymous_user.glimpse_set.create( anonymous_visitor_viewer = anonymous_user)
+        glimpse.clean()
+        glimpse.save()            
+        
+        
+    anonymous_user.views_counter_updated_at = timezone.now()
+    anonymous_user.save()
+        
+                
+     
+def init_user_profile(user, segment = None):
+    user.userprofile = models.UserProfile(user = user, segment = segment)
+    user.userprofile.save()
+    user.save()    
+
+def init_user_token(user):
+    Token.objects.get_or_create(user=user)
+    
+
+def get_tasks_lists():
+    for task in Task.objects.all():
+        poll_for_task_complition(task)
+    open_tasks_list_by_urgancy_list = Task.objects.all().filter(
+        status=Task.STARTED).order_by("target_date")
+    closed_tasks_list_by_relevancy_list = Task.objects.all().filter(
+        status=Task.CLOSED).order_by("-closed_at")
+    missed_tasks_list_by_relevancy_list = Task.objects.all().filter(
+        status=Task.MISSED).order_by("-target_date")
+
+    return open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, missed_tasks_list_by_relevancy_list
+    
+
+def poll_for_task_complition( task):
+    events = task.poll_status()
+    for event in events:
+        if event == task.DISCUSSION_OWNER_COMPLETED:
+            user_completed_a_mission_for_his_own_s_discussion( task.responsible, 
+                                                               task.get_absolute_url())
+        if event == task.OTHER_COMPLETED:
+            user_completed_a_mission_for_another_user_s_discussion( task.responsible, 
+                                                                    task.get_absolute_url())
+            
+        if event == task.DISCUSSION_OWNER_ABORTED :
+            user_aborted_a_mission_for_his_own_s_discussion( task.responsible, 
+                                                             task.get_absolute_url())
+        
+        if event == task.OTHER_ABORTED  :
+            user_aborted_a_mission_for_another_user_s_discussion( task.responsible, 
+                                                                  task.get_absolute_url())
+
+        if event == task.OTHER_CONFIRMED  :
+            user_confirmed_a_state_update_in_another_user_s_mission( task.closed_by, 
+                                                                     task.get_absolute_url())

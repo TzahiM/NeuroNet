@@ -6,33 +6,25 @@ from django.db import models
 
 
 class Migration(SchemaMigration):
-    depends_on = (
-            ("taggit", "0001_initial"),
-        )
-    def forwards(self, orm):
-        # Adding model 'TaggedDiscussions'
-        db.create_table(u'coplay_taggeddiscussions', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('tag', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'coplay_taggeddiscussions_items', to=orm['taggit.Tag'])),
-            ('content_object', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['coplay.Discussion'])),
-        ))
-        db.send_create_signal(u'coplay', ['TaggedDiscussions'])
 
-        # Adding model 'TaggedUsers'
-        db.create_table(u'coplay_taggedusers', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('tag', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'coplay_taggedusers_items', to=orm['taggit.Tag'])),
-            ('content_object', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['coplay.UserProfile'])),
-        ))
-        db.send_create_signal(u'coplay', ['TaggedUsers'])
+    def forwards(self, orm):
+        # Adding field 'Discussion.parent_url'
+        db.add_column(u'coplay_discussion', 'parent_url',
+                      self.gf('django.db.models.fields.URLField')(default=None, max_length=200, null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'Discussion.parent_url_text'
+        db.add_column(u'coplay_discussion', 'parent_url_text',
+                      self.gf('django.db.models.fields.CharField')(default=None, max_length=200, null=True, blank=True),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting model 'TaggedDiscussions'
-        db.delete_table(u'coplay_taggeddiscussions')
+        # Deleting field 'Discussion.parent_url'
+        db.delete_column(u'coplay_discussion', 'parent_url')
 
-        # Deleting model 'TaggedUsers'
-        db.delete_table(u'coplay_taggedusers')
+        # Deleting field 'Discussion.parent_url_text'
+        db.delete_column(u'coplay_discussion', 'parent_url_text')
 
 
     models = {
@@ -113,6 +105,8 @@ class Migration(SchemaMigration):
             'locked_at': ('django.db.models.fields.DateTimeField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'longitude': ('django.db.models.fields.FloatField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
+            'parent_url': ('django.db.models.fields.URLField', [], {'default': 'None', 'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'parent_url_text': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'updated_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },

@@ -34,6 +34,9 @@
 	                	<a class="new btn btn-info" href="https://www.google.co.il/maps/place/{{discussion.location_desc}}" target="_blank">{{discussion.location_desc}}</a> 
 	                {% endif %}      
                 {% endif %}                
+                {% if discussion.parent_url  %}
+                שנוצרה בעקבות <a  href={{discussion.parent_url}} target="_blank">  {{discussion.parent_url_text}}</a> 
+                {% endif %}      
                 {% if is_a_follower %}                
                 	<a class="new btn btn-warning" href="{% url 'coplay:stop_follow' discussion.id %}">להפסיק לקבל עדכונים</a> 
                 {% else %}
@@ -66,6 +69,9 @@
             {% trans "Discussion Deadline" %}
             {{ discussion.locked_at | timeuntil }}
         </div>
+        
+                        <!-- <a class="new btn btn-success" href="{{ROOT_URL}}"/labs/coplay/add_with_url/?parent_url="{{ROOT_URL}}{{ request.path }}&parent_url_text={{page_name}}">לפתיחה פעילות קשורה</a> -->
+
     {% else %}
         <div class="alert alert-error">
         	הפעילות הוקפאה
@@ -73,7 +79,9 @@
                href="{% url 'coplay:create_task' discussion.id %}">{% trans "Create Task" %}</a>   
         </div>
     {% endif %}
-    </div>
+                                                <!-- <a class="new btn btn-success" href="http://127.0.0.1:8000/labs/coplay/add_with_url/?parent_url=http://127.0.0.1:8000{{ request.path }}&parent_url_text={{page_name}}">לפתיחה פעילות קשורה</a> -->
+                                                 <a class="new btn btn-success" href="/labs/coplay/add_with_url/?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{page_name}}">לפתיחה פעילות קשורה</a>
+   </div>
 
     <div id="discussion-body" class="well">
         {% if user == discussion.owner and discussion.is_active%}
@@ -104,7 +112,7 @@
     </div>
 
     <div id="discussion-feedback"
-    {% if discussion.is_active and discussion.owner != user%}
+    {% if discussion.owner != user%}
         <p>
             <a class="btn btn-info"
                href="{% url 'coplay:create_feedback' discussion.id %}">{% trans "Create Feedback" %}</a>
@@ -261,7 +269,7 @@
                                 {% trans "Created" %} 
                                 {{ decision.created_at | naturaltime }}
                                 עם {{ decision.get_number_of_votes }} הצבעות
-                                {% if vote_form %}
+                                {% if vote_form and user != discussion.owner %}
                                     <h5>{% trans "Your Opinion" %}</h5>
                                     <form action="{% url 'coplay:vote' decision.id %}"
                                           method="post">{% csrf_token %}
