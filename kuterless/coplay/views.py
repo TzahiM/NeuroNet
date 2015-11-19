@@ -105,7 +105,7 @@ class UpdateTaskForm(forms.Form):
                                          widget=forms.Textarea(
                                              attrs={'rows': '3'}))
 
-def discussion_de  tails(request, pk):
+def discussion_details(request, pk):
     try:
         discussion = Discussion.objects.get(id=int(pk))
     except Discussion.DoesNotExist:
