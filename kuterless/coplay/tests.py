@@ -171,6 +171,9 @@ class CoPlayTest(TestCase):
         feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ADVICE, "like ADVICdvEADVICE")
         self.assertEquals(error_string, None)
         self.assertEquals(9, Feedback.objects.count())
+        feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ADVICE, "like ADVICdvEADVICE")
+        self.assertNotEquals(error_string, None)
+        self.assertEquals(9, Feedback.objects.count())
         d.print_content()
 
 
@@ -192,6 +195,7 @@ class CoPlayTest(TestCase):
         self.assertEquals( des.get_vote_value_or_none( self.at2) , LikeLevel.GOOD )
         self.assertEquals( des.get_vote_value_or_none( self.at3) , None )
         d.print_content()
+        
 
     def test_action(self):    
         self.assertEquals(0, Task.objects.count())
