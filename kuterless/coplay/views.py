@@ -332,11 +332,20 @@ def add_on_add_discussion(request, pk = None):
         else:
             form = NewDiscussionForm() # An unbound form
 
-        
-    return render(request, use_template, {
-        'form': form,
-        'rtl': 'dir="rtl"'
-    })
+
+    data = render(request, use_template, {
+            'form': form,
+            'rtl': 'dir="rtl"'
+        })
+    response = HttpResponse(data)
+    response['X-Frame-Options'] = "ALLOWALL"
+    return response
+
+#         
+#     return render(request, use_template, {
+#         'form': form,
+#         'rtl': 'dir="rtl"'
+#     })
  
 # @login_required
 # def update_discussion(request, pk):
