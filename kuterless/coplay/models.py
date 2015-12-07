@@ -254,7 +254,7 @@ class Discussion(models.Model):
     def is_a_follower(self, viewing_user):
         if not viewing_user:
             return False
-        if self.viewer_set.all().filter( user = viewing_user):
+        if self.viewer_set.all().filter( user = viewing_user).exists():
             viewer = self.viewer_set.get( user = viewing_user)
             return viewer.get_is_a_follower()
         return False
