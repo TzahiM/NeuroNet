@@ -13,12 +13,17 @@ urlpatterns = patterns('',
     url(r'^discussion_tag_list/(?P<pk>[0-9]+)/$', views.discussion_tag_list, name='discussion_tag_list'),
 
     url(r'^discussion_url_list/$', views.discussion_url_list, name='discussion_url_list'),
+    
+    url(r'^add_on_discussion_url_list/$', views.add_on_discussion_url_list, name='add_on_discussion_url_list'),
 
 #/add
     url(r'add/$', views.add_discussion, name='add_discussion'),
 
     url(r'add_with_tag/(?P<pk>[0-9]+)/$', views.add_discussion, name='add_with_tag'),
 
+# http://127.0.0.1:8000/labs/coplay/add_on_add_with_url/?parent_url=http://www.ynet.co.il/articles/0,7340,L-4722534,00.html&parent_url_text=hi hi
+    url(r'add_on_add_with_url/$', views.add_on_add_discussion, name='add_on_add_with_url'),
+    
 # http://127.0.0.1:8000/labs/coplay/add_with_url/?parent_url=http://www.ynet.co.il/articles/0,7340,L-4722534,00.html&parent_url_text=hi hi
     url(r'add_with_url/$', views.add_discussion, name='add_with_url'),
 

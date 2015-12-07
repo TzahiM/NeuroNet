@@ -230,6 +230,12 @@ class NewDiscussionForm(forms.Form):
 
 @login_required
 def add_discussion(request, pk = None):
+
+    use_template = 'coplay/new_discussion.html'
+#     if add_on:
+#         use_template = 'coplay/add_on_new_discussion.html'
+    
+    
     if request.method == 'POST': # If the form has been submitted...
         form = NewDiscussionForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
@@ -253,7 +259,7 @@ def add_discussion(request, pk = None):
         if parent_url:
             form = NewDiscussionForm(initial={'parent_url': parent_url,
                                               'parent_url_text': parent_url_text}) # An unbound form
-            return render(request, 'coplay/new_discussion.html', {
+            return render(request, use_template, {
                 'form': form,
                 'rtl': 'dir="rtl"'
             })
@@ -271,13 +277,67 @@ def add_discussion(request, pk = None):
         else:
             form = NewDiscussionForm() # An unbound form
 
-    return render(request, 'coplay/new_discussion.html', {
+        
+    return render(request, use_template, {
         'form': form,
         'rtl': 'dir="rtl"'
     })
 
 
 
+@login_required
+def add_on_add_discussion(request, pk = None):
+    
+    
+    use_template = 'coplay/add_on_new_discussion.html'
+    
+    if request.method == 'POST': # If the form has been submitted...
+        form = NewDiscussionForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            
+            new_discussion, error_string = create_discussion( user             = request.user, 
+                                                       title            = form.cleaned_data['title'], 
+                                                       description      = form.cleaned_data['description'],                       
+                                                       location_desc    = form.cleaned_data['location_desc'],
+                                                       tags_string      = form.cleaned_data['tags'],
+                                                       parent_url       = form.cleaned_data['parent_url'],
+                                                       parent_url_text  = form.cleaned_data['parent_url_text'])
+            
+            if new_discussion:
+                messages.success(request,_("Your activity was created successfully"))
+                return redirect(new_discussion)
+                
+            messages.error(request, error_string)
+    else:
+        parent_url = request.REQUEST.get('parent_url', '')
+        parent_url_text = request.REQUEST.get('parent_url_text', '')
+        if parent_url:
+            form = NewDiscussionForm(initial={'parent_url': parent_url,
+                                              'parent_url_text': parent_url_text}) # An unbound form
+            return render(request, use_template, {
+                'form': form,
+                'rtl': 'dir="rtl"'
+            })
+            
+        if pk:
+            try:
+                tag = Tag.objects.get(id=int(pk))
+            except Tag.DoesNotExist:
+                return render(request, 'coplay/message.html',
+                              {'message': 'הנושא איננו קיים',
+                               'rtl': 'dir="rtl"'})
+            form = NewDiscussionForm(initial={'tags': tag.name}) # An unbound form
+            request.user.userprofile.followed_discussions_tags.add( tag.name)
+            request.user.userprofile.save()
+        else:
+            form = NewDiscussionForm() # An unbound form
+
+        
+    return render(request, use_template, {
+        'form': form,
+        'rtl': 'dir="rtl"'
+    })
+ 
 # @login_required
 # def update_discussion(request, pk):
 #     try:
@@ -958,6 +1018,7 @@ def discussion_tag_list(request, pk = None):
 
 
 def discussion_url_list(request):
+    vvvv
     search_url = request.REQUEST.get('search_url', '')
     if search_url:
         active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
@@ -1001,6 +1062,52 @@ def start_follow_tag( request, pk):
             
     return HttpResponseRedirect(reverse('coplay:discussion_tag_list', kwargs={'pk': tag.id}))
 
+
+def add_on_discussion_url_list(request):
+    search_url = request.REQUEST.get('search_url', '')
+    nnnn
+    if search_url:
+        fff
+        active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
+         
+        all_discussions_list  = active_discussions_by_urgancy_list + locked_discussions_by_relevancy_list
+        list_title_min_length = 10000
+        list_title = None
+        applicabale_discussions_list = []
+        for discussion in all_discussions_list:
+            if can_user_acess_discussion(discussion, request.user):
+                if search_url in discussion.parent_url:
+                    applicabale_discussions_list.append(discussion)
+                    if len(discussion.parent_url) < list_title_min_length:
+                        list_title_min_length = len(discussion.parent_url)
+                        list_title = discussion.parent_url_text
+        if list_title:
+            page_name = u'פעילויות שקשורות ל' + list_title
+        else:
+            page_name = u'פעילויות שקשורות ל' + search_url
+             
+                         
+        return render(request, 'coplay/discussion_url_list.html',
+                      {'applicabale_discussions_list': applicabale_discussions_list,
+                       'list_title': page_name,
+                       'page_name': page_name})
+             
+    return HttpResponseRedirect(reverse('coplay:discussions_list'))
+
+
+
+@login_required
+def start_follow_tag( request, pk):
+    try:
+        tag = Tag.objects.get(id=int(pk))
+    except Tag.DoesNotExist:
+        return render(request, 'coplay/message.html',
+                      {'message': 'הנושא איננו קיים',
+                       'rtl': 'dir="rtl"'})
+                
+    start_tag_following( request.user, tag)
+            
+    return HttpResponseRedirect(reverse('coplay:discussion_tag_list', kwargs={'pk': tag.id}))
     
 @login_required
 def stop_follow_tag( request, pk):
