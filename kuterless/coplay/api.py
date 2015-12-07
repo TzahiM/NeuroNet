@@ -439,7 +439,7 @@ class DiscussionWhole(APIView):
     def get(self, request, pk, format = None):
         discussion = self.get_object(pk)
         not_missed_tasks = []
-        if can_user_acess_discussion( request.user):            
+        if can_user_acess_discussion( discussion, request.user):            
             for task in discussion.task_set.all():
                 if task_get_status(task) != task.MISSED:
                     not_missed_tasks.append(task)
