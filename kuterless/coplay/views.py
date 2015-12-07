@@ -828,9 +828,9 @@ class CreateFeedbackView(CreateView):
     def form_valid(self, form):
         form.instance.discussion = self.discussion
         form.instance.user = self.request.user
-        if Feedback.objects.filter( discussion = self.discussion, feedbabk_type = form.instance.feedbabk_type, content = form.instance.content).exists():
-            return HttpResponseRedirect(
-                    self.discussion.get_absolute_url())
+#         if Feedback.objects.filter( discussion = self.discussion, feedbabk_type = form.instance.feedbabk_type, content = form.instance.content).exists():
+#             return HttpResponseRedirect(
+#                     self.discussion.get_absolute_url())
             
         resp = super(CreateFeedbackView, self).form_valid(form) 
          
@@ -1027,7 +1027,6 @@ def discussion_tag_list(request, pk = None):
 
 
 def discussion_url_list(request):
-    vvvv
     search_url = request.REQUEST.get('search_url', '')
     if search_url:
         active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
@@ -1074,9 +1073,7 @@ def start_follow_tag( request, pk):
 
 def add_on_discussion_url_list(request):
     search_url = request.REQUEST.get('search_url', '')
-    nnnn
     if search_url:
-        fff
         active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
          
         all_discussions_list  = active_discussions_by_urgancy_list + locked_discussions_by_relevancy_list
@@ -1104,19 +1101,6 @@ def add_on_discussion_url_list(request):
     return HttpResponseRedirect(reverse('coplay:discussions_list'))
 
 
-
-@login_required
-def start_follow_tag( request, pk):
-    try:
-        tag = Tag.objects.get(id=int(pk))
-    except Tag.DoesNotExist:
-        return render(request, 'coplay/message.html',
-                      {'message': 'הנושא איננו קיים',
-                       'rtl': 'dir="rtl"'})
-                
-    start_tag_following( request.user, tag)
-            
-    return HttpResponseRedirect(reverse('coplay:discussion_tag_list', kwargs={'pk': tag.id}))
     
 @login_required
 def stop_follow_tag( request, pk):

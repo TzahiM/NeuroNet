@@ -92,7 +92,7 @@ def discussion_record_a_view( discussion, user ):
 def discussion_record_anonymous_view(discussion, request):
     
     if 'anonymous_user_id' in request.session:
-        if AnonymousVisitor.objects.filter( id = int(request.session['anonymous_user_id'])).exists():
+        if AnonymousVisitor.objects.filter( id = int(request.session['anonymous_user_id'])).count() != 0:
             anonymous_user = AnonymousVisitor.objects.get( id = int(request.session['anonymous_user_id']))
         else:
             anonymous_user = AnonymousVisitor()
@@ -363,7 +363,7 @@ def start_users_following( follower_user, following_user):
      
 
 def stop_users_following( follower_user, following_user):
-    if FollowRelation.objects.filter( follower_user = follower_user, following_user = following_user).exists():
+    if FollowRelation.objects.filter( follower_user = follower_user, following_user = following_user).count() != 0:
         deleted_follow_relation = FollowRelation.objects.get( follower_user = follower_user, following_user = following_user) 
         deleted_follow_relation.delete()
 
@@ -456,7 +456,7 @@ def discussion_add_feedback(discussion, user, feedbabk_type = None, content = No
     if user == discussion.owner:
         return None, "discussion owner cannot post a feedback"
     
-    if Feedback.objects.filter( discussion = discussion, feedbabk_type = feedbabk_type, content = content, user = user).exists():
+    if Feedback.objects.filter( discussion = discussion, feedbabk_type = feedbabk_type, content = content, user = user).count() != 0:
         return None, "feedback already exists"
     
     feedback = Feedback(discussion=discussion, user=user,
@@ -542,7 +542,7 @@ def discussion_add_decision(discussion, user, content = None):
     if user != discussion.owner:
         return None, "only discussion add a desicion"
     
-    if Decision.objects.filter( parent = discussion, content = content).exists():
+    if Decision.objects.filter( parent = discussion, content = content).count() != 0:
         return None, "decision already exists"
 
     decision = Decision(parent=discussion, content=content)
@@ -650,7 +650,7 @@ def decision_vote(decision, user, value = None):
 
     
 def is_user_is_following( follower_user, following_user):
-    return FollowRelation.objects.filter( follower_user = follower_user, following_user = following_user).exists()
+    return FollowRelation.objects.filter( follower_user = follower_user, following_user = following_user).count() != 0
 
     
 

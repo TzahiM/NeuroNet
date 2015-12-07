@@ -216,7 +216,7 @@ class Discussion(models.Model):
         
                 
         if 'anonymous_user_id' in request.session:
-            if AnonymousVisitor.objects.filter( id = int(request.session['anonymous_user_id'])).exists():
+            if AnonymousVisitor.objects.filter( id = int(request.session['anonymous_user_id'])).count() != 0:
                 anonymous_user = AnonymousVisitor.objects.get( id = int(request.session['anonymous_user_id']))
             else:
                 anonymous_user = AnonymousVisitor()
@@ -254,14 +254,14 @@ class Discussion(models.Model):
     def is_a_follower(self, viewing_user):
         if not viewing_user:
             return False
-        if self.viewer_set.all().filter( user = viewing_user).exists():
+        if self.viewer_set.all().filter( user = viewing_user).count() != 0:
             viewer = self.viewer_set.get( user = viewing_user)
             return viewer.get_is_a_follower()
         return False
 
     def is_user_invited(self, viewing_user) :
                         
-        return self.viewer_set.all().filter( user = viewing_user, is_invited  = True).exists()
+        return self.viewer_set.all().filter( user = viewing_user, is_invited  = True).count() != 0
             
     def can_user_participate(self, viewing_user = None):
         

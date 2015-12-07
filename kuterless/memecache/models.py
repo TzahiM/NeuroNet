@@ -331,7 +331,7 @@ class Cart(models.Model):
         return self.customer.account.get_credit() - self.total_price
     
     def get_cart_number_of_selected_items(self, product):
-        if self.productselection_set.filter( product = product).exists():            
+        if self.productselection_set.filter( product = product).count() != 0:            
             product_selection = self.productselection_set.get(product = product)
             return product_selection.number_of_selected_items
         return 0
@@ -342,7 +342,7 @@ class Cart(models.Model):
             productselection.number_of_selected_items = new_number_of_selected_items
             productselection.save()
         else:
-            if self.productselection_set.filter( product = product).exists():
+            if self.productselection_set.filter( product = product).count() != 0:
                 productselection = self.productselection_set.get( product = product)
                 productselection.delete()
             
