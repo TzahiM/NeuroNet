@@ -254,6 +254,8 @@ class Discussion(models.Model):
     def is_a_follower(self, viewing_user):
         if not viewing_user:
             return False
+        if viewing_user.is_authenticated() == False:
+            return False
         if self.viewer_set.all().filter( user = viewing_user).count() != 0:
             viewer = self.viewer_set.get( user = viewing_user)
             return viewer.get_is_a_follower()
