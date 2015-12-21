@@ -266,13 +266,13 @@ class CoPlayTest(TestCase):
         
         self.assertEquals(self.admin, task2.closed_by)
         self.assertEquals(self.admin, task4.closed_by)
-        self.assertEquals(task1.MISSED, task_get_status(task1))
+        self.assertEquals(Task.MISSED, task_get_status(task1))
         self.assertEquals(task1.CLOSED, task_get_status(task2))
-        self.assertEquals(task1.MISSED, task_get_status(task3))
+        self.assertEquals(Task.MISSED, task_get_status(task3))
         self.assertEquals(task1.ABORTED, task4.status)
         self.assertEquals(task1.CLOSED, task5.status)
-        self.assertEquals(task1.MISSED, task6.status)
-        self.assertEquals(task1.MISSED, task7.status)
+        self.assertEquals(Task.MISSED, task6.status)
+        self.assertEquals(Task.MISSED, task7.status)
                         
         new_stat_desc = "fjfj"
         task, error_string = update_task_status_description(task1, new_stat_desc, self.at1)
@@ -508,9 +508,9 @@ class CoPlayTest(TestCase):
         task , error_string = update_task_state(task1,Task.CLOSED,self.at1)
         self.assertEquals(task, None)
         
-        self.assertEquals(task1.STARTED, task_get_status(task1))
-        self.assertEquals(task1.CLOSED, task_get_status(task2))
-        self.assertEquals(task1.MISSED, task_get_status(task3))
+        self.assertEquals(Task.STARTED, task_get_status(task1))
+        self.assertEquals(Task.CLOSED, task_get_status(task2))
+        self.assertEquals(Task.MISSED, task_get_status(task3))
         
         print 'current tasks status------------------------------------'
         

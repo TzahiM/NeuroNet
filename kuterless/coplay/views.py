@@ -9,7 +9,8 @@ from coplay.services import update_task_status_description, update_task_state, \
     discussion_add_decision, discussion_add_feedback, get_user_fullname_or_username, \
     get_followers_list, get_following_list, is_user_is_following, \
     poll_for_task_complition, discussion_update, can_user_acess_discussion, \
-    is_in_the_same_segment, task_get_status
+    is_in_the_same_segment, task_get_status, start_discussion_following, \
+    stop_discussion_following, MAX_MESSAGE_INPUT_CHARS
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -20,6 +21,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.base import Template
 from django.template.context import Context
+from django.template.defaultfilters import pprint
 from django.utils import six, timezone
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
@@ -31,9 +33,9 @@ from taggit.forms import TagField
 from taggit.models import Tag
 from taggit.utils import edit_string_for_tags
 import floppyforms as forms
+import sys
 
 
-MAX_MESSAGE_INPUT_CHARS = 900
 
         
 
@@ -414,7 +416,7 @@ def start_follow(request, pk):
                       {  'message'      :  'אינך מורשה לצפות בדיון',
                        'rtl': 'dir="rtl"'})
     
-    discussion.start_follow(request.user)
+    start_discussion_following( discussion, request.user)
     
     return discussion_details(request, pk)    
     
@@ -433,7 +435,7 @@ def stop_follow(request, pk):
     
     
     
-    discussion.stop_follow(request.user)
+    stop_discussion_following( discussion, request.user)
     
     return HttpResponseRedirect(
                 discussion.get_absolute_url())    
@@ -608,7 +610,7 @@ def user_coplay_report(request, username=None):
                 if user in discussion.get_followers_list():
                     other_users_open_tasks_list.append(task)
                 
-    tasks_by_recent_closed_at_date = Task.objects.all().exclude(status = task.MISSED).order_by("-closed_at")
+    tasks_by_recent_closed_at_date = Task.objects.all().exclude(status = Task.MISSED).order_by("-closed_at")
 
     for task in tasks_by_recent_closed_at_date:
         discussion = task.parent
@@ -1027,7 +1029,11 @@ def discussion_tag_list(request, pk = None):
 
 
 def discussion_url_list(request):
+#     hughu
     search_url = request.REQUEST.get('search_url', '')
+    
+    pprint( request)
+    sys.exit()
     if search_url:
         active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
          

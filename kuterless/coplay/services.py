@@ -23,6 +23,8 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 import kuterless.settings
 
+MAX_MESSAGE_INPUT_CHARS = 900
+
 def get_accessed_list( all_objects_list, user = None):
     returned_list = []
     for item in all_objects_list:
@@ -263,10 +265,12 @@ def discussion_update( discussion, user, description,
 def create_discussion( user             = None, 
                        title            = None, 
                        description      = None,                       
-                       location_desc    = None,
+                       location_desc    = None,                       
                        tags_string      = None,
                        parent_url       = None,
-                       parent_url_text  = None):
+                       parent_url_text  = None,
+                       latitude         = 0.0,
+                       longitude        = 0.0):
     if user is None:
         return None, 'no user provided'
     
@@ -278,6 +282,10 @@ def create_discussion( user             = None,
 
     if description is None:
         return None, 'description not provided'
+    
+    if len(description) > MAX_MESSAGE_INPUT_CHARS:
+        return None, 'description len ' + str(len(description)) + '>' + str(MAX_MESSAGE_INPUT_CHARS)
+        
 
     discussions_list = Discussion.objects.all().filter(owner=user,
                                                        title = title )
@@ -289,8 +297,9 @@ def create_discussion( user             = None,
                                     title           = title,
                                     description     = description,
                                     parent_url      = parent_url,
-                                    parent_url_text = parent_url_text
-                                    )
+                                    parent_url_text = parent_url_text,
+                                    latitude        = latitude,
+                                    longitude       = longitude)
     if location_desc:
         new_discussion.location_desc = location_desc
                 
@@ -410,6 +419,9 @@ def start_tag_following( follower_user, tag):
                                     details_url = reverse('coplay:discussion_tag_list', kwargs={'pk': tag.id}))
 
 def stop_tag_following( follower_user, tag):
+
+    if follower_user == None or follower_user.is_authenticated() == False:
+        return 
     
     follower_user.userprofile.followed_discussions_tags.remove( tag.name)
     follower_user.userprofile.save()
@@ -417,9 +429,11 @@ def stop_tag_following( follower_user, tag):
 
 def start_discussion_following( discussion, following_user):
     
+    if following_user == None or following_user.is_authenticated() == False:
+        return None, "not authenticated"
     
     if not discussion.can_user_access_discussion(following_user):
-        return False, "user cannot access discussion"
+        return None, "user cannot access discussion"
     
     viewer = discussion.viewer_set.get_or_create( user = following_user)[0]
     viewer.is_a_follower = True
@@ -430,6 +444,9 @@ def start_discussion_following( discussion, following_user):
 
 def stop_discussion_following( discussion, following_user):
     
+    if following_user == None or following_user.is_authenticated() == False:
+        return False, "not authenticated"
+        
     if not discussion.can_user_access_discussion(following_user):
         return False, "user cannot access discussion"
     

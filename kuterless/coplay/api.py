@@ -9,10 +9,10 @@ from coplay.serializers import DiscussionSerializer, UserSerializer, \
     ViewerSerializer, AnonymousVisitorSerializer, AnonymousVisitorViewerSerializer, \
     GlimpseSerializer, FollowRelationSerializer, UserProfileSerializer, \
     UserUpdateSerializer, DiscussionWholeSerializer, DecisionWholeSerializer, \
-    AddFeedBackSerializer, AddTaskSerializer
+    AddFeedBackSerializer, AddTaskSerializer, AddDiscussionSerializer
 from coplay.services import discussion_add_feedback, discussion_add_task, \
     can_user_acess_discussion, get_all_users_visiabale_for_a_user_list, \
-    is_in_the_same_segment, get_accessed_list, task_get_status
+    is_in_the_same_segment, get_accessed_list, task_get_status, create_discussion
 from django.contrib.auth.models import User
 from django.http.response import Http404
 from django.views.decorators.csrf import csrf_exempt
@@ -153,7 +153,7 @@ class TaskList(APIView):
         tasks = Task.objects.all()
         for task in tasks:
             status =  task_get_status( task)
-            if status != task.MISSED and can_user_acess_discussion(task.parent, request.user):
+            if status != Task.MISSED and can_user_acess_discussion(task.parent, request.user):
                 not_missed_tasks.append(task)
         
         serialized_tasks =TaskSerializer(get_accessed_list( not_missed_tasks, request.user), many = True)
@@ -165,7 +165,7 @@ class TaskDetails(APIView):
     def get_object(self, pk):
         try:
             task = Task.objects.get(pk = pk)
-            if task.get_status() != task.MISSED:
+            if task.get_status() != Task.MISSED:
                 return task
             raise Http404
         except Task.DoesNotExist:
@@ -174,7 +174,7 @@ class TaskDetails(APIView):
     def get(self, request, pk, format = None):
         task = self.get_object(pk)
         status =  task_get_status( task)
-        if status == task.MISSED or ( False == can_user_acess_discussion(task.get_discussion(), request.user)):
+        if status == Task.MISSED or ( False == can_user_acess_discussion(task.get_discussion(), request.user)):
             task = None
 
         serialized_task = TaskSerializer(task)
@@ -441,7 +441,7 @@ class DiscussionWhole(APIView):
         not_missed_tasks = []
         if can_user_acess_discussion( discussion, request.user):            
             for task in discussion.task_set.all():
-                if task_get_status(task) != task.MISSED:
+                if task_get_status(task) != Task.MISSED:
                     not_missed_tasks.append(task)
         else:
             discussion = None
@@ -527,37 +527,37 @@ class AddTaskView(APIView):
 
         return Response({'response': error_string})
 
-# class AddDiscussionView(APIView):
-#     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
-#     renderer_classes = (renderers.JSONRenderer,)
-#      
-#      
-#     def dispatch(self, *args, **kwargs):
-#         return super(AddDiscussionView, self).dispatch(*args, **kwargs)
-#          
-#     def get_object(self, pk):
-#             try:
-#                 return Discussion.objects.get(pk = pk)
-#             except Discussion.DoesNotExist:
-#                 raise Http404
-#              
-#  
-#     def post(self, request, pk, format = None,csrf_exempt = True):
-#         discussion = self.get_object(pk)
-#         created_task_serializer = AddTDiscussionSerializer(data=request.DATA)        
-#          
-#         if not created_task_serializer.is_valid():
-#             return Response(created_task_serializer.errors)
-#         task, error_string = discussion_add_task(discussion, 
-#                                                  request.user, 
-#                                                  created_task_serializer.object.goal_description, 
-#                                                  created_task_serializer.object.target_date)
-#         if task:
-#             serialized_task = TaskSerializer(task)
-#          
-#             return Response(serialized_task.data)
-#  
-#         return Response({'response': error_string})
+class AddDiscussionView(APIView):
+    parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
+    renderer_classes = (renderers.JSONRenderer,)
+      
+      
+    
+    def dispatch(self, *args, **kwargs):
+        return super(AddDiscussionView, self).dispatch(*args, **kwargs)
+                       
+  
+    def post(self, request, pk, format = None,csrf_exempt = True):
+        created_discussion_serializer = AddDiscussionSerializer(data=request.DATA)        
+          
+        if not created_discussion_serializer.is_valid():
+            return Response(created_discussion_serializer.errors)
+        
+        discussion, error_string = create_discussion( user             =  request.user,
+                                                      title            =  created_discussion_serializer.object.title          ,
+                                                      description      =  created_discussion_serializer.object.description    ,
+                                                      location_desc    =  created_discussion_serializer.object.location_desc  ,
+                                                      tags_string      =  created_discussion_serializer.object.tags_string    ,
+                                                      parent_url       =  created_discussion_serializer.object.parent_url     ,
+                                                      parent_url_text  =  created_discussion_serializer.object.parent_url_text,
+                                                      latitude         =  created_discussion_serializer.object.latitude       ,
+                                                      longitude        =  created_discussion_serializer.object.longitude      )
+                                                     
+        if discussion:
+            serialized_discussion = DiscussionSerializer(discussion)          
+            return Response(serialized_discussion.data)
+  
+        return Response({'response': error_string})
 
 @csrf_exempt
 def create_feedback_view(request,pk):
@@ -567,6 +567,6 @@ def create_feedback_view(request,pk):
 def create_task_view(request,pk):
     return AddTaskView.as_view()(request,pk)
 
-# @csrf_exempt
-# def create_discussion_view(request,pk):
-#     return AddDiscussionView.as_view()(request,pk)
+@csrf_exempt
+def create_discussion_view(request):
+    return AddDiscussionView.as_view()(request)

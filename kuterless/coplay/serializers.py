@@ -4,6 +4,7 @@ from coplay import models
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
     Viewer, FollowRelation, UserUpdate, Vote, Glimpse, AnonymousVisitor, \
     AnonymousVisitorViewer, UserProfile, MAX_TEXT
+from coplay.services import MAX_MESSAGE_INPUT_CHARS
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
@@ -247,12 +248,13 @@ class DiscussionWholeSerializer(serializers.ModelSerializer):
                   'latitude',
                   'longitude',
                   'location_desc',                  
+                  'parent_url',
+                  'parent_url_text',
                   'feedback_set',
                   'task_set',
                   'decision_set',
                   'viewer_set'
                   )
-        
 
 
 class CreateFeedback(object):
@@ -279,6 +281,25 @@ class CreateTask(object):
         self.goal_description = goal_description
         self.target_date = target_date
 
+class CreateDiscussion(object):
+    
+    def __init__(self, title          ,
+                       description    ,
+                       location_desc  = None ,
+                       tags           = None ,
+                       parent_url     = None ,
+                       parent_url_text= None ,
+                       latitude       = None ,
+                       longitude      = None ):
+
+        self.title           = title          
+        self.description     = description    
+        self.location_desc   = location_desc  
+        self.tags            = tags           
+        self.parent_url      = parent_url     
+        self.parent_url_text = parent_url_text
+        self.latitude        = latitude       
+        self.longitude       = longitude      
  
 
 class AddFeedBackSerializer(serializers.Serializer):
@@ -314,4 +335,41 @@ class AddTaskSerializer(serializers.Serializer):
             return instance
                 
         return CreateTask( **attrs)
+    
+
+# def create_discussion( user             = None, 
+#                        title            = None, 
+#                        description      = None,                       
+#                        location_desc    = None,
+#                        tags_string      = None,
+#                        parent_url       = None,
+#                        parent_url_text  = None):
+    
+class AddDiscussionSerializer(serializers.Serializer):
+    title           = serializers.CharField(max_length = 200)
+    description     = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS)    
+    location_desc   = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+    tags            = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+    parent_url      = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+    parent_url_text = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+    latitude        = serializers.FloatField( required = False)
+    longitude       = serializers.FloatField( required = False) 
+
+    def restore_object(self, attrs, instance=None):
+        """
+        Given a dictionary of deserialized field values, either update
+        an existing model instance, or create a new model instance.
+        """
+        if instance is not None:
+            instance.title                 = attrs.get('title'           , instance.title           )
+            instance.description           = attrs.get('description'     , instance.description     )
+            instance.location_desc         = attrs.get('location_desc'   , instance.location_desc   )
+            instance.tags                  = attrs.get('tags'            , instance.tags            )
+            instance.parent_url            = attrs.get('parent_url'      , instance.parent_url      )
+            instance.parent_url_text       = attrs.get('parent_url_text' , instance.parent_url_text )
+            instance.latitude              = attrs.get('latitude'        , instance.latitude        )
+            instance.longitude             = attrs.get('longitude'       , instance.longitude       )
+            return instance
+                
+        return CreateDiscussion( **attrs)
     
