@@ -510,7 +510,7 @@ class AddTaskView(APIView):
                 raise Http404
             
 
-    def post(self, request, pk, format = None,csrf_exempt = True):
+    def post(self, request, pk, format = None, csrf_exempt = True):
         discussion = self.get_object(pk)
         created_task_serializer = AddTaskSerializer(data=request.DATA)        
         
