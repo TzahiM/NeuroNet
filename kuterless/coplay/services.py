@@ -563,7 +563,8 @@ def discussion_add_decision(discussion, user, content = None):
         return None, "decision already exists"
 
     decision = Decision(parent=discussion, content=content)
-    decision.full_clean()
+  #  print vars(decision)
+#     decision.full_clean()
     decision.save()
     discussion.save() #verify that the entire discussion is considered updated
         
@@ -631,8 +632,9 @@ def decision_vote(decision, user, value = None):
     if value != LikeLevel.BAD and value != LikeLevel.MEDIUM and value != LikeLevel.GOOD and value != LikeLevel.VERY_GOOD and value != LikeLevel.EXCELLENT:
         return False,  'Wrong vote value ' + str(value)
 
-    if False ==  decision.parent.can_user_access_discussion( user):
-        return False,  "user cannot access discussion"
+    #print vars(decision.parent)
+    if not decision.parent.can_user_access_discussion(user):
+        return False,  "user cannot access discussion "
 
 #     if not decision.parent.is_active():
 #         return False,  "discussion is not active"

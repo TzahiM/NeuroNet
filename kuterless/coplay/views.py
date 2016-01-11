@@ -461,7 +461,7 @@ def vote(request, pk):
         form = VoteForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
-            success, error_string = decision_vote( decision, request, int(form.cleaned_data['value']))
+            success, error_string = decision_vote( decision, request.user, int(form.cleaned_data['value']))
             if success == False:
                 return render(request, 'coplay/message.html',
                       {'message': error_string})
@@ -863,9 +863,11 @@ class CreateDecisionView(CreateView):
     model = Decision
     form_class = CreateDecisionForm
 
+
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.discussion = get_object_or_404(Discussion, pk=self.kwargs['pk'])
+        
+        self.discussion = get_object_or_404(Discussion, id=self.kwargs['pk'])
         if self.discussion.owner != request.user:
             return HttpResponse("Unauthorized", status=401)
         return super(CreateDecisionView, self).dispatch(request, *args,
@@ -879,10 +881,9 @@ class CreateDecisionView(CreateView):
 
         if decision == None:
             return HttpResponse( error_string)
-            
-        resp = super(CreateDecisionView, self).form_valid(form)
-
-        return resp
+        
+        #return HttpResponseRedirect(reverse('discussion_details', kwargs={'pk': self.discussion.parent.id]}))
+        return HttpResponseRedirect(self.discussion.get_absolute_url()) # Redirect after POST
             
 
 @login_required

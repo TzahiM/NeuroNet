@@ -292,7 +292,7 @@ class Discussion(models.Model):
         
         if self.is_viewing_require_login and viewing_user == None:
             return False
-                
+        
         if not self.is_user_in_discussion_segment(viewing_user):
             return False
 
