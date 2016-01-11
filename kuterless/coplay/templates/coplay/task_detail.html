@@ -78,7 +78,7 @@
 	<p>  :המשימה קשורה לפעילות בנושא {{task.parent.title |urlize|linebreaks}} <br>
 		<a class="btn btn-success" href="{{ task.parent.get_absolute_url }}">פרטים</a>
 	{% endif %}
-	                                                 <a class="new btn btn-success" href="/labs/coplay/add_with_url/?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{page_name}}">לפתיחה פעילות שקשור  למשימה הזו</a>
+	                                                 <a class="new btn btn-success" href="/labs/coplay/add_with_url/?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{task.goal_description}}">לפתיחה פעילות שקשור  למשימה הזו</a>
 </div>	
 {% endblock %}
 
