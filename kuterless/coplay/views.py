@@ -500,7 +500,8 @@ def task_details(request, pk):
                    'update_task_form': update_task_form,
                    'close_possible': close_possible,
                    'rtl': 'dir="rtl"',
-                   'page_name': u'המשימה:' + task.goal_description})
+                   'page_name': u'המשימה:' + task.goal_description,
+                   'ROOT_URL': 'http://' + SITE_URL})
 
 
 @login_required
