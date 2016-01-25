@@ -15,6 +15,7 @@ local_settings.py
 kuterless/db.sqlite3
 kuterless/.pydevproject
 desktop.ini
+kuterless/media
 
 .idea
 *.prefs
