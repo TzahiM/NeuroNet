@@ -15,7 +15,7 @@ class FeedbackAdmin(admin.ModelAdmin):
 
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ( 'responsible', 'goal_description')
+    list_display = ( 'responsible', 'goal_description', 'result_picture')
 
 class VoteAdmin(admin.ModelAdmin):
     list_display = ( 'voater', 'value')

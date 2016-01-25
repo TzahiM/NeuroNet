@@ -135,7 +135,7 @@ def discussion_record_anonymous_view(discussion, request):
 
             
 
-def update_task_status_description( task , description, user):
+def update_task_status_description( task , description, user, result_picture = None):
         
     if user is None:
         return None, 'no user provided'
@@ -151,6 +151,7 @@ def update_task_status_description( task , description, user):
         return None, 'target date passed'
         
     task.status_description = description
+    task.result_picture = result_picture
     task.save()
     
     task.parent.save()#verify that the entire disscusion is considered updated

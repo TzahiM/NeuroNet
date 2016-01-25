@@ -17,6 +17,9 @@
         <div class="col-md-12">
 
             	<h2> {{task.goal_description |urlize|linebreaks}}</h2>
+            	{%if task.result_picture %}
+                <img src={{task.result_picture.url}} alt="..." width="400" height="280">
+            	{% endif %}
             	{%if user == task.responsible %}
 					<p>באחריותך</p>
 					{% if not task.get_time_until_target%}
@@ -60,7 +63,7 @@
 	{% endif %}
 
 	{% if update_task_form  %}
-		<form action= "{% url 'coplay:update_task_status_description' task.id %}" method="post">{% csrf_token %}
+		<form action= "{% url 'coplay:update_task_status_description' task.id %}" method="post" enctype="multipart/form-data">{% csrf_token %}
 				{% for field in update_task_form %}
 					<div class="fieldWrapper">
 					{{ field.errors }}

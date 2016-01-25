@@ -28,7 +28,7 @@ from django.utils.http import is_safe_url
 from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
-from kuterless.settings import SITE_URL
+from kuterless.settings import SITE_URL, MEDIA_URL
 from taggit.forms import TagField
 from taggit.models import Tag
 from taggit.utils import edit_string_for_tags
@@ -106,6 +106,8 @@ class UpdateTaskForm(forms.Form):
     status_description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS,
                                          widget=forms.Textarea(
                                              attrs={'rows': '3'}))
+    
+    result_picture = forms.ImageField(required=False)
 
 def discussion_details(request, pk):
     try:
@@ -491,7 +493,8 @@ def task_details(request, pk):
         user = request.user
         if  task.target_date > timezone.now():
             if user == task.responsible:
-                update_task_form = UpdateTaskForm(initial={'status_description': task.status_description})
+                update_task_form = UpdateTaskForm(initial={'status_description': task.status_description,
+                                                           'result_picture': task.result_picture})
             else:
                 close_possible = True
 
@@ -511,14 +514,15 @@ def update_task_description(request, pk):
     except Task.DoesNotExist:
         return HttpResponse('Task not found')
     if request.method == 'POST': # If the form has been submitted...
-        form = UpdateTaskForm(request.POST) # A form bound to the POST data
+        form = UpdateTaskForm(request.POST, request.FILES) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data# Process the data in form.cleaned_data
             success, error_string =   update_task_status_description(   task, 
                                                                         description = form.cleaned_data['status_description'], 
-                                                                        user = request.user)
+                                                                        user = request.user,
+                                                                        result_picture = form.cleaned_data['result_picture'])
             
-            if success == False:
+            if success:
                 return HttpResponseRedirect(
                     task.parent.get_absolute_url()) # Redirect after POST
                 
@@ -528,6 +532,7 @@ def update_task_description(request, pk):
                                            'next_url':task.get_absolute_url(),
                                            'next_text': u'בחזרה ל:' + task.goal_description})            
 
+        
     return HttpResponseRedirect('coplay_root') # Redirect after POST
 
 def set_task_state(request, pk, new_state):

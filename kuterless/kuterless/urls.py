@@ -1,9 +1,11 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.views.static import serve
 from django_notify.urls import get_pattern as get_notify_pattern
+from kuterless.settings import MEDIA_ROOT
 from public_fulfillment.views import labs_root, about, root
+from rest_framework.authtoken.views import obtain_auth_token
 from wiki.urls import get_pattern as get_wiki_pattern
-from rest_framework.authtoken.views import  obtain_auth_token
 
 
 admin.autodiscover()
@@ -39,7 +41,7 @@ urlpatterns = patterns('',
        
     url(r'^api-token-auth/', obtain_auth_token),
         
-
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT,}),
 )
 
 

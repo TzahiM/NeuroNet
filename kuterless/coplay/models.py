@@ -556,6 +556,7 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     final_state    = models.BooleanField(default = False)
+    result_picture = models.ImageField( _(u"תמונה של התוצאה"),upload_to='uploads/%Y/%m/%d/', default = 'uploads/%Y/%m/%d/no-name.jpg',null=True, blank=True)
 
     def __unicode__(self):
         return self.goal_description
