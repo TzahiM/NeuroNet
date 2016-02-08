@@ -48,6 +48,7 @@ urlpatterns = patterns('',
 #pk (of discussion)/add_task
     url(r'^(?P<pk>\d+)/create-decision/$', views.CreateDecisionView.as_view(), name='create_decision'),
     url(r'^(?P<pk>\d+)/create-feedback/$', views.CreateFeedbackView.as_view(), name='create_feedback'),
+#     url(r'^(?P<pk>\d+)/create-feedback/$', views.add_feedback, name='create_feedback'),
     url(r'^(?P<pk>\d+)/create-task/$', views.CreateTaskView.as_view(), name='create_task'),
 
 #pk (of task)/task_details

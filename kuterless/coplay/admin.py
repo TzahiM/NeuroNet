@@ -9,7 +9,7 @@ class DiscussionAdmin(admin.ModelAdmin):
     list_display = ('title', 'owner', 'created_at')
     
 class FeedbackAdmin(admin.ModelAdmin):
-    list_display = ( 'feedbabk_type', 'created_at')
+    list_display = ( 'content', 'feedbabk_type', 'created_at', 'voice_recording')
     ordering = ['feedbabk_type', 'created_at']
     search_fields = ['feedbabk_type']
 

@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<p>{{ error_message }}</p>
-	{% for link in links %}
-		<a href= {{link.url}}>{{link.text}}</a>
-	{% endfor %}
+	<br>
+	<br>
+	<br>
+	<p>{{ message }}</p>
+	<a href= {{url}}>{{url_text}}</a>
+	
 {% endblock %}
 

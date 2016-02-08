@@ -458,7 +458,7 @@ def stop_discussion_following( discussion, following_user):
     return True, None
     
 
-def discussion_add_feedback(discussion, user, feedbabk_type = None, content = None):
+def discussion_add_feedback(discussion, user, feedbabk_type = None, content = None, voice_recording = None):
     if feedbabk_type == None:
         return None, 'No feedback type'
     
@@ -478,7 +478,9 @@ def discussion_add_feedback(discussion, user, feedbabk_type = None, content = No
         return None, "feedback already exists"
     
     feedback = Feedback(discussion=discussion, user=user,
-                        feedbabk_type=feedbabk_type, content=content)
+                        feedbabk_type=feedbabk_type, content=content,
+                        voice_recording = voice_recording)
+    
     feedback.full_clean()
     feedback.save()
     discussion.save() #verify that the entire discussion is considered updated

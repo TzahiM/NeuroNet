@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <h1>מהי התגובה שלך?</h1>
 
-        <form method="post">
+        <form method="post"  enctype="multipart/form-data">{% csrf_token %}
             {% csrf_token %}
             {{ form }}
             <button class="btn btn-success">{% trans "Save" %}</button>

@@ -17,12 +17,12 @@
         <div class="col-md-12">
 
             	<h2> {{task.goal_description |urlize|linebreaks}}</h2>
-            	{%if task.result_picture %}
+            	{%if task.result_picture.url != '/media/False' and task.result_picture %}
                 <img src={{task.result_picture.url}} alt="..." width="400" height="280">
             	{% endif %}
             	{%if user == task.responsible %}
 					<p>באחריותך</p>
-					{% if not task.get_time_until_target%}
+					{% if not task.get_time_until_target %}
 						{% if task.get_status_description%}
 						<p><b>הודעתך האחרונה היא: {{task.get_status_description |urlize|linebreaks}} </b></p>					
 						{% endif %}

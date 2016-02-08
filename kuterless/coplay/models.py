@@ -382,6 +382,8 @@ class Feedback(models.Model):
     content = models.TextField(_(u"תוכן התגובה"),validators=[MaxLengthValidator(MAX_TEXT)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    voice_recording = models.FileField( _(u"הקלטה"),upload_to='uploads/%Y/%m/%d/', null=True, blank=True,
+                                        max_length = 5000000)
 
         
     def __unicode__(self):
@@ -556,7 +558,8 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     final_state    = models.BooleanField(default = False)
-    result_picture = models.ImageField( _(u"תמונה של התוצאה"),upload_to='uploads/%Y/%m/%d/', default = 'uploads/%Y/%m/%d/no-name.jpg',null=True, blank=True)
+    result_picture = models.ImageField( _(u"תמונה של התוצאה"),upload_to='uploads/%Y/%m/%d/', null=True, blank=True,default = None,
+                                        max_length = 50000)
 
     def __unicode__(self):
         return self.goal_description

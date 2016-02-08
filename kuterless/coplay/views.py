@@ -74,7 +74,8 @@ class AddFeedbackForm(forms.Form):
     content = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS,
                               widget=forms.Textarea(attrs={'rows': '3'}))
     feedbabk_type = forms.ChoiceField(choices=Feedback.FEEDBACK_TYPES)
-
+    
+    voice_recording = forms.FileField(required=False)
 
 class UpdateDiscussionForm(forms.Form):
     description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS,
@@ -533,7 +534,44 @@ def update_task_description(request, pk):
                                            'next_text': u'בחזרה ל:' + task.goal_description})            
 
         
-    return HttpResponseRedirect('coplay_root') # Redirect after POST
+    return HttpResponseRedirect(
+                    task.parent.get_absolute_url()) # Redirect after POST
+
+@login_required
+def add_feedback(request, pk):
+    try:
+        discussion = Discussion.objects.get(id=int(pk))
+    except Discussion.DoesNotExist:
+        return HttpResponse('Discussion not found')
+    if request.method == 'POST': # If the form has been submitted...
+        form = AddFeedbackForm(request.POST, request.FILES) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+    #         if Feedback.objects.filter( discussion = self.discussion, feedbabk_type = form.instance.feedbabk_type, content = form.instance.content).exists():
+    #             return HttpResponseRedirect(
+    #                     self.discussion.get_absolute_url())
+                
+    #         resp = super(CreateFeedbackView, self).form_valid(form) 
+             
+            feedback, error_string = discussion_add_feedback( discussion    = discussion, 
+                                                             user           = request.user   ,
+                                                             feedbabk_type  = form.cleaned_data['feedbabk_type'], 
+                                                             content        = form.cleaned_data['content'],
+                                                             voice_recording = form.cleaned_data['voice_recording'])
+            
+            if feedback:
+                return HttpResponseRedirect(
+                    discussion.get_absolute_url()) # Redirect after POST
+                
+            return render(request, 'coplay/message.html',
+                                          {'message': error_string,
+                                           'rtl': 'dir="rtl"',
+                                           'next_url':discussion.get_absolute_url(),
+                                           'next_text': u'בחזרה ל:' + discussion.title})            
+
+        
+    return HttpResponseRedirect(
+                    discussion.get_absolute_url()) # Redirect after POST
+
 
 def set_task_state(request, pk, new_state):
     try:
@@ -799,9 +837,11 @@ class CreateTaskView(CreateView):
         if task:
             return HttpResponseRedirect(
                     task.get_absolute_url())
-            
-        return render(self.request, 'coplay/message.html',
+
+        return render(self.request, 'coplay/error.html',
                               {'message': error_string,
+                               'url': self.discussion.get_absolute_url(),
+                               'url_text': u"בחזרה ל" + self.discussion.title,
                                'rtl': 'dir="rtl"'})
 
 
@@ -811,10 +851,12 @@ class CreateFeedbackForm(forms.ModelForm):
         fields = (
             'feedbabk_type',
             'content',
+            'voice_recording',
         )
         widgets = {
             'content': forms.Textarea,
             'feedbabk_type': forms.Select,
+            'voice_recording': forms.FileInput,
         }
 
 
@@ -840,17 +882,23 @@ class CreateFeedbackView(CreateView):
 #             return HttpResponseRedirect(
 #                     self.discussion.get_absolute_url())
             
-        resp = super(CreateFeedbackView, self).form_valid(form) 
+#         resp = super(CreateFeedbackView, self).form_valid(form) 
          
         feedback, error_string = discussion_add_feedback( discussion    = self.discussion, 
                                                          user           = self.request.user   ,
                                                          feedbabk_type  = form.instance.feedbabk_type, 
-                                                         content        = form.instance.content)
-        if feedback == None:
-            return HttpResponse( error_string)
-
+                                                         content        = form.instance.content,
+                                                         voice_recording = form.instance.voice_recording)
+        if feedback:
+            return HttpResponseRedirect(form.instance.discussion.get_absolute_url()) # Redirect after POST
         
-        return resp
+        return render(self.request, 'coplay/error.html',
+                              {'message': error_string,
+                               'url': self.discussion.get_absolute_url(),
+                               'url_text': u"בחזרה ל" + self.discussion.title,
+                               'rtl': 'dir="rtl"'})
+        
+#         return resp
 
 
 class CreateDecisionForm(forms.ModelForm):
@@ -885,11 +933,15 @@ class CreateDecisionView(CreateView):
                                                          self.request.user,
                                                          form.instance.content)
 
-        if decision == None:
-            return HttpResponse( error_string)
+        if decision:
+            return HttpResponseRedirect(self.discussion.get_absolute_url()) # Redirect after POST
         
-        #return HttpResponseRedirect(reverse('discussion_details', kwargs={'pk': self.discussion.parent.id]}))
-        return HttpResponseRedirect(self.discussion.get_absolute_url()) # Redirect after POST
+        return render(self.request, 'coplay/error.html',
+                              {'message': error_string,
+                               'url': self.discussion.get_absolute_url(),
+                               'url_text': u"בחזרה ל" + self.discussion.title,
+                               'rtl': 'dir="rtl"'})
+
             
 
 @login_required
