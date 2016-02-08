@@ -525,7 +525,7 @@ def update_task_description(request, pk):
             
             if success:
                 return HttpResponseRedirect(
-                    task.parent.get_absolute_url()) # Redirect after POST
+                    task.get_absolute_url()) # Redirect after POST
                 
             return render(request, 'coplay/message.html',
                                           {'message': error_string,
@@ -1088,9 +1088,12 @@ def discussion_tag_list(request, pk = None):
 
 
 def discussion_url_list(request):
-#     hughu
+#     return     'hughu'
+    pprint( request)
     search_url = request.REQUEST.get('search_url', '')
-    
+    return render(request, 'coplay/message.html',
+                      {'message': search_url,
+                       'rtl': 'dir="rtl"'})
     pprint( request)
     sys.exit()
     if search_url:

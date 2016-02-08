@@ -18,7 +18,7 @@
 
             	<h2> {{task.goal_description |urlize|linebreaks}}</h2>
             	{%if task.result_picture.url != '/media/False' and task.result_picture %}
-                <img src={{task.result_picture.url}} alt="..." width="400" height="280">
+                <img src={{task.result_picture.url}} class="img-responsive" alt="..." width="400" height="280">
             	{% endif %}
             	{%if user == task.responsible %}
 					<p>באחריותך</p>

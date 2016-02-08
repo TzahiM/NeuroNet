@@ -136,7 +136,7 @@
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
                                 {% if feedback.voice_recording  %}
-								<a href={{feedback.voice_recording.url}} >הקלטה</a>                               
+								<a href={{feedback.voice_recording.url}} target="_blank" >הקלטה</a>                               
                                 {% endif %}
                             </div>
                         </li>
@@ -159,6 +159,9 @@
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
                             </div>
+                                {% if feedback.voice_recording  %}
+								<a href={{feedback.voice_recording.url}} target="_blank" >הקלטה</a>                               
+                                {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
@@ -178,6 +181,9 @@
                                     {% if feedback.created_at < discussion.description_updated_at %}
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
+                                {% if feedback.voice_recording  %}
+								<a href={{feedback.voice_recording.url}} target="_blank" >הקלטה</a>                               
+                                {% endif %}
                             </div>
                         </li>
                     {% endfor %}
@@ -195,9 +201,12 @@
                     {% for feedback in list_advice %}
                         <li class="list-group-item">
                             <div
-                                    {% if feedback.created_at < discussion.description_updated_at %}
+                                   {% if feedback.created_at < discussion.description_updated_at %}
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
+                                {% if feedback.voice_recording  %}
+								<a href={{feedback.voice_recording.url}} target="_blank" >הקלטה</a>                               
+                                {% endif %}
                             </div>
                         </li>
                     {% endfor %}
