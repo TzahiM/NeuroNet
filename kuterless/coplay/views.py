@@ -1089,12 +1089,14 @@ def discussion_tag_list(request, pk = None):
 
 def discussion_url_list(request):
 #     return     'hughu'
-    pprint( request)
+#     pprint( request)
     search_url = request.REQUEST.get('search_url', '')
     return render(request, 'coplay/message.html',
                       {'message': search_url,
                        'rtl': 'dir="rtl"'})
-    pprint( request)
+    
+#     pprint( request)
+    
     sys.exit()
     if search_url:
         active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()

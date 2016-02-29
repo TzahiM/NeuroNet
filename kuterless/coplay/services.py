@@ -227,8 +227,6 @@ def discussion_update( discussion, user, description,
     if not discussion.is_active():
         return None, 'discussion is locked'
 
-    print tags_string
-    
     discussion.description   = description
     discussion.location_desc = location_desc
     discussion.parent_url = parent_url
