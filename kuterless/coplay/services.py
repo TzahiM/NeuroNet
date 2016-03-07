@@ -12,7 +12,7 @@ from coplay.control import user_glimpsed_another_user_s_discussion, \
     user_aborted_a_mission_for_his_own_s_discussion, \
     user_aborted_a_mission_for_another_user_s_discussion, \
     user_confirmed_a_state_update_in_another_user_s_mission, \
-    poll_for_task_complition
+    poll_for_task_complition, get_discussions_lists
 from coplay.models import Task, Discussion, FollowRelation, AnonymousVisitor, \
     Feedback, MAX_INACTIVITY_SECONDS, Decision, LikeLevel, Vote, UserProfile
 from django.contrib.auth.models import User
@@ -33,6 +33,21 @@ def get_accessed_list( all_objects_list, user = None):
     
     return returned_list
     
+def get_discussion_with_parent_url_list( search_url = None, user = None):
+    list_title = None
+    applicabale_discussions_list = []
+    if search_url:
+        active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
+          
+        all_discussions_list  = active_discussions_by_urgancy_list + locked_discussions_by_relevancy_list
+        for discussion in all_discussions_list:
+            if can_user_acess_discussion(discussion, user):
+                if discussion.parent_url and  search_url in discussion.parent_url:
+                    applicabale_discussions_list.append(discussion)
+                    if discussion.parent_url_text:
+                        list_title = discussion.parent_url_text
+
+    return applicabale_discussions_list, list_title
     
 def is_in_the_same_segment(user , another_user = None ):
     segment = None

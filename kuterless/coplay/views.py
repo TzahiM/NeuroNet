@@ -10,7 +10,8 @@ from coplay.services import update_task_status_description, update_task_state, \
     get_followers_list, get_following_list, is_user_is_following, \
     poll_for_task_complition, discussion_update, can_user_acess_discussion, \
     is_in_the_same_segment, task_get_status, start_discussion_following, \
-    stop_discussion_following, MAX_MESSAGE_INPUT_CHARS
+    stop_discussion_following, MAX_MESSAGE_INPUT_CHARS, \
+    get_discussion_with_parent_url_list
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -170,6 +171,9 @@ def discussion_details(request, pk):
     
     page_name = u'עוזרים ב' + discussion.title
     
+    applicabale_discussions_list, list_title = get_discussion_with_parent_url_list( request.path, request.user)
+
+    
     #the response shall not indicate current user's view
     return_response = render(request, 'coplay/discussion_detail.html',
                   {'discussion': discussion,
@@ -190,6 +194,7 @@ def discussion_details(request, pk):
                    'page_name': page_name ,
                    'is_a_follower': is_a_follower,
                    'list_followers': list_followers,
+                   'related_discussions': applicabale_discussions_list != [],
                    'ROOT_URL': 'http://' + SITE_URL})
     
     #current view is recorded after response had been resolved
@@ -1140,6 +1145,22 @@ def start_follow_tag( request, pk):
             
     return HttpResponseRedirect(reverse('coplay:discussion_tag_list', kwargs={'pk': tag.id}))
 
+def related_discussions_of_url(request):
+    search_url = request.REQUEST.get('search_url', '')
+    applicabale_discussions_list, list_title = get_discussion_with_parent_url_list( search_url, request.user)
+    if list_title:
+        page_name = u'פעילויות שקשורות ל' + list_title
+    else:
+        page_name = u'פעילויות שקשורות ל' + search_url
+               
+#     return render(request, 'coplay/discussion_list.html',
+#                   {'latest_discussion_list': applicabale_discussions_list,
+#                    'page_name': page_name})
+                           
+    return render(request, 'coplay/discussion_url_list.html',
+                  {'applicabale_discussions_list': applicabale_discussions_list,
+                   'list_title': page_name,
+                   'page_name': page_name})
 
 def add_on_discussion_url_list(request):
     search_url = request.REQUEST.get('search_url', '')

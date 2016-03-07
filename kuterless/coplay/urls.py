@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     url(r'^discussion_url_list/$', views.discussion_url_list, name='discussion_url_list'),
     
     url(r'^add_on_discussion_url_list/$', views.add_on_discussion_url_list, name='add_on_discussion_url_list'),
+    
+    url(r'^related_discussions_of_url/$', views.related_discussions_of_url, name='related_discussions_of_url'),                       
 
 #/add
     url(r'add/$', views.add_discussion, name='add_discussion'),

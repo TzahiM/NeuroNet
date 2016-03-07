@@ -139,7 +139,7 @@ DATABASES = {
         'NAME':'kuterless',
         'USER':'kuterless',
         'PASSWORD':'kuterless',
-        'HOST':'localhost',
+        'HOST':'127.0.0.1',
     }
 }
 

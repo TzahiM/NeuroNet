@@ -82,7 +82,7 @@ def users_list(request, pk = None):
                       {  'message'      :  'עוד לא הוגדרה חנות',
                        'rtl': 'dir="rtl"'})
         
-    page_name = u'רשימת המשתתפים ב' + segment_name
+    page_name = ' '+ u'רשימת המשתתפים ב' + segment_name + ' '
     
 
     if pk is not None:
