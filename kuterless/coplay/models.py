@@ -42,8 +42,9 @@ class Discussion(models.Model):
     longitude   = models.FloatField(default=None, blank=True, null=True)
     location_desc = models.CharField( max_length=200,default=None, blank=True, null=True)
     tags = TaggableManager(blank=True)
-    parent_url      = models.URLField( max_length=200,default=None, blank=True, null=True)
-    parent_url_text = models.CharField( max_length=200,default=None, blank=True, null=True)
+    parent_url      = models.URLField( max_length=MAX_TEXT,default=None, blank=True, null=True)
+                                                   
+    parent_url_text = models.CharField( max_length=MAX_TEXT,default=None, blank=True, null=True)
     
     def __unicode__(self):
         return self.id

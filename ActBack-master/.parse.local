@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "_default": {
+      "link": "actback"
+    },
+    "actback": {
+      "applicationId": "6YoHwLPVTyMmN71PXvd78w4jWElbvUBzoGEm2YCg"
+    }
+  }
+}

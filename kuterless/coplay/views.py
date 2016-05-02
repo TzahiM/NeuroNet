@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from coplay.control import get_discussions_lists, get_tasks_lists
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
-    Viewer, UserUpdate
+    Viewer, UserUpdate, MAX_TEXT
 from coplay.services import update_task_status_description, update_task_state, \
     start_users_following, stop_users_following, start_tag_following, \
     stop_tag_following, create_discussion, discussion_add_task, decision_vote, \
@@ -230,11 +230,12 @@ class NewDiscussionForm(forms.Form):
 #                             widget=forms.Textarea(
 #                                 attrs={'rows': '1', 'cols': '100'}))
     parent_url = forms.URLField(label=u'קישור לדף רלוונטי. לדוגמה http://hp.com',
-                                required=False)
+                                required=False,
+                                max_length=MAX_TEXT)
     
     parent_url_text = forms.CharField(  label=u"שם הדף הקשור", 
                                         required=False,
-                                        max_length=200,
+                                        max_length=MAX_TEXT,
                                         widget=forms.Textarea(
                                             attrs={'rows': '1', 'cols': '100'}))
 

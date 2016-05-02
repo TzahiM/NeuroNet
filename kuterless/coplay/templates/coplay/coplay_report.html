@@ -17,7 +17,7 @@
 		            			{% if is_following %}                
 		     		           		<a class="new btn btn-warning" href="{% url 'coplay:stop_follow_user'  applicabale_user.username %}">להפסיק לעקוב אחריו/ה</a> 
 		                		{% else %}
-		            	    		<a class="new btn btn-info" href="{% url 'coplay:start_follow_user'  applicabale_user.username %}">רוצה  לעקוב אחריו/ה</a>   
+		            	    		<a class="new btn btn-danger" href="{% url 'coplay:start_follow_user'  applicabale_user.username %}">רוצה  לעקוב אחריו/ה</a>   
 		                		{% endif %}
 	                		{% endif %}
 	            		</h1>

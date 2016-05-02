@@ -15,6 +15,7 @@ encoding//coplay/migrations/0016_auto__add_field_viewer_discussion_updated_at_on
 encoding//coplay/migrations/0017_auto__add_glimpse__add_field_task_final_state__add_field_userprofile_c.py=utf-8
 encoding//coplay/migrations/0018_auto__add_field_userprofile_can_limit_discussion_to_login_users_only.py=utf-8
 encoding//coplay/migrations/0019_auto__add_anonymousviewer__add_field_userprofile_a_player__add_field_g.py=utf-8
+encoding//coplay/migrations/0022_auto__add_field_task_status_picture.py=utf-8
 encoding//coplay/migrations/0030_auto__add_taggeddiscussions__add_taggedusers.py=utf-8
 encoding//coplay/models.py=utf-8
 encoding//coplay/serializers.py=utf-8

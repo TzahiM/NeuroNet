@@ -303,6 +303,8 @@
                                     <div id="rating">{% trans "Average Vote" %} {{ decision.get_vote_level_name }} </div>
 
                                 {% endif %}
+								<a class="new btn btn-success" href="/labs/coplay/add_with_url/?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text= רעיון שהועלה ב{{page_name}} ">להוציא לפועל את הרעיון</a>
+                                
                             </li>
                         {% endfor %}
                     </ul>

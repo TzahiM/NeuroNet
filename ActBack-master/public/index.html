@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <link rel="shortcut icon" type="image/png" href="/270b.png"/>
+    <title>ActBack - מגיבים במעשים</title>
+    <script>
+        function showExplanation(show) {
+            document.querySelector('.preview-container').style.display = show ? 'block' : 'none';
+            showExplanationStage(1);
+        }
+
+        function showExplanationStage(stage) {
+            console.log('stage ->', stage);
+            switch (stage) {
+                case 1:
+                    document.querySelector('.preview-container .image-1').style.display = 'block';
+                    document.querySelector('.preview-container .image-2').style.display = 'none';
+                    break;
+                case 2:
+                    document.querySelector('.preview-container .image-1').style.display = 'none';
+                    document.querySelector('.preview-container .image-2').style.display = 'block';
+                    break;
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container mainview">
+    <h1>
+        <span class="logo">
+            <span>
+                לוגו זמני :)
+            </span>
+        </span>
+        ActBack
+    </h1>
+
+    <h2>
+        מגיבים במעשים
+    </h2>
+
+    <p>
+        <!--ActBack הוא תוסף לכרום שמאפשר לך לראות פעולות שקשורות לחדשות שאת/ה קורא/ת ולהגיב במעשים:-->
+        ActBack הוא תוסף לכרום שמתחבר ל-ynet ומוסיף לכתבות  כפתור מיוחד שמאפשר לך להגיב במעשים
+        <!--ActBack הוא תוסף לכרום שמוסיף לכתבות ב- ynet כפתור מיוחד שמאפשר לך להגיב במעשים-->
+    </p>
+    <ul>
+        <li>
+            להפגין
+        </li>
+        <li>
+            לתרום
+        </li>
+        <li>
+            להתנדב
+        </li>
+        <li>
+            לתמוך בפייסבוק
+        </li>
+        <li>
+            להצטרף לאירוע
+        </li>
+    </ul>
+
+    <div class="actions">
+        <a class="button" onclick="showExplanation(true)">
+            <!--<span class="icon icon-puzzle"></span>-->
+            איך זה עובד?
+        </a>
+        <a class="button" href="https://chrome.google.com/webstore/detail/actback/mfddbnamkgciainnfmcclccpmeokgbih" target="_blank">
+            <!--<span class="icon icon-download"></span>-->
+            התקנה מהחנות של גוגל
+        </a>
+    </div>
+</div>
+
+<div class="preview-container">
+    <div class="cancel" onclick="showExplanation(false)">
+        X
+    </div>
+    <div class="image-container">
+        <div class="image image-1">
+            <div class="action" onclick="showExplanationStage(2)"></div>
+        </div>
+        <div class="image image-2" onclick="showExplanation(false)"></div>
+    </div>
+</div>
+
+<div class="mobile-message">
+    <div>
+        <span class="icon icon-desktop"></span>
+    </div>
+    <h2>
+        נסה/י אותי מהמחשב
+    </h2>
+    <p>
+        ActBack הוא תוסף המיועד לדפדפן במחשב ואינו מיועד למובייל מאחר ובמובייל אין עדיין תמיכה בתוספים.
+    </p>
+</div>
+
+<a target="_blank" href="https://github.com/dht/ActBack"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
+</body>
+</html>
