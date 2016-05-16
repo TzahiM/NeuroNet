@@ -642,7 +642,7 @@ def user_coplay_report(request, username=None):
     else:
         page_name = u'הפעילות של ' + get_user_fullname_or_username(user)
 
-    open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, missed_tasks_list_by_relevancy_list = get_tasks_lists()
+    open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, aborted_tasks_list_by_relevancy_list , missed_tasks_list_by_relevancy_list = get_tasks_lists()
 
     active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
 

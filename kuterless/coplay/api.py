@@ -382,6 +382,16 @@ class UserUpdateListUnRead(APIView):
         serialized_userupdates =UserUpdateSerializer(userupdates, many = True)
         return Response(serialized_userupdates.data)
 
+class UserUpdateListAll(APIView):
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request,format = None):
+        userupdates = UserUpdate.objects.filter(recipient = request.user).order_by("-created_at")
+
+        serialized_userupdates =UserUpdateSerializer(userupdates, many = True)
+        return Response(serialized_userupdates.data)
+
 
 class UserUpdateDetails(APIView):
     def get_object(self, pk):

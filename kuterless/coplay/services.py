@@ -7,12 +7,8 @@ from coplay.control import user_glimpsed_another_user_s_discussion, \
     user_posted_a_feedback_in_another_other_user_s_discussion, \
     user_post_a_decision_for_vote_regarding_his_own_discussion, \
     user_voted_for_an_idea_in_another_user_s_discussion, \
-    user_completed_a_mission_for_his_own_s_discussion, \
-    user_completed_a_mission_for_another_user_s_discussion, \
-    user_aborted_a_mission_for_his_own_s_discussion, \
-    user_aborted_a_mission_for_another_user_s_discussion, \
-    user_confirmed_a_state_update_in_another_user_s_mission, \
     poll_for_task_complition, get_discussions_lists
+    
 from coplay.models import Task, Discussion, FollowRelation, AnonymousVisitor, \
     Feedback, MAX_INACTIVITY_SECONDS, Decision, LikeLevel, Vote, UserProfile
 from django.contrib.auth.models import User

@@ -406,10 +406,12 @@ def get_tasks_lists():
         status=Task.STARTED).order_by("target_date")
     closed_tasks_list_by_relevancy_list = Task.objects.all().filter(
         status=Task.CLOSED).order_by("-closed_at")
+    aborted_tasks_list_by_relevancy_list = Task.objects.all().filter(
+        status=Task.ABORTED).order_by("-closed_at")
     missed_tasks_list_by_relevancy_list = Task.objects.all().filter(
         status=Task.MISSED).order_by("-target_date")
 
-    return open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, missed_tasks_list_by_relevancy_list
+    return open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, aborted_tasks_list_by_relevancy_list, missed_tasks_list_by_relevancy_list
     
 
 def poll_for_task_complition( task):
