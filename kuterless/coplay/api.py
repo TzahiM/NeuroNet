@@ -553,21 +553,68 @@ class AddDiscussionView(APIView):
         if not created_discussion_serializer.is_valid():
             return Response(created_discussion_serializer.errors)
         
-        discussion, error_string = create_discussion( user             =  request.user,
-                                                      title            =  created_discussion_serializer.object.title          ,
-                                                      description      =  created_discussion_serializer.object.description    ,
-                                                      location_desc    =  created_discussion_serializer.object.location_desc  ,
-                                                      tags_string      =  created_discussion_serializer.object.tags_string    ,
-                                                      parent_url       =  created_discussion_serializer.object.parent_url     ,
-                                                      parent_url_text  =  created_discussion_serializer.object.parent_url_text,
-                                                      latitude         =  created_discussion_serializer.object.latitude       ,
-                                                      longitude        =  created_discussion_serializer.object.longitude      )
+#         user = get_user( recived_user            = request.user,
+#                          app_id                  = created_discussion_serializer.app_id,
+#                          application_specific_id = created_discussion_serializer.application_specific_id)
+        
+        discussion, error_string = create_discussion( user                   =  request.user,
+                                                      title                  =  created_discussion_serializer.object.title          ,
+                                                      description            =  created_discussion_serializer.object.description    ,
+                                                      location_desc          =  created_discussion_serializer.object.location_desc  ,
+                                                      tags_string            =  created_discussion_serializer.object.tags_string    ,
+                                                      parent_url             =  created_discussion_serializer.object.parent_url     ,
+                                                      parent_url_text        =  created_discussion_serializer.object.parent_url_text,
+                                                      latitude               =  created_discussion_serializer.object.latitude       ,
+                                                      longitude              =  created_discussion_serializer.object.longitude      ,
+                                                      picture                =  created_discussion_serializer.object.picture                     ,
+                                                      movie_url              =  created_discussion_serializer.object.movie_url                   ,
+                                                      movie_url_url_text     =  created_discussion_serializer.object.movie_url_url_text          
+                                                      )
                                                      
         if discussion:
             serialized_discussion = DiscussionSerializer(discussion)          
             return Response(serialized_discussion.data)
   
         return Response({'response': error_string})
+# 
+# class AddSaftyEnhancement(APIView):
+#     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
+#     renderer_classes = (renderers.JSONRenderer,)
+#       
+#     def dispatch(self, *args, **kwargs):
+#         return super(AddSaftyEnhancement, self).dispatch(*args, **kwargs)
+#                        
+#   
+#     def post(self, request, pk, format = None,csrf_exempt = True):
+#         created_safty_enhancment_serializer = AddSaftyEnhancementSerializer(data=request.DATA)        
+#           
+#         if not created_safty_enhancment_serializer.is_valid():
+#             return Response(created_safty_enhancment_serializer.errors)
+#         
+#         user = get_app_user_id( app_id = created_safty_enhancment_serializer.app_id, 
+#                                 email  = created_safty_enhancment_serializer.email ,
+#                                   = created_safty_enhancment_serializer. ,
+#                                 email  = created_safty_enhancment_serializer.email ,
+#                                 email  = created_safty_enhancment_serializer.email ,
+#                                 email  = created_safty_enhancment_serializer.email ,
+#                                 email  = created_safty_enhancment_serializer.email ,
+#                                 email  = created_safty_enhancment_serializer.email ,
+#                                 email  = created_safty_enhancment_serializer.email ,
+#         discussion, error_string = create_discussion( user             =  request.user,
+#                                                       title            =  created_discussion_serializer.object.title          ,
+#                                                       description      =  created_discussion_serializer.object.description    ,
+#                                                       location_desc    =  created_discussion_serializer.object.location_desc  ,
+#                                                       tags_string      =  created_discussion_serializer.object.tags_string    ,
+#                                                       parent_url       =  created_discussion_serializer.object.parent_url     ,
+#                                                       parent_url_text  =  created_discussion_serializer.object.parent_url_text,
+#                                                       latitude         =  created_discussion_serializer.object.latitude       ,
+#                                                       longitude        =  created_discussion_serializer.object.longitude      )
+#                                                      
+#         if discussion:
+#             serialized_discussion = DiscussionSerializer(discussion)          
+#             return Response(serialized_discussion.data)
+#   
+#         return Response({'response': error_string})
 
 @csrf_exempt
 def create_feedback_view(request,pk):
@@ -579,4 +626,4 @@ def create_task_view(request,pk):
 
 @csrf_exempt
 def create_discussion_view(request):
-    return AddDiscussionView.as_view()(request)
+    return AddDiscussionView.as_view(request)
