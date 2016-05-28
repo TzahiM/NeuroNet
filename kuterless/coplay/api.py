@@ -626,4 +626,4 @@ def create_task_view(request,pk):
 
 @csrf_exempt
 def create_discussion_view(request):
-    return AddDiscussionView.as_view(request)
+    return AddDiscussionView.as_view()(request)
