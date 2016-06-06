@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# from coplay.views import MAX_MESSAGE_INPUT_CHARS
-from coplay.views import MAX_MESSAGE_INPUT_CHARS
+from coplay.services import MAX_MESSAGE_INPUT_CHARS
 from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -235,19 +234,19 @@ class AddUserForm(forms.Form):
 
 class UpdateProfileUserForm(forms.Form):
     password  = forms.CharField( required = False, label='', 
-        widget=forms.PasswordInput(attrs={'placeholder': 'סיסמא', 'class': 'form-control'}))
+        widget=forms.PasswordInput(attrs={'placeholder': u'סיסמא', 'class': 'form-control'}))
 
     password_confirm  = forms.CharField( required = False, label='', 
-        widget=forms.PasswordInput(attrs={'placeholder': 'אימות סיסמא', 'class': 'form-control'}))
+        widget=forms.PasswordInput(attrs={'placeholder': u'אימות סיסמא', 'class': 'form-control'}))
     
     first_name  = forms.CharField( required = False, max_length = 200, label='', 
-        widget=forms.TextInput(attrs={'placeholder': 'שם פרטי', 'class': 'form-control'}))
+        widget=forms.TextInput(attrs={'placeholder': u'שם פרטי', 'class': 'form-control'}))
     
     last_name = forms.CharField( required = False, max_length = 200, label='', 
-        widget=forms.TextInput(attrs={'placeholder': 'שם משפחה', 'class': 'form-control'}))
+        widget=forms.TextInput(attrs={'placeholder': u'שם משפחה', 'class': 'form-control'}))
     
     email = forms.EmailField( required = False, label='', 
-        widget=forms.TextInput(attrs={'placeholder': 'אימייל', 'class': 'form-control'}))
+        widget=forms.TextInput(attrs={'placeholder': u'אימייל', 'class': 'form-control'}))
 
     recieve_email_updates = forms.BooleanField(label=u'קבלת מיילים מהאתר', required = False, initial = True)
     

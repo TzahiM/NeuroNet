@@ -547,7 +547,7 @@ class AddDiscussionView(APIView):
         return super(AddDiscussionView, self).dispatch(*args, **kwargs)
                        
   
-    def post(self, request, pk, format = None,csrf_exempt = True):
+    def post(self, request, format = None,csrf_exempt = True):
         created_discussion_serializer = AddDiscussionSerializer(data=request.DATA)        
           
         if not created_discussion_serializer.is_valid():
@@ -568,7 +568,9 @@ class AddDiscussionView(APIView):
                                                       longitude              =  created_discussion_serializer.object.longitude      ,
                                                       picture                =  created_discussion_serializer.object.picture                     ,
                                                       movie_url              =  created_discussion_serializer.object.movie_url                   ,
-                                                      movie_url_url_text     =  created_discussion_serializer.object.movie_url_url_text          
+                                                      movie_url_url_text     =  created_discussion_serializer.object.movie_url_url_text  ,
+                                                      anyway_progress_status =  created_discussion_serializer.object.anyway_progress_status,
+                                                      anyway_discuss_id      =  created_discussion_serializer.object.anyway_discuss_id      
                                                       )
                                                      
         if discussion:

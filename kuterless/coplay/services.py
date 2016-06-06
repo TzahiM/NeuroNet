@@ -230,7 +230,8 @@ def discussion_update( discussion, user, description,
                        tags_string = None, 
                        location_desc = None, 
                        parent_url = None,
-                       parent_url_text = None):
+                       parent_url_text = None,
+                       picture = None):
     
     if user != discussion.owner:
         return None, 'only owner can update discussion'
@@ -242,6 +243,8 @@ def discussion_update( discussion, user, description,
     discussion.location_desc = location_desc
     discussion.parent_url = parent_url
     discussion.parent_url_text = parent_url_text
+    discussion.picture         = picture
+    
     tags_list =  tags_string.split(',')
     for tag in tags_list:
         discussion.tags.add( tag)
@@ -272,15 +275,21 @@ def discussion_update( discussion, user, description,
 
 
 
-def create_discussion( user             = None, 
-                       title            = None, 
-                       description      = None,                       
-                       location_desc    = None,                       
-                       tags_string      = None,
-                       parent_url       = None,
-                       parent_url_text  = None,
-                       latitude         = 0.0,
-                       longitude        = 0.0):
+def create_discussion( user               = None, 
+                       title              = None, 
+                       description        = None,                       
+                       location_desc      = None,                       
+                       tags_string        = None,
+                       parent_url         = None,
+                       parent_url_text    = None,
+                       latitude           = 0.0 ,
+                       longitude          = 0.0 ,
+                       picture            = None,
+                       movie_url          = None,
+                       movie_url_url_text = None,
+                       anyway_progress_status = None ,
+                       anyway_discuss_id      = None 
+                       ):
     if user is None:
         return None, 'no user provided'
     
@@ -309,7 +318,13 @@ def create_discussion( user             = None,
                                     parent_url      = parent_url,
                                     parent_url_text = parent_url_text,
                                     latitude        = latitude,
-                                    longitude       = longitude)
+                                    longitude       = longitude,
+                                    picture            = picture           ,
+                                    movie_url          = movie_url         ,
+                                    movie_url_url_text = movie_url_url_text,
+                                    anyway_progress_status = anyway_progress_status,
+                                    anyway_discuss_id      = anyway_discuss_id
+                                    )
     if location_desc:
         new_discussion.location_desc = location_desc
                 

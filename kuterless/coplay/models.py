@@ -27,28 +27,32 @@ class Location(models.Model):
     longitude   = models.FloatField(default=None, blank=True, null=True)
 
 class Discussion(models.Model):
-    owner = models.ForeignKey(User)
-    title = models.CharField(_("title"), max_length=200)
-    description = models.TextField(_("Description"), blank=True, null=True,
+    owner                       = models.ForeignKey(User)
+    title                       = models.CharField(_("title"), max_length=200)
+    description                 = models.TextField(_("Description"), blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    locked_at = models.DateTimeField(default=None, blank=True, null=True)
-    description_updated_at = models.DateTimeField(default=None, blank=True, null=True)
-    is_restricted    = models.BooleanField(default = False)
+    created_at                  = models.DateTimeField(auto_now_add=True)
+    updated_at                  = models.DateTimeField(auto_now=True)
+    locked_at                   = models.DateTimeField(default=None, blank=True, null=True)
+    description_updated_at      = models.DateTimeField(default=None, blank=True, null=True)
+    is_restricted               = models.BooleanField(default = False)
     is_viewing_require_login    = models.BooleanField(default = False)
     location                    = models.ForeignKey(Location, null=True, blank=True)
-    latitude    = models.FloatField(default=None, blank=True, null=True)
-    longitude   = models.FloatField(default=None, blank=True, null=True)
-    location_desc = models.CharField( max_length=200,default=None, blank=True, null=True)
-    tags = TaggableManager(blank=True)
-    parent_url      = models.URLField( max_length=MAX_TEXT,default=None, blank=True, null=True)
-                                                   
-    parent_url_text = models.CharField( max_length=MAX_TEXT,default=None, blank=True, null=True)
-    
+    latitude                    = models.FloatField(default=None, blank=True, null=True)
+    longitude                   = models.FloatField(default=None, blank=True, null=True)
+    location_desc               = models.CharField( max_length=200,default=None, blank=True, null=True)
+    tags                        = TaggableManager(blank=True)
+    parent_url                  = models.URLField( max_length=MAX_TEXT,default=None, blank=True, null=True)                                                   
+    parent_url_text             = models.CharField( max_length=MAX_TEXT,default=None, blank=True, null=True)
+    picture                     = models.ImageField( upload_to='uploads/%Y/%m/%d/', null=True, blank=True,default = None,max_length = 50000)
+    anyway_progress_status      = models.IntegerField(default=None, blank=True, null=True)
+    anyway_discuss_id           = models.IntegerField(default=None, blank=True, null=True)
+    movie_url                   = models.URLField( max_length=MAX_TEXT,default=None, blank=True, null=True)                                                   
+    movie_url_url_text          = models.CharField( max_length=MAX_TEXT,default=None, blank=True, null=True)
+
+
     def __unicode__(self):
         return self.id
-    
 
 
     def get_absolute_url(self):
@@ -863,6 +867,14 @@ class TaggedDiscussions(TaggedItemBase):
 class TaggedUsers(TaggedItemBase):
     content_object = models.ForeignKey('UserProfile')
 
+
+class KuterLessApp(models.Model):
+    app_name                    = models.CharField(_("title"), max_length=200)
+    app_description             = models.TextField( blank=True, null=True,
+                                  validators=[MaxLengthValidator(MAX_TEXT)])
+    email                       = models.EmailField(blank=True, null=True)
+    created_at                  = models.DateTimeField(auto_now_add=True)
+    updated_at                  = models.DateTimeField(auto_now=True)
        
 class UserProfile(models.Model):
     user = models.OneToOneField(User, default = None, null=True, blank=True )
@@ -881,12 +893,11 @@ class UserProfile(models.Model):
     description = models.TextField(_("Description"), blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
     location_desc = models.CharField( max_length=200,default=None, blank=True, null=True)
-    
-#     tags                        = TaggableManager()
-    
-#     followed_users_tags = TaggableManager(through=TaggedUsers, related_name = "followed_users_tags")
-        
+            
     followed_discussions_tags = TaggableManager( blank=True)
+    
+    application               = models.ForeignKey(KuterLessApp, null=True, blank=True)
+    application_specific_id   = models.IntegerField(blank=True, default = 0) #used when there is no email
     
     def __unicode__(self):
         return "{} ".format(self.user.username)
@@ -1006,4 +1017,27 @@ class UserUpdate(models.Model):
 
     def get_discussion(self):
         return self.discussion
+    
+    
+# class SaftyEnhancement(models.Model):
+#     OPEN     = 1
+#     FIXED    = 2
+#     CANCELED = 3
+#     
+#     PROGRESS_STATUS = (
+#         (OPEN    , u'נפתח'),
+#         (FIXED   , u'תוקן'),
+#         (CANCELED, u'בוטל'),
+#     )
+# 
+#     kuterless_discussion         = models.ForeignKey(Discussion)
+#     progress_status              = models.IntegerField(choices=PROGRESS_STATUS)
+#     discus_id                    = models.IntegerField(blank=True, default = 0)
+#     created_at                   = models.DateTimeField(auto_now_add=True)
+#     updated_at                   = models.DateTimeField(auto_now=True)
+#     
+#     def __unicode__(self):
+#         return self.id
+
+    
             

@@ -28,7 +28,13 @@ class DiscussionSerializer(serializers.ModelSerializer):
                   'location_desc',
                   'parent_url',
                   'parent_url_text',
+                  'movie_url',
+                  'movie_url_url_text',
+                  'picture',
+                  'anyway_progress_status',
+                  'anyway_discuss_id',
                   )
+        
 
 class UserSerializer(serializers.ModelSerializer):
     
@@ -283,24 +289,33 @@ class CreateTask(object):
 
 class CreateDiscussion(object):
     
-    def __init__(self, title          ,
-                       description    ,
-                       location_desc  = None ,
-                       tags           = None ,
-                       parent_url     = None ,
-                       parent_url_text= None ,
-                       latitude       = None ,
-                       longitude      = None ):
+    def __init__(self,  title          ,
+                        description    ,
+                        location_desc  = None ,
+                        tags_string    = None ,
+                        parent_url     = None ,
+                        parent_url_text= None ,
+                        latitude       = None ,
+                        longitude      = None ,
+                        picture                = None ,
+                        anyway_progress_status = None ,
+                        anyway_discuss_id      = None ,
+                        movie_url              = None ,
+                        movie_url_url_text     = None ):
 
         self.title           = title          
         self.description     = description    
         self.location_desc   = location_desc  
-        self.tags            = tags           
+        self.tags_string     = tags_string           
         self.parent_url      = parent_url     
         self.parent_url_text = parent_url_text
         self.latitude        = latitude       
         self.longitude       = longitude      
- 
+        self.picture                      = picture                     
+        self.anyway_progress_status       = anyway_progress_status      
+        self.anyway_discuss_id            = anyway_discuss_id           
+        self.movie_url                    = movie_url                   
+        self.movie_url_url_text           = movie_url_url_text          
 
 class AddFeedBackSerializer(serializers.Serializer):
         
@@ -335,41 +350,164 @@ class AddTaskSerializer(serializers.Serializer):
             return instance
                 
         return CreateTask( **attrs)
-    
 
-# def create_discussion( user             = None, 
-#                        title            = None, 
-#                        description      = None,                       
-#                        location_desc    = None,
-#                        tags_string      = None,
-#                        parent_url       = None,
-#                        parent_url_text  = None):
-    
 class AddDiscussionSerializer(serializers.Serializer):
-    title           = serializers.CharField(max_length = 200)
-    description     = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS)    
-    location_desc   = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
-    tags            = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
-    parent_url      = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
-    parent_url_text = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
-    latitude        = serializers.FloatField( required = False)
-    longitude       = serializers.FloatField( required = False) 
-
+    title                   = serializers.CharField(max_length = 200, required = True)
+    description             = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = True)    
+    location_desc           = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+    parent_url              = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+    parent_url_text         = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+    latitude                = serializers.FloatField( required = False)
+    longitude               = serializers.FloatField( required = False) 
+    tags_string             = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+    picture                 = serializers.ImageField( allow_empty_file = True, required =False,default = None,max_length = 50000)
+    movie_url               = serializers.URLField( max_length=MAX_TEXT,default=None, required=False )                                                   
+    movie_url_url_text      = serializers.CharField( max_length=MAX_TEXT,default=None, required=False)
+    anyway_progress_status  = serializers.IntegerField(default=None, required = False)
+    anyway_discuss_id       = serializers.IntegerField(default=None, required = False)
+    
     def restore_object(self, attrs, instance=None):
         """
         Given a dictionary of deserialized field values, either update
         an existing model instance, or create a new model instance.
         """
         if instance is not None:
-            instance.title                 = attrs.get('title'           , instance.title           )
-            instance.description           = attrs.get('description'     , instance.description     )
-            instance.location_desc         = attrs.get('location_desc'   , instance.location_desc   )
-            instance.tags                  = attrs.get('tags'            , instance.tags            )
-            instance.parent_url            = attrs.get('parent_url'      , instance.parent_url      )
-            instance.parent_url_text       = attrs.get('parent_url_text' , instance.parent_url_text )
-            instance.latitude              = attrs.get('latitude'        , instance.latitude        )
-            instance.longitude             = attrs.get('longitude'       , instance.longitude       )
+            instance.title                  = attrs.get('title'           , instance.title           )
+            instance.description            = attrs.get('description'     , instance.description     )
+            instance.location_desc          = attrs.get('location_desc'   , instance.location_desc   )
+            instance.tags_string            = attrs.get('tags_string'     , instance.tags_string     )
+            instance.parent_url             = attrs.get('parent_url'      , instance.parent_url      )
+            instance.parent_url_text        = attrs.get('parent_url_text' , instance.parent_url_text )
+            instance.latitude               = attrs.get('latitude'        , instance.latitude        )
+            instance.longitude              = attrs.get('longitude'       , instance.longitude       )
+            instance.email                  = attrs.get('email'                        , instance.email                        )
+            instance.picture                = attrs.get('picture'                      , instance.picture                      )
+            instance.anyway_progress_status = attrs.get('anyway_progress_status'       , instance.anyway_progress_status       )
+            instance.anyway_discuss_id      = attrs.get('anyway_discuss_id '           , instance.anyway_discuss_id            )
+            instance.movie_url              = attrs.get('movie_url'                    , instance.movie_url                    )
+            instance.movie_url_url_text     = attrs.get('movie_url_url_text'           , instance.movie_url_url_text           )
+            instance.anyway_progress_status = attrs.get('anyway_progress_status'       , instance.anyway_progress_status       )
+            instance.anyway_discuss_id      = attrs.get('anyway_discuss_id'            , instance.anyway_discuss_id            )
             return instance
                 
         return CreateDiscussion( **attrs)
+    
+
+    
+# class AddSaftyEnhancementSerializer(serializers.Serializer):
+# #     ENCOURAGE = 1
+# #     COOPERATION = 2
+# #     INTUITION   = 3
+# #     ADVICE      = 4
+# 
+# #     ENHANSMENT_TYPES = (
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #         (, ''),
+# #     )
+# #     
+# # מעגל תנועה
+# # גדר בטיחות
+# # תאונת דרכים
+# # מניעת תאונות
+# # צומת
+# # זכות קדימה
+# # תמרור
+# # מעבר חציה
+# # מהירות נסיעה
+# # רמזור
+# # שוליים
+# # התהפכות
+# # גשר
+# # מנהרה
+# # הפרדה מפלסית
+# # פס האטה
+# # מדרכה
+# # רחוב מגורים
+# # אזור ילדים
+# # בית ספר
+# # מתנס
+# # מרכז פעילות לקשישים
+# # עומס תנועה
+# # כביש עוקף
+# # אבני שפה
+# # קו הפרדה
+# # מחלף
+# # רמפה
+#     enhansment_type = serializers.ChoiceField( choices = ENHANSMENT_TYPES, required        = False)
+#     location_desc   = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+#     latitude        = serializers.FloatField( required = False)
+#     longitude       = serializers.FloatField( required = False) 
+#     description     = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)  
+#     email           = serializers.EmailField( required = False); 
+#     picture         = serializers.ImageField();
+#     
+#     
+#     
+#     
+#     
+#     
+#     title           = serializers.CharField(max_length = 200)
+#     description     = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS)    
+#     location_desc   = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+#     tags            = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+#     parent_url      = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+#     parent_url_text = serializers.CharField(max_length = MAX_MESSAGE_INPUT_CHARS, required = False)
+#     latitude        = serializers.FloatField( required = False)
+#     longitude       = serializers.FloatField( required = False) 
+# 
+#     def restore_object(self, attrs, instance=None):
+#         """
+#         Given a dictionary of deserialized field values, either update
+#         an existing model instance, or create a new model instance.
+#         """
+#         if instance is not None:
+#             instance.title                 = attrs.get('title'           , instance.title           )
+#             instance.description           = attrs.get('description'     , instance.description     )
+#             instance.location_desc         = attrs.get('location_desc'   , instance.location_desc   )
+#             instance.tags                  = attrs.get('tags'            , instance.tags            )
+#             instance.parent_url            = attrs.get('parent_url'      , instance.parent_url      )
+#             instance.parent_url_text       = attrs.get('parent_url_text' , instance.parent_url_text )
+#             instance.latitude              = attrs.get('latitude'        , instance.latitude        )
+#             instance.longitude             = attrs.get('longitude'       , instance.longitude       )
+#             return instance
+#                 
+#         return CreateDiscussion( **attrs)
     

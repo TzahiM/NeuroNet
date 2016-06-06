@@ -239,6 +239,8 @@ class NewDiscussionForm(forms.Form):
                                         max_length=MAX_TEXT,
                                         widget=forms.Textarea(
                                             attrs={'rows': '1', 'cols': '100'}))
+    
+    picture = forms.ImageField(required=False)
 
 @login_required
 def add_discussion(request, pk = None):
@@ -252,13 +254,14 @@ def add_discussion(request, pk = None):
         form = NewDiscussionForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             
-            new_discussion, error_string = create_discussion( user             = request.user, 
+            new_discussion, error_string = create_discussion( user      = request.user, 
                                                        title            = form.cleaned_data['title'], 
                                                        description      = form.cleaned_data['description'],                       
                                                        location_desc    = form.cleaned_data['location_desc'],
                                                        tags_string      = form.cleaned_data['tags'],
                                                        parent_url       = form.cleaned_data['parent_url'],
-                                                       parent_url_text  = form.cleaned_data['parent_url_text'])
+                                                       parent_url_text  = form.cleaned_data['parent_url_text'],
+                                                       picture          = form.cleaned_data['picture'])
             
             if new_discussion:
                 messages.success(request,_("Your activity was created successfully"))
@@ -747,6 +750,7 @@ class UpdateDiscussionDescForm(forms.ModelForm):
             'tags',
             'parent_url',
             'parent_url_text',
+            'picture'
         )
         
         widgets = {
@@ -756,6 +760,7 @@ class UpdateDiscussionDescForm(forms.ModelForm):
             'tags': TagWidgetBig(attrs={'rows': 3 ,'cols' : 40}),
             'parent_url': forms.Textarea(attrs={'rows': 1 ,'cols' : 40}),
             'parent_url_text': forms.Textarea(attrs={'rows': 1 ,'cols' : 40}),
+            'picture': forms.ClearableFileInput ,
         }
         
         
@@ -794,7 +799,8 @@ class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
                                                        tags_string = tags_string, 
                                                        location_desc = form.instance.location_desc, 
                                                        parent_url = form.instance.parent_url,
-                                                       parent_url_text = form.instance.parent_url_text)
+                                                       parent_url_text = form.instance.parent_url_text,
+                                                       picture         = form.instance.picture)
         
         if discussion:
             return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
