@@ -6,9 +6,14 @@ from kuterless.settings import MEDIA_ROOT
 from public_fulfillment.views import labs_root, about, root
 from rest_framework.authtoken.views import obtain_auth_token
 from wiki.urls import get_pattern as get_wiki_pattern
+from django.http.response import HttpResponse, HttpResponseRedirect
+
 
 
 admin.autodiscover()
+
+def redirect_neuronet(request):
+    return HttpResponseRedirect('http://hp.com')
 
 urlpatterns = patterns('',
     # Examples:
@@ -18,6 +23,8 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^$', root, name='home'),
+    
+    url(r'^redirect_neuronet/', redirect_neuronet, name="redirect_neuronet" ),
     
     url(r'^public_fulfillment/', include('public_fulfillment.urls', namespace="public_fulfillment")),
 
