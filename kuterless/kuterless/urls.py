@@ -15,6 +15,14 @@ admin.autodiscover()
 def redirect_neuronet(request):
     return HttpResponseRedirect('https://www.facebook.com/TaliaKlein')
 
+def redirect_any(request, any_key):
+    if any_key == 'hubstair_flyer_number_1'
+        return HttpResponseRedirect('https://www.facebook.com/NeuroNetWorkshops/')
+        
+        
+    return 'unknown_string:'+any_key
+
+    
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'kuterless.views.home', name='home'),
@@ -25,6 +33,8 @@ urlpatterns = patterns('',
     url(r'^$', root, name='home'),
     
     url(r'^redirect_neuronet/', redirect_neuronet, name="redirect_neuronet" ),
+# ex: redirect_any
+    url(r'^(?P<any_key>.+)/redirect_any/$', redirect_any, name='redirect_any'),
     
     url(r'^public_fulfillment/', include('public_fulfillment.urls', namespace="public_fulfillment")),
 
