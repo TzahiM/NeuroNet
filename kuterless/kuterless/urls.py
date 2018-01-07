@@ -13,7 +13,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect
 admin.autodiscover()
 
 def redirect_neuronet(request):
-    return HttpResponseRedirect('http://hp.com')
+    return HttpResponseRedirect('https://www.facebook.com/NeuroNetWorkshops/')
 
 urlpatterns = patterns('',
     # Examples:
