@@ -40,7 +40,7 @@ def root(request):
         segment = request.user.userprofile.segment
     else:
         segment = None
-        segment_name = 'האתר הציבורי'
+        segment_name = u'האתר הציבורי'
     try:
         shop = Shop.objects.get(segment = segment)
     except Shop.DoesNotExist:
@@ -52,7 +52,7 @@ def root(request):
         shop = Shop.objects.get(segment = segment)
     except Shop.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'עוד לא הוגדרה חנות',
+                      {  'message'      :  u'עוד לא הוגדרה חנות',
                        'rtl': 'dir="rtl"'})
         
         
@@ -74,15 +74,15 @@ def users_list(request, pk = None):
         segment = request.user.userprofile.segment
     else:
         segment = None
-        segment_name = 'אתר הציבורי'
+        segment_name = u'אתר הציבורי'
     try:
         shop = Shop.objects.get(segment = segment)
     except Shop.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'עוד לא הוגדרה חנות',
+                      {  'message'      :  u'עוד לא הוגדרה חנות',
                        'rtl': 'dir="rtl"'})
         
-    page_name = ' '+ u'רשימת המשתתפים ב' + segment_name + ' '
+    page_name = u' '+ u'רשימת המשתתפים ב' + segment_name + u' '
     
 
     if pk is not None:
@@ -130,7 +130,7 @@ def instructions(request):
         shop = Shop.objects.get(segment = segment)
     except Shop.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'עוד לא הוגדרה חנות',
+                      {  'message'      :  u'עוד לא הוגדרה חנות',
                        'rtl': 'dir="rtl"'})
     
   
@@ -247,14 +247,14 @@ def product_details(request, pk):
     product = get_product(request.user, pk)
     if None == product:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'אין גישה לחנות',
+                      {  'message'      :  u'אין גישה לחנות',
                        'rtl': 'dir="rtl"'})
         
     cart = product.shop.get_cart(request.user)
     
     if cart == None:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'אין גישה לחנות',
+                      {  'message'      :  u'אין גישה לחנות',
                        'rtl': 'dir="rtl"'})
         
     max_availabale_items = cart.get_cart_number_of_selected_items(product) + cart.get_number_of_additional_items_to_select( product )
@@ -461,7 +461,7 @@ def cart_checkout(request, pk):
         cart = Cart.objects.get(id = int(pk))
     except Cart.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'לא נמצאה עגלה',
+                      {  'message'      :  u'לא נמצאה עגלה',
                        'rtl': 'dir="rtl"'})
         
     cart.shop.checkout(request.user)    
@@ -487,12 +487,12 @@ def item_voucher_details(request, pk):
         item_voucher = ItemVoucher.objects.get(id = int(pk))
     except ItemVoucher.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'פרס לא קיים',
+                      {  'message'      :  u'פרס לא קיים',
                        'rtl': 'dir="rtl"'})
         
     if None == get_product( request.user, str( item_voucher.product.id)):
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'אין גישה לחנות',
+                      {  'message'      :  u'אין גישה לחנות',
                        'rtl': 'dir="rtl"'})
         
     return render(request, 'memecache/item_voucher_details.html',
@@ -506,7 +506,7 @@ def item_voucher_send(request, pk):
         item_voucher = ItemVoucher.objects.get(id = int(pk))
     except ItemVoucher.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'פרס לא קיים',
+                      {  'message'      :  u'פרס לא קיים',
                        'rtl': 'dir="rtl"'})
         
     if None == get_product( request.user, str( item_voucher.product.id)):
@@ -536,7 +536,7 @@ def item_voucher_send(request, pk):
 
         
     return render(request, 'memecache/message.html', 
-                      {  'message'      :  'הפרס נשלח למימוש',
+                      {  'message'      :  u'הפרס נשלח למימוש',
                        'rtl': 'dir="rtl"'})
 
 @login_required
@@ -546,12 +546,12 @@ def item_voucher_use(request, pk):
         item_voucher = ItemVoucher.objects.get(id = int(pk))
     except ItemVoucher.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'פרס לא קיים',
+                      {  'message'      :  u'פרס לא קיים',
                        'rtl': 'dir="rtl"'})
         
     if None == get_product( request.user, str( item_voucher.product.id)):
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'אין גישה לחנות',
+                      {  'message'      :  u'אין גישה לחנות',
                        'rtl': 'dir="rtl"'})
         
     if item_voucher.used:
