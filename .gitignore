@@ -17,5 +17,9 @@ kuterless/.pydevproject
 desktop.ini
 kuterless/media
 
+
 .idea
 *.prefs
+__pycache__/
+migrations/
+
