@@ -713,6 +713,8 @@ def user_coplay_report(request, username=None):
         is_following = False
         
     user_updates_query_set = user.recipient.all().order_by("-created_at")
+    
+    max_number_of_lists_for_display = 10
             
     return render(request, 'coplay/coplay_report.html',
                   {
@@ -723,13 +725,13 @@ def user_coplay_report(request, username=None):
                       'number_of_views'                  : number_of_views       ,
                       'number_of_feedbacks'              : number_of_feedbacks   ,
                       'number_of_votes'                  : number_of_votes       ,
-                      'user_updates_that_viewer_can_access_list': user_updates_query_set,
-                      'tasks_open_by_increased_time_left': user_s_open_tasks_list,
-                      'tasks_others_open_by_increased_time_left': other_users_open_tasks_list,
-                      'discussions_active_by_increase_time_left': user_discussions_active,
-                      'discussions_locked_by_increase_locked_at': user_discussions_locked,
-                      'tasks_closed_by_reverse_time': user_closed_tasks_list,
-                      'tasks_failed_by_reverse_update_time': failed_tasks_list,
+                      'user_updates_that_viewer_can_access_list': user_updates_query_set[:max_number_of_lists_for_display],
+                      'tasks_open_by_increased_time_left': user_s_open_tasks_list[:max_number_of_lists_for_display],
+                      'tasks_others_open_by_increased_time_left': other_users_open_tasks_list[:max_number_of_lists_for_display],
+                      'discussions_active_by_increase_time_left': user_discussions_active[:max_number_of_lists_for_display],
+                      'discussions_locked_by_increase_locked_at': user_discussions_locked[:max_number_of_lists_for_display],
+                      'tasks_closed_by_reverse_time': user_closed_tasks_list[:max_number_of_lists_for_display],
+                      'tasks_failed_by_reverse_update_time': failed_tasks_list[:max_number_of_lists_for_display],
                       'applicabale_user': user,
                       'followers_list' :followers_list,
                       'following_list' :following_list,
