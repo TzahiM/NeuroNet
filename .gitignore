@@ -17,10 +17,10 @@ kuterless/.pydevproject
 desktop.ini
 !kuterless/media/audio_messages
 kuterless/media
-
-
+!kuterless/media/audio_messages
 .idea
 *.prefs
-__pycache__/
-kuterless/coplay/migrations/*
+__pycache__
+kuterless/coplay/migrations
+
 
