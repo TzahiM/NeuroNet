@@ -7,13 +7,30 @@ from public_fulfillment.views import labs_root, about, root
 from rest_framework.authtoken.views import obtain_auth_token
 from wiki.urls import get_pattern as get_wiki_pattern
 from django.http.response import HttpResponse, HttpResponseRedirect
+#from gtts import gTTS
+
 
 
 
 admin.autodiscover()
 
-def redirect_neuronet(request):
+#127.0.0.1:8000/redirect_neuronet/?name=HTML5 has added some new attributes, and several HTML 4.01 attributes are removed from HTML5
+def messages_rx(request):
+    name = request.REQUEST.get('name', '')
+#    tts = gTTS(text='My name is ' + name + '. Nice to meet you.', lang='en', slow=False)
+#    tts = gTTS(text=name, lang='en', slow=False)
+#    tts.save("media/zzz.mp3")
+
     return HttpResponseRedirect('https://eventbuzz.co.il/neuronet1')
+
+def redirect_neuronet(request):
+    name = request.REQUEST.get('name', '')
+#    tts = gTTS(text='My name is ' + name + '. Nice to meet you.', lang='en', slow=False)
+#    tts = gTTS(text=name, lang='en', slow=False)
+#    tts.save("media/zzz.mp3")
+
+    return HttpResponseRedirect('https://eventbuzz.co.il/neuronet1')
+
 
 urlpatterns = patterns('',
     # Examples:
@@ -24,8 +41,13 @@ urlpatterns = patterns('',
 
     url(r'^$', root, name='home'),
     
+    url(r'^messages_rx/', messages_rx, name="messages_rx" ),
+    
+    
     url(r'^redirect_neuronet/', redirect_neuronet, name="redirect_neuronet" ),
     
+    url(r'^ntmu/', include('nice_to_meet_you.urls', namespace="nice_to_meet_you")),
+        
     url(r'^public_fulfillment/', include('public_fulfillment.urls', namespace="public_fulfillment")),
 
     url(r'^labs/$', labs_root , name = "labs_root"),

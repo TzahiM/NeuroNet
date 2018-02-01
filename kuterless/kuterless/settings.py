@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'taggit',
     'corsheaders',    
     'password_reset',
+    'nice_to_meet_you',
 )
 
 MIDDLEWARE_CLASSES = (

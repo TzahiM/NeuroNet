@@ -108,6 +108,21 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="{% url 'labs_root' %}" class="dropdown-toggle"
+                       data-toggle="dropdown">
+                         Name Tags
+
+                        <b class="caret"></b></a>
+                    <ul class="dropdown-menu" role="menu"
+                        aria-labelledby="dLabel">
+                        <li><a href="/admin/nice_to_meet_you" target="_blank">Buisness Card Admin</a></li>
+                        <li><a href="{% url 'nice_to_meet_you:view_cards' %}" target="_blank">Tags 4 Print</a></li>
+                        <li><a href="{% url 'nice_to_meet_you:message_board' %}" target="_blank">Message Board</a></li>
+                        <li><a href="{% url 'nice_to_meet_you:api_messages_list' %}" target="_blank">API debug</a></li>
+                        </li>
+                    </ul>
+                </li>
                 {% if user.is_authenticated %}
                     <li><span class="navbar-text">
                         שלום {{ user.get_full_name|default:user.username }}</a>

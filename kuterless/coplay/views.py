@@ -174,6 +174,7 @@ def discussion_details(request, pk):
     
     applicabale_discussions_list, list_title = get_discussion_with_parent_url_list( request.path, request.user)
 
+    max_number_of_lists_for_display = 10
     
     #the response shall not indicate current user's view
     return_response = render(request, 'coplay/discussion_detail.html',
@@ -191,7 +192,7 @@ def discussion_details(request, pk):
                    'add_task_form': add_task_form,
                    'like_levels': like_levels,
                    'list_viewers':list_viewers,
-                   'list_anonymous_viewers':list_anonymous_viewers,
+                   'list_anonymous_viewers':list_anonymous_viewers[:max_number_of_lists_for_display],
                    'page_name': page_name ,
                    'is_a_follower': is_a_follower,
                    'list_followers': list_followers,

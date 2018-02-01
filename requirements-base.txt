@@ -27,3 +27,5 @@ sorl-thumbnail==11.12
 static==0.4
 wiki==0.0.23
 django-floppyforms==1.1.1
+PyQRCode==1.2.1
+pypng==0.0.18

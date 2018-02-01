@@ -1,0 +1,83 @@
+{% load static %}
+{% load sekizai_tags i18n wiki_tags %}{% load url from future %}
+
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content=
+            {% if author_name %}
+                {{ author_name }}
+            {% else %}
+                "Tzahi Manistersky"
+            {% endif %}
+            >
+
+    <title>
+    </title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap/css/bootstrap-rtl.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/css/carousel.css' %}" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script>
+    <![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+	<!-- <script src="http://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+	<script src="{% static 'dist/typeahead.js' %}"></script>
+	<script src="{% static 'dist/typeahead-addresspicker.js' %}"</script> -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		
+</head>
+
+<body>
+
+
+<div class="container">
+<div class="thumbnail">
+
+<div class="row">
+				{% for card in cards_list %}
+        
+          <div class="col-sm-3 col-lg-3 col-md-3" >
+          <div class="thumbnail">
+
+           <center>
+            <h3><strong>
+                <p>{{card.private_name}} {{card.family_name}}</p>
+                </strong>
+                </h3>
+              <img  class="img-responsive" src={{card.get_qr_code_url}} style="width:120%" alt="...">
+           </center>
+           
+      </div>
+           
+          </div>
+				{% endfor %}
+        
+
+  </div><!-- /row -->
+
+</div><!-- /container -->
+</div><!-- /container -->
+
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+
+</body>
+</html>
+
+
