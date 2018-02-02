@@ -14,7 +14,8 @@ class BusinessCard(models.Model):
     family_name  = models.CharField(max_length=200, default=u'')
     email        = models.EmailField(max_length=70, blank=True)
     phone_regex  = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
-    phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True) # validators should be a list    mobile_phone = models.CharField(max_length=200, default=u'')
+#    phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True) # validators should be a list    mobile_phone = models.CharField(max_length=200, default=u'')
+    phone_number = models.CharField(max_length= 17, default=u'') # validators should be a list    mobile_phone = models.CharField(max_length=200, default=u'')
     url          = models.URLField(max_length=2000, default=u'http://kuterless.org.il', blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)

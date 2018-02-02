@@ -74,11 +74,13 @@ def get_message(request):
     
 def get_latest_message(request):
     if Acquaintance.objects.count() is 0:
-        return None
+        return HttpResponseRedirect( '/media/audio_messages/empty.mp3' )
+#        return None
     
     acquaintance = Acquaintance.objects.all().order_by("-updated_at").first()
     if acquaintance.is_played:
-        return None
+        return HttpResponseRedirect( '/media/audio_messages/empty.mp3' )
+#        return None
     acquaintance.is_played = True
     acquaintance.save()
 #    return HttpResponseRedirect( '/'+ get_sound_to_play_name(acquaintance.id) )
