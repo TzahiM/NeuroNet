@@ -81,8 +81,11 @@ def get_latest_message(request):
         return None
     acquaintance.is_played = True
     acquaintance.save()
-    return HttpResponseRedirect( '/'+ get_sound_to_play_name(acquaintance.id) )
-    
+#    return HttpResponseRedirect( '/'+ get_sound_to_play_name(acquaintance.id) )
+    dst_file_name = 'media/'+ get_sound_to_play_name(acquaintance.id)
+    copyfile( get_sound_to_play_name(acquaintance.id), dst_file_name)
+    return HttpResponseRedirect( '/'+ dst_file_name )
+     
 
 def message_board(request):
     return render(request, 'nice_to_meet_you/message_board.html')

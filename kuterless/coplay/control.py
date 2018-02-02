@@ -15,6 +15,7 @@ from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from taggit.models import Tag
 import kuterless.settings
+from django.core.urlresolvers import reverse
 import models
 
 

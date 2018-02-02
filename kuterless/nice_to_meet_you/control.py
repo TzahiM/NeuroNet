@@ -20,8 +20,8 @@ from kuterless.settings import SITE_URL, MEDIA_URL
 
 def get_sound_to_play_name(acquaintance_id):
 #    return "media/message" + str(acquaintance_id)+".mp3"
-    num_of_messages = 1
-    return "media/audio_messages/default_message"+str(acquaintance_id % num_of_messages)+".mp3"
+    num_of_messages = 8
+    return "audio_messages/default_message"+str(acquaintance_id % num_of_messages)+".mp3"
     
 def get_buisness_card_name(buisness_card_id):
     return "media/buisness_card" + str(buisness_card_id)+".vcf"
