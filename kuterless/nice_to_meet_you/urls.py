@@ -11,6 +11,8 @@ urlpatterns = patterns('',
     
     url(r'scan_card/(?P<pk>[0-9]+)/$', scan_card, name='scan_card'),
     
+    url(r'view_card/(?P<pk>[0-9]+)/$', view_card, name='view_card'),
+    
     url(r'get_message/$', get_message, name='get_message'),
 
     url(r'get_latest_message/$', get_latest_message, name='get_latest_message'),

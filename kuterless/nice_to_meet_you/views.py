@@ -43,7 +43,15 @@ def scanned_user (request):
                       {  'message'      :  message,
                        'rtl': 'dir="rtl"'})
 
-    
+
+def view_card(request, pk):
+    try:
+        business_card = BusinessCard.objects.get(id=int(pk))
+    except BusinessCard.DoesNotExist:
+        return None
+    return render(request, 'nice_to_meet_you/view_card.html', 
+                      {  'card'   :  business_card,})
+                       
 def scan_card(request, pk):
     try:
         business_card = BusinessCard.objects.get(id=int(pk))
