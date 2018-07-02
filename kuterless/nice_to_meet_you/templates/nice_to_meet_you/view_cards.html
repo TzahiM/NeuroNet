@@ -58,7 +58,9 @@
                 <p>{{card.private_name}} {{card.family_name}}</p>
                 </strong>
                 </h3>
-              <img  class="img-responsive" src={{card.get_qr_code_url}} style="width:120%" alt="...">
+                <a href="{% url 'nice_to_meet_you:view_card'  card.id %}" target="_blank">
+                <img  class="img-responsive" src={{card.get_qr_code_url}} style="width:120%" alt="...">
+                </a>
            </center>
            
       </div>
