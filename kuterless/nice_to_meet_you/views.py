@@ -27,7 +27,7 @@ from shutil import *
 from models import *
 from control import get_sound_to_play_name, get_buisness_card_name
 
-
+@login_required
 def view_cards (request):
     return render(request, 'nice_to_meet_you/view_cards.html', 
                       {  'cards_list'   :  BusinessCard.objects.all(),})

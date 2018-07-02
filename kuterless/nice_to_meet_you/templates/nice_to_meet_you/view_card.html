@@ -44,28 +44,23 @@
 <body>
 
 
-<div class="container">
 <div >
 
-<div class="row">
+<div class="row center">
 				{% if card  %}
         
-          <div class="col-sm-12 col-lg-12 col-md-12" >
+          <div class="col-sm-6 col-lg-12 col-md-12 text-truncate center" >
            <div class="thumbnail">
 
-           <center>
      <div class="jumbotron">
-        <div class="container"><strong>
+        <div class="container">
+          <h2 class="text-center">{{card.private_name}} {{card.family_name}}</h2>
           <br>
-          <h1 class="display-1">{{card.private_name}} {{card.family_name}}</h1>
-          <br>
-          <br>
-        </strong>
       </div>
+           <center>
+              <img  class="img-responsive" src={{card.get_qr_code_url}} style="width:100%" alt="...">
            
-              <img  class="img-responsive" src={{card.get_qr_code_url}} style="width:120%" alt="...">
-           </center>
-           
+           <center>
       </div>
         </div>
            
@@ -75,7 +70,7 @@
 
   </div><!-- /row -->
 
-</div><!-- /container -->
+
 </div><!-- /container -->
 
 
