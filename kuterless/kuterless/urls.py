@@ -29,7 +29,7 @@ def redirect_neuronet(request):
 #    tts = gTTS(text=name, lang='en', slow=False)
 #    tts.save("media/zzz.mp3")
 
-    return HttpResponseRedirect('https://docs.google.com/forms/d/e/1FAIpQLSe-jk4lNia3VeqlGZukp4RWX2z3eZBUmPqEGadb_hwGaRoMSw/viewform')
+    return HttpResponseRedirect('https://docs.google.com/forms/d/e/1FAIpQLSfdbgCSy5yHdu8h5PBT5oUeZdbP-WikJRd6BfZoOqkpzsqtWw/viewform')
 
 
 urlpatterns = patterns('',
