@@ -19,6 +19,10 @@ urlpatterns = patterns('',
     
     url(r'message_board/$', message_board, name='message_board'),
     
+    url(r'scoring_board/$', scoring_board, name='scoring_board'),
+    
+    url(r'scoring_clear/$', scoring_clear, name='scoring_clear'),
+    
     url(r'^api/get_messages/$', MessagesList.as_view(), name='api_messages_list'),
 
 )

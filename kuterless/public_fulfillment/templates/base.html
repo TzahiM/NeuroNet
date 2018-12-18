@@ -109,8 +109,9 @@
                         <li><a href="/admin/nice_to_meet_you" target="_blank">Buisness Card Admin</a></li>
                         <li><a href="{% url 'nice_to_meet_you:view_cards' %}" target="_blank">Tags 4 Print</a></li>
                         <li><a href="{% url 'nice_to_meet_you:message_board' %}" target="_blank">Message Board</a></li>
+                        <li><a href="{% url 'nice_to_meet_you:scoring_board' %}" target="_blank">Scoring Board</a></li>
                         <li><a href="{% url 'nice_to_meet_you:api_messages_list' %}" target="_blank">API debug</a></li>
-                        </li>
+                        
                     </ul>
                 </li>
                 {% if user.is_authenticated %}

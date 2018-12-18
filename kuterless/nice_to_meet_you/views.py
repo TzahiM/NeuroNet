@@ -67,6 +67,8 @@ def scan_card(request, pk):
 #    message_to_play_text = 'ting'
     new_acquaintance = Acquaintance(business_card = business_card, message =  message_to_play_text)
     new_acquaintance.save()
+    business_card.score += 1
+    business_card.save()
 
     
 #    return HttpResponseRedirect( '/media/contacts.vcf')
@@ -100,6 +102,42 @@ def get_latest_message(request):
 def message_board(request):
     return render(request, 'nice_to_meet_you/message_board.html')
 
+
+                   
+class CardHoldersTableRow():
+    place = 0
+    card_holder = None
+    score = 0
+
+def scoring_board(request):
+    card_holders_list = BusinessCard.objects.order_by("-score")
+    card_holders_rows_list = []
+    place = 0
     
+    for card_holder in card_holders_list:
+        if card_holder.score != 0:        
+            row = CardHoldersTableRow()
+            place += 1
+            row.place = place
+            row.card_holder = card_holder
+            row.score = card_holder.score
+            card_holders_rows_list.append(row)
+        
+    return render(request, 'nice_to_meet_you/card_holders_list.html',
+                  {'card_holders_rows_list': card_holders_rows_list})
+
+
+
+def scoring_clear(request):
+
+    card_holders_list = BusinessCard.objects.all()
+    for card_holder in card_holders_list:
+        card_holder.score = 0     
+        card_holder.save()
+
+    return HttpResponseRedirect( '/ntmu/scoring_board' ) 
     
+
+
+
         

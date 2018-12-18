@@ -17,6 +17,7 @@ class BusinessCard(models.Model):
 #    phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True) # validators should be a list    mobile_phone = models.CharField(max_length=200, default=u'')
     phone_number = models.CharField(max_length= 17, default=u'') # validators should be a list    mobile_phone = models.CharField(max_length=200, default=u'')
     url          = models.URLField(max_length=2000, default=u'http://kuterless.org.il', blank=True)
+    score    = models.PositiveIntegerField(default = 0)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
