@@ -29,8 +29,14 @@ def redirect_neuronet(request):
 #    tts = gTTS(text=name, lang='en', slow=False)
 #    tts.save("media/zzz.mp3")
 
-    return HttpResponseRedirect('https://docs.google.com/forms/d/e/1FAIpQLSfdbgCSy5yHdu8h5PBT5oUeZdbP-WikJRd6BfZoOqkpzsqtWw/viewform')
 
+def redirect_neuronet_tzahi_manistersky(request):
+#    name = request.REQUEST.get('name', '')
+#    tts = gTTS(text='My name is ' + name + '. Nice to meet you.', lang='en', slow=False)
+#    tts = gTTS(text=name, lang='en', slow=False)
+#    tts.save("media/zzz.mp3")
+
+    return HttpResponseRedirect('https://www.facebook.com/Tzahiman')
 
 urlpatterns = patterns('',
     # Examples:
@@ -43,6 +49,7 @@ urlpatterns = patterns('',
     
     url(r'^messages_rx/', messages_rx, name="messages_rx" ),
     
+    url(r'^redirect_neuronet/tzahi.manistersky', redirect_neuronet_tzahi_manistersky, name="redirect_neuronet_tzahi_manistersky" ),
     
     url(r'^redirect_neuronet/', redirect_neuronet, name="redirect_neuronet" ),
     
