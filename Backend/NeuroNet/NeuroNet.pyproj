@@ -1,0 +1,499 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <Name>NeuroNet</Name>
+    <RootNamespace>NeuroNet</RootNamespace>
+    <InterpreterId>MSBuild|EnvDjango2_2_7|$(MSBuildProjectFullPath)</InterpreterId>
+    <SuppressEnvironmentCreationPrompt>True</SuppressEnvironmentCreationPrompt>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>1e25006c-ae31-4845-bd1f-18cbe63e364c</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <ProjectTypeGuids>{5F0BE9CA-D677-4A4D-8806-6076C0FAAD37};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <StartupFile>manage.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <LaunchProvider>Django launcher</LaunchProvider>
+    <DjangoSettingsModule>NeuroNet.settings</DjangoSettingsModule>
+    <WebBrowserUrl>http://localhost</WebBrowserUrl>
+    <OutputPath>.</OutputPath>
+    <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="coplay\admin.py" />
+    <Compile Include="coplay\api.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="coplay\apps.py" />
+    <Compile Include="coplay\control.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="coplay\migrations\__init__.py" />
+    <Compile Include="coplay\models.py" />
+    <Compile Include="coplay\serializers.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="coplay\services.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="coplay\tests.py" />
+    <Compile Include="coplay\urls.py" />
+    <Compile Include="coplay\views.py" />
+    <Compile Include="coplay\__init__.py" />
+    <Compile Include="manage.py" />
+    <Compile Include="memecache\admin.py" />
+    <Compile Include="memecache\apps.py" />
+    <Compile Include="memecache\control.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="memecache\migrations\__init__.py" />
+    <Compile Include="memecache\models.py" />
+    <Compile Include="memecache\tests.py" />
+    <Compile Include="memecache\urls.py" />
+    <Compile Include="memecache\views.py" />
+    <Compile Include="memecache\__init__.py" />
+    <Compile Include="NeuroNet\local_settings.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NeuroNet\__init__.py" />
+    <Compile Include="NeuroNet\settings.py" />
+    <Compile Include="NeuroNet\urls.py" />
+    <Compile Include="NeuroNet\wsgi.py" />
+    <Compile Include="nice_to_meet_you\admin.py" />
+    <Compile Include="nice_to_meet_you\apps.py" />
+    <Compile Include="nice_to_meet_you\control.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nice_to_meet_you\migrations\__init__.py" />
+    <Compile Include="nice_to_meet_you\models.py" />
+    <Compile Include="nice_to_meet_you\tests.py" />
+    <Compile Include="nice_to_meet_you\urls.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nice_to_meet_you\views.py" />
+    <Compile Include="nice_to_meet_you\__init__.py" />
+    <Compile Include="public_fulfillment\admin.py" />
+    <Compile Include="public_fulfillment\api.py" />
+    <Compile Include="public_fulfillment\apps.py" />
+    <Compile Include="public_fulfillment\control.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="public_fulfillment\forms.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="public_fulfillment\migrations\__init__.py" />
+    <Compile Include="public_fulfillment\models.py" />
+    <Compile Include="public_fulfillment\serializers.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="public_fulfillment\services.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="public_fulfillment\tests.py" />
+    <Compile Include="public_fulfillment\urls.py" />
+    <Compile Include="public_fulfillment\views.py" />
+    <Compile Include="public_fulfillment\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="audio_messages\Audience-laughing-and-applauding-in-theater.mp3" />
+    <Content Include="audio_messages\Cartoon-whistle.mp3" />
+    <Content Include="audio_messages\default_message0.mp3" />
+    <Content Include="audio_messages\default_message1.mp3" />
+    <Content Include="audio_messages\default_message2.mp3" />
+    <Content Include="audio_messages\default_message3.mp3" />
+    <Content Include="audio_messages\default_message4.mp3" />
+    <Content Include="audio_messages\default_message5.mp3" />
+    <Content Include="audio_messages\default_message6.mp3" />
+    <Content Include="audio_messages\default_message7.mp3" />
+    <Content Include="audio_messages\ding.mp3" />
+    <Content Include="audio_messages\empty.mp3" />
+    <Content Include="audio_messages\Fanfare-sound.mp3" />
+    <Content Include="audio_messages\Funny-fanfare-sound.mp3" />
+    <Content Include="audio_messages\Hey-sound-effect.mp3" />
+    <Content Include="audio_messages\Horse-nay.mp3" />
+    <Content Include="audio_messages\Movie-gong-sound-effect.mp3" />
+    <Content Include="audio_messages\Ta-da-orchestra-fanfare.mp3" />
+    <Content Include="coplay\static\bootstrap\css\bootstrap-rtl.css" />
+    <Content Include="coplay\static\bootstrap\css\bootstrap-theme.css" />
+    <Content Include="coplay\static\bootstrap\css\bootstrap-theme.min.css" />
+    <Content Include="coplay\static\bootstrap\css\bootstrap.css" />
+    <Content Include="coplay\static\bootstrap\css\bootstrap.min.css" />
+    <Content Include="coplay\static\bootstrap\css\carousel.css" />
+    <Content Include="coplay\static\bootstrap\css\docs.css" />
+    <Content Include="coplay\static\bootstrap\css\grid.css" />
+    <Content Include="coplay\static\bootstrap\css\jumbotron-narrow.css" />
+    <Content Include="coplay\static\bootstrap\css\jumbotron.css" />
+    <Content Include="coplay\static\bootstrap\css\justified-nav.css" />
+    <Content Include="coplay\static\bootstrap\css\navbar-fixed-top.css" />
+    <Content Include="coplay\static\bootstrap\css\navbar-static-top.css" />
+    <Content Include="coplay\static\bootstrap\css\navbar.css" />
+    <Content Include="coplay\static\bootstrap\css\non-responsive.css" />
+    <Content Include="coplay\static\bootstrap\css\offcanvas.css" />
+    <Content Include="coplay\static\bootstrap\css\pygments-manni.css" />
+    <Content Include="coplay\static\bootstrap\css\qunit.css" />
+    <Content Include="coplay\static\bootstrap\css\signin.css" />
+    <Content Include="coplay\static\bootstrap\css\starter-template.css" />
+    <Content Include="coplay\static\bootstrap\css\sticky-footer-navbar.css" />
+    <Content Include="coplay\static\bootstrap\css\sticky-footer.css" />
+    <Content Include="coplay\static\bootstrap\css\theme.css" />
+    <Content Include="coplay\static\bootstrap\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="coplay\static\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="coplay\static\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="coplay\static\bootstrap\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="coplay\static\bootstrap\js\affix.js" />
+    <Content Include="coplay\static\bootstrap\js\alert.js" />
+    <Content Include="coplay\static\bootstrap\js\bootstrap.js" />
+    <Content Include="coplay\static\bootstrap\js\bootstrap.min.js" />
+    <Content Include="coplay\static\bootstrap\js\button.js" />
+    <Content Include="coplay\static\bootstrap\js\carousel.js" />
+    <Content Include="coplay\static\bootstrap\js\collapse.js" />
+    <Content Include="coplay\static\bootstrap\js\dropdown.js" />
+    <Content Include="coplay\static\bootstrap\js\modal.js" />
+    <Content Include="coplay\static\bootstrap\js\popover.js" />
+    <Content Include="coplay\static\bootstrap\js\scrollspy.js" />
+    <Content Include="coplay\static\bootstrap\js\tab.js" />
+    <Content Include="coplay\static\bootstrap\js\tooltip.js" />
+    <Content Include="coplay\static\bootstrap\js\transition.js" />
+    <Content Include="coplay\static\dist\typeahead-addresspicker.js" />
+    <Content Include="coplay\static\dist\typeahead-addresspicker.min.js" />
+    <Content Include="coplay\static\dist\typeahead.js" />
+    <Content Include="coplay\static\js\.bowerrc" />
+    <Content Include="coplay\static\js\.gitignore" />
+    <Content Include="coplay\static\js\.jshintrc" />
+    <Content Include="coplay\static\js\.travis.yml" />
+    <Content Include="coplay\static\js\app\.bowerrc" />
+    <Content Include="coplay\static\js\app\css\.gitkeep" />
+    <Content Include="coplay\static\js\app\css\animations.css" />
+    <Content Include="coplay\static\js\app\css\app.css" />
+    <Content Include="coplay\static\js\app\img\.gitkeep" />
+    <Content Include="coplay\static\js\app\img\glyphicons-halflings-white.png" />
+    <Content Include="coplay\static\js\app\img\glyphicons-halflings.png" />
+    <Content Include="coplay\static\js\app\img\phones\dell-streak-7.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\dell-streak-7.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\dell-streak-7.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\dell-streak-7.3.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\dell-streak-7.4.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\dell-venue.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\dell-venue.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\dell-venue.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\dell-venue.3.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\dell-venue.4.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\dell-venue.5.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\droid-2-global-by-motorola.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\droid-2-global-by-motorola.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\droid-2-global-by-motorola.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\droid-pro-by-motorola.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\droid-pro-by-motorola.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\lg-axis.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\lg-axis.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\lg-axis.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-atrix-4g.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-atrix-4g.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-atrix-4g.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-atrix-4g.3.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-bravo-with-motoblur.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-bravo-with-motoblur.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-bravo-with-motoblur.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-charm-with-motoblur.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-charm-with-motoblur.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-charm-with-motoblur.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-defy-with-motoblur.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-defy-with-motoblur.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-defy-with-motoblur.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-xoom-with-wi-fi.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-xoom-with-wi-fi.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-xoom-with-wi-fi.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-xoom-with-wi-fi.3.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-xoom-with-wi-fi.4.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-xoom-with-wi-fi.5.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-xoom.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-xoom.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\motorola-xoom.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\nexus-s.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\nexus-s.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\nexus-s.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\nexus-s.3.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-galaxy-tab.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-galaxy-tab.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-galaxy-tab.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-galaxy-tab.3.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-galaxy-tab.4.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-galaxy-tab.5.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-galaxy-tab.6.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-gem.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-gem.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-gem.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-mesmerize-a-galaxy-s-phone.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-mesmerize-a-galaxy-s-phone.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-mesmerize-a-galaxy-s-phone.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-mesmerize-a-galaxy-s-phone.3.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-showcase-a-galaxy-s-phone.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-showcase-a-galaxy-s-phone.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-showcase-a-galaxy-s-phone.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-transform.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-transform.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-transform.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-transform.3.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\samsung-transform.4.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\sanyo-zio.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\sanyo-zio.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\sanyo-zio.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\t-mobile-g2.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\t-mobile-g2.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\t-mobile-g2.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\t-mobile-mytouch-4g.0.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\t-mobile-mytouch-4g.1.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\t-mobile-mytouch-4g.2.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\t-mobile-mytouch-4g.3.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\t-mobile-mytouch-4g.4.jpg" />
+    <Content Include="coplay\static\js\app\img\phones\t-mobile-mytouch-4g.5.jpg" />
+    <Content Include="coplay\static\js\app\index.html" />
+    <Content Include="coplay\static\js\app\js\animations.js" />
+    <Content Include="coplay\static\js\app\js\app.js" />
+    <Content Include="coplay\static\js\app\js\controllers.js" />
+    <Content Include="coplay\static\js\app\js\directives.js" />
+    <Content Include="coplay\static\js\app\js\filters.js" />
+    <Content Include="coplay\static\js\app\js\services.js" />
+    <Content Include="coplay\static\js\app\partials\.gitkeep" />
+    <Content Include="coplay\static\js\app\partials\phone-detail.html" />
+    <Content Include="coplay\static\js\app\partials\phone-list.html" />
+    <Content Include="coplay\static\js\app\phones\100mb.json" />
+    <Content Include="coplay\static\js\app\phones\auctions.json" />
+    <Content Include="coplay\static\js\app\phones\data.json" />
+    <Content Include="coplay\static\js\app\phones\datab.json" />
+    <Content Include="coplay\static\js\app\phones\dell-streak-7.json" />
+    <Content Include="coplay\static\js\app\phones\dell-venue.json" />
+    <Content Include="coplay\static\js\app\phones\droid-2-global-by-motorola.json" />
+    <Content Include="coplay\static\js\app\phones\droid-pro-by-motorola.json" />
+    <Content Include="coplay\static\js\app\phones\lg-axis.json" />
+    <Content Include="coplay\static\js\app\phones\motorola-atrix-4g.json" />
+    <Content Include="coplay\static\js\app\phones\motorola-bravo-with-motoblur.json" />
+    <Content Include="coplay\static\js\app\phones\motorola-charm-with-motoblur.json" />
+    <Content Include="coplay\static\js\app\phones\motorola-defy-with-motoblur.json" />
+    <Content Include="coplay\static\js\app\phones\motorola-xoom-with-wi-fi.json" />
+    <Content Include="coplay\static\js\app\phones\motorola-xoom.json" />
+    <Content Include="coplay\static\js\app\phones\nexus-s.json" />
+    <Content Include="coplay\static\js\app\phones\phones.json" />
+    <Content Include="coplay\static\js\app\phones\samsung-galaxy-tab.json" />
+    <Content Include="coplay\static\js\app\phones\samsung-gem.json" />
+    <Content Include="coplay\static\js\app\phones\samsung-mesmerize-a-galaxy-s-phone.json" />
+    <Content Include="coplay\static\js\app\phones\samsung-showcase-a-galaxy-s-phone.json" />
+    <Content Include="coplay\static\js\app\phones\samsung-transform.json" />
+    <Content Include="coplay\static\js\app\phones\sanyo-zio.json" />
+    <Content Include="coplay\static\js\app\phones\t-mobile-g2.json" />
+    <Content Include="coplay\static\js\app\phones\t-mobile-mytouch-4g.json" />
+    <Content Include="coplay\static\js\bower.json" />
+    <Content Include="coplay\static\js\LICENSE" />
+    <Content Include="coplay\static\js\package.json" />
+    <Content Include="coplay\static\js\README.md" />
+    <Content Include="coplay\static\js\scripts\private\old\format-json.sh" />
+    <Content Include="coplay\static\js\scripts\private\old\goto_step.bat" />
+    <Content Include="coplay\static\js\scripts\private\old\goto_step.sh" />
+    <Content Include="coplay\static\js\scripts\private\old\README.md" />
+    <Content Include="coplay\static\js\scripts\private\old\ScrapeData.js" />
+    <Content Include="coplay\static\js\scripts\private\old\snapshot.sh" />
+    <Content Include="coplay\static\js\scripts\private\push-to-github.sh" />
+    <Content Include="coplay\static\js\scripts\private\README.md" />
+    <Content Include="coplay\static\js\scripts\private\retag.sh" />
+    <Content Include="coplay\static\js\scripts\private\test-all.sh" />
+    <Content Include="coplay\static\js\scripts\private\update-gh-pages.sh" />
+    <Content Include="coplay\static\js\scripts\update-repo.sh" />
+    <Content Include="coplay\static\js\test\e2e\README.md" />
+    <Content Include="coplay\static\js\test\e2e\scenarios.js" />
+    <Content Include="coplay\static\js\test\karma.conf.js" />
+    <Content Include="coplay\static\js\test\protractor-conf.js" />
+    <Content Include="coplay\static\js\test\unit\controllersSpec.js" />
+    <Content Include="coplay\static\js\test\unit\directivesSpec.js" />
+    <Content Include="coplay\static\js\test\unit\filtersSpec.js" />
+    <Content Include="coplay\static\js\test\unit\servicesSpec.js" />
+    <Content Include="coplay\static\style.css" />
+    <Content Include="coplay\static\style.css~" />
+    <Content Include="coplay\templates\coplay\add_on_new_discussion.html" />
+    <Content Include="coplay\templates\coplay\coplay_report.html" />
+    <Content Include="coplay\templates\coplay\co_play_root.html" />
+    <Content Include="coplay\templates\coplay\decision_form.html" />
+    <Content Include="coplay\templates\coplay\discussion_confirm_delete.html" />
+    <Content Include="coplay\templates\coplay\discussion_detail.html" />
+    <Content Include="coplay\templates\coplay\discussion_form.html" />
+    <Content Include="coplay\templates\coplay\discussion_list.html" />
+    <Content Include="coplay\templates\coplay\discussion_url_list.html" />
+    <Content Include="coplay\templates\coplay\email_base.html" />
+    <Content Include="coplay\templates\coplay\email_discussion_update.html" />
+    <Content Include="coplay\templates\coplay\email_task_update.html" />
+    <Content Include="coplay\templates\coplay\error.html" />
+    <Content Include="coplay\templates\coplay\feedback_add.html" />
+    <Content Include="coplay\templates\coplay\feedback_form.html" />
+    <Content Include="coplay\templates\coplay\index.html" />
+    <Content Include="coplay\templates\coplay\message.html" />
+    <Content Include="coplay\templates\coplay\new_discussion.html" />
+    <Content Include="coplay\templates\coplay\task_detail.html" />
+    <Content Include="coplay\templates\coplay\task_form.html" />
+    <Content Include="coplay\templates\coplay\user_follow_email_update.html" />
+    <Content Include="coplay\templates\coplay\user_follow_tag_email_update.html" />
+    <Content Include="coplay\templates\coplay\user_update_detailes.html" />
+    <Content Include="coplay\templates\coplay\_messages.html" />
+    <Content Include="coplay\templates\floppyforms\attrs.html" />
+    <Content Include="coplay\templates\floppyforms\errors.html" />
+    <Content Include="coplay\templates\floppyforms\htmlarea.html" />
+    <Content Include="coplay\templates\floppyforms\layouts\bootstrap3.html" />
+    <Content Include="coplay\templates\floppyforms\layouts\default.html" />
+    <Content Include="coplay\templates\floppyforms\oc_checkbox_select.html" />
+    <Content Include="coplay\templates\floppyforms\rows\bootstrap3.html" />
+    <Content Include="memecache\templates\memecache\index.html" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap-grid.css" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap-grid.css.map" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap-grid.min.css" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap-grid.min.css.map" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap-reboot.css" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap-reboot.css.map" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap-reboot.min.css" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap-reboot.min.css.map" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap.css" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap.css.map" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap.min.css" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\bootstrap.min.css.map" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\js\bootstrap.bundle.js" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\js\bootstrap.bundle.js.map" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\js\bootstrap.bundle.min.js" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\js\bootstrap.bundle.min.js.map" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\js\bootstrap.js" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\js\bootstrap.js.map" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\js\bootstrap.min.js" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\js\bootstrap.min.js.map" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\js\jquery-3.3.1.slim.min.js" />
+    <Content Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\js\popper.min.js" />
+    <Content Include="nice_to_meet_you\templates\nice_to_meet_you\card_holders_list.html" />
+    <Content Include="nice_to_meet_you\templates\nice_to_meet_you\index.html" />
+    <Content Include="nice_to_meet_you\templates\nice_to_meet_you\message_board.html" />
+    <Content Include="nice_to_meet_you\templates\nice_to_meet_you\view_card.html" />
+    <Content Include="nice_to_meet_you\templates\nice_to_meet_you\view_cards.html" />
+    <Content Include="public_fulfillment\templates\add_on_base.html" />
+    <Content Include="public_fulfillment\templates\base.html" />
+    <Content Include="public_fulfillment\templates\login.html" />
+    <Content Include="public_fulfillment\templates\password_reset\base.html" />
+    <Content Include="public_fulfillment\templates\public_fulfillment\example.html" />
+    <Content Include="public_fulfillment\templates\public_fulfillment\index.html" />
+    <Content Include="public_fulfillment\templates\public_fulfillment\labs_root.html" />
+    <Content Include="public_fulfillment\templates\public_fulfillment\new_user.html" />
+    <Content Include="public_fulfillment\templates\public_fulfillment\privacy_policy.html" />
+    <Content Include="public_fulfillment\templates\public_fulfillment\public_fulfillment_root.html" />
+    <Content Include="public_fulfillment\templates\public_fulfillment\root.html" />
+    <Content Include="public_fulfillment\templates\public_fulfillment\update_user.html" />
+    <Content Include="public_fulfillment\templates\public_fulfillment\user_form.html" />
+    <Content Include="r.bat" />
+    <Content Include="requirements.txt" />
+    <Content Include="sp.bat" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="audio_messages\" />
+    <Folder Include="coplay\" />
+    <Folder Include="coplay\migrations\" />
+    <Folder Include="coplay\static\" />
+    <Folder Include="coplay\static\bootstrap\" />
+    <Folder Include="coplay\static\bootstrap\css\" />
+    <Folder Include="coplay\static\bootstrap\fonts\" />
+    <Folder Include="coplay\static\bootstrap\js\" />
+    <Folder Include="coplay\static\dist\" />
+    <Folder Include="coplay\static\js\" />
+    <Folder Include="coplay\static\js\app\" />
+    <Folder Include="coplay\static\js\app\css\" />
+    <Folder Include="coplay\static\js\app\img\" />
+    <Folder Include="coplay\static\js\app\img\phones\" />
+    <Folder Include="coplay\static\js\app\js\" />
+    <Folder Include="coplay\static\js\app\partials\" />
+    <Folder Include="coplay\static\js\app\phones\" />
+    <Folder Include="coplay\static\js\scripts\" />
+    <Folder Include="coplay\static\js\scripts\private\" />
+    <Folder Include="coplay\static\js\scripts\private\old\" />
+    <Folder Include="coplay\static\js\test\" />
+    <Folder Include="coplay\static\js\test\e2e\" />
+    <Folder Include="coplay\static\js\test\unit\" />
+    <Folder Include="coplay\templates\" />
+    <Folder Include="coplay\templates\coplay\" />
+    <Folder Include="coplay\templates\floppyforms\" />
+    <Folder Include="coplay\templates\floppyforms\layouts\" />
+    <Folder Include="coplay\templates\floppyforms\rows\" />
+    <Folder Include="memecache\" />
+    <Folder Include="memecache\migrations\" />
+    <Folder Include="memecache\templates\" />
+    <Folder Include="memecache\templates\memecache\" />
+    <Folder Include="NeuroNet\" />
+    <Folder Include="media\" />
+    <Folder Include="nice_to_meet_you\" />
+    <Folder Include="nice_to_meet_you\migrations\" />
+    <Folder Include="nice_to_meet_you\static\" />
+    <Folder Include="nice_to_meet_you\static\nice_to_meet_you\" />
+    <Folder Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\" />
+    <Folder Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\css\" />
+    <Folder Include="nice_to_meet_you\static\nice_to_meet_you\bootstrap-4.3.1-dist\js\" />
+    <Folder Include="nice_to_meet_you\templates\" />
+    <Folder Include="nice_to_meet_you\templates\nice_to_meet_you\" />
+    <Folder Include="public_fulfillment\" />
+    <Folder Include="public_fulfillment\migrations\" />
+    <Folder Include="public_fulfillment\templates\" />
+    <Folder Include="public_fulfillment\templates\password_reset\" />
+    <Folder Include="public_fulfillment\templates\public_fulfillment\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="EnvDjango2_2_7\">
+      <Id>EnvDjango2_2_7</Id>
+      <Version>3.7</Version>
+      <Description>EnvDjango2_2_7 (Python 3.7 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Django.targets" />
+  <!-- Specify pre- and post-build commands in the BeforeBuild and 
+       AfterBuild targets below. -->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <AutoAssignPort>True</AutoAssignPort>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

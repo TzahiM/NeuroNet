@@ -1,0 +1,33 @@
+{% extends 'add_on_base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+    <h1>
+        {% blocktrans %}New Activity{% endblocktrans %}
+    </h1>
+
+    <div class="alert alert-success">
+        {% trans "An acitivity describes something you would like to build or promote." %}
+        {% trans "Creating an activity allows others to engage in your initative." %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <form action="{% url 'coplay:add_discussion' %}"
+                  method="post">
+                {% csrf_token %}
+                {{ form }}
+
+                <div class="alert alert-warning">{% trans "Please notice: To keep this activity unlocked, new tasks must be created at least once per week." %}</div>
+
+                <input type="submit" value="{% trans "Let's play" %}"/>
+
+            </form>
+
+        </div>
+    </div>
+
+
+{% endblock %}
+

@@ -1,0 +1,7 @@
+import sys
+import pygments.cmdline
+
+try:
+    sys.exit(pygments.cmdline.main(sys.argv))
+except KeyboardInterrupt:
+    sys.exit(1)

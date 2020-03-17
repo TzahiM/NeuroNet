@@ -1,0 +1,62 @@
+test_rewards
+test_segments start
+seg1 None
+at1
+belong to the default public segment
+recieve_notifications
+recieve_updates
+admin
+belong to seg1
+belong to segment seg1
+recieve_notifications
+recieve_updates
+<bound method UserProfile.print_content of <UserProfile: at1 >>
+test_user_glimpse_a_discussion
+test_user_update start
+test_shop
+product name p1 item_price 10 shop shop 1 description p1 desc availabale items: 10 selected 0 sold 0 used 0
+created_at 2020-02-28 14:57:47.446709+00:00 updated_at 2020-02-28 14:57:50.528367+00:00 end_of_sale_at None end_of_use_at None
+98 249 258
+10 zugo
+21 zugo
+54 zugo
+currency name is zugi number of products: 3
+product name p1 item_price 10 shop shop 1 description p1 desc availabale items: 98 selected 10 sold 0 used 0
+created_at 2020-02-28 14:57:47.446709+00:00 updated_at 2020-02-28 14:57:50.596185+00:00 end_of_sale_at None end_of_use_at None
+product selection of p1 user at1 selected items 10
+None
+product name p2 item_price 20 shop shop 1 description p2 desc availabale items: 249 selected 21 sold 0 used 0
+created_at 2020-02-28 14:57:47.446709+00:00 updated_at 2020-02-28 14:57:50.604164+00:00 end_of_sale_at None end_of_use_at None
+product selection of p2 user at2 selected items 10
+None
+product selection of p2 user at1 selected items 11
+None
+product name p3 item_price 22 shop shop 1 description p3 desc availabale items: 258 selected 54 sold 0 used 0
+created_at 2020-02-28 14:57:47.456682+00:00 updated_at 2020-02-28 14:57:50.610173+00:00 end_of_sale_at None end_of_use_at None
+product selection of p3 user at1 selected items 22
+None
+product selection of p3 user at2 selected items 20
+None
+carts
+shop shop 1 cart of at2 current price: 640
+product selection of p2 user at2 selected items 10
+None
+product selection of p3 user at2 selected items 20
+None
+shop shop 1 cart of at1 current price: 804
+product selection of p1 user at1 selected items 10
+None
+product selection of p2 user at1 selected items 11
+None
+product selection of p3 user at1 selected items 22
+None
+before  shop None
+test_transactins
+Account for user at1 credit 330 updated_at 2020-02-28 14:57:51.494783+00:00 created_at 2020-02-28 14:57:51.485809+00:00 total_earn 332 total_spent 2
+Transaction updated_at 2020-02-28 14:57:51.495780+00:00 created_at 2020-02-28 14:57:51.495780+00:00 item_price 300 number_of_items 1 total_price 300 credit 330 cause add 300 url None
+Transaction updated_at 2020-02-28 14:57:51.490794+00:00 created_at 2020-02-28 14:57:51.490794+00:00 item_price -2 number_of_items 1 total_price -2 credit 30 cause withdraw 2 url None
+Transaction updated_at 2020-02-28 14:57:51.489796+00:00 created_at 2020-02-28 14:57:51.489796+00:00 item_price 20 number_of_items 1 total_price 20 credit 32 cause add 20 url www.hp.com
+Transaction updated_at 2020-02-28 14:57:51.488799+00:00 created_at 2020-02-28 14:57:51.487802+00:00 item_price 12 number_of_items 1 total_price 12 credit 12 cause add 12 url None
+Account for user at2 credit 700 updated_at 2020-02-28 14:57:51.493785+00:00 created_at 2020-02-28 14:57:51.486804+00:00 total_earn 1000 total_spent 300
+Transaction updated_at 2020-02-28 14:57:51.494783+00:00 created_at 2020-02-28 14:57:51.493785+00:00 item_price -300 number_of_items 1 total_price -300 credit 700 cause withdraw 300 url None
+Transaction updated_at 2020-02-28 14:57:51.492788+00:00 created_at 2020-02-28 14:57:51.492788+00:00 item_price 1000 number_of_items 1 total_price 1000 credit 1000 cause add 1000 url None

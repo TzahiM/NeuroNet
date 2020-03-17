@@ -1,0 +1,56 @@
+﻿{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+      <meta http-equiv="refresh" content="5">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+     
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" type="text/css" href="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" />
+
+      
+
+
+    <title>לוח התוצאות</title>
+   </head>
+<body >
+ 			<div class="row">
+			<div class="col-sm-3 col-md-4">	</div>
+ 				<div class="col-sm-3 col-md-4" id = "UserList">					
+ 					
+ 					<br>
+ 					<h1><center>Scoring board</center></h1>
+ 					<br>
+ 					<br>
+ 				<div class="table-responsive">
+				   <table class="table">
+				      <caption></caption>
+				      <thead>
+				      </thead>
+				      <tbody>
+				      	{% for card_holder_row in card_holders_rows_list %}
+				         <tr>
+				         	<td><center>{{card_holder_row.place}}</center></td>
+				            <td>{{card_holder_row.card_holder.private_name}} {{card_holder_row.card_holder.family_name}}</td>
+				            <td>{{card_holder_row.card_holder.score}} points</td>
+				         </tr>
+				         {% empty %}
+				         <tr>
+						 </tr>
+					    	</tbody>
+				         {% endfor %}
+				      </tbody>
+				   </table>
+				</div> 
+ 			</div>
+ 	
+ <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/jquery-3.3.1.slim.min.js' %}" ></script>
+  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/popper.min.js' %}" ></script>
+  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/bootstrap.min.js' %}" ></script>
+  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/bootstrap.js' %}" ></script>
+
+</body>
+</html>
