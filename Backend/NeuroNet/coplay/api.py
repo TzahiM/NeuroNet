@@ -466,8 +466,8 @@ class DiscussionWhole(APIView):
 @permission_classes((IsAuthenticated,))
 def example_view(request, format=None):
     content = {
-        'user': unicode(request.user),  # `django.contrib.auth.User` instance.
-        'auth': unicode(request.auth),  # None
+        'user': request.user,  # `django.contrib.auth.User` instance.
+        'auth': request.auth,  # None
     }
     
     return Response(content)

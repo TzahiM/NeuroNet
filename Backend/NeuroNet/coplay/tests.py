@@ -109,106 +109,106 @@ class CoPlayTest(TestCase):
         
 
 
-    #def create_dicussion(self):
-    #    d, error_string = create_discussion( user = self.admin, 
-    #                                         title            = "Visit the moon",
-    #                                         description = "it can be nice")
-    #    if error_string:
-    #        print(( error_string))
-    #        return None
-    #    return d
+    def create_dicussion(self):
+        d, error_string = create_discussion( user = self.admin, 
+                                             title            = "Visit the moon",
+                                             description = "it can be nice")
+        if error_string:
+            print(( error_string))
+            return None
+        return d
     
-    #def test_create_discussion(self):
-    #    self.assertEquals(0, Discussion.objects.count())
-    #    d, error_string = create_discussion( user = self.admin, 
-    #                                 title   = "Visit the moon", description = "it can be nice")
+    def test_create_discussion(self):
+        self.assertEquals(0, Discussion.objects.count())
+        d, error_string = create_discussion( user = self.admin, 
+                                     title   = "Visit the moon", description = "it can be nice")
         
-    #    self.assertNotEquals(None , d)
+        self.assertNotEquals(None , d)
 
-    #    self.assertEquals(1, Discussion.objects.count())
-    #    d.print_content()
-    #    url_long =     "http://hp.com/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/"
-    #    url_text_long = "fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3"
+        self.assertEquals(1, Discussion.objects.count())
+        d.print_content()
+        url_long =     "http://hp.com/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/"
+        url_text_long = "fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3"
         
-    #    d, error_string = create_discussion( user = self.admin, 
-    #                                 title   = "with long_urls", description = "it can be nice",
-    #                                 parent_url      = url_long,
-    #                                 parent_url_text = url_text_long)
+        d, error_string = create_discussion( user = self.admin, 
+                                     title   = "with long_urls", description = "it can be nice",
+                                     parent_url      = url_long,
+                                     parent_url_text = url_text_long)
         
-    #    self.assertNotEquals(None , d)
+        self.assertNotEquals(None , d)
 
-    #    self.assertEquals(2, Discussion.objects.count())
-    #    self.assertEquals( d.parent_url,      url_long)
-    #    self.assertEquals( d.parent_url_text, url_text_long)
-    #    d.print_content()
+        self.assertEquals(2, Discussion.objects.count())
+        self.assertEquals( d.parent_url,      url_long)
+        self.assertEquals( d.parent_url_text, url_text_long)
+        d.print_content()
 
-    #def test_update_description(self):
-    #    d , error_string = create_discussion( self.admin, "Visit the moon1", "because i saw this in my bazuka")
-    #    new_description = 'i have another idea'
-    #    tags_string     = "aa,bb"
-    #    location_desc   = "Israel" 
-    #    parent_url      =  "http://hp.com/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/"
-    #    parent_url_text = "fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3"
-    #    discussion_update( d, self.admin, new_description, 
-    #                   tags_string, 
-    #                   location_desc, 
-    #                   parent_url,
-    #                   parent_url_text)
+    def test_update_description(self):
+        d , error_string = create_discussion( self.admin, "Visit the moon1", "because i saw this in my bazuka")
+        new_description = 'i have another idea'
+        tags_string     = "aa,bb"
+        location_desc   = "Israel" 
+        parent_url      =  "http://hp.com/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/veryvertdvjghdjeei029382323/wwfqveqqvere/"
+        parent_url_text = "fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3fj1n-vn0=31rj313rm=c1e3"
+        discussion_update( d, self.admin, new_description, 
+                       tags_string, 
+                       location_desc, 
+                       parent_url,
+                       parent_url_text)
 
-    #    self.assertEquals(new_description, d.description)
-    #    self.assertEquals(2              , d.tags.count()    )
-    #    self.assertEquals(location_desc  , d.location_desc  )
-    #    self.assertEquals(parent_url     , d.parent_url     )
-    #    self.assertEquals(parent_url_text, d.parent_url_text)
+        self.assertEquals(new_description, d.description)
+        self.assertEquals(2              , d.tags.count()    )
+        self.assertEquals(location_desc  , d.location_desc  )
+        self.assertEquals(parent_url     , d.parent_url     )
+        self.assertEquals(parent_url_text, d.parent_url_text)
 
-    #def test_add_feedback(self):
-    #    self.assertEquals(0, Feedback.objects.count())
-    #    d , error_string = create_discussion( self.admin, "Visit the moon2", "because i saw this in my bazuka")
-    #    self.assertNotEqual(d, None)
-    #    self.assertEquals(error_string, None)        
-    #    feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ENCOURAGE, "like this")
-    #    self.assertEquals(error_string, None)
-    #    feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ENCOURAGE, "like thisff")
-    #    self.assertEquals(error_string, None)
-    #    feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.COOPERATION, "COOPERATION thisd")
-    #    self.assertEquals(error_string, None)
-    #    feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.COOPERATION, "like COOPERATIOff")
-    #    self.assertEquals(error_string, None)
-    #    feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.INTUITION, "INTUITION thiffds")
-    #    self.assertEquals(error_string, None)
-    #    feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.INTUITION, "like INTUIgfgION")
-    #    self.assertEquals(error_string, None)
-    #    feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ADVICE, "ADVICE thddis")
-    #    self.assertEquals(error_string, None)
-    #    feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ADVICE, "like ADVIvddCE")
-    #    self.assertEquals(error_string, None)
-    #    feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ADVICE, "like ADVICdvEADVICE")
-    #    self.assertEquals(error_string, None)
-    #    self.assertEquals(9, Feedback.objects.count())
-    #    feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ADVICE, "like ADVICdvEADVICE")
-    #    self.assertNotEquals(error_string, None)
-    #    self.assertEquals(9, Feedback.objects.count())
-    #    d.print_content()
+    def test_add_feedback(self):
+        self.assertEquals(0, Feedback.objects.count())
+        d , error_string = create_discussion( self.admin, "Visit the moon2", "because i saw this in my bazuka")
+        self.assertNotEqual(d, None)
+        self.assertEquals(error_string, None)        
+        feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ENCOURAGE, "like this")
+        self.assertEquals(error_string, None)
+        feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ENCOURAGE, "like thisff")
+        self.assertEquals(error_string, None)
+        feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.COOPERATION, "COOPERATION thisd")
+        self.assertEquals(error_string, None)
+        feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.COOPERATION, "like COOPERATIOff")
+        self.assertEquals(error_string, None)
+        feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.INTUITION, "INTUITION thiffds")
+        self.assertEquals(error_string, None)
+        feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.INTUITION, "like INTUIgfgION")
+        self.assertEquals(error_string, None)
+        feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ADVICE, "ADVICE thddis")
+        self.assertEquals(error_string, None)
+        feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ADVICE, "like ADVIvddCE")
+        self.assertEquals(error_string, None)
+        feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ADVICE, "like ADVICdvEADVICE")
+        self.assertEquals(error_string, None)
+        self.assertEquals(9, Feedback.objects.count())
+        feedback, error_string = discussion_add_feedback(d ,self.at1, Feedback.ADVICE, "like ADVICdvEADVICE")
+        self.assertNotEquals(error_string, None)
+        self.assertEquals(9, Feedback.objects.count())
+        d.print_content()
 
 
-    #def test_decision(self):
-    #    self.assertEquals(0, Decision.objects.count())
-    #    d , error_string = create_discussion( self.admin, "Visit the moon3", "because i saw this in my bazuka")
+    def test_decision(self):
+        self.assertEquals(0, Decision.objects.count())
+        d , error_string = create_discussion( self.admin, "Visit the moon3", "because i saw this in my bazuka")
         
-    #    des, error_string = discussion_add_decision(d, self.admin, 'content')
+        des, error_string = discussion_add_decision(d, self.admin, 'content')
         
-    #    self.assertEquals(1, Decision.objects.count())
-    #    self.assertEquals(0, Vote.objects.count())
+        self.assertEquals(1, Decision.objects.count())
+        self.assertEquals(0, Vote.objects.count())
         
-    #    decision_vote(des, self.at1, LikeLevel.EXCELLENT)
-    #    decision_vote(des, self.at1, LikeLevel.BAD     )
-    #    decision_vote(des, self.at2, LikeLevel.GOOD    )
-    #    self.assertEquals(2, Vote.objects.count())
-    #    self.assertEquals(2, des.get_number_of_votes())
-    #    self.assertEquals(4, des.get_vote_sum())
-    #    self.assertEquals( des.get_vote_value_or_none( self.at2) , LikeLevel.GOOD )
-    #    self.assertEquals( des.get_vote_value_or_none( self.at3) , None )
-    #    d.print_content()
+        decision_vote(des, self.at1, LikeLevel.EXCELLENT)
+        decision_vote(des, self.at1, LikeLevel.BAD     )
+        decision_vote(des, self.at2, LikeLevel.GOOD    )
+        self.assertEquals(2, Vote.objects.count())
+        self.assertEquals(2, des.get_number_of_votes())
+        self.assertEquals(4, des.get_vote_sum())
+        self.assertEquals( des.get_vote_value_or_none( self.at2) , LikeLevel.GOOD )
+        self.assertEquals( des.get_vote_value_or_none( self.at3) , None )
+        d.print_content()
         
 
     def test_action(self):    

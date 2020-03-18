@@ -55,7 +55,7 @@ class Discussion(models.Model):
     def get_absolute_url(self):
         #return str(self.id)+"/discussion_details/"
         return (
-            reverse('discussion_details', kwargs={'pk': str(self.id)}) 
+            reverse('coplay:discussion_details', kwargs={'pk': str(self.id)}) 
             )
 
 
