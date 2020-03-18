@@ -138,15 +138,13 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
 #                     allowed_users_list.append(user)
             
          
-    html_message = render_to_string("coplay/email_discussion_update.html",
-                                    {'ROOT_URL': settings.SITE_URL,
+
+    html_message = render_to_string("coplay/email_discussion_update.html", {'ROOT_URL': settings.SITE_URL,
                                      'discussion': discussion,
                                      'html_title': string_to_email_subject(subject),
-#                                     'subject_debug':string_to_email_subject(subject),
                                      'details': details,
                                      'id': url_id,
                                      'logged_in_user': logged_in_user})
-    
 
 #     with open( "duguoutput.html" , "w") as debug_file:
 #         debug_file.write(html_message)

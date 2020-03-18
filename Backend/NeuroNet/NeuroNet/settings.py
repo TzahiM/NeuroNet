@@ -40,16 +40,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    #'sekizai',
     'rest_framework.authtoken',
     'rest_framework',
-    'nice_to_meet_you',
+    'public_fulfillment',
     'coplay',
     'memecache',
-    'public_fulfillment',
     'django_extensions',
     'taggit',
     'password_reset',
     'floppyforms',
+    'nice_to_meet_you',
 ]
 
 # Middleware framework
