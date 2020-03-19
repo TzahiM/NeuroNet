@@ -48,7 +48,7 @@ class TagWidgetBig(forms.Textarea):
         
 # Create your views here.
 def root(request):
-    if( request.user.is_authenticated()):
+    if( request.user.is_authenticated):
         return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))        
     return render(request, 'coplay/co_play_root.html', {'rtl': 'dir="rtl"'})
 
@@ -116,7 +116,7 @@ def discussion_details(request, pk):
     except Discussion.DoesNotExist:
         return HttpResponseRedirect('coplay_root')
     
-    if discussion.get_is_viewing_require_login() and not request.user.is_authenticated():
+    if discussion.get_is_viewing_require_login() and not request.user.is_authenticated:
         return HttpResponseRedirect( reverse('login') + '?next=' + request.path)        
     
     if not can_user_acess_discussion( discussion, request.user):
@@ -199,7 +199,7 @@ def discussion_details(request, pk):
                    'ROOT_URL': 'http://' + SITE_URL})
     
     #current view is recorded after response had been resolved
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         success, error_string = discussion_record_a_view (discussion, request.user)
         if success == False:
             return render(request, 'coplay/message.html', 
@@ -500,7 +500,7 @@ def task_details(request, pk):
     close_possible = False
     update_task_form = None
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         user = request.user
         if  task.target_date > timezone.now():
             if user == task.responsible:
@@ -707,7 +707,7 @@ def user_coplay_report(request, username=None):
     
     followers_list = get_followers_list(user)
     following_list = get_following_list(user)
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         is_following = is_user_is_following(request.user, user)
     else:
         is_following = False
@@ -999,7 +999,7 @@ def user_update_details(request, pk):
                       {  'message'      :  'לא נמצא',
                        'rtl': 'dir="rtl"'})
     
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         viewing_user = request.user
     else:
         viewing_user = None
@@ -1029,7 +1029,7 @@ def user_update_mark_recipient_read(request, pk):
                       {  'message'      :  'לא נמצא',
                        'rtl': 'dir="rtl"'})
     
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         viewing_user = request.user
     else:
         viewing_user = None
@@ -1088,7 +1088,7 @@ def discussion_tag_list(request, pk = None):
                 allowed_all_discussions_list.append(discussion)
                
     is_following = False
-    if request.user.is_authenticated() and tag and tag in request.user.userprofile.followed_discussions_tags.all():
+    if request.user.is_authenticated and tag and tag in request.user.userprofile.followed_discussions_tags.all():
         is_following = True           
         
     

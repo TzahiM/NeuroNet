@@ -262,7 +262,7 @@ class UpdateProfileUserForm(forms.Form):
     
     
 def sign_up(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return render(request, 'coplay/message.html', 
                       {  'message'      :  'Already logged in',
                        'rtl': 'dir="rtl"'})

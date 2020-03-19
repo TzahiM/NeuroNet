@@ -1,0 +1,20 @@
+{
+  "name": "Add To NeuroNet",
+  "description": "Add To NeuroNet",
+  "version": "1.2",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "permissions": [
+    "activeTab",
+	"tabs",
+	"storage",
+	"<all_urls>"
+  ],
+  "browser_action": {
+      "default_title": "Add To NeuroNet",
+      "default_icon": "NeuroNetLogo_symbol_only16x16.png"
+  },
+  "manifest_version": 2
+}

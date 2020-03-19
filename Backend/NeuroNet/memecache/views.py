@@ -34,7 +34,7 @@ from NeuroNet import settings
 
 
 def root(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         segment_name = request.user.userprofile.get_segment_title()
         segment = request.user.userprofile.segment
     else:
@@ -68,7 +68,7 @@ class UsersTableRow():
 
 def users_list(request, pk = None):
     
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         segment_name = request.user.userprofile.get_segment_title()
         segment = request.user.userprofile.segment
     else:
@@ -119,7 +119,7 @@ def users_list(request, pk = None):
 
 
 def instructions(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         segment_name = request.user.userprofile.get_segment_title()
         segment = request.user.userprofile.segment
     else:
