@@ -81,6 +81,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'sekizai.context_processors.sekizai',
+                'django.template.context_processors.media',
+				
             ],
         },
     },
@@ -130,6 +132,9 @@ REST_FRAMEWORK = {
         )
 }
 
+LOGIN_URL          = '/login/'
+LOGIN_REDIRECT_URL = '/'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -146,7 +151,7 @@ STATIC_ROOT = posixpath.join(*(BASE_DIR.split(os.path.sep) + ['static']))
 MEDIA_URL = '/media/'
 MEDIA_ROOT = posixpath.join(*(BASE_DIR.split(os.path.sep) + ['media']))
 
-#DEFAULT_FILE_STORAGE = 'jump_tube.control.ASCIIFileSystemStorage'
+DEFAULT_FILE_STORAGE = 'public_fulfillment.control.ASCIIFileSystemStorage'
 
 STORAGE_ROOT = None
 

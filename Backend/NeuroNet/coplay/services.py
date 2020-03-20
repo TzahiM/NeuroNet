@@ -50,6 +50,9 @@ def is_in_the_same_segment(user , another_user = None ):
     if user.is_authenticated:
         segment = user.userprofile.segment
     
+    if not another_user:
+        return True
+
     tested_segment = None
     if another_user.is_authenticated:
         tested_segment = another_user.userprofile.segment

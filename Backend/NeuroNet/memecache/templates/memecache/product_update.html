@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+
+{% load humanize %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <h1>עריכת מוצר </h1>
+	    
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <button class="btn btn-success">לשמירה</button>
+        </form>
+		</div>
+	</div>
+		
+
+{% endblock %}
+

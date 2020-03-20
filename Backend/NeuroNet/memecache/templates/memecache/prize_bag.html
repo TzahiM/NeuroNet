@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{%  load humanize %}
+
+{% block content %}
+ 			<div class="row">
+ 				<div class="col-sm-2 col-md-12" id = "Title">
+ 					<br>
+ 					<br>
+ 					<br>
+ 					<center>
+ 						<h1>הפרסים שלי</h1>
+		 					<br>
+		 					<br>
+		 					{% for product_prize in product_prize_list %}
+		 					<a class="btn btn-success"  href= "#{{product_prize.id_name}}">{{product_prize.product_title}}</a>
+		 					 
+		 					{% empty %}
+		 					עוד אין פרסים
+		 					<br>
+		 					<a class="btn btn-success"  href="{% url 'coplay:discussions_list' %}">רוצה להרויח פרסים</a>
+		 					{% endfor %}
+ 						
+ 					</center>
+ 					
+ 					
+ 				</div>
+ 			</div>
+
+		 {% for product_prize in product_prize_list %}
+			<div class="row"  id="{{product_prize.id_name}}" >
+				<br>
+				<br>
+				<br>   
+				<div class="col-sm-12 col-md-6" >
+					<h4>{{product_prize.count}} פרסים של     {{product_prize.product_title}} </h4>
+				</div>    
+				<br>
+				<br>
+				<br>
+				{% for item_voucher in product_prize.item_voucher_list %}
+					<div class="well col-sm-2 col-md-2" >
+						<center>
+						{{product_prize.product_title}}
+						<br>
+						<br>
+						<br>
+				 	<a class="btn btn-info"  href="{% url 'memecache:item_voucher_details'  item_voucher.id %}">רוצה לקבל</a>
+						<br>
+				 			 						
+				 	</div>
+				{% endfor %}
+			</div>
+		 {% endfor %}
+ 			
+{% endblock %}
+
+
