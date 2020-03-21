@@ -33,10 +33,8 @@ from taggit.forms import TagField
 from taggit.models import Tag
 from taggit.utils import edit_string_for_tags
 import floppyforms as forms
+from django import forms as plain_forms
 import sys
-
-
-
         
 
 class TagWidgetBig(forms.Textarea):
@@ -196,7 +194,7 @@ def discussion_details(request, pk):
                    'is_a_follower': is_a_follower,
                    'list_followers': list_followers,
                    'related_discussions': applicabale_discussions_list != [],
-                   'ROOT_URL': 'http://' + SITE_URL})
+                   'ROOT_URL':  SITE_URL})
     
     #current view is recorded after response had been resolved
     if request.user.is_authenticated:
@@ -210,6 +208,8 @@ def discussion_details(request, pk):
             
     return return_response
 
+#had to solve issue as in https://stackoverflow.com/questions/52039654/django-typeerror-render-got-an-unexpected-keyword-argument-renderer
+# by commenting out <# renderer=self.form.renderer,> from file \Lib\site-packages\django\forms\boundfield.py line 93
 
 class NewDiscussionForm(forms.Form):
     title = forms.CharField(label=_("title"), max_length=200,
@@ -226,10 +226,6 @@ class NewDiscussionForm(forms.Form):
     
     tags = forms.CharField( required=False, label=u'תגיות מופרדות בפסיקים', widget = TagWidgetBig(attrs={'rows': 3 ,'cols' : 40} )  )
 
-
-#     parent_url = forms.URLInput(label=u"דף קשור", max_length=200,
-#                             widget=forms.Textarea(
-#                                 attrs={'rows': '1', 'cols': '100'}))
     parent_url = forms.URLField(label=u'קישור לדף רלוונטי. לדוגמה http://hp.com',
                                 required=False,
                                 max_length=MAX_TEXT)
@@ -269,8 +265,8 @@ def add_discussion(request, pk = None):
                 
             messages.error(request, error_string)
     else:
-        parent_url = request.REQUEST.get('parent_url', '')
-        parent_url_text = request.REQUEST.get('parent_url_text', '')
+        parent_url = request.GET.get('parent_url')
+        parent_url_text = request.GET.get('parent_url_text')
         if parent_url:
             form = NewDiscussionForm(initial={'parent_url': parent_url,
                                               'parent_url_text': parent_url_text}) # An unbound form
@@ -301,10 +297,10 @@ def add_discussion(request, pk = None):
 
 
 @login_required
-def add_on_add_discussion(request, pk = None):
+def add_with_url(request, pk = None):
     
     
-    use_template = 'coplay/add_on_new_discussion.html'
+    use_template = 'coplay/new_discussion.html'
     
     if request.method == 'POST': # If the form has been submitted...
         form = NewDiscussionForm(request.POST) # A form bound to the POST data
@@ -324,8 +320,8 @@ def add_on_add_discussion(request, pk = None):
                 
             messages.error(request, error_string)
     else:
-        parent_url = request.REQUEST.get('parent_url', '')
-        parent_url_text = request.REQUEST.get('parent_url_text', '')
+        parent_url = request.GET.get('parent_url')
+        parent_url_text = request.GET.get('parent_url_text')
         if parent_url:
             form = NewDiscussionForm(initial={'parent_url': parent_url,
                                               'parent_url_text': parent_url_text}) # An unbound form
@@ -515,7 +511,7 @@ def task_details(request, pk):
                    'close_possible': close_possible,
                    'rtl': 'dir="rtl"',
                    'page_name': u'המשימה:' + task.goal_description,
-                   'ROOT_URL': 'http://' + SITE_URL})
+                   'ROOT_URL': SITE_URL})
 
 
 @login_required
@@ -1042,7 +1038,9 @@ def user_update_mark_recipient_read(request, pk):
 
         
     redirect_to = user_update.details_url
-    if not is_safe_url(url=redirect_to, host=request.get_host()):
+    allowed_hosts = []
+    allowed_hosts.append(request.get_host())
+    if not is_safe_url(url=redirect_to, allowed_hosts = allowed_hosts):
         redirect_to = 'home'        
         
     if viewing_user == user_update.recipient:
@@ -1105,7 +1103,7 @@ def discussion_tag_list(request, pk = None):
 def discussion_url_list(request):
 #     return     'hughu'
 #     pprint( request)
-    search_url = request.REQUEST.get('search_url', '')
+    search_url = request.GET.get('search_url')
     return render(request, 'coplay/message.html',
                       {'message': search_url,
                        'rtl': 'dir="rtl"'})
@@ -1156,7 +1154,7 @@ def start_follow_tag( request, pk):
     return HttpResponseRedirect(reverse('coplay:discussion_tag_list', kwargs={'pk': tag.id}))
 
 def related_discussions_of_url(request):
-    search_url = request.REQUEST.get('search_url', '')
+    search_url = request.GET.get('search_url')
     applicabale_discussions_list, list_title = get_discussion_with_parent_url_list( search_url, request.user)
     if list_title:
         page_name = u'פעילויות שקשורות ל' + list_title
@@ -1173,7 +1171,7 @@ def related_discussions_of_url(request):
                    'page_name': page_name})
 
 def add_on_discussion_url_list(request):
-    search_url = request.REQUEST.get('search_url', '')
+    search_url = request.GET.get('search_url')
     if search_url:
         active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
          

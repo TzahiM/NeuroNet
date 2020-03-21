@@ -15,7 +15,7 @@ urlpatterns = [
     path('add/',views.add_discussion, name='add_discussion'),
 
     path('add_with_tag/<int:pk>/', views.add_discussion, name="add_with_tag"),
-    path('add_on_add_with_url/', views.add_on_add_discussion, name="add_on_add_with_url"),
+    path('add_with_url/', views.add_with_url, name="add_with_url"),
     path('<int:pk>/discussion_details/', views.discussion_details, name='discussion_details'),
     path('<int:pk>/update/', views.UpdateDiscussionDescView.as_view(), name="discussion_update"),
     path('<int:pk>/delete/', views.DeleteDiscussionView.as_view(success_url='discussions_list'), name="discussion_delete"),

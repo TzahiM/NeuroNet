@@ -21,7 +21,8 @@ def view_cards (request):
 
 
 def scanned_user (request):
-    message = request.REQUEST.get('message', '')
+    message = request.GET.get('message')
+
 #    tts_object = gTTS( text = message, lang='en', slow=False)
 #    tts_object.save("media/latest_message.mp3")
 

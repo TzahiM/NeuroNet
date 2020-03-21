@@ -28,7 +28,7 @@ from public_fulfillment import forms
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
-    path('', root, name="root"),
+    path('', root, name="home"),
     path('ntmu/', include(('nice_to_meet_you.urls', "nice_to_meet_you"), "nice_to_meet_you")),
     path('labs/coplay/', include(('coplay.urls', 'coplay'), 'coplay')),
     path('labs/memecache/', include(('memecache.urls', "memecache"), "memecache")),

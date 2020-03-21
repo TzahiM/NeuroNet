@@ -33,7 +33,8 @@ def send_html_message(subject, html_content, from_email, to_list):
     
     msg = EmailMessage(string_to_email_subject(subject), html_content, from_email, to_list)
     msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
+    print( 'not sending ', msg)
+    #msg.send()
 
 
 def send_html_message_to_users(subject, html_content, to_users_list):

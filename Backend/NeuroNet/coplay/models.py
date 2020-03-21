@@ -295,6 +295,8 @@ class Discussion(models.Model):
     
     def can_user_access_discussion(self, viewing_user = None):
         
+        if self.owner == viewing_user:
+            return True
         if self.is_viewing_require_login and viewing_user == None:
             return False
         

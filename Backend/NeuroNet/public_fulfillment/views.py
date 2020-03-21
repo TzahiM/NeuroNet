@@ -266,8 +266,10 @@ def sign_up(request):
         return render(request, 'coplay/message.html', 
                       {  'message'      :  'Already logged in',
                        'rtl': 'dir="rtl"'})
-    redirect_to = request.REQUEST.get('next', '')
-    if not is_safe_url(url=redirect_to, host=request.get_host()):
+    redirect_to = request.GET.get('next')
+    allowed_hosts = []
+    allowed_hosts.append(request.get_host())
+    if not is_safe_url(url=redirect_to, allowed_hosts = allowed_hosts):
         redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
 
     if request.method == 'POST': # If the form has been submitted...
@@ -363,8 +365,10 @@ def privacy_policy(request):
 @login_required
 def update_profile(request):
     user = request.user
-    redirect_to = request.REQUEST.get('next', '')
-    if not is_safe_url(url=redirect_to, host=request.get_host()):
+    redirect_to = request.GET.get('next')
+    allowed_hosts = []
+    allowed_hosts.append(request.get_host())
+    if not is_safe_url(url=redirect_to, allowed_hosts = allowed_hosts):
         redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
 
     if request.method == 'POST': # If the form has been submitted...

@@ -361,17 +361,17 @@ def create_discussion( user               = None,
     
 #all the followers for the user and all the followers for a tag
      
-    for user in User.objects.all():
-        if new_discussion.can_user_access_discussion( user):
+    for user in UserProfile.objects.all():
+        if new_discussion.can_user_access_discussion( user.user):
             if user in user_s_following:
-                new_discussion_followers.append(user)
+                new_discussion_followers.append(user.user)
             else:
                 to_append = False
-                for tag_iter in user.userprofile.followed_discussions_tags.all():
+                for tag_iter in user.user.userprofile.followed_discussions_tags.all():
                     if tag_iter.name in new_discussion.tags.names():
                         to_append = True
                 if to_append:
-                    new_discussion_followers.append(user)
+                    new_discussion_followers.append(user.user)
     
           
     discussion_email_updates(new_discussion,
