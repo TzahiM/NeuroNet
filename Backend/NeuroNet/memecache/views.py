@@ -24,7 +24,7 @@ from django.views.generic import UpdateView, DeleteView, CreateView
 from memecache.control import get_shop, get_product
 from memecache.models import Product, Shop, Account, Cart, ItemVoucher
 from taggit.models import Tag
-import floppyforms as forms
+import floppyforms.__future__ as forms
 from NeuroNet import settings
 
 # Create your views here.

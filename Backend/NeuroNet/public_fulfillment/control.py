@@ -5,8 +5,10 @@ This file contain the control services, used for all views
 
 #from coplay.models import UserProfile, Discussion, UserUpdate
 from django.contrib.auth.models import User
+from django.core.files.storage import FileSystemStorage
+import unicodedata
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 
 def func_name():

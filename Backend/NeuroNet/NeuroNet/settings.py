@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'memecache',
     'django_extensions',
     'taggit',
+    'taggit_labels',
     'password_reset',
     'floppyforms',
     'nice_to_meet_you',

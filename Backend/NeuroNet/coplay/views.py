@@ -29,12 +29,13 @@ from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.generic import UpdateView, DeleteView, CreateView
 from NeuroNet.settings import SITE_URL, MEDIA_URL
-from taggit.forms import TagField
 from taggit.models import Tag
 from taggit.utils import edit_string_for_tags
-import floppyforms as forms
-from django import forms as plain_forms
+import floppyforms.__future__ as forms
 import sys
+from taggit.forms import TagField
+from taggit_labels.widgets import LabelWidget
+from django.forms.widgets import ChoiceWidget
         
 
 class TagWidgetBig(forms.Textarea):
@@ -79,8 +80,7 @@ class UpdateDiscussionForm(forms.Form):
     description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS,
                                   label = u'תאור הפעילות' , help_text = u'תאור היעד ואיזו עזרה מבוקשת', widget=forms.Textarea(attrs={'rows': '3',
                                      'cols' : '40'}))
-    m_tags = TagField(required=False, label = 'תגיות' , help_text = u'רשימה של תגים מופרדת עם פסיקים.', widget=forms.Textarea(attrs={'rows': '3',
-                                     'cols' : '40'}))
+    tags = forms.MultipleChoiceField(required=False)
 
 
 class AddDecisionForm(forms.Form):
@@ -212,6 +212,17 @@ def discussion_details(request, pk):
 # by commenting out <# renderer=self.form.renderer,> from file \Lib\site-packages\django\forms\boundfield.py line 93
 
 class NewDiscussionForm(forms.Form):
+
+
+
+    CHOICES = (('a','a'),
+            ('b','b'),
+            ('c','c'),
+            ('d','d'),)
+
+
+    #tags = forms.MultipleChoiceField(required=False, choices=CHOICES, widget=forms.CheckboxSelectMultiple())
+
     title = forms.CharField(label=_("title"), max_length=200,
                             widget=forms.Textarea(
                                 attrs={'rows': '1', 'cols': '100'}))
@@ -224,7 +235,9 @@ class NewDiscussionForm(forms.Form):
                                   widget=forms.Textarea(
                                 attrs={'rows': '1', 'cols': '100'}))
     
-    tags = forms.CharField( required=False, label=u'תגיות מופרדות בפסיקים', widget = TagWidgetBig(attrs={'rows': 3 ,'cols' : 40} )  )
+    #tags = forms.CharField( required=False, label=u'תגיות מופרדות בפסיקים', widget = TagWidgetBig(attrs={'rows': 3 ,'cols' : 40} )  )
+
+
 
     parent_url = forms.URLField(label=u'קישור לדף רלוונטי. לדוגמה http://hp.com',
                                 required=False,
@@ -236,7 +249,7 @@ class NewDiscussionForm(forms.Form):
                                         widget=forms.Textarea(
                                             attrs={'rows': '1', 'cols': '100'}))
     
-    picture = forms.ImageField(required=False)
+    #picture = forms.ImageField(required=False)
 
 @login_required
 def add_discussion(request, pk = None):
@@ -254,10 +267,11 @@ def add_discussion(request, pk = None):
                                                        title            = form.cleaned_data['title'], 
                                                        description      = form.cleaned_data['description'],                       
                                                        location_desc    = form.cleaned_data['location_desc'],
-                                                       tags_string      = form.cleaned_data['tags'],
+                                                       tags_string      = "",
                                                        parent_url       = form.cleaned_data['parent_url'],
                                                        parent_url_text  = form.cleaned_data['parent_url_text'],
-                                                       picture          = form.cleaned_data['picture'])
+                                                       #picture          = form.cleaned_data['picture'],
+                                                       )
             
             if new_discussion:
                 messages.success(request,_("Your activity was created successfully"))
@@ -282,7 +296,8 @@ def add_discussion(request, pk = None):
                 return render(request, 'coplay/message.html',
                               {'message': 'הנושא איננו קיים',
                                'rtl': 'dir="rtl"'})
-            form = NewDiscussionForm(initial={'tags': tag.name}) # An unbound form
+            #form = NewDiscussionForm(initial={'tags': tag.name}) # An unbound form
+            form = NewDiscussionForm(initial={'tags': ""}) # An unbound form
             request.user.userprofile.followed_discussions_tags.add( tag.name)
             request.user.userprofile.save()
         else:
@@ -305,12 +320,13 @@ def add_with_url(request, pk = None):
     if request.method == 'POST': # If the form has been submitted...
         form = NewDiscussionForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
-            
+            tags_string = ''
             new_discussion, error_string = create_discussion( user             = request.user, 
                                                        title            = form.cleaned_data['title'], 
                                                        description      = form.cleaned_data['description'],                       
                                                        location_desc    = form.cleaned_data['location_desc'],
-                                                       tags_string      = form.cleaned_data['tags'],
+                                                       #tags_string      = form.cleaned_data['tags'],
+                                                       tags_string      = tags_string,
                                                        parent_url       = form.cleaned_data['parent_url'],
                                                        parent_url_text  = form.cleaned_data['parent_url_text'])
             
@@ -337,7 +353,8 @@ def add_with_url(request, pk = None):
                 return render(request, 'coplay/message.html',
                               {'message': 'הנושא איננו קיים',
                                'rtl': 'dir="rtl"'})
-            form = NewDiscussionForm(initial={'tags': tag.name}) # An unbound form
+            #form = NewDiscussionForm(initial={'tags': tag.name}) # An unbound form
+            form = NewDiscussionForm(initial={'tags': ""}) # An unbound form
             request.user.userprofile.followed_discussions_tags.add( tag.name)
             request.user.userprofile.save()
         else:
@@ -745,20 +762,20 @@ class UpdateDiscussionDescForm(forms.ModelForm):
             'title',
             'description',
             'location_desc',
-            'tags',
+            #'tags',
             'parent_url',
             'parent_url_text',
-            'picture'
+            #'picture'
         )
-        
+        #tags = TagField(required=False, widget=LabelWidget(model=MyTag))
         widgets = {
             'title': forms.Textarea( attrs={'rows': 1 ,'cols' : 40}),
             'description': forms.Textarea( attrs={'rows': 10 ,'cols' : 40}),
             'location_desc': forms.Textarea(attrs={'rows': 1 ,'cols' : 40}),
-            'tags': TagWidgetBig(attrs={'rows': 3 ,'cols' : 40}),
+            #'tags': ChoiceWidget,
             'parent_url': forms.Textarea(attrs={'rows': 1 ,'cols' : 40}),
             'parent_url_text': forms.Textarea(attrs={'rows': 1 ,'cols' : 40}),
-            'picture': forms.ClearableFileInput ,
+            #'picture': forms.ClearableFileInput ,
         }
         
         
@@ -783,22 +800,23 @@ class UpdateDiscussionDescView(DiscussionOwnerView, UpdateView):
 
 #         resp = super(UpdateDiscussionDescView, self).form_valid(form)  
         
-        tags_string = ''
-        found = False
-        for name in form.instance.tags.names():
-            if found:
-                tags_string += ','
-            tags_string += name
-            found = True
+        #tags_string = ''
+        #found = False
+        #for name in form.instance.tags.names():
+        #    if found:
+        #        tags_string += ','
+        #    tags_string += name
+        #    found = True
         
         discussion, error_string = discussion_update(  form.instance, 
                                                        self.request.user, 
                                                        form.instance.description, 
-                                                       tags_string = tags_string, 
+                                                       tags_string = "",  
                                                        location_desc = form.instance.location_desc, 
                                                        parent_url = form.instance.parent_url,
                                                        parent_url_text = form.instance.parent_url_text,
-                                                       picture         = form.instance.picture)
+                                                       #picture         = form.instance.picture,
+                                                       )
         
         if discussion:
             return HttpResponseRedirect(discussion.get_absolute_url()) # Redirect after POST
@@ -862,12 +880,12 @@ class CreateFeedbackForm(forms.ModelForm):
         fields = (
             'feedbabk_type',
             'content',
-            'voice_recording',
+            #'voice_recording',
         )
         widgets = {
             'content': forms.Textarea,
             'feedbabk_type': forms.Select,
-            'voice_recording': forms.FileInput,
+            #'voice_recording': forms.FileInput,
         }
 
 
@@ -899,7 +917,8 @@ class CreateFeedbackView(CreateView):
                                                          user           = self.request.user   ,
                                                          feedbabk_type  = form.instance.feedbabk_type, 
                                                          content        = form.instance.content,
-                                                         voice_recording = form.instance.voice_recording)
+                                                         #voice_recording = form.instance.voice_recording,
+                                                         )
         if feedback:
             return HttpResponseRedirect(form.instance.discussion.get_absolute_url()) # Redirect after POST
         
