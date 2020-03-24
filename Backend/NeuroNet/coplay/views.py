@@ -309,11 +309,31 @@ def add_discussion(request, pk = None):
         'rtl': 'dir="rtl"'
     })
 
+@login_required
+def extention_add_with_url(request):
+    parent_url = request.GET.get('parent_url')
+    applicabale_discussions_list, list_title = get_discussion_with_parent_url_list(parent_url , request.user)
+
+    if applicabale_discussions_list:
+        if list_title:
+            page_name = u'פעילויות שקשורות ל' + list_title
+        else:
+            page_name = u'פעילויות שקשורות ל' + search_url
+                           
+        return render(request, 'coplay/discussion_url_list.html',
+                      {'applicabale_discussions_list': applicabale_discussions_list,
+                       'list_title': page_name,
+                       'page_name': page_name,
+                       'search_url': search_url,
+                       'url_text': list_title,
+                      })
+
+    return add_with_url(request)
+
 
 
 @login_required
-def add_with_url(request, pk = None):
-    
+def add_with_url(request):
     
     use_template = 'coplay/new_discussion.html'
     
@@ -339,7 +359,8 @@ def add_with_url(request, pk = None):
         parent_url = request.GET.get('parent_url')
         parent_url_text = request.GET.get('parent_url_text')
         if parent_url:
-            form = NewDiscussionForm(initial={'parent_url': parent_url,
+            form = NewDiscussionForm(initial={'title': parent_url_text,
+                                              'parent_url': parent_url,
                                               'parent_url_text': parent_url_text}) # An unbound form
             return render(request, use_template, {
                 'form': form,
@@ -1120,42 +1141,7 @@ def discussion_tag_list(request, pk = None):
 
 
 def discussion_url_list(request):
-#     return     'hughu'
-#     pprint( request)
-    search_url = request.GET.get('search_url')
-    return render(request, 'coplay/message.html',
-                      {'message': search_url,
-                       'rtl': 'dir="rtl"'})
-    
-#     pprint( request)
-    
-    sys.exit()
-    if search_url:
-        active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
-         
-        all_discussions_list  = active_discussions_by_urgancy_list + locked_discussions_by_relevancy_list
-        list_title_min_length = 10000
-        list_title = None
-        applicabale_discussions_list = []
-        for discussion in all_discussions_list:
-            if can_user_acess_discussion(discussion, request.user):
-                if search_url in discussion.parent_url:
-                    applicabale_discussions_list.append(discussion)
-                    if len(discussion.parent_url) < list_title_min_length:
-                        list_title_min_length = len(discussion.parent_url)
-                        list_title = discussion.parent_url_text
-        if list_title:
-            page_name = u'פעילויות שקשורות ל' + list_title
-        else:
-            page_name = u'פעילויות שקשורות ל' + search_url
-             
-                         
-        return render(request, 'coplay/discussion_url_list.html',
-                      {'applicabale_discussions_list': applicabale_discussions_list,
-                       'list_title': page_name,
-                       'page_name': page_name})
-             
-    return HttpResponseRedirect(reverse('coplay:discussions_list'))
+    return( related_discussions_of_url(request))
 
 
 
@@ -1173,50 +1159,53 @@ def start_follow_tag( request, pk):
     return HttpResponseRedirect(reverse('coplay:discussion_tag_list', kwargs={'pk': tag.id}))
 
 def related_discussions_of_url(request):
-    search_url = request.GET.get('search_url')
+    search_url = request.GET.get('parent_url')
     applicabale_discussions_list, list_title = get_discussion_with_parent_url_list( search_url, request.user)
     if list_title:
         page_name = u'פעילויות שקשורות ל' + list_title
     else:
         page_name = u'פעילויות שקשורות ל' + search_url
-               
-#     return render(request, 'coplay/discussion_list.html',
-#                   {'latest_discussion_list': applicabale_discussions_list,
-#                    'page_name': page_name})
                            
     return render(request, 'coplay/discussion_url_list.html',
                   {'applicabale_discussions_list': applicabale_discussions_list,
                    'list_title': page_name,
-                   'page_name': page_name})
+                   'page_name': page_name,
+                   'search_url': search_url,
+                   'url_text': list_title,
+                  })
 
 def add_on_discussion_url_list(request):
-    search_url = request.GET.get('search_url')
-    if search_url:
-        active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
+    return related_discussions_of_url(request)
+    #search_url = request.GET.get('parent_url')
+    #if search_url:
+    #    active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
          
-        all_discussions_list  = active_discussions_by_urgancy_list + locked_discussions_by_relevancy_list
-        list_title_min_length = 10000
-        list_title = None
-        applicabale_discussions_list = []
-        for discussion in all_discussions_list:
-            if can_user_acess_discussion(discussion, request.user):
-                if search_url in discussion.parent_url:
-                    applicabale_discussions_list.append(discussion)
-                    if len(discussion.parent_url) < list_title_min_length:
-                        list_title_min_length = len(discussion.parent_url)
-                        list_title = discussion.parent_url_text
-        if list_title:
-            page_name = u'פעילויות שקשורות ל' + list_title
-        else:
-            page_name = u'פעילויות שקשורות ל' + search_url
+    #    all_discussions_list  = active_discussions_by_urgancy_list + locked_discussions_by_relevancy_list
+    #    list_title_min_length = 10000
+    #    list_title = None
+    #    applicabale_discussions_list = []
+    #    for discussion in all_discussions_list:
+    #        if can_user_acess_discussion(discussion, request.user):
+    #            if search_url in discussion.parent_url:
+    #                applicabale_discussions_list.append(discussion)
+    #                if len(discussion.parent_url) < list_title_min_length:
+    #                    list_title_min_length = len(discussion.parent_url)
+    #                    list_title = discussion.parent_url_text
+    #    if list_title:
+    #        page_name = u'פעילויות שקשורות ל' + list_title
+    #    else:
+    #        page_name = u'פעילויות שקשורות ל' + search_url
              
                          
-        return render(request, 'coplay/discussion_url_list.html',
-                      {'applicabale_discussions_list': applicabale_discussions_list,
-                       'list_title': page_name,
-                       'page_name': page_name})
+    #    return render(request, 'coplay/discussion_url_list.html',
+    #                  {'applicabale_discussions_list': applicabale_discussions_list,
+    #                   'list_title': page_name,
+    #                   'page_name': page_name,
+    #                   'search_url': search_url,
+    #                   'url_text': list_title,
+    #                   })
              
-    return HttpResponseRedirect(reverse('coplay:discussions_list'))
+    #return HttpResponseRedirect(reverse('coplay:discussions_list'))
 
 
     

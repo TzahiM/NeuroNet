@@ -70,8 +70,7 @@
             {{ discussion.locked_at | timeuntil }}
         </div>
         
-                        <!-- <a class="new btn btn-success" href="{{ROOT_URL}}"/labs/coplay/add_with_url/?parent_url="{{ROOT_URL}}{{ request.path }}&parent_url_text={{page_name}}">לפתיחה פעילות קשורה</a> -->
-
+                     
     {% else %}
         <div class="alert alert-error">
         	הפעילות הוקפאה
@@ -81,7 +80,7 @@
     {% endif %}
 												<a class="new btn btn-success" href="/labs/coplay/add_with_url/?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{page_name}}">לפתיחה פעילות קשורה</a>
 												{% if related_discussions %}
-                                                <a class="new btn btn-success" href="/labs/coplay/related_discussions_of_url/?search_url={{ROOT_URL}}{{ request.path }}">לרשימת הפעילויות הקשורות</a>
+                                                <a class="new btn btn-success" href="/labs/coplay/related_discussions_of_url/?parent_url={{ROOT_URL}}{{ request.path }}">לרשימת הפעילויות הקשורות</a>
                                                 {% endif %}
                                                  
     <div id="discussion-body" class="well">
