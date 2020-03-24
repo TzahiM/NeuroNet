@@ -1,1 +1,0 @@
-@"c:\users\admin\envs\kuterless\scripts\python.exe" "c:\users\admin\envs\kuterless\Scripts\markdown_py" %*

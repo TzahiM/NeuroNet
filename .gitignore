@@ -22,5 +22,7 @@ kuterless/media
 *.prefs
 __pycache__
 kuterless/coplay/migrations
+*.config
+
 
 
