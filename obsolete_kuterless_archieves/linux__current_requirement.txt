@@ -24,7 +24,7 @@ django-sekizai==0.7
 django-taggit==0.12.3
 django-toolbelt==0.0.1
 djangorestframework==2.3.14
-ecdsa==0.10
+ecdsa==0.13.3
 gunicorn==18.0
 ipython==1.1.0
 itsdangerous==0.23
