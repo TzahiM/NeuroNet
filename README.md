@@ -11,8 +11,9 @@ install into dir: c:\Python37
 5 - create virtual env for ths project and activate it
 6 - install python packages from 
 pip install -r  NeuroNet\Backend\NeuroNet\requirements.txt
-7 - merge the changes from of your *.py env files to the files in NeuroNet\Backend\NeuroNet\EnvDjango2_2_7
-
+7 - merge the changes from of your *.py env in the following files to the files in NeuroNet\Backend\NeuroNet\EnvDjango2_2_7
+C:\inetpub\wwwroot\NeuroNet\Backend\NeuroNet\EnvDjango2_2_7\Lib\site-packages\django\forms\boundfield.py
+C:\inetpub\wwwroot\NeuroNet\Backend\NeuroNet\EnvDjango2_2_7\Lib\site-packages\floppyforms\__init__.py
 
 
 
