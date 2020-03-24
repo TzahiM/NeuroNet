@@ -17,7 +17,7 @@ django-password-reset==0.7
 django-sekizai==0.7
 django-taggit==0.12.2
 django-toolbelt==0.0.1
-djangorestframework==2.3.14
+djangorestframework==3.9.1
 ecdsa==0.10
 ipython==1.1.0
 itsdangerous==0.23
