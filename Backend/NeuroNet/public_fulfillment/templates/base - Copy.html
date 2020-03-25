@@ -14,7 +14,7 @@
                 "Tzahi Manistersky"
             {% endif %}
             >
-      {% load staticfiles %}
+
     <title>
         {% if page_name %}
             {{ page_name }}
@@ -27,7 +27,9 @@
     <!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap/css/bootstrap-rtl.css' %}" rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" />
+    <!-- Custom styles for this template -->
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/css/carousel.css' %}" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script>
@@ -47,75 +49,10 @@
 		   
 		
 </head>
-<style>
 
-.overflow-auto1 {
-  height: 500px;
-  overflow: auto;
-}
-
-div.relative {
-  position: relative;
-  width: 800px;
-  height: 400px;
-  border: 3px solid #73AD21;
-} 
-
-div.absolute {
-  position: absolute;
-  top: 80px;
-  right: 0;
-  width: 200px;
-  height: 100px;
-  border: 3px solid #73AD21;
-}
-div.sticky {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  background-color: yellow;
-  padding: 50px;
-  font-size: 20px;
-}
-
-div.fixed {
-  position: fixed;
-  left: 0;
-  right: 0;
-  z-index: 1030;
-}
-
-
-.overflow-auto1 {
-  height: 500px;
-  overflow: scroll;
-}
-
-@media (min-width: 768px) {
-    .h-md-100 { height: 100vh; }
-}
-@media (max-width: 768px) {
-    .h-md-100 {}
-    #text-area{
-    height: 50vh;
-    overflow: scroll;
-    }
-}
-
-.btn-round { border-radius: 30px; }
-.bg-indigo { background: #f3f3f3; }
-.text-cyan { color: #35bdff; }
-
-
-.btn-width{
-  width: 100%;
-}
-
-
-</style>
 <body>
 <div class="container">
-    <div class="row">
+
     <div class="navbar navbar-inverse navbar-fixed-top  navbar-right" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse"
@@ -172,7 +109,17 @@ div.fixed {
                         <b class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu"
                         aria-labelledby="dLabel">
-                        >
+                        {#<li><a href="http://wiki.hasadna.org.il/index.php?title=%D7%94%D7%92%D7%A9%D7%9E%D7%94_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%AA" target="_blank">פרויקט קוטרלס
+                               (לשעבר הגשמה ציבורית) </a></li>
+                        <li><a href="{% url 'coplay:coplay_root' %}"> מה זה CoPlayWeb ?</a></li>
+                        <li><a href="{% url 'labs_root' %}#versions">מה
+                            חדש?</a></li>
+                        <li><a href="{% url 'public_fulfillment:privacy_policy' %}">מדיניות הפרטיות</a></li>
+                                                <li>
+                            <a href="{% url 'public_fulfillment:example' %}">
+                                פרפראות
+                            </a>
+                        <#}/li>
 
                         <li class="divider"></li>
                         <li><a href="{% url 'labs_root' %}">איך אנחנו
@@ -181,13 +128,12 @@ div.fixed {
                         </li>
                     </ul>
                 </li>
-               
+               {# <li><a  class="navbar-brand" href="/labs/coplay/17/details/">להשתתף בפיתוח</a></li>#}
 
             </ul>
         </div>
         <!--/.nav-collapse -->
     </div>
-        </div>
 
     {% include 'coplay/_messages.html' %}
 
@@ -216,10 +162,10 @@ div.fixed {
     </footer>
 </div>
 <!-- /container -->
-  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/jquery-3.3.1.slim.min.js' %}" ></script>
-  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/popper.min.js' %}" ></script>
-  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/bootstrap.min.js' %}" ></script>
-  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/bootstrap.js' %}" ></script>
+
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 
 
 </body>
