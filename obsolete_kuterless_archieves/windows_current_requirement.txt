@@ -16,7 +16,7 @@ django-sekizai==0.7
 django-taggit==0.12.2
 django-toolbelt==0.0.1
 django-uni-form==0.9.0
-djangorestframework==2.3.14
+djangorestframework==3.9.1
 ecdsa==0.10
 Fabric==1.14.0
 Flask==0.10.1
