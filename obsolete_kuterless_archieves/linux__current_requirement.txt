@@ -6,7 +6,7 @@ Markdown==2.3.1
 MarkupSafe==0.18
 Pillow==2.2.2
 South==0.8.4
-Werkzeug==0.9.4
+Werkzeug==0.15.3
 argparse==1.2.1
 dj-database-url==0.2.2
 dj-static==0.0.5
