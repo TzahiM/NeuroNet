@@ -77,6 +77,8 @@ def get_all_users_visiabale_for_a_user_list(user = None):
 def can_user_acess_discussion(discussion, user):
     if not user.is_authenticated:
         return discussion.can_user_access_discussion(None)
+    if not user.userprofile:
+        return False
     
     return discussion.can_user_access_discussion(user)
 
@@ -84,6 +86,9 @@ def discussion_record_a_view( discussion, user ):
     
     if user.is_authenticated == False:
         return False , 'user is not authenticated'
+    if not user.userprofile:
+        return False
+
     
     if not discussion.can_user_access_discussion( user):
         return False, 'user cannot access discussion'
@@ -126,15 +131,7 @@ def discussion_record_anonymous_view(discussion, request):
                 glimpse = anonymous_viewer.glimpse_set.create( anonymous_visitor_viewer = anonymous_viewer)
                 glimpse.clean()
                 glimpse.save()            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+           
             
     else:
         if request.user.is_authenticated:
@@ -186,6 +183,8 @@ def update_task_status_description( task , description, user, result_picture = N
 
 
 def update_task_state( task , new_state , user ):
+    if not user.userprofile:
+        return None, 'not A user'
 
     if new_state != Task.STARTED and new_state != Task.CLOSED and new_state != Task.ABORTED:
         return None, 'unknown task state ' + str(new_state)
@@ -235,6 +234,8 @@ def discussion_update( discussion, user, description,
                        parent_url = None,
                        parent_url_text = None,
                        picture = None):
+    if not user.userprofile:
+        return None, 'not A user'
     
     if user != discussion.owner:
         return None, 'only owner can update discussion'
@@ -295,6 +296,8 @@ def create_discussion( user               = None,
                        ):
     if user is None:
         return None, 'no user provided'
+    if not user.userprofile:
+        return None, 'not A user'
     
     if user.is_authenticated is False:
         return None, 'user not authenticated'
@@ -388,6 +391,8 @@ def start_users_following( follower_user, following_user):
     if follower_user == following_user:
         return
     
+    if not follower_user.userprofile or not follower_user.userprofile:
+        return None
 
     already_following = is_user_is_following( follower_user, following_user)
     
@@ -400,11 +405,15 @@ def start_users_following( follower_user, following_user):
      
 
 def stop_users_following( follower_user, following_user):
+    if not follower_user.userprofile or not follower_user.userprofile:
+        return None
     if FollowRelation.objects.filter( follower_user = follower_user, following_user = following_user).count() != 0:
         deleted_follow_relation = FollowRelation.objects.get( follower_user = follower_user, following_user = following_user) 
         deleted_follow_relation.delete()
 
 def start_tag_following( follower_user, tag):
+    if not follower_user.userprofile:
+        return None
         
     if False == ( tag in follower_user.userprofile.followed_discussions_tags.all()):
             
@@ -448,7 +457,7 @@ def start_tag_following( follower_user, tag):
 
 def stop_tag_following( follower_user, tag):
 
-    if follower_user == None or follower_user.is_authenticated == False:
+    if follower_user == None or follower_user.is_authenticated == False or not follower_user.userprofile:
         return 
     
     follower_user.userprofile.followed_discussions_tags.remove( tag.name)
@@ -459,6 +468,8 @@ def start_discussion_following( discussion, following_user):
     
     if following_user == None or following_user.is_authenticated == False:
         return None, "not authenticated"
+    if not following_user.userprofile:
+        return None, "not a user"
     
     if not discussion.can_user_access_discussion(following_user):
         return None, "user cannot access discussion"
@@ -474,6 +485,9 @@ def stop_discussion_following( discussion, following_user):
     
     if following_user == None or following_user.is_authenticated == False:
         return False, "not authenticated"
+
+    if not following_user.userprofile:
+        return None, "not a user"
         
     if not discussion.can_user_access_discussion(following_user):
         return False, "user cannot access discussion"
@@ -486,6 +500,8 @@ def stop_discussion_following( discussion, following_user):
     
 
 def discussion_add_feedback(discussion, user, feedbabk_type = None, content = None, voice_recording = None):
+    if not user or not user.userprofile:
+        return None, "not a user"
     if feedbabk_type == None:
         return None, 'No feedback type'
     
@@ -539,6 +555,8 @@ def discussion_add_feedback(discussion, user, feedbabk_type = None, content = No
 def discussion_add_task(discussion, responsible, goal_description, target_date,
                         max_inactivity_seconds=MAX_INACTIVITY_SECONDS):
 
+    if not responsible or not responsible.userprofile:
+        return None, "not a user"
     if not discussion.can_user_access_discussion(responsible):
         return None, "user cannot access discussion"
     
@@ -580,6 +598,8 @@ def discussion_add_task(discussion, responsible, goal_description, target_date,
 
 
 def discussion_add_decision(discussion, user, content = None):
+    if not user or not user.userprofile:
+        return None, "not a user"
     if content == None:
         return None, 'No content'
 
@@ -624,6 +644,8 @@ def discussion_add_decision(discussion, user, content = None):
 
 
 def discussion_invite(discussion, user = None):
+    if not user or not user.userprofile:
+        return None, "not a user"
             
     if user == discussion.owner:
         return None, "discussion owner is always invited"
@@ -639,6 +661,8 @@ def discussion_invite(discussion, user = None):
 
 
 def discussion_cancel_invite(discussion, user = None):
+    if not user or not user.userprofile:
+        return None, "not a user"
             
     if user == discussion.owner:
         return None, "discussion owner is alwaye invited"
@@ -655,6 +679,8 @@ def discussion_cancel_invite(discussion, user = None):
 
 
 def decision_vote(decision, user, value = None):
+    if not user or not user.userprofile:
+        return None, "not a user"
     
     if value == None:
         return False, 'missing vote value'
@@ -699,6 +725,10 @@ def decision_vote(decision, user, value = None):
 
     
 def is_user_is_following( follower_user, following_user):
+    if not follower_user or not follower_user.userprofile:
+        return None, "not a user"
+    if not following_user or not following_user.userprofile:
+        return None, "not a user"
     return FollowRelation.objects.filter( follower_user = follower_user, following_user = following_user).count() != 0
 
     
@@ -706,6 +736,9 @@ def is_user_is_following( follower_user, following_user):
 def get_followers_list( following_user):
     
     followers_list = []
+
+    if not following_user or not following_user.userprofile:
+        return []
     
     follow_relations_set = FollowRelation.objects.filter( following_user = following_user)
     
@@ -715,6 +748,8 @@ def get_followers_list( following_user):
     return followers_list
 
 def get_following_list( follower_user):
+    if not follower_user or not follower_user.userprofile:
+        return []
     
     following_list = []
     

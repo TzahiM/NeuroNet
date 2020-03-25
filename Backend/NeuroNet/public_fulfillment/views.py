@@ -366,6 +366,11 @@ def privacy_policy(request):
 @login_required
 def update_profile(request):
     user = request.user
+    if not user.userprofile:
+        return render(request, 'coplay/message.html', 
+                    {  'message'      :  'not a user',
+                    'rtl': 'dir="rtl"'})
+
     redirect_to = request.GET.get('next')
     allowed_hosts = []
     allowed_hosts.append(request.get_host())

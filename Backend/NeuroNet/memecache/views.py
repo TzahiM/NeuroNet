@@ -33,8 +33,9 @@ from NeuroNet import settings
 
 
 
+@login_required
 def root(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and request.user.userprofile:
         segment_name = request.user.userprofile.get_segment_title()
         segment = request.user.userprofile.segment
     else:
@@ -66,9 +67,10 @@ class UsersTableRow():
 
     
 
+@login_required
 def users_list(request, pk = None):
     
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and  request.user.userprofile:
         segment_name = request.user.userprofile.get_segment_title()
         segment = request.user.userprofile.segment
     else:
@@ -119,7 +121,7 @@ def users_list(request, pk = None):
 
 
 def instructions(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and  request.user.userprofile:
         segment_name = request.user.userprofile.get_segment_title()
         segment = request.user.userprofile.segment
     else:
@@ -295,6 +297,8 @@ class CreateShopView(CreateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        if not request.user.userprofile:
+            return HttpResponse("Unauthorized", status=401)
         self.admin_user = request.user
         self.segment = request.user.userprofile.segment
         
@@ -376,6 +380,8 @@ class CreateProductView( CreateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        if not request.user.userprofile:
+            return HttpResponse("Unauthorized", status=401)
         segment = request.user.userprofile.segment
         self.shop = get_object_or_404(Shop, segment = segment)
         if self.shop.admin_user != request.user:
@@ -399,6 +405,8 @@ class UpdateProductView( UpdateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        if not request.user.userprofile:
+            return HttpResponse("Unauthorized", status=401)
         segment = request.user.userprofile.segment
         self.shop = get_object_or_404(Shop, segment = segment)
         if self.shop.admin_user != request.user:
@@ -412,6 +420,8 @@ class DeleteProductView( DeleteView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        if not request.user.userprofile:
+            return HttpResponse("Unauthorized", status=401)
         segment = request.user.userprofile.segment
         self.shop = get_object_or_404(Shop, segment = segment)
         if self.shop.admin_user != request.user:

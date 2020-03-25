@@ -9,8 +9,7 @@ from memecache.control import init_user_account
 def create_kuterless_user(  user_name, password, first_name = None, last_name = None, email = None, recieve_updates = True, description= None, location_desc = None, followed_discussions_tags = None, segment = None):
     
                 
-    if User.objects.filter( username = user_name ).count() != 0:
-        
+    if User.objects.filter( username = user_name ).count() != 0:        
         return None
     
     user = User(

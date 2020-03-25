@@ -912,6 +912,8 @@ class UserProfile(models.Model):
          
         if another_user not in User.objects.all():
             return False
+        if not another_user.userprofile:
+            return False
         
         return (self.segment == another_user.userprofile.segment)
     

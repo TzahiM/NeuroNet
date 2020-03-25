@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from coplay.control import get_discussions_lists, get_tasks_lists
 from coplay.models import Discussion, Feedback, LikeLevel, Decision, Task, \
-    Viewer, UserUpdate, MAX_TEXT
+    Viewer, UserUpdate, MAX_TEXT, UserProfile
 from coplay.services import update_task_status_description, update_task_state, \
     start_users_following, stop_users_following, start_tag_following, \
     stop_tag_following, create_discussion, discussion_add_task, decision_vote, \
@@ -1003,6 +1003,11 @@ def start_follow_user(request, username):
         return render(request, 'coplay/message.html', 
                       {  'message'      :  'לא נמצא',
                        'rtl': 'dir="rtl"'})
+    if not following_user.userprofile:
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'לא נמצא',
+                       'rtl': 'dir="rtl"'})
+
     
     
     if not is_in_the_same_segment(request.user, following_user):
@@ -1022,7 +1027,11 @@ def stop_follow_user(request, username):
         return render(request, 'coplay/message.html', 
                       {  'message'      :  'לא נמצא',
                        'rtl': 'dir="rtl"'})
-    
+    if not following_user.userprofile:
+        return render(request, 'coplay/message.html', 
+                      {  'message'      :  'לא נמצא',
+                       'rtl': 'dir="rtl"'})
+   
     stop_users_following( request.user, following_user)
         
     return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': following_user}))
@@ -1090,6 +1099,7 @@ def user_update_mark_recipient_read(request, pk):
     return HttpResponseRedirect(redirect_to) # Redirect after POST
         
 
+@login_required
 def discussion_tag_list(request, pk = None):
     followers = []
     
@@ -1102,14 +1112,14 @@ def discussion_tag_list(request, pk = None):
                            'rtl': 'dir="rtl"'})
         page_name = u'רשימת פעילויות בנושא: ' + tag.name
         
-        for user in User.objects.all():
-            if tag.name in user.userprofile.followed_discussions_tags.names():
-                followers.append(user)
+        for userprofile in UserProfile.objects.all():
+            if is_in_the_same_segment (request.user, userprofile.user):
+                if tag.name in userprofile.followed_discussions_tags.names():
+                    followers.append(userprofile.user)
     else:
         page_name = u'מי צריך עזרה?'
         tag = None
     
-
     tags_set = set ()
     active_discussions_by_urgancy_list, locked_discussions_by_relevancy_list = get_discussions_lists()
     
@@ -1126,7 +1136,7 @@ def discussion_tag_list(request, pk = None):
                 allowed_all_discussions_list.append(discussion)
                
     is_following = False
-    if request.user.is_authenticated and tag and tag in request.user.userprofile.followed_discussions_tags.all():
+    if request.user.is_authenticated and request.user.userprofile and tag and tag in request.user.userprofile.followed_discussions_tags.all():
         is_following = True           
         
     
@@ -1140,6 +1150,7 @@ def discussion_tag_list(request, pk = None):
                    'followers': followers})
 
 
+@login_required
 def discussion_url_list(request):
     return( related_discussions_of_url(request))
 
@@ -1174,6 +1185,7 @@ def related_discussions_of_url(request):
                    'url_text': list_title,
                   })
 
+@login_required
 def add_on_discussion_url_list(request):
     return related_discussions_of_url(request)
     #search_url = request.GET.get('parent_url')

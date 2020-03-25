@@ -54,6 +54,9 @@ def post_update_to_user(recipient_user_id, header, content = None, discussion_id
     except User.DoesNotExist:
         return
 
+    if not recipient_user.userprofile:
+        return
+
     if not recipient_user.userprofile.recieve_notifications:
         return
     
@@ -72,6 +75,9 @@ def post_update_to_user(recipient_user_id, header, content = None, discussion_id
             return
     else:
         sender_user = None
+        if not sender_user.userprofile:
+            sender_user = None
+
        
 
     user_update = models.UserUpdate(

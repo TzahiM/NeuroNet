@@ -14,7 +14,7 @@
                 "Tzahi Manistersky"
             {% endif %}
             >
-      {% load staticfiles %}
+
     <title>
         {% if page_name %}
             {{ page_name }}
@@ -27,7 +27,9 @@
     <!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap/css/bootstrap-rtl.css' %}" rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" />
+    <!-- Custom styles for this template -->
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/css/carousel.css' %}" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script>
@@ -47,72 +49,7 @@
 		   
 		
 </head>
-<style>
 
-.overflow-auto1 {
-  height: 500px;
-  overflow: auto;
-}
-
-div.relative {
-  position: relative;
-  width: 800px;
-  height: 400px;
-  border: 3px solid #73AD21;
-} 
-
-div.absolute {
-  position: absolute;
-  top: 80px;
-  right: 0;
-  width: 200px;
-  height: 100px;
-  border: 3px solid #73AD21;
-}
-div.sticky {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  background-color: yellow;
-  padding: 50px;
-  font-size: 20px;
-}
-
-div.fixed {
-  position: fixed;
-  left: 0;
-  right: 0;
-  z-index: 1030;
-}
-
-
-.overflow-auto1 {
-  height: 500px;
-  overflow: scroll;
-}
-
-@media (min-width: 768px) {
-    .h-md-100 { height: 100vh; }
-}
-@media (max-width: 768px) {
-    .h-md-100 {}
-    #text-area{
-    height: 50vh;
-    overflow: scroll;
-    }
-}
-
-.btn-round { border-radius: 30px; }
-.bg-indigo { background: #f3f3f3; }
-.text-cyan { color: #35bdff; }
-
-
-.btn-width{
-  width: 100%;
-}
-
-
-</style>
 <body>
 <div class="container">
     <div class="row">
@@ -136,13 +73,11 @@ div.fixed {
                     <li>
                         <a href="{% url 'public_fulfillment:update_profile' %}?next={{ request.path }}">עדכון
                             פרופיל</a></li>
-                    <li><a href="{% url 'logout' %}?next={{ request.path }}"> יציאה </a></li>
+                    <li><a href="{% url 'logout' %}?next={{ request.path }}">להתנתקות</a></li>
                 {% else %}
-                    <li>
-                        <a href="{% url 'public_fulfillment:sign_up' %}?next={{ request.path }}">הרשמה</a>
-                    </li>
-                    <li><a href="{% url 'login' %}?next={{ request.path }}">כניסה
-                        למשתמש קיים</a></li>
+                   
+                    <li><a href="{% url 'login' %}?next={{ request.path }}">לחיבור
+                        </a></li>
                 {% endif %}
             	<li>
             		{% if user.is_authenticated %}
@@ -155,7 +90,7 @@ div.fixed {
 
             </ul>
             <ul class="nav navbar-nav">
-                {% if user.is_authenticated %}
+                
                 <li><a href="{% url 'coplay:add_discussion' %}">להתחלת פעילות                	
                     חדשה</a></li>
                 <li><a href="{% url 'coplay:discussions_list' %}">
@@ -163,7 +98,7 @@ div.fixed {
                 </a></li>
                 <li><a href="{% url 'memecache:users_list'  %}">המשתתפים הרשומים</a></li>
                 <li><a href="{% url 'memecache:root'  %}">פרסים</a></li>
-                {% endif %}
+                
                 <li class="dropdown">
                     <a href="{% url 'labs_root' %}" class="dropdown-toggle"
                        data-toggle="dropdown">
@@ -216,10 +151,10 @@ div.fixed {
     </footer>
 </div>
 <!-- /container -->
-  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/jquery-3.3.1.slim.min.js' %}" ></script>
-  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/popper.min.js' %}" ></script>
-  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/bootstrap.min.js' %}" ></script>
-  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/bootstrap.js' %}" ></script>
+
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 
 
 </body>
