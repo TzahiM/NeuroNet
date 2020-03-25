@@ -21,7 +21,8 @@ def about(request):
 #    return render(request, 'public_fulfillment/public_fulfillment_root.html', {
     return render(request, 'public_fulfillment/root.html', {
         'text_block_0': text_block_0,
-        'rtl': 'dir="rtl"'
+        'rtl': 'dir="rtl"',
+        'page_name': 'HackCorona',
     })
 
 def root(request):
