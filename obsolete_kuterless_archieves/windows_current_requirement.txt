@@ -22,7 +22,7 @@ Fabric==1.14.0
 Flask==0.10.1
 gTTS==1.2.2
 gTTS-token==1.1.1
-gunicorn==19.7.1
+gunicorn==19.5.0
 idna==2.6
 ipython==1.1.0
 itsdangerous==0.23
