@@ -22,14 +22,13 @@ def about(request):
     return render(request, 'public_fulfillment/root.html', {
         'text_block_0': text_block_0,
         'rtl': 'dir="rtl"',
-        'page_name': 'HackCorona',
     })
 
 def root(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
-    
-    return about(request)
+    return HttpResponseRedirect(reverse('about'))
+
     
     
 

@@ -10,7 +10,7 @@
     {% if discussion %}
          {{ discussion.title }}
         {% else %}
-        "HackCorona a non-profit initiative, created by team of volunteers that wish to harness crowed wisdom for fighting the corona virus challenges. Not only Epidemic, stress and economic"
+        "The Corona virus hackathon is a non-profit initiative, created by team of volunteers that wish to harness crowed wisdom for fighting the corona virus challenges. Not only Epidemic, stress and economic"
         {% endif %}
     >
     <meta name="author" content=
@@ -29,13 +29,13 @@
         {% if page_name %}
             {{ page_name }}
         {% else %}
-          HackCorona by NeuroNet - committed to Your Best Ideas
+          The Corona virus hackathon is sponsered by NeuroNet - committed to Your Best Ideas
         {% endif %}
 
     </title>
 	<!-- icons & favicons  -->
     <!-- Bootstrap core CSS -->
-    <link href="{% static 'bootstrap/css/bootstrap-rtl.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="{% static 'style.css' %}" rel="stylesheet">
@@ -107,21 +107,19 @@
                     לפעילויות הקיימות
                 </a></li>
                 <li><a href="{% url 'memecache:users_list'  %}">המשתתפים הרשומים</a></li>
-                <li><a href="{% url 'memecache:root'  %}">פרסים</a></li>
+                
                 
                 <li class="dropdown">
                     <a href="{% url 'labs_root' %}" class="dropdown-toggle"
                        data-toggle="dropdown">
-                         אודות
-
+                         About
                         <b class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu"
                         aria-labelledby="dLabel">
-                        >
-
+                        <li><a href="{% url 'about' %}">
+                            Corona Virus Hackathon </a>
+                        </li>
                         <li class="divider"></li>
-                        <li><a href="{% url 'labs_root' %}">איך אנחנו
-                            מפתחים?</a></li>
                         <li><a href="https://github.com/TzahiM/NeuroNet.git" target="_blank" >Developers</a>
                         </li>
                     </ul>
