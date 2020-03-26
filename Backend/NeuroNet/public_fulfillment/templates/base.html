@@ -1,25 +1,35 @@
 ﻿{% load staticfiles %}
 
 <!DOCTYPE html>
-<html lang="en" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content='NeuroNet'>
+    <meta name="description" content=
+    {% if discussion %}
+         {{ discussion.title }}
+        {% else %}
+        "HackCorona a non-profit initiative, created by team of volunteers that wish to harness crowed wisdom for fighting the corona virus challenges. Not only Epidemic, stress and economic"
+        {% endif %}
+    >
     <meta name="author" content=
             {% if author_name %}
                 {{ author_name }}
             {% else %}
-                "Tzahi Manistersky"
+                {% if discussion %}
+                    {{ discussion.owner.get_full_name|default:discussion.owner.username }}
+                {% else %}
+          "Tzahi Manistersky mailto:TzahiManistersky@gmail.com"          
+                {% endif %}
             {% endif %}
             >
-
+    <link rel="icon" href="/media/NeuroNetLogo_symbol_only16x16.png" type="image/png">
     <title>
         {% if page_name %}
             {{ page_name }}
         {% else %}
-          NeuroNet - committed to Your Best Ideas 
+          HackCorona by NeuroNet - committed to Your Best Ideas
         {% endif %}
 
     </title>

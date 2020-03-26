@@ -1,0 +1,42 @@
+﻿{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+      <meta http-equiv="refresh" content="5">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      {% load staticfiles %}
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" type="text/css" href="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}" />
+
+      
+
+
+    <title>הודעות</title>
+   </head>
+<body >
+
+
+
+    
+<br>
+
+        <div class="container" >
+			
+ 			<div class="row">
+<audio id="myAudio" controls autoplay>
+  <source src="/ntmu/get_latest_message" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+</div>
+</div>
+<!-- /container -->
+ <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/jquery-3.3.1.slim.min.js' %}" ></script>
+  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/popper.min.js' %}" ></script>
+  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/bootstrap.min.js' %}" ></script>
+  <script src="{% static 'nice_to_meet_you/bootstrap-4.3.1-dist/js/bootstrap.js' %}" ></script>
+
+</body>
+</html>
