@@ -23,6 +23,10 @@ kuterless/media
 __pycache__
 kuterless/coplay/migrations
 *.config
+*.xls
+*.xlsx
+*.csv
+
 
 
 

@@ -1,0 +1,10 @@
+..\excel\__init__.py
+..\excel\__pycache__\__init__.cpython-37.pyc
+..\excel\__pycache__\xlrd_shortcuts.cpython-37.pyc
+..\excel\xlrd_shortcuts.py
+PKG-INFO
+SOURCES.txt
+dependency_links.txt
+pbr.json
+requires.txt
+top_level.txt

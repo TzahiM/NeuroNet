@@ -439,13 +439,13 @@ class ItemVoucher (models.Model):
     updated_at       = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return "id {}:{} {} updated_at {}".format( self.id, self.product.title, self.customet.username,  self.updated_at)
+        return "id {}:{} {} updated_at {}".format( self.id, self.product.title, self.customer.username,  self.updated_at)
 
     def get_absolute_url(self):
         return (
         reverse('memecache:item_voucher_details', kwargs={'pk': str(self.id)}) )
     
-            
+
     
     def print_content(self):
                 

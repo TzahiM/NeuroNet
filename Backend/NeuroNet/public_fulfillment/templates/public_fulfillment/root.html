@@ -39,39 +39,54 @@
                       <img class="img-responsive" src="/media/minds-corona.png" alt="The corona ANTI virus">
                         </center>
                 </div>
- 			<div class="row">                                                                                                                                                                                                    
-                <div class="col-sm-1 col-md-12" id = "EarnPrizes">                                                                                                                                                               
+                </div>
+ 		                                                                                                                                                                                                 
+            <div class="row">
+            </div>   
+                <div class="col-sm-4" id = "new project">                                                                                                                                                               
+                	<br>
+                	<br>                	
+                	<center>
+						<a class="btn btn-success"  href="{% url 'coplay:add_discussion' %}">פתיחת פעילות חדשה</a>
+                	</center>
+                	<br>   
+                	<br>   
+
+                </div>
+                <div class="col-sm-4" id = "list of projects">                                                                                                                                                               
                 	<br>
                 	<br>                	
                 	<center>
                 			<a class="btn btn-success"  href="{% url 'coplay:discussions_list' %}">לרשימת הפעילויות הקיימות</a>
                 	</center>
+                    <br>
+                	<br>   
                 </div>
-            </div>   
-            <div class="row">
+                <div class="col-sm-4" id = "community members">                                                                                                                                                               
+                	<br>
+                	<br>                	
                 	<center>
-                	<br>
-                	<br>
-                	</center>
-            </div>         
- 			        
- 			<div class="row">
-                <div class="col-sm-3 col-md-12" id = "PrizeBag">
-
-                	<br>
-                	<center>
-						<a class="btn btn-success"  href="{% url 'coplay:add_discussion' %}">פתיחת פעילות חדשה</a>
-					</center>
-                	<br>
-                </div>
-            </div>   
-                	<br>
-                	<br>
-            		<center>
             			<a class="btn btn-success" align ="center" href="{% url 'memecache:users_list'  %}"> רשימת המשתתפים</a>
-            		</center>
+                	</center>
+                	<br>   
+                    <br>
+                </div>
+            </div>         
+ 			<div class="row" id="sponsers">  
+                	<br>                	
+                	<br>                	
+                <center>
+                 <h1>Sponsers</h1>
+                	<br>                	
+                <div class="col-sm-3" >
+                    <a href="https://www.linkedin.com/in/tzahi-manistersky-2174755/" target="_blank">
+                      <img class="img-responsive" src="/media/NeuroNetLogo.jpg" alt="NeuroNet - Commited to your best Ideas" >
+                    </a>
+                </div>
+                </center>
+ 			</div>   
+ 			
 		
-            </div>
   
 {% endblock %}
 
