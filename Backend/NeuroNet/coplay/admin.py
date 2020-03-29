@@ -9,7 +9,7 @@ class DiscussionAdmin(admin.ModelAdmin):
     list_display = ('title', 'owner', 'created_at')
     
 class FeedbackAdmin(admin.ModelAdmin):
-    list_display = ( 'content', 'feedbabk_type', 'created_at', 'voice_recording')
+    list_display = ( 'content', 'feedbabk_type', 'created_at')
     ordering = ['feedbabk_type', 'created_at']
     search_fields = ['feedbabk_type']
 
@@ -37,7 +37,8 @@ class SegmentAdmin(admin.ModelAdmin):
     list_display = ('title', 'description')
     
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'segment')
+    list_display = ('user', 'segment', 'description')
+    search_fields = ['description']
 
 
 class UpdateAdmin(admin.ModelAdmin):

@@ -47,6 +47,7 @@ def get_discussion_with_parent_url_list( search_url = None, user = None):
     
 def is_in_the_same_segment(user , another_user = None ):
     segment = None
+
     if user.is_authenticated:
         segment = user.userprofile.segment
     

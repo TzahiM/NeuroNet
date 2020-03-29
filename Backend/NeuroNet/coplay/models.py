@@ -878,6 +878,8 @@ class KuterLessApp(models.Model):
     created_at                  = models.DateTimeField(auto_now_add=True)
     updated_at                  = models.DateTimeField(auto_now=True)
        
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, default = None, null=True, blank=True , on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -900,7 +902,8 @@ class UserProfile(models.Model):
     
     application               = models.ForeignKey(KuterLessApp, null=True, blank=True, on_delete=models.CASCADE)
     application_specific_id   = models.IntegerField(blank=True, default = 0) #used when there is no email
-    
+
+
     def __str__(self):
         return "{} ".format(self.user.username)
     
