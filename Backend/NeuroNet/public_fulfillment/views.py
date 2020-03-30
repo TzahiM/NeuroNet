@@ -234,29 +234,29 @@ class AddUserForm(forms.Form):
 
 class UpdateProfileUserForm(forms.Form):
     password  = forms.CharField( required = False, label='', 
-        widget=forms.PasswordInput(attrs={'placeholder': u'סיסמא', 'class': 'form-control'}))
+        widget=forms.PasswordInput(attrs={'placeholder': u'password', 'class': 'form-control'}))
 
     password_confirm  = forms.CharField( required = False, label='', 
-        widget=forms.PasswordInput(attrs={'placeholder': u'אימות סיסמא', 'class': 'form-control'}))
+        widget=forms.PasswordInput(attrs={'placeholder': u'repeat password', 'class': 'form-control'}))
     
     first_name  = forms.CharField( required = False, max_length = 200, label='', 
-        widget=forms.TextInput(attrs={'placeholder': u'שם פרטי', 'class': 'form-control'}))
+        widget=forms.TextInput(attrs={'placeholder': u'first name', 'class': 'form-control'}))
     
     last_name = forms.CharField( required = False, max_length = 200, label='', 
-        widget=forms.TextInput(attrs={'placeholder': u'שם משפחה', 'class': 'form-control'}))
+        widget=forms.TextInput(attrs={'placeholder': u'last name', 'class': 'form-control'}))
     
     email = forms.EmailField( required = False, label='', 
-        widget=forms.TextInput(attrs={'placeholder': u'אימייל', 'class': 'form-control'}))
+        widget=forms.TextInput(attrs={'placeholder': u'email', 'class': 'form-control'}))
 
-    recieve_email_updates = forms.BooleanField(label=u'קבלת מיילים מהאתר', required = False, initial = True)
+    recieve_email_updates = forms.BooleanField(label=u'recieving emails', required = False, initial = True)
     
 #     followed_discussions_tags = forms.CharField( label=u'נושאים שיענינו אותך', widget = TagWidgetBig(attrs={'rows': 3 ,'cols' : 40} )  )
     
-    description = forms.CharField(label=u'כל דבר שתרצה/י להוסיף',required = False,
+    description = forms.CharField(label=u'contact info/about yourself',required = False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
     
-    location_desc = forms.CharField(label=u'כתובת',
+    location_desc = forms.CharField(required = False,label=u'Address',
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea)
     

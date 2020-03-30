@@ -64,6 +64,7 @@ class UsersTableRow():
     place = 0
     user = None
     total_earn = 0
+    description = ''
 
     
 
@@ -83,7 +84,7 @@ def users_list(request, pk = None):
                       {  'message'      :  u'עוד לא הוגדרה חנות',
                        'rtl': 'dir="rtl"'})
         
-    page_name = u' '+ u'רשימת המשתתפים ב' + segment_name + u' '
+    page_name = u' '+ u'members of ' + segment_name + u' commnity'
     
 
     if pk is not None:
@@ -111,6 +112,7 @@ def users_list(request, pk = None):
             row.place = place
             row.user = account.user
             row.total_earn = account.total_earn
+            row.description = account.user.userprofile.description
             users_rows_list.append(row)
         
     return render(request, 'memecache/users_list.html',

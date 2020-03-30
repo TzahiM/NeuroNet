@@ -221,23 +221,23 @@ def import_users( excel_file_name, segment_name ):
             want_to_add_that  = excel_object.read( col_named_dict['Anything else that we need to know? Anything to say?']+row_str).strip()
             love_to_do = excel_object.read( col_named_dict['What do you love to do?']+row_str).strip()
             if social_profile:
-                description += 'Feel free to follow me on:'+ social_profile + '\n'
+                description += 'Feel free to follow me on:'+ social_profile + '\r\n'
 
             if proffesion:
-                description += 'I am a '+ proffesion + '\n'
+                description += 'I am a '+ proffesion + '\r\n'
             if education:
-                description += "I've learned " + education +  '\n'
+                description += "I've learned " + education +  '\r\n'
             
 
             if love_to_do:
-                description += 'I most love to '+ love_to_do + '\n'
+                description += 'I most love to '+ love_to_do + '\r\n'
             help_need = excel_object.read( col_named_dict['How Can we help you?']+row_str)
             if help_need:
                 help_need=help_need.replace('  (Please submit as a comment  https://www.facebook.com/groups/614901792606701/permalink/623412731755607/)','')
 
-                description += 'I need help in  '+ help_need + '\n'
+                description += 'I need help in  '+ help_need + '\r\n'
             if want_to_add_that:
-                description += 'And '+ want_to_add_that + '\n'
+                description += 'And '+ want_to_add_that + '\r\n'
 
         print('\nfirst_name               :',first_name               ,
               '\nlast_name                :',last_name                ,

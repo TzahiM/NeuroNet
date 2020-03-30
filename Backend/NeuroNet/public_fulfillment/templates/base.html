@@ -78,10 +78,10 @@
                 
                 {% if user.is_authenticated %}
                     <li><span class="navbar-text">
-                        שלום {{ user.get_full_name|default:user.username }}</a>
+                        Hello {{ user.get_full_name|default:user.username }}</a>
                     </li>
                     <li>
-                        <a href="{% url 'public_fulfillment:update_profile' %}?next={{ request.path }}">Profile Update</a></li>
+                        <a href="{% url 'public_fulfillment:update_profile' %}?next={{ request.path }}">Update Profile</a></li>
                     <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
                 {% else %}
                    
