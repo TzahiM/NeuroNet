@@ -109,7 +109,7 @@ def users_list(request, pk = None):
         if account.user.userprofile.segment == segment:
             place += 1
             if search_text:
-                if not( account.user.userprofile.description and search_text in account.user.userprofile.description):
+                if not( account.user.userprofile.description and search_text.casefold() in account.user.userprofile.description.casefold()):
                     add_user = False
             if add_user:
                 row = UsersTableRow()
