@@ -6,13 +6,13 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <h1>{% trans "Delete" %}</h1>
+            <h1>Delete?</h1>
 
         <form method="post">
             {% csrf_token %}
 
-<div class="well"><p>{% blocktrans %}Are you sure?{% endblocktrans %}</p>
-            <button class="btn btn-success">{% trans "Delete" %}</button></div>        </form>
+<div class="well"><p>Are you sure?</p>
+            <button class="btn btn-success">Delete</button></div>        </form>
 
 
 {% endblock %}

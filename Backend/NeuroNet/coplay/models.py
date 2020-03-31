@@ -428,7 +428,7 @@ class LikeLevel(object):
         (EXCELLENT, 'רעיון מצוייו'),
         (VERY_GOOD, 'טוב מאוד'),
         (GOOD, 'לא רע'),
-        (MEDIUM, 'אין דעה'),
+        (MEDIUM, 'None דעה'),
         (BAD, 'רעיון לא טוב'),
     )
 
@@ -491,11 +491,11 @@ class Decision(models.Model):
             if number_of_votes == LikeLevel.GOOD:
                 return 'טוב'
             if number_of_votes == LikeLevel.MEDIUM:
-                return 'אין דעה'
+                return 'None דעה'
             if number_of_votes == LikeLevel.BAD:
                 return 'רעיון לא טוב'
 
-        return 'אין'
+        return 'None'
 
         return self.vote_set.count()
 

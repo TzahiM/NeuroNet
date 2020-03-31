@@ -78,7 +78,7 @@ class AddFeedbackForm(forms.Form):
 
 class UpdateDiscussionForm(forms.Form):
     description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS,
-                                  label = u'תאור הפעילות' , help_text = u'תאור היעד ואיזו עזרה מבוקשת', widget=forms.Textarea(attrs={'rows': '3',
+                                  label = u"Project's description" , help_text = u"Describe project's goals and what kind of help you need", widget=forms.Textarea(attrs={'rows': '3',
                                      'cols' : '40'}))
     tags = forms.MultipleChoiceField(required=False)
 
@@ -119,7 +119,7 @@ def discussion_details(request, pk):
     
     if not can_user_acess_discussion( discussion, request.user):
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'אינך מורשה לצפות בדיון',
+                      {  'message'      :  'restricted project',
                        'rtl': 'dir="rtl"'})
 
     list_encourage = discussion.feedback_set.all().filter(
@@ -239,11 +239,11 @@ class NewDiscussionForm(forms.Form):
 
 
 
-    parent_url = forms.URLField(label=u'קישור לדף רלוונטי. לדוגמה http://hp.com',
+    parent_url = forms.URLField(label=u'A link to a related web page http://hp.com',
                                 required=False,
                                 max_length=MAX_TEXT)
     
-    parent_url_text = forms.CharField(  label=u"שם הדף הקשור", 
+    parent_url_text = forms.CharField(  label=u"Page name", 
                                         required=False,
                                         max_length=MAX_TEXT,
                                         widget=forms.Textarea(
@@ -294,7 +294,7 @@ def add_discussion(request, pk = None):
                 tag = Tag.objects.get(id=int(pk))
             except Tag.DoesNotExist:
                 return render(request, 'coplay/message.html',
-                              {'message': 'הנושא איננו קיים',
+                              {'message': 'Unknown tag',
                                'rtl': 'dir="rtl"'})
             #form = NewDiscussionForm(initial={'tags': tag.name}) # An unbound form
             form = NewDiscussionForm(initial={'tags': ""}) # An unbound form
@@ -312,20 +312,22 @@ def add_discussion(request, pk = None):
 @login_required
 def extention_add_with_url(request):
     parent_url = request.GET.get('parent_url')
+    parent_url_text = request.GET.get('parent_url_text')
     applicabale_discussions_list, list_title = get_discussion_with_parent_url_list(parent_url , request.user)
 
     if applicabale_discussions_list:
-        if list_title:
-            page_name = u'פעילויות שקשורות ל' + list_title
+        if parent_url_text:
+            page_name = u'projects that are related to' + parent_url_text
         else:
-            page_name = u'פעילויות שקשורות ל' + search_url
+            page_name = u'projects that are related to' + list_title
+
                            
         return render(request, 'coplay/discussion_url_list.html',
                       {'applicabale_discussions_list': applicabale_discussions_list,
                        'list_title': page_name,
                        'page_name': page_name,
-                       'search_url': search_url,
-                       'url_text': list_title,
+                       'search_url': parent_url,
+                       'url_text': parent_url_text,
                       })
 
     return add_with_url(request)
@@ -372,7 +374,7 @@ def add_with_url(request):
                 tag = Tag.objects.get(id=int(pk))
             except Tag.DoesNotExist:
                 return render(request, 'coplay/message.html',
-                              {'message': 'הנושא איננו קיים',
+                              {'message': 'Unknown tag',
                                'rtl': 'dir="rtl"'})
             #form = NewDiscussionForm(initial={'tags': tag.name}) # An unbound form
             form = NewDiscussionForm(initial={'tags': ""}) # An unbound form
@@ -437,7 +439,7 @@ def delete_discussion(request, pk):
         discussion = Discussion.objects.get(id=int(pk))
     except Discussion.DoesNotExist:
         return render(request, 'coplay/message.html',
-                      {'message': 'הדיון איננו קיים',
+                      {'message': 'Unknown project',
                        'rtl': 'dir="rtl"'})
 
     user = request.user
@@ -447,7 +449,7 @@ def delete_discussion(request, pk):
             'discussions_list') # Redirect to discussions list
 
     return render(request, 'coplay/message.html',
-                  {'message': 'רק בעל הדיון  מורשה למחוק אותו',
+                  {'message': 'Can be deleted only by projects owner',
                    'rtl': 'dir="rtl"'})
 
 
@@ -460,7 +462,7 @@ def start_follow(request, pk):
     
     if not can_user_acess_discussion( discussion, request.user):
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'אינך מורשה לצפות בדיון',
+                      {  'message'      :  'Restricted project',
                        'rtl': 'dir="rtl"'})
     
     start_discussion_following( discussion, request.user)
@@ -477,7 +479,7 @@ def stop_follow(request, pk):
     
     if not can_user_acess_discussion( discussion, request.user):
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'אינך מורשה לצפות בדיון',
+                      {  'message'      :  'Restricted project',
                        'rtl': 'dir="rtl"'})
     
     
@@ -496,12 +498,12 @@ def vote(request, pk):
         decision = Decision.objects.get(id=int(pk))
     except Decision.DoesNotExist:
         return render(request, 'coplay/message.html',
-                              {'message': 'משימה לא ידועה',
+                              {'message': 'Unknown goal',
                                'rtl': 'dir="rtl"'})
         
     if not can_user_acess_discussion( decision.parent, request.user):
         return render(request, 'coplay/message.html', 
-                                  {  'message'      :  'אינך מורשה לצפות בדיון',
+                      {  'message'      :  'Restricted project',
                                    'rtl': 'dir="rtl"'})    
     
     if request.method == 'POST': # If the form has been submitted...
@@ -523,12 +525,12 @@ def task_details(request, pk):
         task = Task.objects.get(id=int(pk))
     except Task.DoesNotExist:
         return render(request, 'coplay/message.html',
-                      {'message': 'משימה שאיננה קיימת',
+                      {'message': 'Unknown goal',
                        'rtl': 'dir="rtl"'})
         
     if not can_user_acess_discussion( task.parent, request.user):
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'אינך מורשה לצפות בדיון',
+                      {  'message'      :  'Restricted project',
                        'rtl': 'dir="rtl"'})
 
     close_possible = False
@@ -548,7 +550,7 @@ def task_details(request, pk):
                    'update_task_form': update_task_form,
                    'close_possible': close_possible,
                    'rtl': 'dir="rtl"',
-                   'page_name': u'המשימה:' + task.goal_description,
+                   'page_name': u'Goal is:' + task.goal_description,
                    'ROOT_URL': SITE_URL})
 
 
@@ -575,7 +577,7 @@ def update_task_description(request, pk):
                                           {'message': error_string,
                                            'rtl': 'dir="rtl"',
                                            'next_url':task.get_absolute_url(),
-                                           'next_text': u'בחזרה ל:' + task.goal_description})            
+                                           'next_text': u'Back to' + task.goal_description})            
 
         
     return HttpResponseRedirect(
@@ -610,7 +612,7 @@ def add_feedback(request, pk):
                                           {'message': error_string,
                                            'rtl': 'dir="rtl"',
                                            'next_url':discussion.get_absolute_url(),
-                                           'next_text': u'בחזרה ל:' + discussion.title})            
+                                           'next_text': u'Back to:' + discussion.title})            
 
         
     return HttpResponseRedirect(
@@ -625,7 +627,7 @@ def set_task_state(request, pk, new_state):
     
     if not can_user_acess_discussion( task.parent, request.user):
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'אינך מורשה לצפות בדיון',
+                      {  'message'      :  'Restricted project',
                        'rtl': 'dir="rtl"'})
     
     user = request.user
@@ -639,7 +641,8 @@ def set_task_state(request, pk, new_state):
               {'message': error_string,
                'rtl': 'dir="rtl"',
                'next_url' : task.parent.get_absolute_url(),
-               'next_text'  : u"חזרה לפעילות"})
+               'next_text': u'Back to' + task.goal_description})            
+
 
 
     return HttpResponseRedirect(task.parent.get_absolute_url()) # Redirect after POST
@@ -672,13 +675,13 @@ def user_coplay_report(request, username=None):
         
     if not is_in_the_same_segment( user, request.user):
         return render(request, 'coplay/message.html', 
-                  {  'message'      :  'משתמש ממודר',
+                  {  'message'      :  'Restricted user',
                    'rtl': 'dir="rtl"'})
 
     if user == request.user:
-        page_name = u'הפעילות שלי '
+        page_name = u'My project'
     else:
-        page_name = u'הפעילות של ' + get_user_fullname_or_username(user)
+        page_name = get_user_fullname_or_username(user) + u"'s Project"
 
     open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, aborted_tasks_list_by_relevancy_list , missed_tasks_list_by_relevancy_list = get_tasks_lists()
 
@@ -891,7 +894,7 @@ class CreateTaskView(CreateView):
         return render(self.request, 'coplay/error.html',
                               {'message': error_string,
                                'url': self.discussion.get_absolute_url(),
-                               'url_text': u"בחזרה ל" + self.discussion.title,
+                               'url_text': u"Back to" + self.discussion.title,
                                'rtl': 'dir="rtl"'})
 
 
@@ -946,7 +949,7 @@ class CreateFeedbackView(CreateView):
         return render(self.request, 'coplay/error.html',
                               {'message': error_string,
                                'url': self.discussion.get_absolute_url(),
-                               'url_text': u"בחזרה ל" + self.discussion.title,
+                               'url_text': u"Back to" + self.discussion.title,
                                'rtl': 'dir="rtl"'})
         
 #         return resp
@@ -990,7 +993,7 @@ class CreateDecisionView(CreateView):
         return render(self.request, 'coplay/error.html',
                               {'message': error_string,
                                'url': self.discussion.get_absolute_url(),
-                               'url_text': u"בחזרה ל" + self.discussion.title,
+                               'url_text': u"Back to" + self.discussion.title,
                                'rtl': 'dir="rtl"'})
 
             
@@ -1001,18 +1004,18 @@ def start_follow_user(request, username):
         following_user = User.objects.get(username=username)
     except User.DoesNotExist:
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'לא נמצא',
+                      {  'message'      :  'unknown',
                        'rtl': 'dir="rtl"'})
     if not following_user.userprofile:
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'לא נמצא',
+                      {  'message'      :  'unknown',
                        'rtl': 'dir="rtl"'})
 
     
     
     if not is_in_the_same_segment(request.user, following_user):
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'משתמש ממודר',
+                      {  'message'      :  'Restricted user',
                        'rtl': 'dir="rtl"'})
     
     start_users_following( request.user, following_user)
@@ -1025,11 +1028,11 @@ def stop_follow_user(request, username):
         following_user = User.objects.get(username=username)
     except User.DoesNotExist:
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'לא נמצא',
+                      {  'message'      :  'unknown',
                        'rtl': 'dir="rtl"'})
     if not following_user.userprofile:
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'לא נמצא',
+                      {  'message'      :  'unknown',
                        'rtl': 'dir="rtl"'})
    
     stop_users_following( request.user, following_user)
@@ -1041,7 +1044,7 @@ def user_update_details(request, pk):
         user_update = UserUpdate.objects.get(id=int(pk))
     except UserUpdate.DoesNotExist:
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'לא נמצא',
+                      {  'message'      :  'unknown',
                        'rtl': 'dir="rtl"'})
     
     if request.user.is_authenticated:
@@ -1051,7 +1054,7 @@ def user_update_details(request, pk):
         
     if not user_update.can_user_access(viewing_user):
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'אינך מורשה לצפות בעדכון',
+                      {  'message'      :  'Restricted notification',
                        'rtl': 'dir="rtl"'})
     
     render_result = render(request, 'coplay/user_update_detailes.html', 
@@ -1071,7 +1074,7 @@ def user_update_mark_recipient_read(request, pk):
         user_update = UserUpdate.objects.get(id=int(pk))
     except UserUpdate.DoesNotExist:
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'לא נמצא',
+                      {  'message'      :  'unknown',
                        'rtl': 'dir="rtl"'})
     
     if request.user.is_authenticated:
@@ -1081,7 +1084,7 @@ def user_update_mark_recipient_read(request, pk):
         
     if not user_update.can_user_access(viewing_user):
         return render(request, 'coplay/message.html', 
-                      {  'message'      :  'אינך מורשה לצפות בעדכון',
+                      {  'message'      :  'Restricted notification',
                        'rtl': 'dir="rtl"'})
 
 
@@ -1108,16 +1111,16 @@ def discussion_tag_list(request, pk = None):
             tag = Tag.objects.get(id=int(pk))
         except Tag.DoesNotExist:
             return render(request, 'coplay/message.html',
-                          {'message': 'הנושא איננו קיים',
+                          {'message': 'Unknown tag',
                            'rtl': 'dir="rtl"'})
-        page_name = u'רשימת פעילויות בנושא: ' + tag.name
+        page_name = u'All projects that are related to' + tag.name
         
         for userprofile in UserProfile.objects.all():
             if is_in_the_same_segment (request.user, userprofile.user):
                 if tag.name in userprofile.followed_discussions_tags.names():
                     followers.append(userprofile.user)
     else:
-        page_name = u'מי צריך עזרה?'
+        page_name = u'Who needs help?'
         tag = None
     
     tags_set = set ()
@@ -1162,7 +1165,7 @@ def start_follow_tag( request, pk):
         tag = Tag.objects.get(id=int(pk))
     except Tag.DoesNotExist:
         return render(request, 'coplay/message.html',
-                      {'message': 'הנושא איננו קיים',
+                      {'message': 'Unknown tag',
                        'rtl': 'dir="rtl"'})
                 
     start_tag_following( request.user, tag)
@@ -1172,10 +1175,9 @@ def start_follow_tag( request, pk):
 def related_discussions_of_url(request):
     search_url = request.GET.get('parent_url')
     applicabale_discussions_list, list_title = get_discussion_with_parent_url_list( search_url, request.user)
-    if list_title:
-        page_name = u'פעילויות שקשורות ל' + list_title
-    else:
-        page_name = u'פעילויות שקשורות ל' + search_url
+
+    page_name = u'projects that are related to' + parent_url_text
+
                            
     return render(request, 'coplay/discussion_url_list.html',
                   {'applicabale_discussions_list': applicabale_discussions_list,
@@ -1227,7 +1229,7 @@ def stop_follow_tag( request, pk):
         tag = Tag.objects.get(id=int(pk))
     except Tag.DoesNotExist:
         return render(request, 'coplay/message.html',
-                      {'message': 'הנושא איננו קיים',
+                      {'message': 'Unknown tag',
                        'rtl': 'dir="rtl"'})
         
     stop_tag_following( request.user, tag )

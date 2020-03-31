@@ -6,12 +6,12 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <h1>הוספת רעיון חדש להצבעה</h1>
+            <h1>Add an idea for vote (survay)</h1>
 
         <form method="post">
             {% csrf_token %}
             {{ form }}
-            <button class="btn btn-success">{% trans "Save" %}</button>
+            <button class="btn btn-success">Save</button>
         </form>
         
 		</div>

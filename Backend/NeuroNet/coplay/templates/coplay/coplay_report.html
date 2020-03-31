@@ -15,9 +15,9 @@
 	            		<h1>{{ page_name}} 
 	            			{% if user !=  applicabale_user %}
 		            			{% if is_following %}                
-		     		           		<a class="new btn btn-warning" href="{% url 'coplay:stop_follow_user'  applicabale_user.username %}">להפסיק לעקוב אחריו/ה</a> 
+		     		           		<a class="new btn btn-warning" href="{% url 'coplay:stop_follow_user'  applicabale_user.username %}">stop follow</a> 
 		                		{% else %}
-		            	    		<a class="new btn btn-danger" href="{% url 'coplay:start_follow_user'  applicabale_user.username %}">רוצה  לעקוב אחריו/ה</a>   
+		            	    		<a class="new btn btn-danger" href="{% url 'coplay:start_follow_user'  applicabale_user.username %}">start follow</a>   
 		                		{% endif %}
 	                		{% endif %}
 	            		</h1>
@@ -25,7 +25,7 @@
 	            	    <p>{{ description|urlize|linebreaks }}</p>
 	            	    {% endif %}
 	            	    {% if followed_discussions_tags%}
-	            	    מתענין/ת ב
+	            	    interested in 
 						{% for tag in followed_discussions_tags %}
                 			<a class="btn btn-primary " href="{% url 'coplay:discussion_tag_list'  tag.id %}">{{ tag.name }}</a>
 		        		{% endfor %}
@@ -35,25 +35,36 @@
 	                	<p><a href="https://www.google.co.il/maps/place/{{location_desc}}" target="_blank">{{location_desc}}</a></p> 
 	                {% endif %}      
 	            	    
-	            		{{number_of_closed_tasks}} משימות שהושלמו
-	            	    {{number_of_closed_tasks_for_others}}  מתוכם למשתמשים אחרים 
-	            	    {{number_of_aborted_tasks}}  משימות שבוטלו בזמן 
-	            	    {{number_of_task_closing}} אישורי משימות
-	            	    {{number_of_feedbacks}} תגובות בפעילויות של אחרים
-	            	    {{number_of_votes}} הצבעות בפעילויות של אחרים
-	            	    {{number_of_views}} צפיות בפעילויות של אחרים
+	            		{{number_of_closed_tasks}} achived goals
+	            	    {{number_of_closed_tasks_for_others}}  for other members 
+	            	    {{number_of_aborted_tasks}}  canceled on time goals 
+	            	    {{number_of_task_closing}} approving goals
+	            	    {{number_of_feedbacks}} comments
+	            	    {{number_of_votes}} votes
+	            	    {{number_of_views}} views
 	            	</center>
 	            	<br>
 					<center>
-						<a class="btn btn-success" href="#UserUpdates">עדכונים</a>    
-						<a class="btn btn-success" href="#TasksOpen">משימות פתוחות אישיות</a>    
-						<a class="btn btn-success" href="#TasksOpenOthers">משימות פתוחות של אחרים  </a>
-						<a class="btn btn-success" href="#DiscussionsActive">פעילויות פעילות </a>
-						<a class="btn btn-success" href="#DiscussionsLocked">פעילויות לא פעילות</a>
-						<a class="btn btn-success" href="#TasksClosed">משימות שהושלמו בזמן</a>
-						<a class="btn btn-success" href="#TasksFailedAll">משימות שבוטלו בזמן של כולם</a>
-						<a class="btn btn-success" href="#FollwersList">עוקבים</a>	
-						<a class="btn btn-success" href="#FollowingList">עוקב/ת אחרי</a>	
+						<a class="btn btn-success" href="#UserUpdates">
+                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your{% endif %}
+                        notifications</a>    
+						<a class="btn btn-success" href="#TasksOpen"> 
+                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your's{% endif %}
+                        goals in progress</a>    
+						<a class="btn btn-success" href="#TasksOpenOthers">others goals in progress</a>
+						<a class="btn btn-success" href="#DiscussionsActive">active projects</a>
+						<a class="btn btn-success" href="#DiscussionsLocked">inactive projects</a>
+						<a class="btn btn-success" href="#TasksClosed">
+                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your's{% endif %}
+                        achived goals</a>
+						<a class="btn btn-success" href="#TasksFailedAll">
+                        everyone's aborted goals </a>
+						<a class="btn btn-success" href="#FollwersList">
+                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your{% endif %}
+                        followers</a>	
+						<a class="btn btn-success" href="#FollowingList">
+                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}you are{% endif %}
+                        following </a>	
 					</center>
                 </div>         
                 
@@ -63,7 +74,10 @@
     	<br>
         <br>
         <br>
-                	<center><h2>עדכונים</h2></center>
+                	<center><h2>
+                       {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your{% endif %}
+                        notifications
+                        </h2></center>
 	                	<ul>
 					{% for user_update in user_updates_that_viewer_can_access_list %}
 					
@@ -71,20 +85,20 @@
 					 			{% if not user_update.get_if_already_read %}<strong>{% endif %}        	
 					        	{% if user_update.header %}
 					        		{{ user_update.header |urlize|linebreaks}}
+					 			{{ user_update.created_at|naturaltime }}
 					        		{% if user_update.get_if_long %}
-					        			<a class="btn btn-success" href={{ user_update.get_absolute_url }} >להרחבה</a></p>
+					        			<a class="btn btn-success" href={{ user_update.get_absolute_url }} >Details</a></p>
 					        		{% else%}
 					        			{% if user_update.details_url %}
-								        	<a class="btn btn-success"  href="{% url 'coplay:user_update_mark_recipient_read'  user_update.id %}">להרחבה</a>
+								        	<a class="btn btn-success"  href="{% url 'coplay:user_update_mark_recipient_read'  user_update.id %}">Details</a>
 							        	{% endif %}
 					        		{% endif %}
 					        	{% endif %}
 					 			{% if not user_update.get_if_already_read %}</strong>{% endif %}
-					 			{{ user_update.created_at|naturaltime }}
 					 		</li>
 					{% empty %}
 					    <li class="list-group-item">
-					    אין					    	
+					    None					    	
 					    </li>
 					{% endfor %}
 					</ul>
@@ -94,7 +108,10 @@
     	<br>
         <br>
         <br>
-                	<center><h2>  משימות פתוחות אישיות </h2></center>
+                	<center><h2>  
+                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your's{% endif %}
+                        goals in progress                        
+                        </h2></center>
 	                	<ul>
 					{% for task in tasks_open_by_increased_time_left %}
 					
@@ -103,11 +120,11 @@
 					 			<strong>
 					 			{% endif %}
 					 			{{task.goal_description|urlize|linebreaks}}<br>
-					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
+					 			responsible for <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
 					 			  
-					 			תסתיים  {{task.target_date | naturaltime }}
+					 			Ended in  {{task.target_date | naturaltime }}
 					 			
-					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
+					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >Details</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}
 					 			</strong>
 					 			{% endif %}
@@ -115,7 +132,7 @@
 					 		</li>
 					{% empty %}
 					    <li class="list-group-item">
-					    <a class="btn btn-success" href="{% url 'coplay:discussions_list' %}">לעזור לפעילות קיימת</a>
+					    <a class="btn btn-success" href="{% url 'coplay:discussions_list' %}">Help one of the projects</a>
 					    	
 					    </li>
 					{% endfor %}
@@ -125,7 +142,7 @@
     	<br>
         <br>
         <br>
-                	<center><h2>משימות פתוחות של אחרים</h2></center>
+                	<center><h2>Other's goals in progress</h2></center>
 	                	<ul>
 					{% for task in tasks_others_open_by_increased_time_left %}
 					
@@ -134,18 +151,24 @@
 					 			<strong>
 					 			{% endif %}
 					 			{{task.goal_description|urlize|linebreaks}}<br>
-					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
+					 			 responsible for is 
+                                     {% if user !=  task.responsible %}
+                                     
+                                     <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
+					 			     {% else %}
+                                     you
+                                     {% endif %}
 					 			  
-					 			תסתיים  {{task.target_date | naturaltime }}
+					 			Ended in  {{task.target_date | naturaltime }}
 					 			
-					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
+					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >Details</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}
 					 			</strong>
 					 			{% endif %}
 	
 					 		</li>
 					{% empty %}
-					    <center><li class="list-group-item">אין</li></center>
+					    <center><li class="list-group-item">None</li></center>
 					{% endfor %}
 					</ul>
                 </div>
@@ -162,28 +185,34 @@
     	<br>
         <br>
         <br>
-                	<center><h2>פעילויות פעילות</h2></center>
+                	<center><h2>active projects</h2></center>
 					<ul>
 					{% for discussion in discussions_active_by_increase_time_left %}
 					    <li  class="list-group-item">
 					    	{% if discussion.owner == applicabale_user %}
 					    	<strong>
 					    	{% endif %}
-						    	<a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
-						    	  רוצה עזרה ב  
+                                {% if user !=  discussion.owner %}
+                                <a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">
+                                {{ discussion.owner.get_full_name|default:discussion.owner.username }}
+                                </a>
+						    	  Need help in 
+                                {% else %}
+                                You need help in
+                                {% endif %}
 						    	{{ discussion.title }}
 						    	{{ discussion.updated_at|date }}
-						    	עלולה להינעל  
+						    	might be inactivated by  
 						    	{{ discussion.locked_at|naturaltime }}
 					
-							<a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a>
+							<a class="btn btn-success" href="{{ discussion.get_absolute_url }}">Details</a>
 					    	{% if discussion.owner == applicabale_user %}
 					    	</strong>
 					    	{% endif %}
 						</li> 
 					{% empty %}
 					    <li class="list-group-item">
-					    <a class="btn btn-success"href="{% url 'coplay:add_discussion' %}">התחלת פעילות חדשה</a>
+					    <a class="btn btn-success"href="{% url 'coplay:add_discussion' %}">Open new project</a>
 					    </li>
 					{% endfor %}
 					</ul>
@@ -194,7 +223,7 @@
     	<br>
         <br>
         <br>
-                	<center><h2>פעילויות לא פעילות</h2></center>
+                	<center><h2>inactive projects</h2></center>
 					<ul>
 					{% for discussion in discussions_locked_by_increase_locked_at %}
 						<li class="list-group-item">
@@ -202,20 +231,24 @@
 					    	<strong>
 					    	{% endif %}
 
-							<a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>		    	
-				    	  רצה/תה  עזרה ב  
-				    		{{ discussion.title }}
+                                {% if user !=  applicabale_user %}
+                                <a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ applicabale_user.get_full_name|default:applicabale_user.username }}</a>
+                                Asked for help
+                                    {% else %}
+				    	  You'd asked help in  
+                                {% endif %}	    	
+				    		{{ discussion.title }}.
 				    	
-				    	  הפעילות ננעלה  
+				    	  and now it is inactive  
 			              	{{ discussion.locked_at|naturaltime }}
 						
-							<a class="btn btn-success" href="{{ discussion.get_absolute_url }}">פרטים</a>
+							<a class="btn btn-success" href="{{ discussion.get_absolute_url }}">Details</a>
 					    	{% if discussion.owner == applicabale_user %}
 					    	</strong>
 					    	{% endif %}
 						</li> 
 					{% empty %}
-					    <center><li class="list-group-item">אין</li></center>
+					    <center><li class="list-group-item">None</li></center>
 					{% endfor %}
 					</ul>
 				
@@ -233,7 +266,9 @@
     	<br>
         <br>
         <br>
-                	<center><h2>משימות אישיות שהושלמו</h2></center>
+                	<center><h2>{% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your's{% endif %}
+                        achived goals
+                        </h2></center>
 	                	<ul>
 					{% for task in tasks_closed_by_reverse_time %}
 					
@@ -243,18 +278,32 @@
 					 			{% endif %}
 					 			
 					 			{{task.goal_description|urlize|linebreaks}}<br>
-					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
-					 			נסגרה ב {{task.closed_at |date:"d/n/Y H:i" }} 
-					על ידי: {{ task.closed_by.get_full_name|default:task.closed_by.username}}
+					 			responsible for is
+                                     {% if user !=  task.responsible %}
+                                     <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a>,
+                                     {% else %}
+                                     you,
+                                     {% endif %}
+
+                                     
+                                     had been achieved by {{task.closed_at |date:"d/n/Y H:i" }}.
+                                     Confirmed by
+
+                                     {% if user !=  task.closed_by %}
+                                     <a  href="{% url 'coplay:user_coplay_report'  task.closed_by.username %}">{{ task.closed_by.get_full_name|default:task.closed_by.username }}</a>.
+                                     {% else %}
+                                     you.
+                                     {% endif %}
+
 					 			
-					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
+					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >Details</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}
 					 			</strong>
 					 			{% endif %}
 	
 					 		</li>
 					{% empty %}
-					    <center><li class="list-group-item">אין</li></center>
+					    <center><li class="list-group-item">None</li></center>
 					{% endfor %}
 					</ul>
 				
@@ -264,27 +313,45 @@
     	<br>
         <br>
         <br>
-                	<center><h2>משימות שבוטלו בזמן של כולם</h2></center>
+                	<center><h2>everyone's aborted goals</h2></center>
 	                	<ul>
 					{% for task in tasks_failed_by_reverse_update_time  %}
-					
-					 		<li class="list-group-item">
-					 			{% if  task.parent.owner == applicabale_user%}
+
+                            <li class="list-group-item">
+					 			{% if  task.parent.owner != applicabale_user%}
 					 			<strong>
 					 			{% endif %}
 					 			
 					 			{{task.goal_description|urlize|linebreaks}}<br>
-					 			באחריות <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
-					 			{{task.get_status_display}}  {{task.closed_at | naturaltime }}
-					 			על ידי: {{ task.closed_by.get_full_name|default:task.closed_by.username}}
-					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >להרחבה</a></p>
+					 			responsible for is
+                                     {% if user !=  task.responsible %}
+                                     <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a>,
+                                     {% else %}
+                                     you,
+                                     {% endif %}
+
+                                     
+                                     had been aborted by {{task.closed_at |date:"d/n/Y H:i" }}.
+                                     Confirmed by
+
+                                     {% if user !=  task.closed_by %}
+                                     <a  href="{% url 'coplay:user_coplay_report'  task.closed_by.username %}">{{ task.closed_by.get_full_name|default:task.closed_by.username }}</a>.
+                                     {% else %}
+                                     you.
+                                     {% endif %}
+
+					 			
+					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >Details</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}
 					 			</strong>
 					 			{% endif %}
 	
 					 		</li>
+
+
+
 					{% empty %}
-					    <center><li class="list-group-item">אין</li></center>
+					    <center><li class="list-group-item">None</li></center>
 					{% endfor %}
 					</ul>
                 </div>
@@ -303,15 +370,20 @@
     	<br>
         <br>
         <br>
-                	<center><h2>רשימת העוקבים</h2></center>
+                	<center><h2>
+                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your{% endif %}
+                        followers</h2></center>
+
 	               	<ul>
 					{% for follower in followers_list %}
 					
 					 		<li class="list-group-item">
-					 			<a  href="{% url 'coplay:user_coplay_report'  follower.username %}">{{ follower.get_full_name|default:follower.username }}</a>
-  				 		    </li>
+
+                                 {% if user !=  follower %}<a  href="{% url 'coplay:user_coplay_report'  follower.username %}">{{ follower.get_full_name|default:follower.username }}</a>{% else %}you{% endif %}
+
+                            </li>
 					{% empty %}
-					    <center><li class="list-group-item">אין</li></center>
+					    <center><li class="list-group-item">None</li></center>
 					{% endfor %}
 					</ul>
 				
@@ -321,15 +393,24 @@
     	<br>
         <br>
         <br>
-                	<center><h2>עוקב/ת אחרי</h2></center>
+                	<center><h2>
+                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }} is following{% else %}you are following{% endif %}
+                        
+                    </h2></center>
 	               	<ul>
 					{% for following in following_list %}
+
+                           <li class="list-group-item">
+
+                                 {% if user !=  following %}<a  href="{% url 'coplay:user_coplay_report'  following.username %}">{{ following.get_full_name|default:following.username }}</a>{% else %}you{% endif %}
+
+                            </li>
 					
 					 		<li class="list-group-item">
 					 			<a  href="{% url 'coplay:user_coplay_report'  following.username %}">{{ following.get_full_name|default:following.username }}</a>
   				 		    </li>
 					{% empty %}
-					    <center><li class="list-group-item">אין</li></center>
+					    <center><li class="list-group-item">None</li></center>
 					{% endfor %}
 					</ul>
                 </div>

@@ -4,29 +4,29 @@
 {% block content %}  
     <div class="row">
      
-    <a class="btn btn-success " href="#Tags">לרשימת הנושאים</a>
+    <a class="btn btn-success " href="#Tags">Availabale tags</a>
      
     	{% if tag %}
-						<a class="btn btn-success"  href="{% url 'coplay:add_with_tag'  tag.id %}"> לפתיחת פעילות חדשה שקשורה ל {{tag.name}}</a>    	 
+						<a class="btn btn-success"  href="{% url 'coplay:add_with_tag'  tag.id %}">Open a new project, related to {{tag.name}}</a>    	 
 		{% if is_following %}                
-       		<a class="new btn btn-warning" href="{% url 'coplay:stop_follow_tag'  tag.id %}">להפסיק לעקוב</a> 
+       		<a class="new btn btn-warning" href="{% url 'coplay:stop_follow_tag'  tag.id %}">Stop following this tag</a> 
 		{% else %}
-    		<a class="new btn btn-info" href="{% url 'coplay:start_follow_tag'  tag.id %}">להתחיל  לעקוב</a>   
+    		<a class="new btn btn-info" href="{% url 'coplay:start_follow_tag'  tag.id %}">Start following this tag</a>   
 		{% endif %}
     	 
-    		<a class="new btn btn-info" href="{% url 'coplay:start_follow_tag'  tag.id %}">קישור להזמנה</a>   
+    		<a class="new btn btn-info" href="{% url 'coplay:start_follow_tag'  tag.id %}">Get a link for follow tag</a>   
     	 
     	 {%else%}
     	{% endif %}
     
     {%if followers %}
-    <a class="btn btn-success " href="#Followers"> רשימת המתענינים ב{{tag.name}}</a>
+    <a class="btn btn-success " href="#Followers">Follwers of {{tag.name}}</a>
     {%endif%}
     </div>
     <div class="row">
-    <h1>מי צריך עזרה
+    <h1>Projects
     	{% if tag %}
-    	 בנושא {{tag}}?
+    	 that are tagged by {{tag}}
     	 {%else%}?
     	{% endif %}
     	
@@ -39,16 +39,22 @@
             {% if discussion.is_active %}
                 <li class="list-group-item">
                 
-                    <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
-                    רוצה עזרה ב
+                    {% if user !=  discussion.owner %}
+                                <a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">
+                                {{ discussion.owner.get_full_name|default:discussion.owner.username }}
+                                </a>
+						    	  need help in 
+                                {% else %}
+                                You need help in
+                                {% endif %}
                     <a href="{{ discussion.get_absolute_url }}">{{ discussion.title }}</a>
 
 
 <span class="badge">
-                    עלול להינעל
+                   May be considered to be unactive in
                     {{ discussion.locked_at|naturaltime }}</span>
                 {% if discussion.latitude and discussion.longitude %}
-                	<a class="new btn btn-info" href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">מיקום</a>
+                	<a class="new btn btn-info" href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">Location</a>
                 {% else %} 
 	                {% if discussion.location_desc  %}
 	                	<a class="new btn btn-info" href="https://www.google.co.il/maps/place/{{discussion.location_desc}}" target="_blank">{{discussion.location_desc}}</a> 
@@ -58,12 +64,16 @@
             {% else %}
                 <li class="list-group-item">
                 	<div class="text-muted">
-                        <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
-                        רצה/תה עזרה ב
+                        {% if user !=  applicabale_user %}
+                                <a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ applicabale_user.get_full_name|default:applicabale_user.username }}</a>
+                                Asked for help
+                                    {% else %}
+				    	  You'd asked help in  
+                                {% endif %}	  
                         <a href="{{ discussion.get_absolute_url }}">{{ discussion.title }}</a>
                         {{ discussion.updated_at|date }}
                     </div>
-                    הפעילות הוקפאה עקב חוסר נוכחי במשימות חדשות 
+                    and now it is inactive for  
                     {{ discussion.locked_at|naturaltime }}
                 {% if discussion.latitude and discussion.longitude %}
                 	<a class="new btn btn-info" href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">מיקום</a>
@@ -75,7 +85,7 @@
                 </li>
             {% endif %}
         {% empty %}
-            <liclass="list-group-item"> אין פעילויות</li>
+            <li class="list-group-item"> None </li>
         {% endfor %}
     </ul>
     </div>
@@ -85,13 +95,14 @@
     	<br>
         <br>
         <br>
-                	<center><h2> מי עוד מתענין/ת ב{{tag.name}}?</h2></center>
+                	<center><h2>Followers for {{tag.name}}?</h2></center>
 	               	<ul>
-					{% for following in followers %}
+					{% for follower in followers %}
 					
 					 		<li class="list-group-item">
-					 			<a  href="{% url 'coplay:user_coplay_report'  following.username %}">{{ following.get_full_name|default:following.username }}</a>
-  				 		    </li>
+                                 {% if user !=  follower %}<a  href="{% url 'coplay:user_coplay_report'  follower.username %}">{{ follower.get_full_name|default:follower.username }}</a>{% else %}you{% endif %}
+					 			
+                             </li>
 					{% endfor %}
 					</ul>
 	{% endif %}
@@ -102,9 +113,9 @@
     	<br>
         <br>
         <br>
-                	<center><h2>רשימת הנושאים</h2></center>
+                	<center><h2>Tags</h2></center>
     
-		<a class="btn btn-success " href="{% url 'coplay:discussions_list' %}">רשימת כל הפעילויות</a>
+		
 		 
         {% for tag in tags_list %}
         <a class="btn btn-primary " href="{% url 'coplay:discussion_tag_list'  tag.id %}">{{ tag.name }}</a>

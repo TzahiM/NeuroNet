@@ -6,12 +6,12 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <h1>{% trans "Edit" %}</h1>
+            <h1>Edit</h1>
 
         <form method="post">
             {% csrf_token %}
             {{ form }}
-            <button class="btn btn-success">{% trans "Save" %}</button>
+            <button class="btn btn-success">Save</button>
         </form>
 		</div>
 	</div>

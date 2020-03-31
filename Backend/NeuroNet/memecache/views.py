@@ -97,23 +97,28 @@ def users_list(request, pk = None):
         
     currency_name = shop.currency_name
     account_list = Account.objects.order_by("-total_earn")
+
+    search_text = request.GET.get('search_text')
+
     users_rows_list = []
     place = 0
     
     for account in account_list:
         
         add_user = True
-        if account.user.userprofile.segment != segment:
-            add_user = False
-                            
-        if add_user:
-            row = UsersTableRow()
+        if account.user.userprofile.segment == segment:
             place += 1
-            row.place = place
-            row.user = account.user
-            row.total_earn = account.total_earn
-            row.description = account.user.userprofile.description
-            users_rows_list.append(row)
+            if search_text:
+                if not( account.user.userprofile.description and search_text in account.user.userprofile.description):
+                    add_user = False
+            if add_user:
+                row = UsersTableRow()
+                row.place = place
+                row.user = account.user
+                row.total_earn = account.total_earn
+                row.description = account.user.userprofile.description
+                users_rows_list.append(row)
+
         
     return render(request, 'memecache/users_list.html',
                   {'currency_name': currency_name,
@@ -140,7 +145,7 @@ def instructions(request):
     
     instructions_text = """
 
-    על התחלת פעילות חדשה מקבלים         27
+    על Open new project מקבלים         27
     על השלמת משימה עבור משתמש אחר        23
     על ביטול משימה עבור משתמש אחר        19
     על השלמת משימה עבור המשתמש עצמו        17
@@ -194,7 +199,7 @@ def products_list(request, pk):
     shop = get_shop(request.user, pk)
     if None == shop:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'אין גישה לחנות',
+                      {  'message'      :  u'None גישה לחנות',
                        'rtl': 'dir="rtl"'})
         
     product_list = shop.product_set.all().order_by("title")
@@ -229,13 +234,13 @@ def update_product_selection(request, pk):
 
             if request.user.userprofile.segment != product.shop.segment:
                 return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'אין גישה למוצר',
+                      {  'message'      :  u'None גישה למוצר',
                        'rtl': 'dir="rtl"'})
                 
             cart = product.shop.get_cart(request.user)
             if cart == None:
                 return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'אין גישה לקניה',
+                      {  'message'      :  u'None גישה לקניה',
                        'rtl': 'dir="rtl"'})
 
             cart.take_items( product , form.cleaned_data['number_of_selected_items'])
@@ -250,14 +255,14 @@ def product_details(request, pk):
     product = get_product(request.user, pk)
     if None == product:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'אין גישה לחנות',
+                      {  'message'      :  u'None גישה לחנות',
                        'rtl': 'dir="rtl"'})
         
     cart = product.shop.get_cart(request.user)
     
     if cart == None:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'אין גישה לחנות',
+                      {  'message'      :  u'None גישה לחנות',
                        'rtl': 'dir="rtl"'})
         
     max_availabale_items = cart.get_cart_number_of_selected_items(product) + cart.get_number_of_additional_items_to_select( product )
@@ -446,7 +451,7 @@ def cart_details(request, pk):
         cart = Cart.objects.get(id = int(pk))
     except Cart.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'לא נמצאה עגלה',
+                      {  'message'      :  'unknownה עגלה',
                        'rtl': 'dir="rtl"'})
         
     
@@ -472,7 +477,7 @@ def cart_checkout(request, pk):
         cart = Cart.objects.get(id = int(pk))
     except Cart.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'לא נמצאה עגלה',
+                      {  'message'      :  u'unknownה עגלה',
                        'rtl': 'dir="rtl"'})
         
     cart.shop.checkout(request.user)    
@@ -503,7 +508,7 @@ def item_voucher_details(request, pk):
         
     if None == get_product( request.user, str( item_voucher.product.id)):
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'אין גישה לחנות',
+                      {  'message'      :  u'None גישה לחנות',
                        'rtl': 'dir="rtl"'})
         
     return render(request, 'memecache/item_voucher_details.html',
@@ -522,7 +527,7 @@ def item_voucher_send(request, pk):
         
     if None == get_product( request.user, str( item_voucher.product.id)):
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'אין גישה לחנות',
+                      {  'message'      :  u'None גישה לחנות',
                        'rtl': 'dir="rtl"'})
 
     if item_voucher.customer != request.user:
@@ -562,7 +567,7 @@ def item_voucher_use(request, pk):
         
     if None == get_product( request.user, str( item_voucher.product.id)):
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'אין גישה לחנות',
+                      {  'message'      :  u'None גישה לחנות',
                        'rtl': 'dir="rtl"'})
         
     if item_voucher.used:

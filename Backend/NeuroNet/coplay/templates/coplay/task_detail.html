@@ -3,63 +3,64 @@
 {% load humanize %}
 
 {% block content %}
-<center>
-	{% if False == user.is_authenticated %}
-		<h1>כדי לאשר שינוי מצב של משימה של מישהו אחר או לעדכן את התקדמות המשימה שלך צריך להיכנס למערכת</h1>
-	
-		<a class="btn btn-success" href="{% url 'public_fulfillment:sign_up' %}?next={{ request.path }}">רישום</a>
-		<a class="btn btn-success" href="{% url 'login' %}?next={{request.path}}">כניסה למשתמש קיים</a>
-    {% endif %}
-	<a class="btn btn-success" href="{% url 'coplay:coplay_root' %}">הסברים</a>
-</center>	
+<br />
+<br />
+<br />
 	
     <div class="row">
         <div class="col-md-12">
 
             	<h2> {{task.goal_description |urlize|linebreaks}}</h2>
             	{%if task.result_picture.url != '/media/False' and task.result_picture %}
-                <img src={{task.result_picture.url}} class="img-responsive" alt="..." width="400" height="280">
+                <img src={{task.result_picture.url}} class="img-responsive">
             	{% endif %}
             	{%if user == task.responsible %}
-					<p>באחריותך</p>
+					<p>Your are responsible for</p>
 					{% if not task.get_time_until_target %}
 						{% if task.get_status_description%}
-						<p><b>הודעתך האחרונה היא: {{task.get_status_description |urlize|linebreaks}} </b></p>					
+						<p><b>Your latest update  {{task.get_status_description |urlize|linebreaks}} </b></p>					
 						{% endif %}
 					{% endif %}
             	{%else%}
-					<p>	באחריות:  <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a></p>
+					<p>	responsible for:  <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a></p>
 					{% if task.get_status_description%}
-						<p><b>שהודיע/ה  ש: {{task.get_status_description |urlize|linebreaks}} </b></p>
+						<p><b>Updated that {{task.get_status_description |urlize|linebreaks}} </b></p>
 					{%endif%}
 					{% if close_possible %}
 						<center>
 							{% if task.get_status != task.CLOSED %}
-								<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">לסגירת משימה</a>
+								<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">Confirm completion</a>
 							{% endif %}
 							{% if task.get_status != task.STARTED %}
-								<a class="btn btn-warning" href= "{% url 'coplay:re_open_task' task.id %}">לפתיחה מחדש של  המשימה</a>
+								<a class="btn btn-warning" href= "{% url 'coplay:re_open_task' task.id %}">Reopen this goal</a>
 							{% endif %}
 							{% if task.get_status != task.ABORTED %}
-								<a class="btn btn-danger" href= "{% url 'coplay:abort_task' task.id %}">לביטול המשימה</a>
+								<a class="btn btn-danger" href= "{% url 'coplay:abort_task' task.id %}">Abort</a>
 							{% endif %}
 						</center>
 
 					{% endif %}
 
             	{% endif %}
-				<p>המשימה רשומה כ{{task.get_status_display}}</p>
-				<p>עדכון אחרון : {{task.updated_at| naturaltime }}</p>				
+				<p>Knowm at {{task.get_status_display}}</p>
+				<p>Updated at {{task.updated_at| naturaltime }}</p>				
         </div>         
     </div>        
             
-	<p> התחילה : {{task.created_at |date:"d/n/Y H:i" }}</p>
-	<p> זמן לסיום : {{task.target_date | naturaltime }}</p>
-	<p>תאריך יעד : {{task.target_date |date:"d/n/Y H:i" }}</p>       
+	<p>Started on {{task.created_at |date:"d/n/Y H:i" }}</p>
+	<p>Target complition  {{task.target_date | naturaltime }}</p>
+	<p>Target date {{task.target_date |date:"d/n/Y H:i" }}</p>       
 	
 	{% if task.closed_at %}
-		<p> {{task.closed_at|date:"d/n/Y H:i"  }} אושר ב</p>
-		<p>			על ידי: <a  href="{% url 'coplay:user_coplay_report'  task.closed_by.username %}">{{ task.closed_by.get_full_name|default:task.closed_by.username }}</a>		</p>
+		<p> {{task.closed_at|date:"d/n/Y H:i"  }}Approved by</p>
+		<p>	 
+            {% if user !=  task.closed_by %}
+    <a  href="{% url 'coplay:user_coplay_report'  task.closed_by.username %}">{{ task.closed_by.get_full_name|default:task.closed_by.username }}</a>		
+            	{%else%}
+        you
+	{% endif %}
+        
+        </p>
 	{% endif %}
 
 	{% if update_task_form  %}
@@ -72,16 +73,18 @@
 				{% endfor %}
 				<br>
 				<br>
-				<input type="submit" class="btn btn-success" value=" עדכון המשתתפים על המצב של המשימה ובקשה  שיסגרו או יבטלו או יפתחו אותה מחדש" />
+				<input type="submit" class="btn btn-success" value="Notify other project's followers" />
 		</form>
 	{% endif %}
 	<br>
 	
 	{% if task.parent %}
-	<p>  :המשימה קשורה לפעילות בנושא {{task.parent.title |urlize|linebreaks}} <br>
-		<a class="btn btn-success" href="{{ task.parent.get_absolute_url }}">פרטים</a>
+	<p>Related to {{task.parent.title |urlize|linebreaks}} <br>
+		<a class="btn btn-success" href="{{ task.parent.get_absolute_url }}">Details</a>
 	{% endif %}
-	                                                 <a class="new btn btn-success" href="/labs/coplay/add_with_url/?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{task.goal_description}}">לפתיחה פעילות שקשור  למשימה הזו</a>
+	                                                 <a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{task.goal_description}}">
+        
+       Open a project related for achieve this goal</a>
 </div>	
 {% endblock %}
 

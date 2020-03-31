@@ -6,12 +6,12 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <h1>מהי התגובה שלך?</h1>
+            <h1>What is your feedback</h1>
 
         <form method="post"  enctype="multipart/form-data">{% csrf_token %}
             {% csrf_token %}
             {{ form }}
-            <button class="btn btn-success">{% trans "Save" %}</button>
+            <button class="btn btn-success">Save</button>
         </form>
 
 

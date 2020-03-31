@@ -22,7 +22,7 @@ from django.urls import path
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
-from public_fulfillment.views import labs_root, about, root
+from public_fulfillment.views import about, root
 from django.contrib.auth.views import LoginView, LogoutView
 from public_fulfillment import forms
 from rest_framework.authtoken.views import obtain_auth_token
@@ -35,7 +35,7 @@ urlpatterns = [
     path('CoronaVirusHackathon/coplay/', include(('coplay.urls', 'coplay'), 'coplay')),
     path('CoronaVirusHackathon/memecache/', include(('memecache.urls', "memecache"), "memecache")),
     path('CoronaVirusHackathon/site/', include(('public_fulfillment.urls', "public_fulfillment"), "public_fulfillment")),
-    path('labs/', labs_root, name="labs_root"),
+    #path('labs/', labs_root, name="labs_root"),
     path('login/',
         LoginView.as_view
         (

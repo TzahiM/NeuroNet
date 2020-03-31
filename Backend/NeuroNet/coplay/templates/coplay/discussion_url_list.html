@@ -2,10 +2,13 @@
 {%  load humanize %}
 
 {% block content %}  
-    <div class="row">    	
-    <center><h1>
+    <div class="row"> 
+        <br />
+        <br />
+        
+    <h1>
         {% if search_url %}
-        פעילויות שקשורות ל
+        projects that are already related to
             <a href="{{search_url}}">
             {% if url_text %}
                 {{ url_text }}
@@ -17,56 +20,79 @@
             {{list_title}}
         {% endif %}                
         
-        </h1></center>
+        </h1>
+        <br />
+        <br />
+        <br />
+     
+        <br />
     </div>
     <div class="row">
     	{% if applicabale_discussions_list %}
 		    <ul>
-		        {% for discussion in applicabale_discussions_list %}
-		            {% if discussion.is_active %}
-		                <li class="list-group-item">
-		                
-		                    <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
-		                    רוצה עזרה ב
-		                    <a href="{{ discussion.get_absolute_url }}">{{ discussion.title }}</a>
-		
-		
-		<span class="badge">
-		                    עלול להינעל
-		                    {{ discussion.locked_at|naturaltime }}</span>
-		                {% if discussion.latitude and discussion.longitude %}
-		                	<a class="new btn btn-info" href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">מיקום</a>
-		                {% else %} 
-			                {% if discussion.location_desc  %}
-			                	<a class="new btn btn-info" href="https://www.google.co.il/maps/place/{{discussion.location_desc}}" target="_blank">{{discussion.location_desc}}</a> 
-			                {% endif %}                
-		                {% endif %}                
-		                </li>
-		            {% else %}
-		                <li class="list-group-item">
-		                	<div class="text-muted">
-		                        <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
-		                        רצה/תה עזרה ב
-		                        <a href="{{ discussion.get_absolute_url }}">{{ discussion.title }}</a>
-		                        {{ discussion.updated_at|date }}
-		                    </div>
-		                    הפעילות הוקפאה עקב חוסר נוכחי במשימות חדשות 
-		                    {{ discussion.locked_at|naturaltime }}
-		                {% if discussion.latitude and discussion.longitude %}
-		                	<a class="new btn btn-info" href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">מיקום</a>
-		                {% else %} 
-			                {% if discussion.location_desc  %}
-			                	<a class="new btn btn-info" href="https://www.google.co.il/maps/place/{{discussion.location_desc}}" target="_blank">{{discussion.location_desc}}</a> 
-			                {% endif %}                
-		                {% endif %}                
-		                </li>
-		            {% endif %}
-		        {% empty %}
-		            <liclass="list-group-item"> אין פעילויות</li>
-		        {% endfor %}
+                  {% for discussion in applicabale_discussions_list%}
+            {% if discussion.is_active %}
+                <li class="list-group-item">
+                
+                    {% if user !=  discussion.owner %}
+                                <a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">
+                                {{ discussion.owner.get_full_name|default:discussion.owner.username }}
+                                </a>
+						    	  need help in 
+                                {% else %}
+                                You need help in
+                                {% endif %}
+                    <a href="{{ discussion.get_absolute_url }}">{{ discussion.title }}</a>
+
+
+<span class="badge">
+                   May be considered to be unactive in
+                    {{ discussion.locked_at|naturaltime }}</span>
+                {% if discussion.latitude and discussion.longitude %}
+                	<a class="new btn btn-info" href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">Location</a>
+                {% else %} 
+	                {% if discussion.location_desc  %}
+	                	<a class="new btn btn-info" href="https://www.google.co.il/maps/place/{{discussion.location_desc}}" target="_blank">{{discussion.location_desc}}</a> 
+	                {% endif %}                
+                {% endif %}                
+                </li>
+            {% else %}
+                <li class="list-group-item">
+                	<div class="text-muted">
+                        {% if user !=  applicabale_user %}
+                                <a  href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ applicabale_user.get_full_name|default:applicabale_user.username }}</a>
+                                Asked for help
+                                    {% else %}
+				    	  You'd asked help in  
+                                {% endif %}	  
+                        <a href="{{ discussion.get_absolute_url }}">{{ discussion.title }}</a>
+                        {{ discussion.updated_at|date }}
+                    </div>
+                    and now it is inactive for  
+                    {{ discussion.locked_at|naturaltime }}
+                {% if discussion.latitude and discussion.longitude %}
+                	<a class="new btn btn-info" href="https://www.google.co.il/maps/@{{discussion.latitude}},{{discussion.longitude}},15z" target="_blank">מיקום</a>
+                {% else %} 
+	                {% if discussion.location_desc  %}
+	                	<a class="new btn btn-info" href="https://www.google.co.il/maps/place/{{discussion.location_desc}}" target="_blank">{{discussion.location_desc}}</a> 
+	                {% endif %}                
+                {% endif %}                
+                </li>
+            {% endif %}
+        {% empty %}
+            <li class="list-group-item"> None </li>
+        {% endfor %}
 		    </ul>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{search_url}}&parent_url_text={{url_text}}">open another project<br> that is also related to <br>{{url_text}}</a>
     	{% else%}
-			<a class="new btn btn-success" href="/labs/coplay/add_with_url/?parent_url={{search_url}}&parent_url_text={{page_name}}">לפתיחה פעילות חדשה הקשורה ב{{parent_url_text}}</a>
+			<a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{search_url}}&parent_url_text={{page_name}}">open a project that is related to <br>{{parent_url_text}}</a>
     	{%endif%}
 
     </div>

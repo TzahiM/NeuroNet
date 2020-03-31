@@ -10,15 +10,15 @@
 
   <p>
   	
-      <a href="http://{{ROOT_URL}}{{discussion.get_absolute_url}}{{id}}">אל הפעילות המלאה</a>
+      <a href="http://{{ROOT_URL}}{{discussion.get_absolute_url}}{{id}}">Project's homepage</a>
       <br>
       <br>
       {% if logged_in_user %}
-      <a href="http://{{ROOT_URL}}{% url 'coplay:user_coplay_report'  logged_in_user %}">לעמוד האישי של {{ logged_in_user.get_full_name|default:logged_in_user.username }}</a>
+      <a href="http://{{ROOT_URL}}{% url 'coplay:user_coplay_report'  logged_in_user %}">profile{{ logged_in_user.get_full_name|default:logged_in_user.username }}</a>
       <br>
       <br>
       {% endif%}
-      <a href="http://{{ROOT_URL}}{% url 'coplay:stop_follow'  discussion.id %}">להפסיק לקבל עדכונים אודות הפעילות</a>
+      <a href="http://{{ROOT_URL}}{% url 'coplay:stop_follow'  discussion.id %}">Stop updates or this project only</a>
    </p>
       
 

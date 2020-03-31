@@ -3,25 +3,17 @@
 
 {% block content %}
 <script>
-function searchFunction() {
-  // Declare variables
-    var input, filter, ul, li, a, i, txtValue;
-    input = document.getElementById("myInput");
-    filter = input.value.toUpperCase();
-    ul = document.getElementById("myUL");
-    li = ul.getElementsByTagName("tr");
-    for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("p")[0];
-        txtValue = a.textContent || a.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-        } else {
-            li[i].style.display = "none";
-        }
-    }
-}
+
+
+
 </script>
  			<div class="row">
+                 <br />
+                 <br />
+                 <br />
+              {#   <input type="search" id="myInput" onkeyup="searchFunction()" placeholder="Search in subttles" title="partial text">#}
+                 <br />
+
  				<div class="col-sm-3 col-md-12" id = "UserList">					
  					<br>
 					{% if tags_list %}
@@ -33,7 +25,7 @@ function searchFunction() {
  					<br>
  					<h1><center>{{page_name}}</center></h1>
  					<br>
-              {#  <input type="search" id="myInput" onkeyup="searchFunction()" placeholder="Search in description" title="partial text">#}
+            
 
  					<br>
  				<div class="table-responsive">
@@ -41,9 +33,12 @@ function searchFunction() {
 				      <caption></caption>
 				      <thead>
 				         <tr>
-				            <th><center>Place number</center></th>
+				            <th><center>Rated</center></th>
 				            <th>member</th>
-				            <th>earning</th>
+				            <th>scored
+                             <br />
+                             ({{currency_name}})
+                             </th>
 				            <th></th>
 				         </tr>
 				      </thead>
@@ -53,7 +48,7 @@ function searchFunction() {
 				         <tr>
 				         	<td><center>{{user_row.place}}</center></td>
 				            <td><a  href="{% url 'coplay:user_coplay_report'  user_row.user.username %}">{{ user_row.user.get_full_name|default:user_row.user.username }}</a></td>
-				            <td>{{ user_row.total_earn}} {{currency_name}}</td>
+				            <td>{{ user_row.total_earn}} </td>
 				            <td><p>{{ user_row.description|urlize|linebreaks}}</p> </td>
 				         </tr>
 				         {% empty %}

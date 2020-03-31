@@ -6,25 +6,21 @@
 {% block content %}
     <div class="row">
         <div id="discussion-detail" class="col-md-12">
-            <a class="btn btn-default pull-right"
-               href="{% url 'coplay:coplay_root' %}">
-                {% trans "Coplay Info" %} 
-                &raquo;
-            </a>
+            
 
             <div class="title"><h1>{{ discussion.title }}</h1></div>
 
             <div class="delete"><h3>
                <a class="btn btn-info pull-right"
                href="{% url 'coplay:start_follow' discussion.id %}">
-               קישור להזמנה</a>
+               get a link to invite</a>
                 {% if user == discussion.owner %}
                     <a class="btn btn-danger pull-right"
                        href="{% url 'coplay:discussion_delete' discussion.id %}">
-                       {% trans "Delete Discussion" %}</a>
-                    {% trans "Your Activity" %}
+                       Delete project</a>
+                    Your project
                 {% else %}
-                    {% trans "Activity Of" %}
+                    Project of
                     <a href="{% url 'coplay:user_coplay_report'  discussion.owner.username %}">{{ discussion.owner.get_full_name|default:discussion.owner.username }}</a>
                 {% endif %}
                 {% if discussion.latitude and discussion.longitude %}
@@ -35,12 +31,12 @@
 	                {% endif %}      
                 {% endif %}                
                 {% if discussion.parent_url  %}
-                שנוצרה בעקבות <a  href={{discussion.parent_url}} target="_blank">  {{discussion.parent_url_text}}</a> 
+                related to<a  href={{discussion.parent_url}} target="_blank">  {{discussion.parent_url_text}}</a> 
                 {% endif %}      
                 {% if is_a_follower %}                
-                	<a class="new btn btn-warning" href="{% url 'coplay:stop_follow' discussion.id %}">להפסיק לקבל עדכונים</a> 
+                	<a class="new btn btn-warning" href="{% url 'coplay:stop_follow' discussion.id %}">Stop following this project</a> 
                 {% else %}
-                	<a class="new btn btn-info" href="{% url 'coplay:start_follow' discussion.id %}">מענין, רוצה לקבל עדכונים</a>   
+                	<a class="new btn btn-info" href="{% url 'coplay:start_follow' discussion.id %}">Start following this project </a>   
                 {% endif %}
         
             </h3></div>
@@ -49,15 +45,15 @@
 
 
     <div id="discussion-shortcuts" class="panel panel-default">
-        <div class="panel-body"><a href="#Feedbacks">{% trans "Discussion Feedbacks" %}</a>
+        <div class="panel-body"><a href="#Feedbacks">Feedbacks</a>
             &bull;
-            <a href="#Decisions">רעיונות להצבעה</a>
+            <a href="#Decisions">Surveys/a>
             &bull;
-            <a href="#Tasks">{% trans "Discussion Tasks" %}</a>
+            <a href="#Tasks">Goals</a>
             &bull;
-            <a href="#Followers">מקבלי/ות העדכונים</a>
+            <a href="#Followers">This projects's followers</a>
             &bull;
-            <a href="#Views">{% trans "Discussion Views" %}</a>
+            <a href="#Views">Project views/a>
             &bull;
             <a href="#AnonymousViews">צפייה אנונימית</a>
         </div>
@@ -66,39 +62,38 @@
     <div id="discussion-deadline">
     {% if discussion.is_active %}
         <div class="alert alert-warning">
-            {% trans "Discussion Deadline" %}
+            may be related as inactive in
             {{ discussion.locked_at | timeuntil }}
         </div>
         
                      
     {% else %}
         <div class="alert alert-error">
-        	הפעילות הוקפאה
-            להפשרה  קח/י יוזמה והמשך/י ב<a class="new btn btn-info"
-               href="{% url 'coplay:create_task' discussion.id %}">{% trans "Create Task" %}</a>   
+        	This project is currently not active. It is a good idea to <a class="new btn btn-info"
+               href="{% url 'coplay:create_task' discussion.id %}">Set your new goal for support this project</a>   
         </div>
     {% endif %}
-												<a class="new btn btn-success" href="/labs/coplay/add_with_url/?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{page_name}}">לפתיחה פעילות קשורה</a>
+												<a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{page_name}}">Add a new related project</a>
 												{% if related_discussions %}
-                                                <a class="new btn btn-success" href="/labs/coplay/related_discussions_of_url/?parent_url={{ROOT_URL}}{{ request.path }}">לרשימת הפעילויות הקשורות</a>
+                                                <a class="new btn btn-success" href="{% url 'coplay:related_discussions_of_url' %}?parent_url={{ROOT_URL}}{{ request.path }}">See related projects</a>
                                                 {% endif %}
                                                  
     <div id="discussion-body" class="well">
         {% if user == discussion.owner and discussion.is_active%}
             <a class="btn btn-info pull-right"
-               href="{% url 'coplay:discussion_update' discussion.id %}">{% trans "Edit" %}</a>
+               href="{% url 'coplay:discussion_update' discussion.id %}">Edit</a>
         {% endif %}
 
-        <h4>{% trans "Discussion Goals and Help Requested" %}</h4>
+        <h4>Project's description</h4>
 
         <p>{{ discussion.description|urlize|linebreaks }}</p>
 
         <p>
             <i id="Feedbacks">
-                {% trans "Created:" %}
+                Created
                 {{ discussion.created_at | naturaltime }}
                 &bull;
-                 היעדים עודכנו
+                 description updated
                  {{ discussion.description_updated_at | naturaltime }}
                 {% trans "Updated:" %}
                 {{ discussion.updated_at | naturaltime }}
@@ -115,7 +110,7 @@
     {% if discussion.owner != user%}
         <p>
             <a class="btn btn-info"
-               href="{% url 'coplay:create_feedback' discussion.id %}">{% trans "Create Feedback" %}</a>
+               href="{% url 'coplay:create_feedback' discussion.id %}">Add survay</a>
         </p>
     {% endif %}
     </div>
@@ -124,7 +119,7 @@
         <div class="col-sm-6 col-md-3" >
             <div class="panel panel-default" id="encouragement">
                 <div class="panel-heading">
-                    {% trans "Discussion Encouragements" %}
+                   Encouragements
                 </div>
 
 
@@ -135,9 +130,7 @@
                                     {% if feedback.created_at < discussion.description_updated_at %}
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
-                                {% if feedback.voice_recording  %}
-								<a href={{feedback.voice_recording.url}} target="_blank" >הקלטה</a>                               
-                                {% endif %}
+                                
                             </div>
                         </li>
                     {% endfor %}
@@ -148,7 +141,7 @@
         <div class="col-sm-6 col-md-3">
             <div class="panel panel-default" id="cooperation">
                 <div class="panel-heading">
-                    {% trans "Discussion Cooperations" %}
+                    Willing to cooporate
                 </div>
 
                 <ul class="list-group">
@@ -159,9 +152,7 @@
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
                             </div>
-                                {% if feedback.voice_recording  %}
-								<a href={{feedback.voice_recording.url}} target="_blank" >הקלטה</a>                               
-                                {% endif %}
+                                
                         </li>
                     {% endfor %}
                 </ul>
@@ -171,7 +162,7 @@
         <div class="col-sm-6 col-md-3" >
             <div class="panel panel-default" id="intuition">
                 <div class="panel-heading">
-                    {% trans "Discussion Intuitions" %}
+                    Intuitions
                 </div>
 
                 <ul class="list-group">
@@ -181,9 +172,7 @@
                                     {% if feedback.created_at < discussion.description_updated_at %}
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
-                                {% if feedback.voice_recording  %}
-								<a href={{feedback.voice_recording.url}} target="_blank" >הקלטה</a>                               
-                                {% endif %}
+                                
                             </div>
                         </li>
                     {% endfor %}
@@ -193,7 +182,7 @@
         <div class="col-sm-6 col-md-3">
             <div class="panel panel-default" id="advice">
                 <div class="panel-heading">
-                    {% trans "Discussion Advices" %}
+                    Advices
                 </div>
 
 
@@ -204,9 +193,7 @@
                                    {% if feedback.created_at < discussion.description_updated_at %}
                                         class="text-muted"                            {% endif %}    >
                                 <a href="{% url 'coplay:user_coplay_report'  feedback.user.username %}">{{ feedback.user.get_full_name|default:feedback.user.username }}</a>:{{ feedback.content|urlize|linebreaks }} {{ feedback.created_at | naturaltime }}
-                                {% if feedback.voice_recording  %}
-								<a href={{feedback.voice_recording.url}} target="_blank" >הקלטה</a>                               
-                                {% endif %}
+                                
                             </div>
                         </li>
                     {% endfor %}
@@ -224,11 +211,11 @@
         <br>
 
             <a class="new btn btn-info pull-right"
-               href="{% url 'coplay:create_task' discussion.id %}">{% trans "Create Task" %}</a>
+               href="{% url 'coplay:create_task' discussion.id %}">Set a new goal for help this project</a>
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    {% trans "Tasks" %}
+                    Goal
                 </div>
 
 
@@ -242,10 +229,10 @@
                             	{{ task.get_status_display }} {{ task.closed_at | naturaltime }}
                             {% else %}
 								   {{ task.get_status_display }} {{ task.target_date | naturaltime }}
-								   תסתיים    
+								   Ended in    
 							{% endif %}
                             <a class="btn btn-success" href={{ task.get_absolute_url }}>
-                                    {% trans "Details" %}</a>
+                                    Details</a>
                             
 
                         </li>
@@ -262,14 +249,14 @@
         <br>
             {% if add_decision_form and discussion.is_active%}
                         <a class="new btn btn-info pull-right"
-                           href="{% url 'coplay:create_decision' discussion.id %}">הוספת רעיון נוסף להצבעה</a>
+                           href="{% url 'coplay:create_decision' discussion.id %}">Add a survay</a>
             {% endif %}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     {% if user == discussion.owner %}
-                        הרעיונות שהעמדת להצבעה  
+                        Your survays 
                     {% else %}
-                        רעיונות להצבעה
+                        Survays
                     {% endif %}
                 </div>
 
@@ -278,11 +265,11 @@
                     <ul class="list-group">
                         {% for decision in list_decision %}
                             <li class="list-group-item">{{ decision.content|urlize|linebreaks }}
-                                {% trans "Created" %} 
+                                Created at 
                                 {{ decision.created_at | naturaltime }}
-                                עם {{ decision.get_number_of_votes }} הצבעות
+                                With {{ decision.get_number_of_votes }} Votes
                                 {% if vote_form and user != discussion.owner %}
-                                    <h5>{% trans "Your Opinion" %}</h5>
+                                    <h5>Please vote</h5>
                                     <form action="{% url 'coplay:vote' decision.id %}"
                                           method="post">{% csrf_token %}
                                         {% for field in vote_form %}
@@ -292,19 +279,19 @@
                                             </div>
                                         {% endfor %}
                                         <input type="submit"
-                                               value="{% trans "Submit Opinion" %}"/>
+                                               value="Submit"/>
                                     </form>
                                 {% else %}
                                     <div id="rating">{% trans "Average Vote" %} {{ decision.get_vote_level_name }} </div>
 
                                 {% endif %}
-								<a class="new btn btn-success" href="/labs/coplay/add_with_url/?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text= רעיון שהועלה ב{{page_name}} ">להוציא לפועל את הרעיון</a>
+								<a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text= An idea from {{page_name}} ">Start a new project for achieve this goal</a>
                                 
                             </li>
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p>אין רעיונות להצבעה</p>
+                    <p>None</p>
                 {% endif %}
             </div>
 
@@ -320,7 +307,7 @@
 
 
             <div class="panel panel-default">
-                <div class="panel-heading">מקבלי/ות העדכונים
+                <div class="panel-heading">Followers
                 </div>
 
 
@@ -328,7 +315,12 @@
                     {% for follower in list_followers %}
 
                         <li class="list-group-item">
-                            <a  href="{% url 'coplay:user_coplay_report'  follower.username %}">{{ follower.get_full_name|default:follower.username }}</a> 
+                            {% if user !=  follower %}
+                                <a  href="{% url 'coplay:user_coplay_report'  follower.username %}">{{ follower.get_full_name|default:follower.username }}</a> 
+                            {% else %}
+                            You
+                            {% endif %}
+
                         </li>
                     {% endfor %}
                 </ul>
@@ -345,7 +337,7 @@
 
 
             <div class="panel panel-default">
-                <div class="panel-heading">{% trans "Discussion Views" %}
+                <div class="panel-heading">Project Views
                 </div>
 
 
@@ -353,12 +345,12 @@
                     {% for viewer in list_viewers %}
 
                         <li class="list-group-item">
-                            {% trans "Recent View was at" %}   {{ viewer.views_counter_updated_at | naturaltime }}
-                            {% trans "By" %}
+                            Recent View   {{ viewer.views_counter_updated_at | naturaltime }}
+                            by
                             <a href="{% url 'coplay:user_coplay_report'  viewer.user.username %}">{{ viewer.user.get_full_name|default:viewer.user.username }}</a>
-                            {% trans "Total" %}
+                            Total of
                             {{ viewer.get_views_counter }} 
-                            {% trans "Views" %} 
+                            views 
                         </li>
                     {% endfor %}
                 </ul>
@@ -374,7 +366,7 @@
 
 
             <div class="panel panel-default">
-                <div class="panel-heading">צפייה אנונימית
+                <div class="panel-heading">Anonymous views
                 </div>
 
 
@@ -382,18 +374,18 @@
                     {% for viewer in list_anonymous_viewers %}
 
                         <li class="list-group-item">
-                            {% trans "Recent View was at" %}   {{ viewer.views_counter_updated_at | naturaltime }}
-                            {% trans "By" %}
+                            Recent View   {{ viewer.views_counter_updated_at | naturaltime }}
+                            
                             {% if viewer.get_user %}
-                            ככל הנראה
+                           Probably at
                             	<a href="{% url 'coplay:user_coplay_report'  viewer.get_user.username %}">{{ viewer.get_user.get_full_name|default:viewer.get_user.username }}</a>
                             	{{viewer.anonymous_visitor.id}} 
                             {% else %}
-                            אנונימי {{viewer.anonymous_visitor.id}}
+                            Anonymous {{viewer.anonymous_visitor.id}}
                             {% endif %}
-                            {% trans "Total" %}
+                            Total of
                             {{ viewer.get_views_counter }} 
-                            {% trans "Views" %} 
+                            views 
                         </li>
                     {% endfor %}
                 </ul>
