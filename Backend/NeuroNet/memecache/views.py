@@ -40,19 +40,19 @@ def root(request):
         segment = request.user.userprofile.segment
     else:
         segment = None
-        segment_name = u'האתר הציבורי'
+        segment_name = u'Public'
     try:
         shop = Shop.objects.get(segment = segment)
     except Shop.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'עוד לא הוגדרה חנות',
+                      {  'message'      :  'No shop defined',
                        'rtl': 'dir="rtl"'})
     
     try:
         shop = Shop.objects.get(segment = segment)
     except Shop.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'עוד לא הוגדרה חנות',
+                      {  'message'      :  u'No shop defined',
                        'rtl': 'dir="rtl"'})
         
         
@@ -76,12 +76,12 @@ def users_list(request, pk = None):
         segment = request.user.userprofile.segment
     else:
         segment = None
-        segment_name = u'אתר הציבורי'
+        segment_name = u'Public'
     try:
         shop = Shop.objects.get(segment = segment)
     except Shop.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'עוד לא הוגדרה חנות',
+                      {  'message'      :  u'No shop defined',
                        'rtl': 'dir="rtl"'})
         
     page_name = u' '+ u'members of ' + segment_name + u' commnity'
@@ -109,7 +109,7 @@ def users_list(request, pk = None):
         if account.user.userprofile.segment == segment:
             place += 1
             if search_text:
-                if not( account.user.userprofile.description and search_text.casefold() in account.user.userprofile.description.casefold()):
+                if not( account.user.userprofile.description and ( search_text.casefold() in account.user.userprofile.description.casefold()) or search_text.casefold() in account.user.username.casefold()):
                     add_user = False
             if add_user:
                 row = UsersTableRow()
@@ -133,12 +133,12 @@ def instructions(request):
         segment = request.user.userprofile.segment
     else:
         segment = None
-        segment_name = 'אתר הציבורי'
+        segment_name = 'Public'
     try:
         shop = Shop.objects.get(segment = segment)
     except Shop.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'עוד לא הוגדרה חנות',
+                      {  'message'      :  u'No shop defined',
                        'rtl': 'dir="rtl"'})
     
   
@@ -199,7 +199,7 @@ def products_list(request, pk):
     shop = get_shop(request.user, pk)
     if None == shop:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'None גישה לחנות',
+                      {  'message'      :  u'Restricted shop',
                        'rtl': 'dir="rtl"'})
         
     product_list = shop.product_set.all().order_by("title")
@@ -229,12 +229,12 @@ def update_product_selection(request, pk):
                 product = Product.objects.get(id=int(pk))
             except Task.DoesNotExist:
                 return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'מוצר שאיננו קיים',
+                      {  'message'      :  u'Unknown product',
                        'rtl': 'dir="rtl"'})
 
             if request.user.userprofile.segment != product.shop.segment:
                 return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'None גישה למוצר',
+                      {  'message'      :  u'Restricted product',
                        'rtl': 'dir="rtl"'})
                 
             cart = product.shop.get_cart(request.user)
@@ -255,14 +255,14 @@ def product_details(request, pk):
     product = get_product(request.user, pk)
     if None == product:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'None גישה לחנות',
+                      {  'message'      :  u'Restricted shop',
                        'rtl': 'dir="rtl"'})
         
     cart = product.shop.get_cart(request.user)
     
     if cart == None:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'None גישה לחנות',
+                      {  'message'      :  u'Restricted shop',
                        'rtl': 'dir="rtl"'})
         
     max_availabale_items = cart.get_cart_number_of_selected_items(product) + cart.get_number_of_additional_items_to_select( product )
@@ -451,7 +451,7 @@ def cart_details(request, pk):
         cart = Cart.objects.get(id = int(pk))
     except Cart.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  'unknownה עגלה',
+                      {  'message'      :  'Unknown cart',
                        'rtl': 'dir="rtl"'})
         
     
@@ -477,7 +477,7 @@ def cart_checkout(request, pk):
         cart = Cart.objects.get(id = int(pk))
     except Cart.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'unknownה עגלה',
+                      {  'message'      :  u'Unknown cart',
                        'rtl': 'dir="rtl"'})
         
     cart.shop.checkout(request.user)    
@@ -503,12 +503,12 @@ def item_voucher_details(request, pk):
         item_voucher = ItemVoucher.objects.get(id = int(pk))
     except ItemVoucher.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'פרס לא קיים',
+                      {  'message'      :  u'Unknown award',
                        'rtl': 'dir="rtl"'})
         
     if None == get_product( request.user, str( item_voucher.product.id)):
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'None גישה לחנות',
+                      {  'message'      :  u'Restricted shop',
                        'rtl': 'dir="rtl"'})
         
     return render(request, 'memecache/item_voucher_details.html',
@@ -522,17 +522,17 @@ def item_voucher_send(request, pk):
         item_voucher = ItemVoucher.objects.get(id = int(pk))
     except ItemVoucher.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'פרס לא קיים',
+                      {  'message'      :  u'Unknown award',
                        'rtl': 'dir="rtl"'})
         
     if None == get_product( request.user, str( item_voucher.product.id)):
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'None גישה לחנות',
+                      {  'message'      :  u'Restricted shop',
                        'rtl': 'dir="rtl"'})
 
     if item_voucher.customer != request.user:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'זה לא הפרס שלך',
+                      {  'message'      :  u'Not your reward',
                        'rtl': 'dir="rtl"'})
 
     
@@ -545,14 +545,14 @@ def item_voucher_send(request, pk):
     
     to_users_list = [item_voucher.shop.admin_user]
     
-    send_html_message_to_users(u'מימוש פרס של ' + sender_name, html_message, to_users_list)
+    send_html_message_to_users(u'Claim an award of' + sender_name, html_message, to_users_list)
     
     
-    post_update_to_user(item_voucher.shop.admin_user.id, u'מימוש פרס של ' + sender_name,  details_url = item_voucher.get_absolute_url())
+    post_update_to_user(item_voucher.shop.admin_user.id, u'Claim an award of ' + sender_name,  details_url = item_voucher.get_absolute_url())
 
         
     return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'הפרס נשלח למימוש',
+                      {  'message'      :  u'Your award had been sent for confirm its use',
                        'rtl': 'dir="rtl"'})
 
 @login_required
@@ -562,12 +562,12 @@ def item_voucher_use(request, pk):
         item_voucher = ItemVoucher.objects.get(id = int(pk))
     except ItemVoucher.DoesNotExist:
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'פרס לא קיים',
+                      {  'message'      :  u'Unknown award',
                        'rtl': 'dir="rtl"'})
         
     if None == get_product( request.user, str( item_voucher.product.id)):
         return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'None גישה לחנות',
+                      {  'message'      :  u'Restricted shop',
                        'rtl': 'dir="rtl"'})
         
     if item_voucher.used:

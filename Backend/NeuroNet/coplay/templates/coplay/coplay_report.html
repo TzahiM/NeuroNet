@@ -35,10 +35,10 @@
 	                	<p><a href="https://www.google.co.il/maps/place/{{location_desc}}" target="_blank">{{location_desc}}</a></p> 
 	                {% endif %}      
 	            	    
-	            		{{number_of_closed_tasks}} achived goals
+	            		{{number_of_closed_tasks}} achived tasks
 	            	    {{number_of_closed_tasks_for_others}}  for other members 
-	            	    {{number_of_aborted_tasks}}  canceled on time goals 
-	            	    {{number_of_task_closing}} approving goals
+	            	    {{number_of_aborted_tasks}}  canceled on time tasks 
+	            	    {{number_of_task_closing}} approving tasks
 	            	    {{number_of_feedbacks}} comments
 	            	    {{number_of_votes}} votes
 	            	    {{number_of_views}} views
@@ -50,20 +50,20 @@
                         notifications</a>    
 						<a class="btn btn-success" href="#TasksOpen"> 
                         {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your's{% endif %}
-                        goals in progress</a>    
-						<a class="btn btn-success" href="#TasksOpenOthers">others goals in progress</a>
+                        tasks in progress</a>    
+						<a class="btn btn-success" href="#TasksOpenOthers">others tasks in progress</a>
 						<a class="btn btn-success" href="#DiscussionsActive">active projects</a>
 						<a class="btn btn-success" href="#DiscussionsLocked">inactive projects</a>
 						<a class="btn btn-success" href="#TasksClosed">
                         {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your's{% endif %}
-                        achived goals</a>
+                        achived tasks</a>
 						<a class="btn btn-success" href="#TasksFailedAll">
-                        everyone's aborted goals </a>
+                        everyone's aborted tasks </a>
 						<a class="btn btn-success" href="#FollwersList">
                         {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your{% endif %}
                         followers</a>	
 						<a class="btn btn-success" href="#FollowingList">
-                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}you are{% endif %}
+                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}is{% else %}you are{% endif %}
                         following </a>	
 					</center>
                 </div>         
@@ -110,7 +110,7 @@
         <br>
                 	<center><h2>  
                         {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your's{% endif %}
-                        goals in progress                        
+                        tasks in progress                        
                         </h2></center>
 	                	<ul>
 					{% for task in tasks_open_by_increased_time_left %}
@@ -122,7 +122,7 @@
 					 			{{task.goal_description|urlize|linebreaks}}<br>
 					 			responsible for <a  href="{% url 'coplay:user_coplay_report'  task.responsible.username %}">{{ task.responsible.get_full_name|default:task.responsible.username }}</a> 
 					 			  
-					 			Ended in  {{task.target_date | naturaltime }}
+					 			{{task.target_date | naturaltime }}
 					 			
 					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >Details</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}
@@ -142,7 +142,7 @@
     	<br>
         <br>
         <br>
-                	<center><h2>Other's goals in progress</h2></center>
+                	<center><h2>Other's tasks in progress</h2></center>
 	                	<ul>
 					{% for task in tasks_others_open_by_increased_time_left %}
 					
@@ -159,7 +159,7 @@
                                      you
                                      {% endif %}
 					 			  
-					 			Ended in  {{task.target_date | naturaltime }}
+					 			{{task.target_date | naturaltime }}
 					 			
 					 			<p><a class="btn btn-success" href={{ task.get_absolute_url }} >Details</a></p>
 					 			{% if  task.parent.owner == applicabale_user%}
@@ -267,7 +267,7 @@
         <br>
         <br>
                 	<center><h2>{% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your's{% endif %}
-                        achived goals
+                        achived tasks
                         </h2></center>
 	                	<ul>
 					{% for task in tasks_closed_by_reverse_time %}
@@ -313,7 +313,7 @@
     	<br>
         <br>
         <br>
-                	<center><h2>everyone's aborted goals</h2></center>
+                	<center><h2>everyone's aborted tasks</h2></center>
 	                	<ul>
 					{% for task in tasks_failed_by_reverse_update_time  %}
 
@@ -406,9 +406,7 @@
 
                             </li>
 					
-					 		<li class="list-group-item">
-					 			<a  href="{% url 'coplay:user_coplay_report'  following.username %}">{{ following.get_full_name|default:following.username }}</a>
-  				 		    </li>
+					 		
 					{% empty %}
 					    <center><li class="list-group-item">None</li></center>
 					{% endfor %}

@@ -78,7 +78,7 @@ class AddFeedbackForm(forms.Form):
 
 class UpdateDiscussionForm(forms.Form):
     description = forms.CharField(max_length=MAX_MESSAGE_INPUT_CHARS,
-                                  label = u"Project's description" , help_text = u"Describe project's goals and what kind of help you need", widget=forms.Textarea(attrs={'rows': '3',
+                                  label = u"Project's description" , help_text = u"Describe project's tasks and what kind of help you need", widget=forms.Textarea(attrs={'rows': '3',
                                      'cols' : '40'}))
     tags = forms.MultipleChoiceField(required=False)
 
@@ -141,12 +141,11 @@ def discussion_details(request, pk):
     list_anonymous_viewers = discussion.anonymousvisitorviewer_set.all().exclude(
         views_counter= 0 ).order_by("-views_counter_updated_at")
 
-    list_tasks_open = discussion.task_set.all().order_by("target_date").filter(status = Task.STARTED)
+    list_tasks_not_missed = discussion.task_set.all().order_by("-updated_at").exclude(status = Task.MISSED)
     
 #     list_tasks_closed_and_aborted = discussion.task_set.all().exclude(status = Task.MISSED).filter(final_state = True).order_by("-closed_at")
-    list_tasks_closed_and_aborted = discussion.task_set.all().exclude(status = Task.MISSED).order_by("-updated_at")
-
-    list_tasks = list(list_tasks_open) + list( list_tasks_closed_and_aborted)
+    #list_tasks_closed_and_aborted = discussion.task_set.all().exclude(status = Task.MISSED).order_by("-updated_at")
+    #list_tasks = list(list_tasks_open) + list( list_tasks_closed_and_aborted)
     
     vote_form = None
     feedback_form = None
@@ -167,11 +166,11 @@ def discussion_details(request, pk):
  
     list_followers = discussion.get_followers_list()
     
-    page_name = u'עוזרים ב' + discussion.title
+    page_name = u'Supporting' + discussion.title
     
     applicabale_discussions_list, list_title = get_discussion_with_parent_url_list( request.path, request.user)
 
-    max_number_of_lists_for_display = 10
+    max_number_of_lists_for_display = 100
     
     #the response shall not indicate current user's view
     return_response = render(request, 'coplay/discussion_detail.html',
@@ -181,7 +180,7 @@ def discussion_details(request, pk):
                    'list_intuition': list_intuition,
                    'list_advice': list_advice,
                    'list_decision': list_decision,
-                   'list_tasks': list_tasks,
+                   'list_tasks': list_tasks_not_missed,
                    'feedback_form': feedback_form,
                    'description_form': description_form,
                    'add_decision_form': add_decision_form,
@@ -498,7 +497,7 @@ def vote(request, pk):
         decision = Decision.objects.get(id=int(pk))
     except Decision.DoesNotExist:
         return render(request, 'coplay/message.html',
-                              {'message': 'Unknown goal',
+                              {'message': 'Unknown task',
                                'rtl': 'dir="rtl"'})
         
     if not can_user_acess_discussion( decision.parent, request.user):
@@ -525,7 +524,7 @@ def task_details(request, pk):
         task = Task.objects.get(id=int(pk))
     except Task.DoesNotExist:
         return render(request, 'coplay/message.html',
-                      {'message': 'Unknown goal',
+                      {'message': 'Unknown task',
                        'rtl': 'dir="rtl"'})
         
     if not can_user_acess_discussion( task.parent, request.user):
@@ -742,12 +741,13 @@ def user_coplay_report(request, username=None):
     number_of_task_closing = Task.objects.filter( closed_by = user ).count()
     number_of_aborted_tasks = Task.objects.filter( status=Task.ABORTED, responsible = user ).count()
     
-    followers_list = get_followers_list(user)
     following_list = get_following_list(user)
     if request.user.is_authenticated:
         is_following = is_user_is_following(request.user, user)
     else:
         is_following = False
+
+    followers_list = get_followers_list(user)
         
     user_updates_query_set = user.recipient.all().order_by("-created_at")
     

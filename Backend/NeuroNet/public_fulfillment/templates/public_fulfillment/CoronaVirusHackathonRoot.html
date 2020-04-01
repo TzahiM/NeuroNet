@@ -1,0 +1,81 @@
+﻿{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<br>
+
+        <div class="container" >
+			<div class="row">
+                <div class="col-sm-12" id="coundown_timer">
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <center>
+            <iframe src="http://free.timeanddate.com/countdown/i780u0n1/n676/cf111/cm0/cu5/ct0/cs0/ca0/co0/cr0/ss0/cac000/cpc000/pcf90/tcf00/fs275/szw576/szh243/iso2020-04-07T00:00:00/bo3" allowTransparency="true" frameborder="0" width="578" height="245"></iframe>
+                    </center>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+
+
+                                                                                                                                                                                                                                 
+                </div>                                                                                                                                                                                                               
+               
+
+                
+                </div>
+ 		                                                                                                                                                                                                 
+            <div class="row">
+            </div>   
+                <div class="col-sm-4" id = "new project">                                                                                                                                                               
+                	<br>
+                	<br>                	
+                	<center>
+						<a class="btn btn-success"  href="{% url 'coplay:add_discussion' %}">Open new project</a>
+                	</center>
+                	<br>   
+                	<br>   
+
+                </div>
+                <div class="col-sm-4" id = "list of projects">                                                                                                                                                               
+                	<br>
+                	<br>                	
+                	<center>
+                			<a class="btn btn-success"  href="{% url 'coplay:discussions_list' %}">All projects</a>
+                	</center>
+                    <br>
+                	<br>   
+                </div>
+                <div class="col-sm-4" id = "community members">                                                                                                                                                               
+                	<br>
+                	<br>                	
+                	<center>
+            			<a class="btn btn-success" align ="center" href="{% url 'memecache:users_list'  %}">Community members</a>
+                	</center>
+                	<br>   
+                    <br>
+                </div>
+            </div>         
+ 			<div class="row" id="sponsers">  
+                	<br>                	
+                	<br>                	
+                <center>
+                 <h1>Sponsers</h1>
+                	<br>                	
+                <div class="col-sm-3" >
+                    <a href="https://www.linkedin.com/in/tzahi-manistersky-2174755/" target="_blank">
+                      <img class="img-responsive" src="/media/NeuroNetLogo.jpg" alt="NeuroNet - Commited to your best Ideas" >
+                    </a>
+                </div>
+                </center>
+ 			</div>   
+ 			
+		
+  
+{% endblock %}
+

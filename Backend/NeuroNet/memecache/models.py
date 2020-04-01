@@ -127,9 +127,9 @@ class Purchase(models.Model):
 class Shop(models.Model):
     segment = models.ForeignKey(Segment, default = None, null=True, blank=True,on_delete=models.CASCADE)
     admin_user         = models.ForeignKey(User,on_delete=models.SET_NULL,null=True)    
-    title = models.CharField(_(u"שם החנות"), max_length=200)
-    currency_name = models.CharField(_(u"שם המטבע"), default = 'MemeCache', max_length=200)
-    description = models.TextField(_(u"תאור"), blank=True, null=True,
+    title = models.CharField("shop name", max_length=200)
+    currency_name = models.CharField("coin name", default = 'MemeCache', max_length=200)
+    description = models.TextField("Description", blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -172,7 +172,7 @@ class Shop(models.Model):
         if not self.can_user_enter(user):
             return
         cart = self.get_cart(user)
-        transaction_title =  u'רכישה בחנות ' + self.title
+        transaction_title =  u'Purchase in ' + self.title
         transaction = user.account.withdraw_and_return_transaction_if_ok(title = transaction_title, 
                                                                          positive_item_price = cart.total_price, 
                                                                          number_of_items = 1, 
@@ -235,16 +235,16 @@ class Shop(models.Model):
             
 class Product(models.Model):
     shop = models.ForeignKey(Shop,on_delete=models.CASCADE)
-    title = models.CharField(_(u"שם המוצר"), max_length=200)
-    description = models.TextField(_(u"תאור"), blank=True, null=True,
+    title = models.CharField("Product name", max_length=200)
+    description = models.TextField("Description", blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
-    item_price  = models.PositiveIntegerField(_(u"מחיר"),default = 0)
-    number_of_abailabale_items  = models.PositiveIntegerField(_(u"כמה במלאי"),default = 0)
+    item_price  = models.PositiveIntegerField("Price",default = 0)
+    number_of_abailabale_items  = models.PositiveIntegerField("Availabale",default = 0)
     number_of_selected_items    = models.PositiveIntegerField(default = 0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    end_of_sale_at = models.DateTimeField(_(u"סיום המכירה"),null=True, blank=True,default = None)
-    end_of_use_at  = models.DateTimeField(_(u"תקף עד"),null=True, blank=True,default = None)
+    end_of_sale_at = models.DateTimeField("End of sale",null=True, blank=True,default = None)
+    end_of_use_at  = models.DateTimeField("Valid until",null=True, blank=True,default = None)
     
     def __str__(self):
         return "id {}:{} {}".format( self.id, self.title, self.item_price)

@@ -32,7 +32,7 @@
 								<a class="btn btn-success" href= "{% url 'coplay:close_task' task.id %}">Confirm completion</a>
 							{% endif %}
 							{% if task.get_status != task.STARTED %}
-								<a class="btn btn-warning" href= "{% url 'coplay:re_open_task' task.id %}">Reopen this goal</a>
+								<a class="btn btn-warning" href= "{% url 'coplay:re_open_task' task.id %}">Reopen this task</a>
 							{% endif %}
 							{% if task.get_status != task.ABORTED %}
 								<a class="btn btn-danger" href= "{% url 'coplay:abort_task' task.id %}">Abort</a>
@@ -84,7 +84,7 @@
 	{% endif %}
 	                                                 <a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{task.goal_description}}">
         
-       Open a project related for achieve this goal</a>
+       Open a project related for achieve this task</a>
 </div>	
 {% endblock %}
 

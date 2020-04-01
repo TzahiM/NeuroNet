@@ -27,8 +27,10 @@ def about(request):
 def root(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
-    return HttpResponseRedirect(reverse('about'))
-
+    return render(request, 'public_fulfillment/CoronaVirusHackathonRoot.html', {
+        #'text_block_0': text_block_0,
+        'rtl': 'dir="rtl"',
+    })
     
     
 

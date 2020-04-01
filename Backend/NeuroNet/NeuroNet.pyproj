@@ -403,6 +403,7 @@
     <Content Include="public_fulfillment\templates\base.html" />
     <Content Include="public_fulfillment\templates\login.html" />
     <Content Include="public_fulfillment\templates\password_reset\base.html" />
+    <Content Include="public_fulfillment\templates\public_fulfillment\CoronaVirusHackathonRoot.html" />
     <Content Include="public_fulfillment\templates\public_fulfillment\example.html" />
     <Content Include="public_fulfillment\templates\public_fulfillment\index.html" />
     <Content Include="public_fulfillment\templates\public_fulfillment\labs_root.html" />

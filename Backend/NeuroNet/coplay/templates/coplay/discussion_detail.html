@@ -49,13 +49,13 @@
             &bull;
             <a href="#Decisions">Surveys/a>
             &bull;
-            <a href="#Tasks">Goals</a>
+            <a href="#Tasks">tasks</a>
             &bull;
             <a href="#Followers">This projects's followers</a>
             &bull;
-            <a href="#Views">Project views/a>
+            <a href="#Views">Project views</a>
             &bull;
-            <a href="#AnonymousViews">צפייה אנונימית</a>
+            <a href="#AnonymousViews">Anonymous views</a>
         </div>
     </div>
 
@@ -70,7 +70,7 @@
     {% else %}
         <div class="alert alert-error">
         	This project is currently not active. It is a good idea to <a class="new btn btn-info"
-               href="{% url 'coplay:create_task' discussion.id %}">Set your new goal for support this project</a>   
+               href="{% url 'coplay:create_task' discussion.id %}">Set your new task for support this project</a>   
         </div>
     {% endif %}
 												<a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{page_name}}">Add a new related project</a>
@@ -110,7 +110,7 @@
     {% if discussion.owner != user%}
         <p>
             <a class="btn btn-info"
-               href="{% url 'coplay:create_feedback' discussion.id %}">Add survay</a>
+               href="{% url 'coplay:create_feedback' discussion.id %}">Add new comment</a>
         </p>
     {% endif %}
     </div>
@@ -211,11 +211,11 @@
         <br>
 
             <a class="new btn btn-info pull-right"
-               href="{% url 'coplay:create_task' discussion.id %}">Set a new goal for help this project</a>
+               href="{% url 'coplay:create_task' discussion.id %}">Set a new task for help this project</a>
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Goal
+                    Tasks
                 </div>
 
 
@@ -285,7 +285,7 @@
                                     <div id="rating">{% trans "Average Vote" %} {{ decision.get_vote_level_name }} </div>
 
                                 {% endif %}
-								<a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text= An idea from {{page_name}} ">Start a new project for achieve this goal</a>
+								<a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text= An idea from {{page_name}} ">Start a new project for achieve this task</a>
                                 
                             </li>
                         {% endfor %}

@@ -4,6 +4,9 @@
 {% block content %}
 <script>
 
+    function search_by_text(text) {
+        window.location.replace("{% url 'memecache:users_list'  %}" + "?search_text=" + document.getElementById("myInput").value);
+   }
 
 
 </script>
@@ -11,8 +14,8 @@
                  <br />
                  <br />
                  <br />
-              {#   <input type="search" id="myInput" onkeyup="searchFunction()" placeholder="Search in subttles" title="partial text">#}
-                 <br />
+                 <input type="search" id="myInput"  placeholder="Search in members" title="partial text">
+                 <button onclick="search_by_text();">Search</button>
 
  				<div class="col-sm-3 col-md-12" id = "UserList">					
  					<br>

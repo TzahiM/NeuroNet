@@ -97,7 +97,7 @@ def get_user_url(user):
 def user_follow_start_email_updates(follower_user, following_user, inverse_following):
 
     t = Template("""
-        {{follower_user.get_full_name|default:follower_user.username}} התחיל/ה לעקוב אחרי פתיחת הפעילויות שלך
+        {{follower_user.get_full_name|default:follower_user.username}}started following you
         """)
         
     subject = t.render(Context({"follower_user": follower_user}))
@@ -246,7 +246,7 @@ def discussion_task_email_updates(task, subject, logged_in_user, details = None)
 def task_state_change_update(task, state_change_description):
     t = Template("""
                 {{task.responsible.get_full_name|default:task.responsible.username}} {{state_change_description}} :\n
-                 "{{task.goal_description}} "\nאושר על ידי {{task.closed_by.get_full_name|default:task.closed_by.username}}
+                 "{{task.goal_description}} "\nclosed by {{task.closed_by.get_full_name|default:task.closed_by.username}}
                  """)
                 
     trunkated_subject_and_detailes = t.render(Context({"task": task, 'state_change_description': state_change_description}))
@@ -263,57 +263,57 @@ def task_state_change_update(task, state_change_description):
 
 def user_started_a_new_discussion( user, url = None):
 
-    user.account.deposit_and_return_transaction_if_ok( u"התחיל פעילות חדשה", 
+    user.account.deposit_and_return_transaction_if_ok( u"started a new project", 
     positive_item_price = 27, url = url)
     
 
 def user_completed_a_mission_for_another_user_s_discussion( user, url = None):
 
-    user.account.deposit_and_return_transaction_if_ok( u"השלים משימה  בשביל  משתתף אחר",
+    user.account.deposit_and_return_transaction_if_ok( u"Achived his/her task",
                                                   positive_item_price = 23, url = url)
 
 
 def user_aborted_a_mission_for_another_user_s_discussion( user, url = None):
     
-    user.account.deposit_and_return_transaction_if_ok( u"ביטול משימה בשביל משתתף אחר",
+    user.account.deposit_and_return_transaction_if_ok( u"Aborted a task for anohter one's ",
                                                   positive_item_price = 19, url = url)
 
 
 
 def user_completed_a_mission_for_his_own_s_discussion( user, url = None):
     
-    user.account.deposit_and_return_transaction_if_ok( "השלים משימה  לקידום פעילות שלו ",
+    user.account.deposit_and_return_transaction_if_ok( "Achieved his task for his/her's project",
                                                   positive_item_price = 17, url = url)
 
 
 
 def user_aborted_a_mission_for_his_own_s_discussion( user, url = None):
     
-    user.account.deposit_and_return_transaction_if_ok( u"ביטול משימה שלקח לטובת פעילות שלו ",
+    user.account.deposit_and_return_transaction_if_ok( u"Aborted his task for another one's project ",
                                                   positive_item_price = 13, url = url)
 
      
 def user_confirmed_a_state_update_in_another_user_s_mission( user, url = None):
     
-    user.account.deposit_and_return_transaction_if_ok( u"אישור עדכון של מצב משימות",
+    user.account.deposit_and_return_transaction_if_ok( u"Approved a task",
                                                   positive_item_price = 11, url = url)
 
 
 
 def user_posted_a_feedback_in_another_other_user_s_discussion( user, url = None):
     
-    user.account.deposit_and_return_transaction_if_ok( u"תגובה בפעילות של משתתף אחר", 
+    user.account.deposit_and_return_transaction_if_ok( u"commented in another one's project", 
                                                         positive_item_price = 7, url = url)
 
 def user_post_a_decision_for_vote_regarding_his_own_discussion( user, url = None):
     
-    user.account.deposit_and_return_transaction_if_ok(u"העלאת רעיון להצבעה", 
+    user.account.deposit_and_return_transaction_if_ok(u"Added an idea for vote (survay)", 
                                                   positive_item_price = 5, url = url) 
 
 
 def user_voted_for_an_idea_in_another_user_s_discussion( user, url = None):
     
-    user.account.deposit_and_return_transaction_if_ok(u"הצבעה על רעיון של משתתף אחר", 
+    user.account.deposit_and_return_transaction_if_ok(u"Voted", 
                                                   positive_item_price = 3, url = url) 
 
 
@@ -321,7 +321,7 @@ def user_voted_for_an_idea_in_another_user_s_discussion( user, url = None):
 def user_glimpsed_another_user_s_discussion( user, discussion , views_counter = 0):
             
     t = Template("""
-    {{user.get_full_name|default:user.username}} צפה/תה בפעילות שלך "{{discussion.title}}" בפעם ה {{views_counter}}
+    {{user.get_full_name|default:user.username}} watched your project "{{discussion.title}}" total views {{views_counter}}
     """)
     
 #     t = Template("""
@@ -341,7 +341,7 @@ def user_glimpsed_another_user_s_discussion( user, discussion , views_counter = 
                                  url_id = '', 
                                  mailing_list = mailing_list)
 
-    user.account.deposit_and_return_transaction_if_ok( title = u"צפיה בפעילות של מישהו אחר", 
+    user.account.deposit_and_return_transaction_if_ok( title = u"Watched another one's project", 
                                                        positive_item_price = 2, 
                                                        url = discussion.get_absolute_url()) 
     

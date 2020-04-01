@@ -217,13 +217,13 @@ def update_task_state( task , new_state , user ):
             return None, error_string
         
         if new_state == task.STARTED:
-            task_state_change_update( task,  u" עדיין לא השלים/ה את ")
+            task_state_change_update( task,  u"Had not completed")
             
         if new_state == task.ABORTED:
-            task_state_change_update( task,  u" ביטל/ה את ")
+            task_state_change_update( task,  u" Aborted")
     
         if new_state == task.CLOSED:
-            task_state_change_update( task,  u" השלימ/ה את ")
+            task_state_change_update( task,  u" Completed")
 
     return task, None
 
@@ -264,7 +264,7 @@ def discussion_update( discussion, user, description,
     
 
     t = Template("""
-    {{discussion.owner.get_full_name|default:discussion.owner.username}} עידכן/ה את המטרות של הפעילות והעזרה המבוקשת :\n
+    {{discussion.owner.get_full_name|default:discussion.owner.username}} updtaed the status of :\n
     "{{discussion.description}} "\n
     """)
     
@@ -353,7 +353,7 @@ def create_discussion( user               = None,
         start_tag_following( user, tag)
             
     t = Template("""
-    {{discussion.owner.get_full_name|default:discussion.owner.username}} ביקש/ה את העזרה שלך ב :
+    {{discussion.owner.get_full_name|default:discussion.owner.username}} Asked your help in:
     "{{discussion.title}} "\n
     """)
             
@@ -429,7 +429,7 @@ def start_tag_following( follower_user, tag):
 #                 already_following_users.append(user)
 
         t = Template("""
-            {{follower_user.get_full_name|default:follower_user.username}} גם התחיל/ה לעקוב אחרי {{name}}
+            {{follower_user.get_full_name|default:follower_user.username}}also started follow {{name}}
             """)
         subject = t.render(Context({"follower_user": follower_user,
                                     "name" : tag.name}))
@@ -536,7 +536,7 @@ def discussion_add_feedback(discussion, user, feedbabk_type = None, content = No
         return None, error_string
     
     t = Template("""
-    {{feedbabk.user.get_full_name|default:feedbabk.user.username}} פירסם/ה {{feedbabk.get_feedbabk_type_name}}:\n
+    {{feedbabk.user.get_full_name|default:feedbabk.user.username}} commented a {{feedbabk.get_feedbabk_type_name}}:\n
     "{{feedbabk.content}} "\n
     """)
 
@@ -579,7 +579,7 @@ def discussion_add_task(discussion, responsible, goal_description, target_date,
     discussion.save() #verify that the entire discussion is considered updated
     start_discussion_following( discussion, responsible)
     t = Template("""
-            {{task.responsible.get_full_name|default:task.responsible.username}} הבטיח/ה ש :\n
+            {{task.responsible.get_full_name|default:task.responsible.username}} accepted a new task:\n
             "{{task.goal_description}} "\n  עד {{task.target_date | date:"d/n/Y H:i"}}
             """)
             
@@ -626,8 +626,8 @@ def discussion_add_decision(discussion, user, content = None):
         return None, error_string
 
     t = Template("""
-    {{decision.parent.owner.get_full_name|default:decision.parent.owner.username}} מבקש/ת שתצביע/י על :\n
-    "{{decision.content}} "\nלהצבעה צריך להיכנס אל הפעילות המלאה...
+    {{decision.parent.owner.get_full_name|default:decision.parent.owner.username}} Asked you to vote on :\n
+    "{{decision.content}} "\nEnter the project for voting
     """)
     
     trunkated_subject_and_detailes = t.render(Context({"decision": decision}))

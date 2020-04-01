@@ -29,7 +29,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('', root, name="home"),
-    path('CoronaVirusHackathon/', about, name="root"),
+    path('CoronaVirusHackathon/', root, name="root"),
     path('CoronaVirusHackathon/about/', about, name="about"),
     #path('ntmu/', include(('nice_to_meet_you.urls', "nice_to_meet_you"), "nice_to_meet_you")),
     path('CoronaVirusHackathon/coplay/', include(('coplay.urls', 'coplay'), 'coplay')),

@@ -377,19 +377,19 @@ class Feedback(models.Model):
     ADVICE = 4
 
     FEEDBACK_TYPES = (
-        (ENCOURAGE, u'עידוד'),
-        (COOPERATION, u'שיתוף פעולה'),
-        (INTUITION, u'אינטואיציה'),
-        (ADVICE, u'עצה'),
+        (ENCOURAGE, u'Encourage'),
+        (COOPERATION, u'Cooporation'),
+        (INTUITION, u'Intuition'),
+        (ADVICE, u'Advice'),
     )
 
     discussion = models.ForeignKey(Discussion, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    feedbabk_type = models.IntegerField(_(u"סוג התגובה"),choices=FEEDBACK_TYPES)
-    content = models.TextField(_(u"תוכן התגובה"),validators=[MaxLengthValidator(MAX_TEXT)])
+    feedbabk_type = models.IntegerField(_(u"Type of commen"),choices=FEEDBACK_TYPES)
+    content = models.TextField(_(u"Comment text"),validators=[MaxLengthValidator(MAX_TEXT)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    voice_recording = models.FileField( _(u"הקלטה"),upload_to='uploads/%Y/%m/%d/', null=True, blank=True,
+    voice_recording = models.FileField( _(u"recording"),upload_to='uploads/%Y/%m/%d/', null=True, blank=True,
                                         max_length = 5000000)
 
         
@@ -400,12 +400,12 @@ class Feedback(models.Model):
     def get_feedbabk_type_name(self):
         feedbabk_type = self.feedbabk_type
         if feedbabk_type == self.ENCOURAGE:
-            return 'עידוד'
+            return 'Encourage'
         if feedbabk_type == self.COOPERATION:
-            return 'שיתוף פעולה'
+            return 'Cooporation'
         if feedbabk_type == self.INTUITION:
-            return 'אינטואיציה'
-        return 'עצה'
+            return 'Intuition'
+        return 'Advice'
 
 
     def print_content(self):
@@ -425,11 +425,11 @@ class LikeLevel(object):
     MEDIUM = 2
     BAD = 1
     level = (
-        (EXCELLENT, 'רעיון מצוייו'),
-        (VERY_GOOD, 'טוב מאוד'),
-        (GOOD, 'לא רע'),
-        (MEDIUM, 'None דעה'),
-        (BAD, 'רעיון לא טוב'),
+        (EXCELLENT, 'Excellent'),
+        (VERY_GOOD, 'Very good'),
+        (GOOD, 'Good'),
+        (MEDIUM, "Can't tell"),
+        (BAD, 'Bad idea'),
     )
 
 
@@ -485,15 +485,15 @@ class Decision(models.Model):
         number_of_votes = self.get_vote_average_or_none()
         if number_of_votes:
             if number_of_votes == LikeLevel.EXCELLENT:
-                return 'מצויין'
+                return 'Excellent'
             if number_of_votes == LikeLevel.VERY_GOOD:
-                return 'טוב מאוד'
+                return 'Very good'
             if number_of_votes == LikeLevel.GOOD:
-                return 'טוב'
+                return 'Good'
             if number_of_votes == LikeLevel.MEDIUM:
-                return 'None דעה'
+                return "Can't tell"
             if number_of_votes == LikeLevel.BAD:
-                return 'רעיון לא טוב'
+                return 'Bad idea'
 
         return 'None'
 
@@ -546,10 +546,10 @@ class Task(models.Model):
     OTHER_CONFIRMED = 10
     
     STATUS_CHOICES = (
-        (STARTED, 'פעילה'),
-        (CLOSED, 'הושלמה בהצלחה'),
-        (MISSED, 'פוספסה'),
-        (ABORTED, 'בוטלה בזמן'),
+        (STARTED, 'In progress'),
+        (CLOSED, 'Achieved successfully'),
+        (MISSED, 'Missed'),
+        (ABORTED, 'Aborted'),
     )
 
     parent = models.ForeignKey(Discussion, null=True, blank=True, on_delete=models.CASCADE)
@@ -565,7 +565,7 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     final_state    = models.BooleanField(default = False)
-    result_picture = models.ImageField( _(u"תמונה של התוצאה"),upload_to='uploads/%Y/%m/%d/', null=True, blank=True,default = None,
+    result_picture = models.ImageField( "A picture of the result",upload_to='uploads/%Y/%m/%d/', null=True, blank=True,default = None,
                                         max_length = 50000)
 
     def __str__(self):
@@ -843,8 +843,8 @@ class FollowRelation(models.Model):
 
         
 class Segment(models.Model):
-    title = models.CharField(_(u"שם"), max_length=200)
-    description = models.TextField(_(u"תאור"), blank=True, null=True,
+    title = models.CharField("Name", max_length=200)
+    description = models.TextField("Description", blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -871,7 +871,7 @@ class TaggedUsers(TaggedItemBase):
 
 
 class KuterLessApp(models.Model):
-    app_name                    = models.CharField(_("title"), max_length=200)
+    app_name                    = models.CharField("title", max_length=200)
     app_description             = models.TextField( blank=True, null=True,
                                   validators=[MaxLengthValidator(MAX_TEXT)])
     email                       = models.EmailField(blank=True, null=True)
@@ -894,7 +894,7 @@ class UserProfile(models.Model):
     latitude    = models.FloatField(default=None, blank=True, null=True)
     longitude   = models.FloatField(default=None, blank=True, null=True)
 #    recieve_personal_messages_from_users    = models.BooleanField(default = False)
-    description = models.TextField(_("Description"), blank=True, null=True,
+    description = models.TextField("Description", blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
     location_desc = models.CharField( max_length=200,default=None, blank=True, null=True)
             
@@ -933,7 +933,7 @@ class UserProfile(models.Model):
             
         if self.get_segment() :
             return self.segment.title
-        return u'אתר הציבורי'
+        return u'Public'
 
 
     def get_all_users_in_same_segment_list(self):

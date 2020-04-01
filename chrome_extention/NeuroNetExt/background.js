@@ -12,6 +12,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 	//var action_url = 'http://kuterless.org.il/labs/coplay/add_with_url/?parent_url=';
 //	var action_url = 'http://127.0.0.1:8000/CoronaVirusHackathon/coplay/add_with_url/?parent_url=';
 		var action_url = 'http://127.0.0.1:8000/CoronaVirusHackathon/coplay/extention_add_with_url/?parent_url=';
+//		var action_url = 'http://www.neuronetlabs.org/CoronaVirusHackathon/coplay/extention_add_with_url/?parent_url=';
 //var action_url = 'http://www.neuronetlabs.org/CoronaVirusHackathon/coplay/add_with_url/?parent_url=';
 	var parameters_url = tab.url + '&parent_url_text=' + tab.title;
 	

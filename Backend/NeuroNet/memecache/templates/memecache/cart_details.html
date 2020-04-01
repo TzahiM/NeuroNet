@@ -12,13 +12,13 @@
  				<div class="col-sm-3 col-md-12" id = "Products">
  					<div class="table-responsive">
 				   <table class="table">
-				      <caption><h1>מה שלקחתי עד עכשיו</h1></caption>
+				      <caption><h1>Baught so far</h1></caption>
 				      <thead>
 				         <tr>
-				            <th>לקחתי</th>
-				            <th>כמה</th>
-				            <th>במחיר של</th>
-				            <th>סך הכל</th>
+				            <th>I took</th>
+				            <th>number of</th>
+				            <th>cost</th>
+				            <th>Total</th>
 				            <th></th>
 				         </tr> 
 				      </thead>
@@ -34,14 +34,14 @@
 				         <tr>
 				            <td></td>
 				            <td></td>
-				            <td>סך הכל</td>
+				            <td>Total</td>
 				            <td>{{cart.get_total_price}} {{cart.shop.currency_name}}</td>				            
 				         </tr>
 				      </tbody>
 				   </table>
 				   נשארו לי עוד {{cart.get_ramaining_customer_credit}} {{cart.shop.currency_name}}
-				   <a class="btn btn-success"  href="{% url 'memecache:products_list' cart.shop.id %}">לקנות עוד</a>
-				   <a class="btn btn-info"  href="{% url 'memecache:cart_checkout' cart.id %}">להוסיף לפרסים שלי</a>
+				   <a class="btn btn-success"  href="{% url 'memecache:products_list' cart.shop.id %}">Buy more</a>
+				   <a class="btn btn-info"  href="{% url 'memecache:cart_checkout' cart.id %}">Add to my rewards</a>
 				</div> 
  			</div>
  			
