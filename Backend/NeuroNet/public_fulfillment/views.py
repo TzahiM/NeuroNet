@@ -24,7 +24,9 @@ def about(request):
         'rtl': 'dir="rtl"',
     })
 
-def root(request):
+
+
+def corona_hackathon_root(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
     return render(request, 'public_fulfillment/CoronaVirusHackathonRoot.html', {
@@ -32,6 +34,12 @@ def root(request):
         'rtl': 'dir="rtl"',
     })
     
+
+def root(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
+    return HttpResponseRedirect(reverse('corona_hackathon_root'))
+
     
 
 
