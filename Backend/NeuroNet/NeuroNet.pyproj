@@ -93,6 +93,9 @@
     <Compile Include="public_fulfillment\forms.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="public_fulfillment\gmail.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="public_fulfillment\migrations\__init__.py" />
     <Compile Include="public_fulfillment\models.py" />
     <Compile Include="public_fulfillment\serializers.py">

@@ -22,12 +22,13 @@ from django.urls import path
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
-from public_fulfillment.views import about, root, corona_hackathon_root
+from public_fulfillment.views import about, root, corona_hackathon_root, gmail
 from django.contrib.auth.views import LoginView, LogoutView
 from public_fulfillment import forms
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
+    path('gmail/', gmail, name="gmail"),
     path('', root, name="home"),
     path('CoronaVirusHackathon/', corona_hackathon_root, name="corona_hackathon_root"),
     path('CoronaVirusHackathon/about/', about, name="about"),

@@ -368,19 +368,10 @@ def add_with_url(request):
                 'rtl': 'dir="rtl"'
             })
             
-        if pk:
-            try:
-                tag = Tag.objects.get(id=int(pk))
-            except Tag.DoesNotExist:
-                return render(request, 'coplay/message.html',
-                              {'message': 'Unknown tag',
+        return render(request, 'coplay/message.html',
+                              {'message': 'URL not provided',
                                'rtl': 'dir="rtl"'})
-            #form = NewDiscussionForm(initial={'tags': tag.name}) # An unbound form
-            form = NewDiscussionForm(initial={'tags': ""}) # An unbound form
-            request.user.userprofile.followed_discussions_tags.add( tag.name)
-            request.user.userprofile.save()
-        else:
-            form = NewDiscussionForm() # An unbound form
+    form = NewDiscussionForm() # An unbound form
 
 
     data = render(request, use_template, {

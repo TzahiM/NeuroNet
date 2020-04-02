@@ -1,0 +1,20 @@
+{
+  "name": "Corona Virus Hackathon",
+  "description": "Use current URL and make it into a project that shall solve the corona virus challenges",
+  "version": "1.2",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "permissions": [
+    "activeTab",
+	"tabs",
+	"storage",
+	"<all_urls>"
+  ],
+  "browser_action": {
+      "default_title": "seed a project",
+      "default_icon": "corona_virus_hackathon.png"
+  },
+  "manifest_version": 2
+}

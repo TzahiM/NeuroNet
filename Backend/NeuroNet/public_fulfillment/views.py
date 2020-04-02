@@ -16,6 +16,11 @@ from public_fulfillment.services import create_kuterless_user
 # Create your views here.
 
 
+def gmail(request):
+    return render(request, 'coplay/index.html', {
+        'rtl': 'dir="rtl"',
+    })
+
 def about(request):
     text_block_0 = ''
 #    return render(request, 'public_fulfillment/public_fulfillment_root.html', {
@@ -23,8 +28,6 @@ def about(request):
         'text_block_0': text_block_0,
         'rtl': 'dir="rtl"',
     })
-
-
 
 def corona_hackathon_root(request):
     if request.user.is_authenticated:
