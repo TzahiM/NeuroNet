@@ -8,12 +8,14 @@
 // Called when the user clicks on the browser action.
 chrome.browserAction.onClicked.addListener(function(tab) {
 	
-	
-	var action_url = 'http://www.neuronetlabs.org/CoronaVirusHackathon/coplay/extention_add_with_url/?parent_url=';
-	var parameters_url = tab.url + '&parent_url_text=' + tab.title;
+	var message = 'http://www.neuronetlabs.org';						 //the destination server
+	message    += '/CoronaVirusHackathon/coplay/extention_add_with_url/';//destination inner url
+	message    += '?parent_url=' + tab.url; 							 //add current browser url  - should use first
+	message    += '&parent_url_text=' + tab.title;						 //Add webpage name
+	message    += '&ver=20.04.03.1';									 //add version number
 	
 
-	chrome.tabs.update(tab.id, { url: (action_url+ parameters_url)});
+	chrome.tabs.update(tab.id, { url: message});
 
 });
 

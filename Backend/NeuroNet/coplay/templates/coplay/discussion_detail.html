@@ -70,7 +70,7 @@
     {% else %}
         <div class="alert alert-error">
         	This project is currently not active. It is a good idea to <a class="new btn btn-info"
-               href="{% url 'coplay:create_task' discussion.id %}">Set your new task for support this project</a>   
+               href="{% url 'coplay:create_task' discussion.id %}">Start your own task for support this project</a>   
         </div>
     {% endif %}
 												<a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text={{page_name}}">Add a new related project</a>
@@ -285,7 +285,6 @@
                                     <div id="rating">{% trans "Average Vote" %} {{ decision.get_vote_level_name }} </div>
 
                                 {% endif %}
-								<a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{ROOT_URL}}{{ request.path }}&parent_url_text= An idea from {{page_name}} ">Start a new project for achieve this task</a>
                                 
                             </li>
                         {% endfor %}

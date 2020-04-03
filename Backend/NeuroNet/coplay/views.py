@@ -229,7 +229,7 @@ class NewDiscussionForm(forms.Form):
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea(
                                 attrs={'rows': '6', 'cols': '100'}))
-    location_desc = forms.CharField(label=u'כתובת',required=False,
+    location_desc = forms.CharField(label=u'Geo Location',required=False,
                                   max_length=MAX_MESSAGE_INPUT_CHARS,
                                   widget=forms.Textarea(
                                 attrs={'rows': '1', 'cols': '100'}))
@@ -273,7 +273,7 @@ def add_discussion(request, pk = None):
                                                        )
             
             if new_discussion:
-                messages.success(request,_("Your activity was created successfully"))
+                messages.success(request,"Your project had been created successfully")
                 return redirect(new_discussion)
                 
             messages.error(request, error_string)
@@ -352,7 +352,7 @@ def add_with_url(request):
                                                        parent_url_text  = form.cleaned_data['parent_url_text'])
             
             if new_discussion:
-                messages.success(request,_("Your activity was created successfully"))
+                messages.success(request,"Your project had been created successfully")
                 return redirect(new_discussion)
                 
             messages.error(request, error_string)
