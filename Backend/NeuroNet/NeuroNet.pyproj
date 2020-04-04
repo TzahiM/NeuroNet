@@ -341,6 +341,7 @@
     <Content Include="coplay\templates\coplay\index.html" />
     <Content Include="coplay\templates\coplay\message.html" />
     <Content Include="coplay\templates\coplay\new_discussion.html" />
+    <Content Include="coplay\templates\coplay\user_updates.html" />
     <Content Include="coplay\templates\coplay\task_detail.html" />
     <Content Include="coplay\templates\coplay\task_form.html" />
     <Content Include="coplay\templates\coplay\user_follow_email_update.html" />

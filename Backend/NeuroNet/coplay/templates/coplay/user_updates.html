@@ -1,0 +1,56 @@
+﻿{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<br>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-sm-12 col-md-12" id="UserUpdates">
+            <br>
+            <br>
+            <br>
+            <center>
+                <h2>
+                    {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your{% endif %}
+                    notifications
+                </h2>
+            </center>
+            <ul>
+                {% for user_update in user_updates_that_viewer_can_access_list %}
+
+                <li class="list-group-item">
+                    {% if not user_update.get_if_already_read %}<strong>
+                        {% endif %}
+                        {% if user_update.header %}
+                        {{ user_update.header |urlize|linebreaks}}
+                        {{ user_update.created_at|naturaltime }}
+                        {% if user_update.get_if_long %}
+                        <a class="btn btn-success" href={{ user_update.get_absolute_url }}>Details</a></p>
+                        {% else%}
+                        {% if user_update.details_url %}
+                        <a class="btn btn-success" href="{% url 'coplay:user_update_mark_recipient_read'  user_update.id %}">Details</a>
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+                        {% if not user_update.get_if_already_read %}
+                    </strong>{% endif %}
+                </li>
+                {% empty %}
+                <li class="list-group-item">
+                    None
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+</div>
+
+</div>
+
+{% endblock %}
+
+
+

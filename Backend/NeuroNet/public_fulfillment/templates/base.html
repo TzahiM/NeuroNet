@@ -83,8 +83,10 @@
                     {
                    
                     a.setAttribute("class", "btn btn-danger");
-                    a.setAttribute("border", "round");
-                    a.innerText = n_notifications + ' Unread' ;
+                   // a.setAttribute("border", "round");
+        
+              //      a.setAttribute("on_click", "window.location.href = {% url 'coplay:user_updates'  user.username %};");
+                    a.innerText = n_notifications + '\nUnread' ;
                     a.style.display = '';
                     
                     }
@@ -137,7 +139,7 @@
                 <span class="icon-bar"></span>
             </button>
            {% if user.is_authenticated %}
-                    <a href="{% url 'coplay:user_coplay_report'  user.username %}#UserUpdates"><div id="notifications"></div></a>
+                    <a href="{% url 'coplay:user_updates'  user.username %}"><div id="notifications"></div></a>
          {% endif %}
         </div>
         
@@ -152,7 +154,7 @@
                     <li>
                         <a href="{% url 'public_fulfillment:update_profile' %}?next={{ request.path }}">Update Profile</a></li>
                     <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
-                    <li ><a href="{% url 'coplay:user_coplay_report'  user.username %}#UserUpdates"><div id="notifications"></div></a></li>
+                    <li ><div id="notifications"></div></li>
             	
             	
 

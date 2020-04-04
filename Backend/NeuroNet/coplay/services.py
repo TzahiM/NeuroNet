@@ -429,7 +429,7 @@ def start_tag_following( follower_user, tag):
 #                 already_following_users.append(user)
 
         t = Template("""
-            {{follower_user.get_full_name|default:follower_user.username}}also started follow {{name}}
+            {{follower_user.get_full_name|default:follower_user.username}} also started follow {{name}}
             """)
         subject = t.render(Context({"follower_user": follower_user,
                                     "name" : tag.name}))

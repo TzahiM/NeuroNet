@@ -654,6 +654,37 @@ def re_open_task(request, pk):
 
 
 
+def user_updates(request, username=None):
+    if username:
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return HttpResponse('User not found')        
+    else:
+        user = request.user
+        
+    if not is_in_the_same_segment( user, request.user):
+        return render(request, 'coplay/message.html', 
+                  {  'message'      :  'Restricted user',
+                   'rtl': 'dir="rtl"'})
+
+    if user == request.user:
+        page_name = u'My updates'
+    else:
+        page_name = get_user_fullname_or_username(user) + u"'s Updates"
+
+        
+    user_updates_query_set = user.recipient.all().order_by("-created_at")
+    
+    max_number_of_lists_for_display = 100
+            
+    return render(request, 'coplay/user_updates.html',
+                  {
+                      'user_updates_that_viewer_can_access_list': user_updates_query_set[:max_number_of_lists_for_display],
+                      'applicabale_user': user,
+                      'page_name': page_name } )
+
+
 def user_coplay_report(request, username=None):
     if username:
         try:
@@ -669,9 +700,9 @@ def user_coplay_report(request, username=None):
                    'rtl': 'dir="rtl"'})
 
     if user == request.user:
-        page_name = u'My project'
+        page_name = u'My Dashboard'
     else:
-        page_name = get_user_fullname_or_username(user) + u"'s Project"
+        page_name = get_user_fullname_or_username(user) + u"'s Dashboard"
 
     open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, aborted_tasks_list_by_relevancy_list , missed_tasks_list_by_relevancy_list = get_tasks_lists()
 
@@ -768,6 +799,7 @@ def user_coplay_report(request, username=None):
                       'description': user.userprofile.description,
                       'location_desc': user.userprofile.location_desc,
                       'followed_discussions_tags': user.userprofile.followed_discussions_tags.all() } )
+
 
 class UpdateDiscussionDescForm(forms.ModelForm):
     

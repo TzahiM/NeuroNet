@@ -34,6 +34,7 @@ urlpatterns = [
     path('<str:username>/user_coplay_report/', views.user_coplay_report,  name="user_coplay_report"),
     path('<str:username>/start_follow_user/', views.start_follow_user,    name="start_follow_user"),
     path('<str:username>/stop_follow_user/', views.stop_follow_user,      name="stop_follow_user"),
+    path('<str:username>/user_updates/', views.user_updates,      name="user_updates"),
     path('user_update_details/<int:pk>/', views.user_update_details,      name="user_update_details"),
     path('user_update_mark_recipient_read/<int:pk>/', views.user_update_mark_recipient_read, name="user_update_mark_recipient_read"),
     path('start_follow_tag/<int:pk>/', views.start_follow_tag,                               name="start_follow_tag"),
