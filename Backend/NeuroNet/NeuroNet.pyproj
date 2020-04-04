@@ -336,6 +336,7 @@
     <Content Include="coplay\templates\coplay\email_discussion_update.html" />
     <Content Include="coplay\templates\coplay\email_task_update.html" />
     <Content Include="coplay\templates\coplay\error.html" />
+    <Content Include="coplay\templates\coplay\extention_landing.html" />
     <Content Include="coplay\templates\coplay\feedback_add.html" />
     <Content Include="coplay\templates\coplay\feedback_form.html" />
     <Content Include="coplay\templates\coplay\index.html" />

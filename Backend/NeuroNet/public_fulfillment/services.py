@@ -150,9 +150,22 @@ def delete_segment( segment):
     for userprofile in segment.userprofile_set.all():
         delete_kuterless_user(userprofile.user)
 
+
     segment.shop = None
 
     segment.delete()
+
+
+
+def delete_segment_non_admin_users( segment):
+    if segment==None or segment.id == None:
+        return
+
+    for userprofile in segment.userprofile_set.all():
+        if userprofile.user != segment.shop_set.all()[0].admin_user:
+            delete_kuterless_user(userprofile.user)
+
+
     
 def print_col_names( excel_file_name ):
     excel_object = OpenExcel('HackCoronaRegistrationForm_1.xlsx')
@@ -252,7 +265,8 @@ def import_users( excel_file_name, segment_name ):
               '\nwilling_to_help', willing_to_help,
               '\ndescription              :\n',description)
 
-        user = create_or_update_kuterless_user(  user_name=user_name, 
+       # user = create_or_update_kuterless_user(  user_name=user_name, 
+        user = create_kuterless_user(  user_name=user_name, 
                                                first_name = first_name, 
                                                last_name = last_name,
                                                email = email,
@@ -260,3 +274,4 @@ def import_users( excel_file_name, segment_name ):
                                                location_desc = location_desc,
                                                segment = segment)
 
+        

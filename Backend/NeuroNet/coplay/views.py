@@ -329,6 +329,12 @@ def extention_add_with_url(request):
                        'url_text': parent_url_text,
                       })
 
+    return render(request, 'coplay/extention_landing.html',
+                    {'page_name': "NeuroNet Landing page",
+                    'search_url': parent_url,
+                    'url_text': parent_url_text,
+                    })
+
     return add_with_url(request)
 
 
@@ -671,7 +677,7 @@ def user_updates(request, username=None):
     if user == request.user:
         page_name = u'My updates'
     else:
-        page_name = get_user_fullname_or_username(user) + u"'s Updates"
+        page_name = get_user_fullname_or_username(user) + u"'s updates"
 
         
     user_updates_query_set = user.recipient.all().order_by("-created_at")

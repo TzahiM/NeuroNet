@@ -1,0 +1,27 @@
+﻿{% extends 'base.html' %}
+{%  load humanize %}
+
+{% block content %}  
+    <div class="row"> 
+        <br />
+        <br />
+        
+    <h2>
+        Welcome back,  {{ user.get_short_name|default:user.username }}                     
+      </h2>
+        <br />
+    	<a class="new btn btn-info" href="{% url 'coplay:user_updates'  user.username %}">Reading updates</a>
+
+        <br />
+     
+        <br />
+    </div>
+    <div class="row">
+    	<a class="new btn btn-success" href="{% url 'coplay:add_with_url' %}?parent_url={{search_url}}&parent_url_text={{url_text}}">open a project that is related to {{url_text}}</a>
+    	
+
+    </div>
+    
+{% endblock %}
+
+
