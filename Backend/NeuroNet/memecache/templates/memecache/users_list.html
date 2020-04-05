@@ -14,7 +14,7 @@
                  <br />
                  <br />
                  <br />
-                 <input type="search" id="myInput"  placeholder="Search in members" title="partial text">
+                 <input type="search" id="myInput"  placeholder="Search in members" title="partial text" value={{search_text}}>
                  <button onclick="search_by_text();">Search</button>
 
  				<div class="col-sm-3 col-md-12" id = "UserList">					
@@ -43,6 +43,7 @@
                              ({{currency_name}})
                              </th>
 				            <th></th>
+				            <th></th>
 				         </tr>
 				      </thead>
 				      <tbody id="myUL">
@@ -53,6 +54,12 @@
 				            <td><a  href="{% url 'coplay:user_coplay_report'  user_row.user.username %}">{{ user_row.user.get_full_name|default:user_row.user.username }}</a></td>
 				            <td>{{ user_row.total_earn}} </td>
 				            <td><p>{{ user_row.description|urlize|linebreaks}}</p> </td>
+				            <td><p>
+                                {% if user_row.location_desc %}
+            	                	<a href="https://www.google.co.il/maps/place/{{ user_row.location_desc}}" target="_blank">{{ user_row.location_desc}}</a> 
+                                {% endif  %}
+                                </p> </td>
+                                
 				         </tr>
 				         {% empty %}
 				         <tr>

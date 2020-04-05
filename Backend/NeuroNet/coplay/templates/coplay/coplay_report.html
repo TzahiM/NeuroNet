@@ -47,7 +47,7 @@
 					<center>
 						<a class="btn btn-success" href="#UserUpdates">
                         {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your{% endif %}
-                        updates</a>    
+                        notifications</a>    
 						<a class="btn btn-success" href="#TasksOpen"> 
                         {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your's{% endif %}
                         tasks in progress</a>    
@@ -76,7 +76,7 @@
         <br>
                 	<center><h2>
                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }}'s{% else %}your{% endif %}
-                        updates
+                        notifications
                         </h2></center>
 	                	<ul>
 					{% for user_update in user_updates_that_viewer_can_access_list %}

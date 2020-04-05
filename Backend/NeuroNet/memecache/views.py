@@ -65,6 +65,7 @@ class UsersTableRow():
     user = None
     total_earn = 0
     description = ''
+    location = ''
 
     
 
@@ -109,14 +110,20 @@ def users_list(request, pk = None):
         if account.user.userprofile.segment == segment:
             place += 1
             if search_text:
-                if not( account.user.userprofile.description and ( search_text.casefold() in account.user.userprofile.description.casefold()) or search_text.casefold() in account.user.username.casefold()):
+                if not( account.user.userprofile.description and ( search_text.casefold() in account.user.userprofile.description.casefold()) or search_text.casefold() in account.user.username.casefold() ):
                     add_user = False
+                    if account.user.userprofile.location_desc and search_text.casefold() in account.user.userprofile.location_desc.casefold():
+                        add_user = True
+                    else:
+                        add_user = False
             if add_user:
                 row = UsersTableRow()
                 row.place = place
                 row.user = account.user
                 row.total_earn = account.total_earn
                 row.description = account.user.userprofile.description
+                if account.user.userprofile.location_desc:
+                    row.location_desc = account.user.userprofile.location_desc
                 users_rows_list.append(row)
 
         
@@ -124,6 +131,7 @@ def users_list(request, pk = None):
                   {'currency_name': currency_name,
                    'segment_name':  segment_name,
                    'users_rows_list': users_rows_list,
+                   'search_text':search_text,
                    'page_name': page_name})
 
 

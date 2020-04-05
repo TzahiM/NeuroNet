@@ -218,7 +218,7 @@ def import_users( excel_file_name, segment_name ):
         description                = ''
         if willing_to_help:
             willing_to_help=willing_to_help.replace(' (See this Facebook post https://www.facebook.com/groups/614901792606701/permalink/623412731755607/)','')
-            description += "I'm willing to help in:" + willing_to_help +  '\n'
+            description += "I'm willing to help in:" + willing_to_help +  '\r\n'
         if location_desc is 'VA':
             location_desc = 'vankuver'
         if location_desc is 'CA':
@@ -235,7 +235,7 @@ def import_users( excel_file_name, segment_name ):
             want_to_add_that  = excel_object.read( col_named_dict['Anything else that we need to know? Anything to say?']+row_str).strip()
             love_to_do = excel_object.read( col_named_dict['What do you love to do?']+row_str).strip()
             if social_profile:
-                description += 'Feel free to follow me on:'+ social_profile + '\r\n'
+                description += 'Feel free to follow me on: '+ social_profile + '\r\n'
 
             if proffesion:
                 description += 'I am a '+ proffesion + '\r\n'
