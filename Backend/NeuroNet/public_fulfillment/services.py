@@ -214,7 +214,7 @@ def import_users( excel_file_name, segment_name ):
 
         if first_name == u'גיא' and last_name == u'דפני':
             first_name = 'Guy'
-            last_name = 'Dafni'
+            last_name = 'Dafny'
 
         user_name                  = (first_name+'_'+ last_name).casefold().replace(' ', '_').replace(')', '_').replace('(', '_')
 
