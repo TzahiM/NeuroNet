@@ -14,7 +14,13 @@
                  <br />
                  <br />
                  <br />
-                 <input type="search" id="myInput"  placeholder="Search in members" title="partial text" value={{search_text}}>
+                 <input type="search" id="myInput"  placeholder="Search in members" title="partial text" 
+                        
+					{% if search_text %}                                            
+                        value={{search_text}}
+					{% endif %}
+                        
+                        >
                  <button onclick="search_by_text();">Search</button>
 
  				<div class="col-sm-3 col-md-12" id = "UserList">					
