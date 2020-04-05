@@ -213,6 +213,9 @@ def import_users( excel_file_name, segment_name ):
         willing_to_help            = excel_object.read( col_named_dict['How are you willing to help']+row_str).strip()
         user_name                  = (first_name+'_'+ last_name).casefold()
 
+        if first_name == u'גיא' and last_name == u'דפני':
+            first_name = 'Guy'
+            last_name = 'Dafni'
 
         segment                    = segment
         description                = ''
