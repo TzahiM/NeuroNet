@@ -276,6 +276,7 @@ def import_users( excel_file_name, segment_name ):
                                                email = email,
                                                description = description,
                                                location_desc = location_desc,
-                                               segment = segment)
+                                               segment = segment,
+                                               recieve_updates = False)
 
         
