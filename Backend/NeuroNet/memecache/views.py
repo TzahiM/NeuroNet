@@ -104,11 +104,12 @@ def users_list(request, pk = None):
     users_rows_list = []
     place = 0
     
+    is_segment_admin = ( request.user == segment.shop_set.first().admin_user)
+
     for account in account_list:
-        
-        add_user = True
-        if account.user.userprofile.segment == segment:
+        if account.user.userprofile.segment == segment and (account.user.userprofile.a_player or is_segment_admin):
             place += 1
+            add_user = True
             if search_text:
                 if not( account.user.userprofile.description and ( search_text.casefold() in account.user.userprofile.description.casefold()) or search_text.casefold() in account.user.username.casefold() ):
                     add_user = False
