@@ -57,60 +57,6 @@
 	<script src="{% static 'dist/typeahead.js' %}"></script>
 	<script src="{% static 'dist/typeahead-addresspicker.js' %}"</script> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-{% if user.is_authenticated %}
-    <script id="notification_script">
-        
-    
-        function read_notifications() {
-            var n_notifications = 0;
-            // construct an HTTP request
-            var xhr = new XMLHttpRequest();
-            var url = "{% url 'coplay:api_userupdates_list_unread' %}";
-            xhr.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) 
-                {
-                    var videoObj = JSON.parse(this.responseText);
-                    var a = document.getElementById("notifications");
-                    for (i in videoObj) 
-                    {
-                           
-                            n_notifications++;
-                          
-                  
-                    }
-                   
-                    if( n_notifications > 0)
-                    {
-                   
-                    a.setAttribute("class", "btn btn-danger");
-                   // a.setAttribute("border", "round");
-        
-              //      a.setAttribute("on_click", "window.location.href = {% url 'coplay:user_updates'  user.username %};");
-                    a.innerText = n_notifications + '\nUnread' ;
-                    a.style.display = '';
-                    
-                    }
-                    else
-                    {
-                    
-                   // a.setAttribute("class", "btn btn-info");
-                    a.innerText = '';
-        a.style.display = 'none';
-                    }
-
-                
-                
-                }
-            };
-
-            xhr.open('GET', url, true);
-            xhr.send();                         
-        }
-  
-   
-    
-    </script>
-{% endif %}
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-47099729-3"></script>
 <script>
@@ -124,6 +70,21 @@
 </head>
 
 <body>
+
+     {% if user.is_authenticated  %} 
+    
+    {% if  not user.userprofile.a_player %} 
+	<script id="redirect for agreement">   
+    var current_url=window.location.href;
+        window.location.replace("{% url 'disclaimer'  %}" + "?next=" + current_url);
+        
+  
+      
+    </script>
+
+    {% endif %}
+    {% endif %}
+
 <div class="container">
     <div class="row">
     <div class="navbar navbar-inverse navbar-fixed-top  navbar-right" role="navigation">
@@ -197,6 +158,9 @@
                             Corona Virus Hackathon </a>
                         </li>
                         <li class="divider"></li>
+
+                            <li><a href="{% url 'agreement' %}"  target="_blank">User agreement.</a></li>
+                        <li class="divider"></li>
                         <li>
                             <a href="https://github.com/TzahiM/NeuroNet.git" target="_blank" >
                 <img src="https://www.pngitem.com/pimgs/m/128-1280162_github-logo-png-cat-transparent-png.png" height="42" width="42" alt="Github" ></a>
@@ -223,7 +187,8 @@
      
     </div>
         </div>
-
+   
+     
     {% include 'coplay/_messages.html' %}
 
     {% block content %}
@@ -263,11 +228,67 @@
 
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-    {% if user.is_authenticated %}
-    <script id="notification_script">
-        //read_notifications();  
-        setInterval(read_notifications ,2000);
-    </script>
+{% if user.is_authenticated %}
+<script id="notification_script">
+    {% if user.userprofile.a_player %} 
+
+        function read_notifications() {
+            var n_notifications = 0;
+            // construct an HTTP request
+            var xhr = new XMLHttpRequest();
+            var url = "{% url 'coplay:api_userupdates_list_unread' %}";
+            xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) 
+                {
+                    var videoObj = JSON.parse(this.responseText);
+                    var a = document.getElementById("notifications");
+                    for (i in videoObj) 
+                    {
+                           
+                            n_notifications++;
+                          
+                  
+                    }
+                   
+                    if( n_notifications > 0)
+                    {
+                   
+                    a.setAttribute("class", "btn btn-danger");
+                   // a.setAttribute("border", "round");
+        
+              //      a.setAttribute("on_click", "window.location.href = {% url 'coplay:user_updates'  user.username %};");
+                    a.innerText = n_notifications + '\nUnread' ;
+                    a.style.display = '';
+                    
+                    }
+                    else
+                    {
+                    
+                   // a.setAttribute("class", "btn btn-info");
+                    a.innerText = '';
+        a.style.display = 'none';
+                    }
+
+                
+                
+                }
+            };
+
+            xhr.open('GET', url, true);
+            xhr.send();                         
+        }
+
+    setInterval(read_notifications ,2000);
+    {% else %}
+        var current_url=window.location.href;
+        
+        window.location.replace("{% url 'disclaimer'  %}" + "?next=" + current_url);
+    {% endif %}
+
+
+     
+
+</script>
 {% endif %}
 
 </body>

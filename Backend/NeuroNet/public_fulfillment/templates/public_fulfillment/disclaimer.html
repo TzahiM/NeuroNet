@@ -1,0 +1,31 @@
+﻿{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<br>
+
+        <div class="container" >
+			<div class="row">
+                <div class="col-sm-9" >
+            
+
+                	<br>
+                	<br>
+                        1) I am above 18 had
+                    <br />
+                    2) I admit reading <a href="{% url 'agreement' %}"  target="_blank">www.neuronetlabs.org agreement.</a>                                                                                                                                                                                                        
+                	<br>
+                	<br>
+                <a class="btn btn-default"  href="{% url 'back_from_disclaimer' %}?next={{ next }}" >Accept</a>
+
+                </div>                                                                                                                                                                                                               
+                
+             </div>
+ 		                                                                                                                                                                                                 
+        </div>   
+ 			
+		
+  
+{% endblock %}
+

@@ -16,11 +16,6 @@ from public_fulfillment.services import create_kuterless_user
 # Create your views here.
 
 
-def gmail(request):
-    return render(request, 'coplay/index.html', {
-        'rtl': 'dir="rtl"',
-    })
-
 def about(request):
     text_block_0 = ''
 #    return render(request, 'public_fulfillment/public_fulfillment_root.html', {
@@ -37,6 +32,41 @@ def corona_hackathon_root(request):
         'rtl': 'dir="rtl"',
     })
     
+
+def agreement(request):
+
+
+    return render(request, 'public_fulfillment/agreement.html', {
+        'next': next,
+        'rtl': 'dir="rtl"',
+    })
+
+
+
+@login_required
+def back_from_disclaimer(request):
+    next = request.GET.get('next')
+
+    if next:
+        return HttpResponseRedirect(next)
+    return root(request)
+
+
+    return render(request, 'public_fulfillment/disclaimer.html', {
+        'next': next,
+        'rtl': 'dir="rtl"',
+    })
+
+@login_required
+def disclaimer(request):
+    next = request.GET.get('next')
+    request.user.userprofile.a_player = True
+    request.user.userprofile.save()
+
+    return render(request, 'public_fulfillment/disclaimer.html', {
+        'next': next,
+        'rtl': 'dir="rtl"',
+    })
 
 def root(request):
     if request.user.is_authenticated:
@@ -215,10 +245,6 @@ def example(request):
         'rtl': 'dir="rtl"'
     })
 
-def privacy_policy(request):
-    return render(request, 'public_fulfillment/privacy_policy.html', {
-        'rtl': 'dir="rtl"'
-    })
 
 
 @login_required
