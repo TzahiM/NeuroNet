@@ -97,7 +97,7 @@ def get_user_url(user):
 def user_follow_start_email_updates(follower_user, following_user, inverse_following):
 
     t = Template("""
-        {{follower_user.get_full_name|default:follower_user.username}} is now following you
+        {{follower_user.get_full_name|default:follower_user.username}} is now following you and will be notified on your new ideas/projects. Make it easy for you to cooporate !
         """)
         
     subject = t.render(Context({"follower_user": follower_user}))
