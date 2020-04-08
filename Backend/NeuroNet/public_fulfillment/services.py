@@ -280,3 +280,9 @@ def import_users( excel_file_name, segment_name ):
                                                recieve_updates = False)
 
         
+def print_users(segment_name):
+    segment = Segment.objects.get(title=segment_name)
+    for u in segment.userprofile_set.all():
+        print( u.user.email, u.user.first_name, u.user.last_name, u.user.username)
+
+
