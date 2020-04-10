@@ -360,22 +360,33 @@ def create_discussion( user               = None,
     trunkated_subject_and_detailes = t.render(Context({"discussion": new_discussion}))
 
     new_discussion_followers = []
+    for user_profile in UserProfile.objects.all():
+        if new_discussion.can_user_access_discussion( user_profile.user):
+            to_append = False
+            if  is_user_is_following( user_profile.user ,new_discussion.owner):
+                to_append = True
+            else:
+                for tag_iter in user_profile.followed_discussions_tags.all():
+                    if tag_iter.name in new_discussion.tags.names():
+                        to_append = True
+            if to_append:
+                new_discussion_followers.append(user_profile.user)
 
-    user_s_following = get_followers_list(new_discussion.owner)
+    #user_s_following = get_followers_list(new_discussion.owner)
     
 #all the followers for the user and all the followers for a tag
      
-    for user in UserProfile.objects.all():
-        if new_discussion.can_user_access_discussion( user.user):
-            if user in user_s_following:
-                new_discussion_followers.append(user.user)
-            else:
-                to_append = False
-                for tag_iter in user.user.userprofile.followed_discussions_tags.all():
-                    if tag_iter.name in new_discussion.tags.names():
-                        to_append = True
-                if to_append:
-                    new_discussion_followers.append(user.user)
+    #for user in UserProfile.objects.all():
+    #    if new_discussion.can_user_access_discussion( user.user):
+    #        if user in user_s_following:
+    #            new_discussion_followers.append(user.user)
+    #        else:
+    #            to_append = False
+    #            for tag_iter in user.user.userprofile.followed_discussions_tags.all():
+    #                if tag_iter.name in new_discussion.tags.names():
+    #                    to_append = True
+    #            if to_append:
+    #                new_discussion_followers.append(user.user)
     
           
     discussion_email_updates(new_discussion,

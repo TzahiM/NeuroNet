@@ -129,6 +129,8 @@ def user_follow_start_email_updates(follower_user, following_user, inverse_follo
 def discussion_email_updates(discussion, subject, logged_in_user, details = None, url_id = '', mailing_list = []):
     if mailing_list == []:
         mailing_list = discussion.get_followers_list()
+
+    print( 'dst', mailing_list)
     
 #     allowed_users_list = []
 #     
