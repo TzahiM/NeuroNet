@@ -261,14 +261,17 @@ def add_discussion(request, pk = None):
     if request.method == 'POST': # If the form has been submitted...
         form = NewDiscussionForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
-            
+            parent_url_text = ''
+            if form.cleaned_data['parent_url_text']:
+                parent_url_text = form.cleaned_data['parent_url_text']
+
             new_discussion, error_string = create_discussion( user      = request.user, 
                                                        title            = form.cleaned_data['title'], 
                                                        description      = form.cleaned_data['description'],                       
                                                        location_desc    = form.cleaned_data['location_desc'],
                                                        tags_string      = "",
                                                        parent_url       = form.cleaned_data['parent_url'],
-                                                       parent_url_text  = form.cleaned_data['parent_url_text'],
+                                                       parent_url_text  = parent_url_text,
                                                        #picture          = form.cleaned_data['picture'],
                                                        )
             

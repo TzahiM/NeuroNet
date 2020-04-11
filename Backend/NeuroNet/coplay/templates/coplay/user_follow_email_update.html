@@ -11,9 +11,9 @@
   <p>
   	{% if inverse_following %}
 	  	You are already following {{follower_user.get_full_name|default:follower_user.username}}
-	    <a href="{{ROOT_URL}}{% url 'coplay:stop_follow_user'  follower_user.username %}">Stop following{{follower_user.get_full_name|default:follower_user.username}}  </a>  	 
+	    <a href="{{ROOT_URL}}{% url 'coplay:stop_follow_user'  follower_user.username %}">Stop following {{follower_user.get_full_name|default:follower_user.username}}  </a>  	 
   	{% else %}
-	    <a href="{{ROOT_URL}}{% url 'coplay:start_follow_user'  follower_user.username %}">Start following{{follower_user.get_full_name|default:follower_user.username}}  </a>
+	    <a href="{{ROOT_URL}}{% url 'coplay:start_follow_user'  follower_user.username %}">Start following {{follower_user.get_full_name|default:follower_user.username}}  </a>
   	{% endif %}
   	
 <br>  	

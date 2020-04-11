@@ -394,7 +394,7 @@
         <br>
         <br>
                 	<center><h2>
-                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }} is following{% else %}you are following{% endif %}
+                        {% if user !=  applicabale_user %}{{ applicabale_user.get_full_name|default:applicabale_user.username }} is following {% else %}you are following {% endif %}
                         
                     </h2></center>
 	               	<ul>
