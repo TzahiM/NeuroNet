@@ -166,7 +166,7 @@ def discussion_details(request, pk):
  
     list_followers = discussion.get_followers_list()
     
-    page_name = u'Supporting' + discussion.title
+    page_name = u'Supporting ' + discussion.title
     
     applicabale_discussions_list, list_title = get_discussion_with_parent_url_list( request.path, request.user)
 
