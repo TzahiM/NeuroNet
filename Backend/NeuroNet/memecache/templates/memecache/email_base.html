@@ -1,4 +1,4 @@
-﻿{#<!-- made using http://htmlemailboilerplate.com/ -->
+﻿<!-- made using http://htmlemailboilerplate.com/ -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -163,13 +163,13 @@
 	<br>
 {% endif %}
     	
-    	<p>זוהי הודעה אוטומטית מאתר הבדיקות של NeuroNet</p>
+    	<p>This is an automated email, sent from Corona Virus Hackathon</p>
       {% block content %}
       {% endblock %}
-      <p>קוטרלס - מה לעשות? - לעשות !</p>
+      <p>Sponsered by NeuroNet - committed to Your Best Ideas</p>
       
 	   <p>    
-      <a href="{{ROOT_URL}}{% url 'public_fulfillment:update_profile' %}">אם אינך רוצה לקבל מיילים יש למחוק את המייל  מהפרופיל שלך</a>
+      <a href="{{ROOT_URL}}{% url 'public_fulfillment:stop_email' %}">Stop recive emails</a>
       	      
 	   </p>
       
@@ -178,4 +178,4 @@
   </table>
   <!-- End of wrapper table -->
 </body>
-</html>#}
+</html>
