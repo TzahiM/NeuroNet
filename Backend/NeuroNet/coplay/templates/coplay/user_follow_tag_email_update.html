@@ -12,10 +12,10 @@
   	
 <br>  	
 <br>  	
-      <a href="http://{{ROOT_URL}}{% url 'coplay:user_coplay_report'  follower_user.username %}">Watch {{follower_user.get_full_name|default:follower_user.username}} profile</a>
+      <a href="{{ROOT_URL}}{% url 'coplay:user_coplay_report'  follower_user.username %}">Watch {{follower_user.get_full_name|default:follower_user.username}} profile</a>
    <br>
    <br>
-         <a href="http://{{ROOT_URL}}{% url 'coplay:discussion_tag_list'  tag.id %}"> See projects that are associated to {{tag.name}}</a>
+         <a href="{{ROOT_URL}}{% url 'coplay:discussion_tag_list'  tag.id %}"> See projects that are associated to {{tag.name}}</a>
    </p>
       
 

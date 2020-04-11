@@ -9,7 +9,7 @@
         	<p>
         	{% if user_update.recipient != user %}
        			<a href="{% url 'coplay:user_coplay_report'  user_update.recipient.username %}">{{ user_update.recipient.get_full_name|default:user_update.recipient.username }}</a>
-       			עודכן/ה ש
+       			had been updated that
         	{% endif %}        	
         	{% if user_update.content %}
        			{{ user_update.content |urlize|linebreaks}}

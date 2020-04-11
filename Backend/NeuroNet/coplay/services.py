@@ -459,7 +459,7 @@ def start_tag_following( follower_user, tag):
             if tag in user.userprofile.followed_discussions_tags.all():
                 if user.email != None and user.userprofile.recieve_updates:
                     send_html_message(subject, html_message,
-                              'kuterless-no-reply@kuterless.org.il',
+                              settings.EMAIL_REPLY_TO_ADDRESS,
                               [user.email])
                 post_update_to_user(user.id, 
                                     header = string_to_email_subject(subject),
