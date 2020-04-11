@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'taggit',
     'taggit_labels',
-    'password_reset',
+    #'password_reset',
     'floppyforms',
     'nice_to_meet_you',
 ]

@@ -122,8 +122,8 @@
 
                 {% else %}
                    
-                    <li><a href="{% url 'login' %}?next={{ request.path }}">Login
-                        </a></li>
+                    <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
+                    <li><a href="{% url 'password_reset' %}">Reset Password</a></li>
                 {% endif %}
             	<li>
             		{% if user.is_authenticated %}

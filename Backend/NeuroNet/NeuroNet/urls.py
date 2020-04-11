@@ -27,6 +27,7 @@ from public_fulfillment.views import disclaimer, agreement, back_from_disclaimer
 from django.contrib.auth.views import LoginView, LogoutView
 from public_fulfillment import forms
 from rest_framework.authtoken.views import obtain_auth_token
+from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 
 urlpatterns = [
     path('', root, name="home"),
@@ -55,10 +56,15 @@ urlpatterns = [
     name='login'),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
 
-    path('password_reset/', include(('password_reset.urls', "password_reset"), "password_reset")),
+    #path('password_reset/', include(('password_reset.urls', "password_reset"), "password_reset")),
     path('api-auth/', include(('rest_framework.urls', "rest_framework"), "rest_framework")),
     path('api-token-auth/', obtain_auth_token, name='obtain_auth_token'),
 
     # Uncomment the next line to enable the admin:
-    path('admin/', admin.site.urls)
+    path('admin/', admin.site.urls),
+    path('reset-password', PasswordResetView.as_view(template_name='password_reset_form.html'), name='password_reset'),
+    path('reset-password/done', PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),
+    path('reset-password/confirm/<uidb64>[0-9A-Za-z]+)-<token>/', PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
+    path('reset-password/complete/',
+    PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),name='password_reset_complete'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

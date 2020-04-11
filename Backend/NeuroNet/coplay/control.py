@@ -49,7 +49,7 @@ def send_html_message_to_users(subject, html_content, to_users_list):
         if user.userprofile.recieve_updates and user.email:
             to_list.append(user.email)
     
-    send_html_message(subject, html_content, settings.EMAIL_REPLY_TO_ADDRESS, to_list)
+    send_html_message(subject, html_content, settings.DEFAULT_FROM_EMAIL, to_list)
 
 
 def post_update_to_user(recipient_user_id, header, content = None, discussion_id = None, sender_user_id = None,  details_url = None):
@@ -120,7 +120,7 @@ def user_follow_start_email_updates(follower_user, following_user, inverse_follo
     
     if following_user.email != None and following_user.userprofile.recieve_updates:
         send_html_message(subject, html_message,
-                              settings.EMAIL_REPLY_TO_ADDRESS,
+                              settings.DEFAULT_FROM_EMAIL,
                               [following_user.email])
 
     post_update_to_user(following_user.id, 
@@ -166,7 +166,7 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
         if user != logged_in_user:
             if user.email and user.userprofile.recieve_updates:
                 send_html_message(subject, html_message,
-                              settings.EMAIL_REPLY_TO_ADDRESS,
+                              settings.DEFAULT_FROM_EMAIL,
                               [user.email])
             post_update_to_user(user.id, 
                      header = string_to_email_subject(subject),
@@ -203,7 +203,7 @@ def discussion_email_updates_personal(discussion, subject, logged_in_user, detai
         if attensdent != logged_in_user:
             if attensdent.email and attensdent.userprofile.recieve_updates:
                 send_html_message(subject, html_message,
-                              settings.EMAIL_REPLY_TO_ADDRESS,
+                              settings.DEFAULT_FROM_EMAIL,
                               [attensdent.email])
             post_update_to_user(attensdent.id, 
                      header = string_to_email_subject(subject),
@@ -238,7 +238,7 @@ def discussion_task_email_updates(task, subject, logged_in_user, details = None)
         if attensdent != logged_in_user:
             if attensdent.email and attensdent.userprofile.recieve_updates:
                 send_html_message(subject, html_message,
-                              settings.EMAIL_REPLY_TO_ADDRESS,
+                              settings.DEFAULT_FROM_EMAIL,
                               [attensdent.email])
 
             post_update_to_user(attensdent.id, 
