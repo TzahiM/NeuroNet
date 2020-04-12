@@ -9,7 +9,7 @@ from coplay.models import Segment
 from excel import OpenExcel
 from memecache.models import Shop
 from NeuroNet import settings
-from public_fulfillment.control import send_email_message_to_user
+from public_fulfillment.control import send_email_message_to_user, send_any_email_message_to_user
 from django.template.base import Template
 from django.template.context import Context
 
@@ -322,6 +322,31 @@ Tzahi Manistersky                                                               
     subject = 'Your application to corona virus hackathon had been approved'
 
     send_email_message_to_user(user,subject, message)
+
+
+def send_registration_confirmed_email_message_to_user_fix(user):
+    subject = 'Default  password if reset-password fails'
+
+    template = """
+This is Tzahi Manistersky, the organizer of corona virus hackathon.                                                  \n
+We had encountered a bug in reset password.\n
+So if is fails, use password:incorrect                                                                                                                     \n
+Feel free to be one of the first to connect into our system at  http://www.neuronetlabs.org/CoronaVirusHackathon/    \n                                                                                               \n
+username: {{username}}                                                                                                        \n
+password: incorrect                                   \n
+                                                                                                                     \n
+Tzahi Manistersky                                                                                                    \n
++972(52)2947775
+ """
+    parameters_dict = {"username": user.username}
+    send_any_email_message_to_user(user, 
+                                   subject = subject, 
+                                   template = template, 
+                                   parameters_dict = parameters_dict)
+
+
+
+
 
 
 

@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 import unicodedata
 from django.template.loader import render_to_string
+from django.template.base import Template
+from django.template.context import Context
 from coplay.control import string_to_email_subject
 from coplay.control import send_html_message
 from NeuroNet import settings
@@ -67,3 +69,11 @@ def send_email_message_to_user(user, subject, message):
 
 
 
+
+
+
+def send_any_email_message_to_user(user, subject = '', template = '', parameters_dict={}):
+    
+    message = Template(template).render(Context(parameters_dict))
+
+    send_email_message_to_user(user,subject, message)

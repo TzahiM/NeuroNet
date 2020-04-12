@@ -65,6 +65,7 @@ urlpatterns = [
     path('reset-password', PasswordResetView.as_view(template_name='password_reset_form.html', html_email_template_name='password_reset_email.html'), name='password_reset'),
     path('reset-password/done', PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),
     path('reset-password/confirm/<uidb64>[0-9A-Za-z]+)-<token>/', PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
+    #path('reset-password/confirm/<uidb64>[0-9A-Za-z]+)-<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset-password/complete/',
     PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),name='password_reset_complete'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
