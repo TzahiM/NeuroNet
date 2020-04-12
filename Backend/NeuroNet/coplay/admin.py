@@ -37,8 +37,8 @@ class SegmentAdmin(admin.ModelAdmin):
     list_display = ('title', 'description')
     
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'segment', 'description')
-    search_fields = ['description']
+    list_display = ('user', 'segment', 'description','a_player', 'recieve_updates','recieve_notifications')
+    search_fields = ['description','user','description', 'segment']
 
 
 class UpdateAdmin(admin.ModelAdmin):
