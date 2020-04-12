@@ -410,6 +410,7 @@
     <Content Include="public_fulfillment\templates\password_reset_complete.html" />
     <Content Include="public_fulfillment\templates\password_reset_confirm.html" />
     <Content Include="public_fulfillment\templates\password_reset_done.html" />
+    <Content Include="public_fulfillment\templates\password_reset_email.html" />
     <Content Include="public_fulfillment\templates\password_reset_form.html" />
     <Content Include="public_fulfillment\templates\password_reset\base.html" />
     <Content Include="public_fulfillment\templates\public_fulfillment\agreement.html" />

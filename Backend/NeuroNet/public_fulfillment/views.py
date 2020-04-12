@@ -323,15 +323,25 @@ def update_profile(request):
     })
     
 
-@login_required
+#@login_required
 def stop_email(request):
-    user = request.user
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        username = request.GET.get('username')
+        if username:
+            user = User.objects.get(username=username)
+        else:
+            return render(request, 'coplay/message.html', 
+                      {  'message'      :  'unknown user',
+                       'rtl': 'dir="rtl"'})
+
     user.userprofile.recieve_updates = False
     user.userprofile.save()
     user.save()
 
     return render(request, 'coplay/message.html', 
-                      {  'message'      :  'הופסקה קבלת המיילים',
+                      {  'message'      :  user.get_full_name()+' had been removed from our mailing list',
                        'rtl': 'dir="rtl"'})
     
 

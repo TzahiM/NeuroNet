@@ -62,7 +62,7 @@ urlpatterns = [
 
     # Uncomment the next line to enable the admin:
     path('admin/', admin.site.urls),
-    path('reset-password', PasswordResetView.as_view(template_name='password_reset_form.html'), name='password_reset'),
+    path('reset-password', PasswordResetView.as_view(template_name='password_reset_form.html', html_email_template_name='password_reset_email.html'), name='password_reset'),
     path('reset-password/done', PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),
     path('reset-password/confirm/<uidb64>[0-9A-Za-z]+)-<token>/', PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset-password/complete/',
