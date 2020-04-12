@@ -9,6 +9,10 @@ from coplay.models import Segment
 from excel import OpenExcel
 from memecache.models import Shop
 from NeuroNet import settings
+from public_fulfillment.control import send_email_message_to_user
+from django.template.base import Template
+from django.template.context import Context
+
 
 def get_default_email():
     u = User.objects.all()[0]
@@ -284,5 +288,41 @@ def print_users(segment_name):
     segment = Segment.objects.get(title=segment_name)
     for u in segment.userprofile_set.all():
         print( u.user.email, u.user.first_name, u.user.last_name, u.user.username)
+
+
+
+
+
+def send_registration_confirmed_email_message_to_user(user):
+    
+    t = Template("""
+This is Tzahi Manistersky, the organizer of corona virus hackathon.                                                  \n
+I'm sending you this main because you had applied to join our community,                                             \n
+It took us some time for process your application.                                                                   \n
+But considering that filling the form is an evidence for your commitment.                                            \n
+                                                                                                                     \n
+The important thing is that we need new ideas/projects and cooperation.                                              \n
+                                                                                                                     \n
+Feel free to be one of the first to connect into our system at  http://www.neuronetlabs.org/CoronaVirusHackathon/    \n
+1) Your account info:                                                                                                \n
+username: {{username}}                                                                                                        \n
+This is a link for reset your password: http://www.neuronetlabs.org/reset-password                                   \n
+ Once you're in, I'll be notified for any of your projects (idea/ask for support and help)                           \n
+                                                                                                                     \n
+2) If you are using chrome, I would highly recommend on installing our chrome extension from store:                  \n
+https://chrome.google.com/webstore/detail/corona-virus-hackathon/ggkbcckihealpkiafibifobejlamcfpn                    \n
+Feel free to contact me:                                                                                             \n
+                                                                                                                     \n
+Tzahi Manistersky                                                                                                    \n
++972(52)2947775
+ """)
+        
+    message = t.render(Context({"username": user.username}))
+
+    subject = 'Your application to corona virus hackathon had been approved'
+
+    send_email_message_to_user(user,subject, message)
+
+
 
 

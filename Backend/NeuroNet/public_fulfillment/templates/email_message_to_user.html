@@ -1,0 +1,26 @@
+﻿{% extends "coplay/email_base.html" %}
+
+{% block content %}
+
+<p>
+    <br />
+    <br />
+    {% if first_name %}
+    Dear {{first_name}}
+  	{% endif %}
+    <br />
+    <br />
+    {% if details %}
+  		{{details|urlize|linebreaks }}
+  	{% endif %}
+
+</p>
+  <p>  	
+      
+   </p>
+   <br>
+   <br>
+      
+
+{% endblock %}
+

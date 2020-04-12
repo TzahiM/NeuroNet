@@ -7,6 +7,12 @@ This file contain the control services, used for all views
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 import unicodedata
+from django.template.loader import render_to_string
+from coplay.control import string_to_email_subject
+from coplay.control import send_html_message
+from NeuroNet import settings
+
+
 
 #logger = logging.getLogger(__name__)
 
@@ -40,6 +46,24 @@ def simple_auth_token( key):
     return None
         
     
+def send_email_message_to_user(user, subject, message):
+
+    
+    html_message = render_to_string("email_message_to_user.html",
+                                    {'ROOT_URL': settings.SITE_URL,
+                                     'username': user.username,
+                                     'first_name': user.first_name,
+                                     'html_title': string_to_email_subject(subject),
+                                     'details': message})
+    
+
+#    with open( "output.html" , "w") as debug_file:
+#        debug_file.write(html_message)
+    
+    if user.email != None and user.userprofile.recieve_updates:
+        send_html_message(subject, html_message,
+                              settings.DEFAULT_FROM_EMAIL,
+                              [user.email])
 
 
 

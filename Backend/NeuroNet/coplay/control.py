@@ -134,7 +134,7 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
     if mailing_list == []:
         mailing_list = discussion.get_followers_list()
 
-    print( 'dst', mailing_list)
+    #print( 'dst', mailing_list)
     
 #     allowed_users_list = []
 #     
