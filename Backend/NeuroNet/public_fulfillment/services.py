@@ -281,7 +281,7 @@ def import_users( excel_file_name, segment_name ):
                                                description = description,
                                                location_desc = location_desc,
                                                segment = segment,
-                                               recieve_updates = False)
+                                               recieve_updates = True)
 
         
 def print_users(segment_name):
