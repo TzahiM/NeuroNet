@@ -17,7 +17,11 @@
                     2) I admit reading <a href="{% url 'agreement' %}"  target="_blank">www.neuronetlabs.org agreement.</a>                                                                                                                                                                                                        
                 	<br>
                 	<br>
+                    {% if next %}
                 <a class="btn btn-default"  href="{% url 'back_from_disclaimer' %}?next={{ next }}" >Accept</a>
+                    {% else %}
+                <a class="btn btn-default"  href="{% url 'back_from_disclaimer' %}" >Accept</a>
+                    {%endif %}
 
                 </div>                                                                                                                                                                                                               
                 
