@@ -3,8 +3,10 @@
 
 {% block content %}  
     <div class="row">
+    {%if tags_list %}
      
     <a class="btn btn-success " href="#Tags">Availabale tags</a>
+  	{% endif %}
      
     	{% if tag %}
 						<a class="btn btn-success"  href="{% url 'coplay:add_with_tag'  tag.id %}">Open a new project, related to {{tag.name}}</a>    	 

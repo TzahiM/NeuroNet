@@ -1179,6 +1179,7 @@ def discussion_tag_list(request, pk = None):
                    'tags_list': tags_set,
                    'tag': tag,
                    'is_following': is_following,
+                   'applicabale_user': request.user,
                    'followers': followers})
 
 
@@ -1214,6 +1215,7 @@ def related_discussions_of_url(request):
                    'page_name': page_name,
                    'search_url': search_url,
                    'url_text': list_title,
+                   'applicabale_user': request.user,
                   })
 
 @login_required
