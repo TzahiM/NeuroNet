@@ -154,16 +154,16 @@ def instructions(request):
     
     instructions_text = """
 
-    על Open new project מקבלים         27
-    על השלמת משימה עבור משתמש אחר        23
-    על ביטול משימה עבור משתמש אחר        19
-    על השלמת משימה עבור המשתמש עצמו        17
-    על ביטול משימה עבור המשתמש עצמו        13
-    על אישור עדכון של מצב משימות        11
-    על תגובה בפעילות של משתמש אחר        7
-    על פירסום רעיון להצבעה של מוביל פעילות        5
-    על הצבעה על רעיון של מישהו אחר        3
-    על צפייה בפעילות של מישהו אחר מקבלים         2
+    27 for each new project
+    23 every time that you completion of a task for other's community member project
+    19 for any cancel (on time) your task for other's community member project
+    17 every time that you had completed a task for your own project
+    13 for cancel on time a task for your own project
+    11 for confirm the status of any task
+    7  for any comment in another one's project
+    5  on posting a new query of idea at your project
+    3  on every vote on another one's project
+    2  for every time you watched another one's (updated) project.    
     """
         
     return render(request, 'memecache/instruction.html', {'shop':shop, 'instructions_text': instructions_text})
