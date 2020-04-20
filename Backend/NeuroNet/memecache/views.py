@@ -136,6 +136,7 @@ def users_list(request, pk = None):
                    'page_name': page_name})
 
 
+@login_required
 def instructions(request):
     if request.user.is_authenticated and  request.user.userprofile:
         segment_name = request.user.userprofile.get_segment_title()
