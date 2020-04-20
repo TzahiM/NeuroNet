@@ -115,6 +115,7 @@
                     <li>
                         <a href="{% url 'public_fulfillment:update_profile' %}">Update Profile</a></li>
                     <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
+                    <li><a href="https://forms.gle/c723wnVe3rWrnkdH9" target="_blank">Link for invite</a></li>
 
                     <li ><div id="notifications"></div></li>
             	
@@ -124,6 +125,7 @@
                    
                     <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
                     <li><a href="{% url 'password_reset' %}">Reset Password</a></li>
+                    <li><a href="{% url 'public_fulfillment:sign_up'  %}">Register</a></li>
                 {% endif %}
             	<li>
             		{% if user.is_authenticated %}
@@ -172,13 +174,7 @@
                       
                     </ul>
                 </li>
-                <li>
-                    {% if user.is_authenticated %}
-                    <li><a href="https://forms.gle/c723wnVe3rWrnkdH9" target="_blank">Link for invite</a>
-                {% else %}
-                    <li><a href="https://forms.gle/c723wnVe3rWrnkdH9" target="_blank">Register</a>
-                {% endif %}
-                </li>
+                
                
 
             </ul>

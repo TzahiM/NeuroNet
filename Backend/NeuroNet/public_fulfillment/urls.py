@@ -4,7 +4,7 @@ from public_fulfillment import api
 
 urlpatterns = [
     path('', views.about, name="about"),
-    #path('register/', views.sign_up, name="sign_up"),
+    path('sign_up/', views.sign_up, name="sign_up"),
     path('update_profile/', views.update_profile, name="update_profile"),
     path('stop_email/', views.stop_email, name="stop_email"),
     path('example/', views.example, name="example"),

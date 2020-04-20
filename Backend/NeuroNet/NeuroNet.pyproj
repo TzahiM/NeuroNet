@@ -414,6 +414,7 @@
     <Content Include="public_fulfillment\templates\password_reset_form.html" />
     <Content Include="public_fulfillment\templates\password_reset\base.html" />
     <Content Include="public_fulfillment\templates\public_fulfillment\agreement.html" />
+    <Content Include="public_fulfillment\templates\public_fulfillment\Events.html" />
     <Content Include="public_fulfillment\templates\public_fulfillment\CoronaVirusHackathonRoot.html" />
     <Content Include="public_fulfillment\templates\public_fulfillment\disclaimer.html" />
     <Content Include="public_fulfillment\templates\email_message_to_user.html" />
