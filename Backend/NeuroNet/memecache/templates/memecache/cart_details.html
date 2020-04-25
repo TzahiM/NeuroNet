@@ -39,7 +39,7 @@
 				         </tr>
 				      </tbody>
 				   </table>
-				   נשארו לי עוד {{cart.get_ramaining_customer_credit}} {{cart.shop.currency_name}}
+				   Remaining {{cart.get_ramaining_customer_credit}} {{cart.shop.currency_name}}
 				   <a class="btn btn-success"  href="{% url 'memecache:products_list' cart.shop.id %}">Buy more</a>
 				   <a class="btn btn-info"  href="{% url 'memecache:cart_checkout' cart.id %}">Add to my rewards</a>
 				</div> 

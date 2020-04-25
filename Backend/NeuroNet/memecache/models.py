@@ -128,7 +128,7 @@ class Shop(models.Model):
     segment = models.ForeignKey(Segment, default = None, null=True, blank=True,on_delete=models.CASCADE)
     admin_user         = models.ForeignKey(User,on_delete=models.SET_NULL,null=True)    
     title = models.CharField("shop name", max_length=200)
-    currency_name = models.CharField("coin name", default = 'MemeCache', max_length=200)
+    currency_name = models.CharField("coin name", default = 'MemeCash', max_length=200)
     description = models.TextField("Description", blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
 

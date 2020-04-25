@@ -14,7 +14,7 @@
       <br>
       <br>
       {% if logged_in_user %}
-      <a href="{{ROOT_URL}}{% url 'coplay:user_coplay_report'  logged_in_user %}">profile{{ logged_in_user.get_full_name|default:logged_in_user.username }}</a>
+      <a href="{{ROOT_URL}}{% url 'coplay:user_coplay_report'  logged_in_user %}"> profile {{ logged_in_user.get_full_name|default:logged_in_user.username }}</a>
       <br>
       <br>
       {% endif%}

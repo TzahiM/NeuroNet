@@ -166,16 +166,13 @@
     	<p>This is an automated email, sent from Corona Virus Hackathon</p>
       {% block content %}
       {% endblock %}
-      <p>Sponsored by NeuroNet - committed to Your Best Ideas</p>
-      
+      <p>Sponsored by NeuroNet - committed to Your Best Ideas</p>      
 	   <p>
-{% if username %}
-      <a href="{{ROOT_URL}}{% url 'public_fulfillment:stop_email' %}?username={{username}}">Stop receive emails</a>
-	{% else%}
-           
-      <a href="{{ROOT_URL}}{% url 'public_fulfillment:stop_email' %}">Stop receive emails</a>
-{% endif %}
-      	      
+      {% if username %}
+      <a href="{{ROOT_URL}}{% url 'public_fulfillment:stop_email' %}?username={{username}}">Stop receive emails from {{ROOT_URL}}</a>
+	  {% else%}           
+        a href="{{ROOT_URL}}{% url 'public_fulfillment:stop_email' %}">Stop receive emails from {{ROOT_URL}}</a>
+      {% endif %}      	      
 	   </p>
       
     </td>

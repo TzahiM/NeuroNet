@@ -19,7 +19,7 @@ class Location(models.Model):
     num = models.IntegerField()
     street = models.CharField(max_length=100, default=None, blank=True, null=True)
     city = models.CharField(max_length=100, default=None, blank=True, null=True)
-    state = models.CharField(max_length=20, default = u'ישראל', blank=True)
+    state = models.CharField(max_length=20, default = u'Israel', blank=True)
     latitude    = models.FloatField(default=None, blank=True, null=True)
     longitude   = models.FloatField(default=None, blank=True, null=True)
 

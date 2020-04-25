@@ -18,14 +18,14 @@
 	    	<br>    	
 	    	{% if item_voucher.used %}
 	    		{% if just_used%}
-	    			<h1>    מומש בהצלחה! </h1>
+	    			<h1> Vaucher accepted </h1>
 	    		{% else %}
-	    			כבר נתנו  {{ item_voucher.updated_at | naturaltime }}
+	    			Had been already recived before  {{ item_voucher.updated_at | naturaltime }}
 	    		{% endif %}
 	    	{% else %}
 	    		{% if item_voucher.product.can_use %}
 	    			{% if item_voucher.product.end_of_use_at %}
-	    			אי אפשר יהיה להשתמש {{ item_voucher.product.end_of_use_at | naturaltime }}
+	    			Shall not be availabale in {{ item_voucher.product.end_of_use_at | naturaltime }}
 	    			{% endif %}
 	    			<center>
 	    			{% if user == item_voucher.shop.admin_user %}
