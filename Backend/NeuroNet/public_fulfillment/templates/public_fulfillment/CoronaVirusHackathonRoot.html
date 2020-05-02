@@ -4,7 +4,7 @@
 
 {% block content %}
         <div class="container" >
-			<div class="row">
+			<div class="row" id="next_meeting" hidden>
                 <div class="col-sm-4" id="coundown_timer">
        
                   
@@ -27,11 +27,16 @@
 
 
                                                                                                                                                                                                                                  
-                </div> 
+            </div> 
+            </div> 
 
             <div class="row">
                 <div class="col-sm-2" >
                   
+                    <br />
+                    <br />
+                    <br />
+                    <br />
                     <br />
                     <br />
                 <a class="btn btn-success" href="{% url 'public_fulfillment:sign_up'  %}" target="_blank">Register</a>
