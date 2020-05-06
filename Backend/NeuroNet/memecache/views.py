@@ -250,7 +250,7 @@ def update_product_selection(request, pk):
             cart = product.shop.get_cart(request.user)
             if cart == None:
                 return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'Bannot buy now, try later',
+                      {  'message'      :  u'Cannot buy now, try later',
                        'rtl': 'dir="ltr"'})
 
             cart.take_items( product , form.cleaned_data['number_of_selected_items'])
