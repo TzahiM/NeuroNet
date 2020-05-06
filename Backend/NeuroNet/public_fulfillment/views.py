@@ -163,7 +163,7 @@ def sign_up(request):
         return render(request, 'coplay/message.html', 
                       {  'message'      :  'Already logged in',
                        'rtl': 'dir="rtl"'})
-    #return HttpResponseRedirect("https://forms.gle/c723wnVe3rWrnkdH9")
+    return HttpResponseRedirect("https://forms.gle/c723wnVe3rWrnkdH9")
     
     redirect_to = request.GET.get('next')
     allowed_hosts = []
