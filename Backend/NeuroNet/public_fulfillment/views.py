@@ -18,7 +18,7 @@ from coplay.services import start_users_following
 
 
 def about(request):
-    return HttpResponseRedirect('/media/content/About.html')
+    return HttpResponseRedirect('/media/content/About Coronavirus Hachathon.html')
 
     text_block_0 = ''
     return render(request, 'public_fulfillment/root.html', {
