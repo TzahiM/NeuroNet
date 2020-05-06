@@ -18,11 +18,13 @@ from coplay.services import start_users_following
 
 
 def about(request):
+    return HttpResponseRedirect('/media/content/About.html')
+
     text_block_0 = ''
-#    return render(request, 'public_fulfillment/public_fulfillment_root.html', {
     return render(request, 'public_fulfillment/root.html', {
         'text_block_0': text_block_0,
         'rtl': 'dir="rtl"',
+        'about': '/media/content/About.html',
     })
 
 def corona_hackathon_root(request):
@@ -161,7 +163,7 @@ def sign_up(request):
         return render(request, 'coplay/message.html', 
                       {  'message'      :  'Already logged in',
                        'rtl': 'dir="rtl"'})
-    return HttpResponseRedirect("https://forms.gle/c723wnVe3rWrnkdH9")
+    #return HttpResponseRedirect("https://forms.gle/c723wnVe3rWrnkdH9")
     
     redirect_to = request.GET.get('next')
     allowed_hosts = []
@@ -186,7 +188,7 @@ def sign_up(request):
             password_confirm = form.cleaned_data['password_confirm']
             if password != password_confirm:
                 return render(request, 'coplay/message.html', 
-                      {  'message'      :  'None התאמה בין שתי הסיסמאות',
+                      {  'message'      :  'Password repeat mismatch',
                        'rtl': 'dir="rtl"'})
                 
             user_name =  form.cleaned_data['user_name']

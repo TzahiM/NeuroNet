@@ -31,16 +31,16 @@
 	    			{% if user == item_voucher.shop.admin_user %}
 	    			<a class="btn btn-info"
 	                       href="{% url 'memecache:item_voucher_use' item_voucher.id %}">
-	                       להשתמש</a>
+	                       Accept</a>
 	    			{% endif %}
 	    			{% if user == item_voucher.customer %}
 	    			<a class="btn btn-info "
 	                       href="{% url 'memecache:item_voucher_send' item_voucher.id %}">
-	                       להשתמש</a>
+	                       Use</a>
 	    			{% endif %}
 	    			</center>
 	    		{% else %}
-	    		כבר אי אפשר להשתמש
+	    		Already used
 	    	  	{% endif %}
 	    	
 	    	{% endif %}

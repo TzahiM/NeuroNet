@@ -5,7 +5,15 @@
 {% block content %}
 <br>
 
-        <div class="container" >
+<div class="container" >
+{% if about %}
+			
+
+            
+            <iframe height="900" width="1600" src="{{about}}" ></iframe>
+           
+{% else %}            
+
 			<div class="row">
                 <div class="col-sm-9" >
             
@@ -50,7 +58,7 @@
                 </div>
  		                                                                                                                                                                                                 
             <div class="row">
-            </div>   
+              
                 <div class="col-sm-4" id = "new project">                                                                                                                                                               
                 	<br>
                 	<br>                	
@@ -80,7 +88,8 @@
                     <br>
                 </div>
             </div>         
- 			<div class="row" id="sponsers">  
+{% endif %} 			
+<div class="row" id="sponsers">  
                 	<br>                	
                 	<br>                	
                 <center>
@@ -93,7 +102,8 @@
                 </div>
                 </center>
  			</div>   
- 			
+</div> 
+ 			  
 		
   
 {% endblock %}

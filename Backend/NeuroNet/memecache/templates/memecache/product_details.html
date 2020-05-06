@@ -13,10 +13,10 @@
                 {% if user == product.shop.admin_user %}
                     <a class="btn btn-danger pull-right"
                        href="{% url 'memecache:product_delete' product.id %}">
-                       למחיקת המוצר</a>
+                       Delete</a>
                        <a class="btn btn-info pull-right"
                        href="{% url 'memecache:product_update' product.id %}">
-                       לעריכת המוצר</a>
+                       Edit</a>
                 {% endif %}
         
             </div>
@@ -26,7 +26,7 @@
     <div class="row">
 		<div class="col-sm-6 col-md-6" >
 			{% if product.description%}
-				<h3>תאור:</h3>
+				<h3>Description:</h3>
 			 	{{product.description|urlize|linebreaks}}
 			 {% endif %}			
 	    </div>
@@ -34,10 +34,10 @@
 			   <table class="table">
 			      <thead>
 			         <tr>
-			            <th>כמה {{shop.currency_name}} זה עולה?</th>
-			            <th>כמה {{shop.currency_name}} נשאר לך?</th>
-			            <th>כמה {{product.title}}  עוד אפשר לקנות?</th>
-			            <th>כמה {{product.title}}  לקחת?</th>
+			            <th>Price {{shop.currency_name}}</th>
+			            <th>Your {{shop.currency_name}} balance</th>
+			            <th>You can buy additional {{product.title}} </th>
+			            <th>Already selected {{product.title}}</th>
 			         </tr>
 			      </thead>
 			      <tbody>
@@ -54,17 +54,17 @@
 									</div>
 								{% endfor %}
 								<br>
-								<input type="submit" class="btn btn-success" value="להוסיף לעגלה" />
+								<input type="submit" class="btn btn-success" value="Add to cart" />
 							</form>
 						<br>
-						<a class="btn btn-success"  href="{% url 'memecache:products_list' shop.id %}">לקנות עוד</a>
+						<a class="btn btn-success"  href="{% url 'memecache:products_list' shop.id %}">Buy more</a>
 						</td>
 					 </tr>
 				  </tbody>
 			</table>
 			<a class="glyphicon glyphicon-shopping-cart"
                        href="{% url 'memecache:cart_details' cart.id %}">
-                       מה כבר לקחתי</a>
+                       Checkout</a>
 	    </div>
 	</div>
 

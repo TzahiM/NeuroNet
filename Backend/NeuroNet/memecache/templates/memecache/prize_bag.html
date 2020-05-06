@@ -8,16 +8,16 @@
  					<br>
  					<br>
  					<center>
- 						<h1>הפרסים שלי</h1>
+ 						<h1>My rewards</h1>
 		 					<br>
 		 					<br>
 		 					{% for product_prize in product_prize_list %}
 		 					<a class="btn btn-success"  href= "#{{product_prize.id_name}}">{{product_prize.product_title}}</a>
 		 					 
 		 					{% empty %}
-		 					עוד None פרסים
+		 					 None 
 		 					<br>
-		 					<a class="btn btn-success"  href="{% url 'coplay:discussions_list' %}">רוצה להרויח פרסים</a>
+		 					<a class="btn btn-success"  href="{% url 'coplay:discussions_list' %}">Earn rewards</a>
 		 					{% endfor %}
  						
  					</center>

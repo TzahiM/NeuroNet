@@ -25,10 +25,10 @@
 				      <caption><h1>מה אפשר לקנות ב{{shop.title}}?</h1></caption>
 				      <thead>
 				         <tr>
-				            <th>שם</th>
-				            <th>עולה</th>
-				            <th>אפשר לקנות עוד</th>
-				            <th>עד מתי אפשר לקנות?</th>
+				            <th></th>
+				            <th>Cosr</th>
+				            <th>Remaining</th>
+				            <th>End of sale</th>
 				            <th></th>
 				         </tr>
 				      </thead>
@@ -43,14 +43,14 @@
 				            	 	{% if product.end_of_sale_at %}
 				            	 		{{ product.end_of_sale_at |naturaltime }}
 				            	 	{% else%}
-				            	 		עד מתי שרוצים
+				            	 		No limit
 				            	 	{% endif %}
 				            	 {% else%}
-				            	 	כבר אי אפשר לקנות
+				            	 	Not availabale
 				            	 {% endif %}
 				            </td>
 				            <td><a class="btn btn-success" href={{ product.get_absolute_url }}>
-                                    לפרטים</a>                                     				            	
+                                    Details</a>                                     				            	
 				            	</td>
 				         </tr>
 				         {% empty %}
@@ -62,7 +62,7 @@
 				   <br>
 				   <a class="glyphicon glyphicon-shopping-cart"
                        href="{% url 'memecache:cart_details' cart.id %}">
-                       מה כבר לקחתי</a>
+                       Checkout</a>
                        <br>
                        <br>
                        <br>
