@@ -238,6 +238,9 @@ class Product(models.Model):
     title = models.CharField("Product name", max_length=200)
     description = models.TextField("Description", blank=True, null=True,
                                    validators=[MaxLengthValidator(MAX_TEXT)])
+    picture = models.ImageField( "A picture that describe the product",upload_to='uploads/%Y/%m/%d/', null=True, blank=True,default = None,
+                                        max_length = 500000)
+
     item_price  = models.PositiveIntegerField("Price",default = 0)
     number_of_abailabale_items  = models.PositiveIntegerField("Availabale",default = 0)
     number_of_selected_items    = models.PositiveIntegerField(default = 0)

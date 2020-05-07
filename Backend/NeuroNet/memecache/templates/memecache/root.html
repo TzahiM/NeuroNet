@@ -7,40 +7,31 @@
 
         <div class="container" >
 			
- 			<div class="row">
-                <div class="col-sm-1 col-md-12" id = "EarnPrizes">
-                	               	
-                	
-                </div>
-            </div>   
+ 			   
+                    
+ 			   
             <div class="row">
-                	<center>
+                <div class="col-sm-3 col-md-12" id = "PrizeBag">
                 	<br>
                 	<br>
-                	    
-                		<a class="btn btn-success"  href="{% url 'memecache:instructions' %}">How to earn {{shop.currency_name}} ?</a>
-                	</center>
-            </div>         
- 			<div class="row">
-                <div class="col-sm-3 col-md-12" id = "Shop">
-                	<br>
-                	<br>
-                	<center><a class="btn btn-success"  href="{% url 'memecache:products_list'  shop.id %}">Select awards{{shop.title}}</a></center>
+                <a class="btn btn-success"  href="{% url 'memecache:instructions' %}">How to earn {{shop.currency_name}} ?</a>
                 </div>
-            </div>         
+            </div><div class="row">
+                <div class="col-sm-3 col-md-12" id = "PrizeBag">
+                	<br>
+                	<br>
+                	<a class="btn btn-success"  href="{% url 'memecache:products_list'  shop.id %}">Select awards for {{shop.title}} members</a>
+                </div>
+            </div>    
  			<div class="row">
                 <div class="col-sm-3 col-md-12" id = "PrizeBag">
                 	<br>
                 	<br>
-                	<center><a class="btn btn-success"  href="{% url 'memecache:prize_bag' %}">Use my awards</a></center>
+                	<a class="btn btn-success"  href="{% url 'memecache:prize_bag' %}">Use my awards</a>
                 </div>
             </div>   
-                	<br>
-                	<br>
-            		<center>
-            			<a class="btn btn-success" align ="center" href="{% url 'memecache:users_list'  %}">Community members</a>
-            		</center>
-		
+ 
+		</div>
 
 
 {% endblock %}

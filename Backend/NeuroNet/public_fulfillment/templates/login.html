@@ -31,12 +31,12 @@
                 {% if form.errors %}
                 <p class="validation-summary-errors">Please enter a correct user name and password.</p>
                 {% endif %}
-                <a class="btn btn-default" href="{% url 'public_fulfillment:sign_up'  %}">Register</a>
+                <a class="btn btn-success" href="{% url 'public_fulfillment:sign_up'  %}">Register</a>
 
 
                 <br />
                 <br />
-                 <a class="btn btn-default" href="{% url 'password_reset' %}" target="_blank">Reset Password</a>
+                 <a class="btn btn-danger" href="{% url 'password_reset' %}" target="_blank">Forget Password</a>
 
 
             </form>

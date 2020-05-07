@@ -9,10 +9,10 @@
   				<div class="col-sm-2 col-md-12" id = "Title">
  					{% if  shop.admin_user == user  %}
                                     <td><a class="btn btn-success" href="{% url 'memecache:product_create'  shop.id %}">
-                                    להוסיף מוצר</a> 
+                                    Add an award</a> 
                                     </td>
                                     <td><a class="btn btn-success" href="{% url 'memecache:shop_update'  shop.id %}">
-                                    לערוך את החנות</a> 
+                                    Edit</a> 
                                     </td>
                                     {% endif %}
  				</div>
@@ -22,13 +22,14 @@
  				<div class="col-sm-3 col-md-12" id = "Products">
  					<div class="table-responsive">
 				   <table class="table">
-				      <caption><h1>מה אפשר לקנות ב{{shop.title}}?</h1></caption>
+				      <caption><h1>Awards to choose from {{shop.title}}?</h1></caption>
 				      <thead>
 				         <tr>
 				            <th></th>
-				            <th>Cosr</th>
+				            <th>Cost</th>
 				            <th>Remaining</th>
 				            <th>End of sale</th>
+				            <th></th>
 				            <th></th>
 				         </tr>
 				      </thead>
@@ -49,6 +50,12 @@
 				            	 	Not availabale
 				            	 {% endif %}
 				            </td>
+                             <td>
+                                 {%if product.picture %}
+                <img src={{product.picture.url}} height="50" width="50" >
+            {% endif %}
+
+                             </td>
 				            <td><a class="btn btn-success" href={{ product.get_absolute_url }}>
                                     Details</a>                                     				            	
 				            	</td>

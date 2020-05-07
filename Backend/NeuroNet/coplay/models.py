@@ -566,7 +566,7 @@ class Task(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     final_state    = models.BooleanField(default = False)
     result_picture = models.ImageField( "A picture of the result",upload_to='uploads/%Y/%m/%d/', null=True, blank=True,default = None,
-                                        max_length = 50000)
+                                        max_length = 500000)
 
     def __str__(self):
         return self.goal_description

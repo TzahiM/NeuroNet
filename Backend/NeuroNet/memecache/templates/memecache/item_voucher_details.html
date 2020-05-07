@@ -11,11 +11,14 @@
     	<div class="well col-sm-12 col-md-3">
 	    	<br>
 	    	<center><h1>{{ item_voucher.product.title }}</h1>
+            <br />
+            {%if  item_voucher.product.picture %}
+            <br />
+                <img src={{ item_voucher.product.picture.url}} class="img-thumbnail">
+            {% endif %}
 	    		<br><br>Identifier {{item_voucher.id}}</center>
 	    	<br>
-	    	<br>    	
-	    	<br>
-	    	<br>    	
+	    	
 	    	{% if item_voucher.used %}
 	    		{% if just_used%}
 	    			<h1> Vaucher accepted </h1>
@@ -28,6 +31,7 @@
 	    			Shall not be availabale in {{ item_voucher.product.end_of_use_at | naturaltime }}
 	    			{% endif %}
 	    			<center>
+                        <br />
 	    			{% if user == item_voucher.shop.admin_user %}
 	    			<a class="btn btn-info"
 	                       href="{% url 'memecache:item_voucher_use' item_voucher.id %}">

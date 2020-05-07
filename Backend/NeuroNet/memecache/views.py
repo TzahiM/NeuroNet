@@ -183,6 +183,7 @@ class PrizesOfAProduct():
     product_title = ''
     item_voucher_list = []
     count = 0
+    picture = None
 
 
 @login_required
@@ -199,6 +200,7 @@ def prize_bag(request):
             product_prize.id_name = 'ProductSet'+ str(product.id)
             product_prize.item_voucher_list =  list( item_voucher_query_set)
             product_prize.count = len(product_prize.item_voucher_list)
+            product_prize.picture = product.picture
             product_prize_list.append(product_prize)
         
     return render(request, 'memecache/prize_bag.html',
@@ -375,6 +377,7 @@ class ProductForm(forms.ModelForm):
         fields = (
             'title',
             'description',
+            'picture',
             'item_price',
             'number_of_abailabale_items',
             'end_of_sale_at',

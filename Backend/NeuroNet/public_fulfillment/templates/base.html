@@ -129,7 +129,7 @@ src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Echo_bell.svg/102
                 {% else %}
                    
                     <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
-                    <li><a href="{% url 'password_reset' %}">Reset Password</a></li>
+                    <li><a href="{% url 'password_reset' %}">Forget Password</a></li>
                     <li><a href="{% url 'public_fulfillment:sign_up'  %}">Register</a></li>
                 {% endif %}
             	<li>
@@ -151,7 +151,7 @@ src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Echo_bell.svg/102
                    Projects
                 </a></li>
                 <li><a href="{% url 'memecache:users_list'  %}">Community members</a></li>
-                <li><a href="{% url 'memecache:instructions'  %}">
+                <li><a href="{% url 'memecache:root'  %}">
                     <img  class="img-responsive" width="20"  
 src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRyhqWAAEH1Q9Vr5ISDEUiikgH9y-jAkMVk3WVpMuwDsDYm5rfS&usqp=CAU" 
                          alt="store" >

@@ -8,7 +8,7 @@
  					<br>
  					<br>
  					<center>
- 						<h1>My rewards</h1>
+ 						<h1>My awards</h1>
 		 					<br>
 		 					<br>
 		 					{% for product_prize in product_prize_list %}
@@ -32,7 +32,7 @@
 				<br>
 				<br>   
 				<div class="col-sm-12 col-md-6" >
-					<h4>{{product_prize.count}} פרסים של     {{product_prize.product_title}} </h4>
+					<h4>{{product_prize.count}} awards of  {{product_prize.product_title}} </h4>
 				</div>    
 				<br>
 				<br>
@@ -43,8 +43,14 @@
 						{{product_prize.product_title}}
 						<br>
 						<br>
+                        {%if product_prize.picture %}
+                            <img src={{product_prize.picture.url}} class="img-thumbnail">
+                       
+
+                        {% endif %}
 						<br>
-				 	<a class="btn btn-info"  href="{% url 'memecache:item_voucher_details'  item_voucher.id %}">רוצה לקבל</a>
+						<br>
+				 	<a class="btn btn-info"  href="{% url 'memecache:item_voucher_details'  item_voucher.id %}">Use</a>
 						<br>
 				 			 						
 				 	</div>
