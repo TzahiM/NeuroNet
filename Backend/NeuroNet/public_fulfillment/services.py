@@ -193,7 +193,7 @@ def print_col_names( excel_file_name ):
     #        print( '<'+tag+'>')
     #return
     
-def import_users( excel_file_name, segment_name ):
+def import_users( excel_file_name, segment_name , preceed_with = ''):
     excel_object = OpenExcel(excel_file_name)
     col_named_dict = get_col_names_dict(excel_object)
     try:
@@ -202,6 +202,7 @@ def import_users( excel_file_name, segment_name ):
         print('please create a segment named '+ segment_name)
         return
 
+    new_users=[]
 
 
 
@@ -220,7 +221,7 @@ def import_users( excel_file_name, segment_name ):
             first_name = 'Guy'
             last_name = 'Dafny'
 
-        user_name                  = (first_name+'_'+ last_name).casefold().replace(' ', '_').replace(')', '_').replace('(', '_')
+        user_name                  = preceed_with + (first_name+'_'+ last_name).casefold().replace(' ', '_').replace(')', '_').replace('(', '_')
 
         segment                    = segment
         description                = ''
@@ -282,6 +283,10 @@ def import_users( excel_file_name, segment_name ):
                                                location_desc = location_desc,
                                                segment = segment,
                                                recieve_updates = True)
+        new_users.append(user)
+
+    return new_users
+
 
         
 def print_users(segment_name):

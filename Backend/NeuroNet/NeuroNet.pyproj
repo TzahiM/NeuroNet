@@ -32,6 +32,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="admin_scripts.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="coplay\admin.py" />
     <Compile Include="coplay\api.py">
       <SubType>Code</SubType>

@@ -13,6 +13,8 @@ from django.views.generic.edit import CreateView
 from NeuroNet import settings
 from public_fulfillment.services import create_kuterless_user
 from coplay.services import start_users_following
+from admin_scripts import new_user_actions
+
 
 # Create your views here.
 
@@ -65,9 +67,11 @@ def disclaimer(request):
     next = request.GET.get('next')
     request.user.userprofile.a_player = True
     request.user.userprofile.save()
-    admin_user= request.user.userprofile.segment.shop_set.first().admin_user
-    start_users_following( admin_user, request.user)
-    start_users_following( request.user, admin_user)
+    #admin_user= request.user.userprofile.segment.shop_set.first().admin_user
+    #start_users_following( admin_user, request.user)
+    #start_users_following( request.user, admin_user)
+    new_user_actions(request.user)
+
 
 
     return render(request, 'public_fulfillment/disclaimer.html', {

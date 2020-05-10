@@ -121,7 +121,7 @@ src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Echo_bell.svg/102
                         Hello {{ user.get_full_name|default:user.username }}</a>
                     </li>
                     <li>
-                        <a href="{% url 'public_fulfillment:update_profile' %}">Update Profile</a></li>
+                    <a href="{% url 'public_fulfillment:update_profile' %}">Update Profile/password</a></li>
                     <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
                     <li><a href="https://forms.gle/c723wnVe3rWrnkdH9" target="_blank">Link for invite</a></li>
 
@@ -129,7 +129,7 @@ src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Echo_bell.svg/102
                 {% else %}
                    
                     <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
-                    <li><a href="{% url 'password_reset' %}">Forget Password</a></li>
+                    <li><a href="{% url 'password_reset' %}">Forget your password?</a></li>
                     <li><a href="{% url 'public_fulfillment:sign_up'  %}">Register</a></li>
                 {% endif %}
             	<li>
@@ -151,10 +151,11 @@ src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Echo_bell.svg/102
                    Projects
                 </a></li>
                 <li><a href="{% url 'memecache:users_list'  %}">Community members</a></li>
-                <li><a href="{% url 'memecache:root'  %}">
-                    <img  class="img-responsive" width="20"  
-src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRyhqWAAEH1Q9Vr5ISDEUiikgH9y-jAkMVk3WVpMuwDsDYm5rfS&usqp=CAU" 
-                         alt="store" >
+                <li><a href="{% url 'memecache:root'  %}"  >
+                    <div id="awards" >
+                        Awards
+                    </div>
+                    
                     </a></li>
                 
                 
@@ -244,6 +245,7 @@ src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRyhqWAAEH1Q9Vr5ISDE
 
 
         </p>
+                
 
     </footer>
 </div>

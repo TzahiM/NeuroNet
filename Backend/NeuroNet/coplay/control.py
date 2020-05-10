@@ -31,19 +31,10 @@ def send_html_message(subject, html_content, from_email, to_list):
 #    with open( "output.html" , "w") as debug_file:
 #        debug_file.write(html_content)
 
-    if not settings.PRODUCTION:
-        settings.EMAIL_BACKEND       = settings.DEBUG_EMAIL_BACKEND      
-        settings.EMAIL_HOST          = settings.DEBUG_EMAIL_HOST         
-        settings.EMAIL_HOST_USER     = settings.DEBUG_EMAIL_HOST_USER    
-        settings.EMAIL_HOST_PASSWORD = settings.DEBUG_EMAIL_HOST_PASSWORD
-        settings.EMAIL_PORT          = settings.DEBUG_EMAIL_PORT         
-        settings.EMAIL_USE_TLS       = settings.DEBUG_EMAIL_USE_TLS      
-
     msg = EmailMessage(subject= string_to_email_subject(subject), 
                        body = html_content, 
                        from_email = from_email, 
                        to = to_list,
-                       bcc =  [settings.ADMIN_EMAIL],
                        reply_to = [settings.REPLY_TO_EMAIL])
 
     msg.content_subtype = "html"  # Main content is now text/html
