@@ -27,6 +27,7 @@ kuterless/coplay/migrations
 *.xlsx
 *.csv
 credentials.json
+admin.py
 
 
 
