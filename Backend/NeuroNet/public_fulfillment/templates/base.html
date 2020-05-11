@@ -118,7 +118,8 @@ src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Echo_bell.svg/102
                 
                 {% if user.is_authenticated %}
                     <li><span class="navbar-text">
-                        Hello {{ user.get_full_name|default:user.username }}</a>
+                        <a href="{% url 'coplay:user_coplay_report'  user.username %}">Hello {{ user.get_full_name|default:user.username }}</a>
+
                     </li>
                     <li>
                     <a href="{% url 'public_fulfillment:update_profile' %}">Update Profile/password</a></li>
@@ -129,19 +130,20 @@ src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Echo_bell.svg/102
                 {% else %}
                    
                     <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
-                    <li><a href="{% url 'password_reset' %}">Forget your password?</a></li>
+                    <li><a href="{% url 'password_reset' %}">Forgot Your Username or Password?</a></li>
                     <li><a href="{% url 'public_fulfillment:sign_up'  %}">Register</a></li>
                 {% endif %}
             	<li>
             		{% if user.is_authenticated %}
-            		<a href="{% url 'coplay:user_coplay_report'  user.username %}">Dashboard</a>
+            		    <a href="{% url 'coplay:user_coplay_report'  user.username %}">Dashboard</a>    
             		{% else %}
-            		<a href="{% url 'home' %}">Home</a>
+            		    <a href="{% url 'home' %}">Home</a>
             		{% endif %}
                 </li>
 
 
             </ul>
+
             <ul class="nav navbar-nav">
                 
                 <li><a href="{% url 'coplay:add_discussion' %}">

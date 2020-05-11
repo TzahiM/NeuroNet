@@ -169,7 +169,7 @@ def update_task_status_description( task , description, user, result_picture = N
     task.parent.save()#verify that the entire disscusion is considered updated
     
     t = Template("""
-    {{task.responsible.get_full_name|default:task.responsible.username}} הודיע/ה ש :\n
+    An update from {{task.responsible.get_full_name|default:task.responsible.username}}:\n
     "{{task.get_status_description}} "\n
     """)
     
@@ -264,7 +264,7 @@ def discussion_update( discussion, user, description,
     
 
     t = Template("""
-    {{discussion.owner.get_full_name|default:discussion.owner.username}} updtaed the status of :\n
+    {{discussion.owner.get_full_name|default:discussion.owner.username}} updtaed the status of {{discussion.title}} to:\n
     "{{discussion.description}} "\n
     """)
     
@@ -445,12 +445,7 @@ def start_tag_following( follower_user, tag):
         subject = t.render(Context({"follower_user": follower_user,
                                     "name" : tag.name}))
         
-        html_message = render_to_string("coplay/user_follow_tag_email_update.html",
-                                        {'ROOT_URL': settings.SITE_URL,
-                                         'follower_user': follower_user,
-                                         'html_title': string_to_email_subject(subject),
-                                         'details': subject,
-                                         'tag': tag})
+        
 
 #         with open( "output.html" , "w") as debug_file:
 #             debug_file.write(html_message)
@@ -458,6 +453,13 @@ def start_tag_following( follower_user, tag):
         for user in all_users_visiabale_for_a_user_list:
             if tag in user.userprofile.followed_discussions_tags.all():
                 if user.email != None and user.userprofile.recieve_updates:
+                    html_message = render_to_string("coplay/user_follow_tag_email_update.html",
+                                        {'username': user.username,
+                                         'ROOT_URL': settings.SITE_URL,
+                                         'follower_user': follower_user,
+                                         'html_title': string_to_email_subject(subject),
+                                         'details': subject,
+                                         'tag': tag})
                     send_html_message(subject, html_message,
                               settings.DEFAULT_FROM_EMAIL,
                               [user.email])
@@ -590,8 +592,8 @@ def discussion_add_task(discussion, responsible, goal_description, target_date,
     discussion.save() #verify that the entire discussion is considered updated
     start_discussion_following( discussion, responsible)
     t = Template("""
-            {{task.responsible.get_full_name|default:task.responsible.username}} accepted a new task:\n
-            "{{task.goal_description}} "\n  עד {{task.target_date | date:"d/n/Y H:i"}}
+            {{task.responsible.get_full_name|default:task.responsible.username}} accepted a new task: 
+            "{{task.goal_description}} "\nto be completed until {{task.target_date | date:"d/n/Y H:i"}}
             """)
             
    

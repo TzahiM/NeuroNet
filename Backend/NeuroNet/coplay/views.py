@@ -708,7 +708,7 @@ def user_coplay_report(request, username=None):
                   {  'message'      :  'Restricted user',
                    'rtl': 'dir="rtl"'})
 
-    page_name = get_user_fullname_or_username(user) + u"'s Dashboard"
+    page_name = get_user_fullname_or_username(user) + u"'s profile"
 
     open_tasks_list_by_urgancy_list, closed_tasks_list_by_relevancy_list, aborted_tasks_list_by_relevancy_list , missed_tasks_list_by_relevancy_list = get_tasks_lists()
 

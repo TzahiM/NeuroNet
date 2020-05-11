@@ -28,8 +28,9 @@ def string_to_email_subject( string):
     return string
 
 def send_html_message(subject, html_content, from_email, to_list):
-#    with open( "output.html" , "w") as debug_file:
-#        debug_file.write(html_content)
+    #with open( "output.html" , "w", encoding="utf-8") as debug_file:
+    #    debug_file.write(html_content)
+    #    debug_file.write(subject)
 
     msg = EmailMessage(subject= string_to_email_subject(subject), 
                        body = html_content, 
@@ -113,7 +114,8 @@ def user_follow_start_email_updates(follower_user, following_user, inverse_follo
 
     
     html_message = render_to_string("coplay/user_follow_email_update.html",
-                                    {'ROOT_URL': settings.SITE_URL,
+                                    {'username': following_user.username,
+                                     'ROOT_URL': settings.SITE_URL,
                                      'follower_user': follower_user,
                                      'html_title': string_to_email_subject(subject),
                                      'details': subject,
@@ -157,12 +159,7 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
             
          
 
-    html_message = render_to_string("coplay/email_discussion_update.html", {'ROOT_URL': settings.SITE_URL,
-                                     'discussion': discussion,
-                                     'html_title': string_to_email_subject(subject),
-                                     'details': details,
-                                     'id': url_id,
-                                     'logged_in_user': logged_in_user})
+   
 
 #     with open( "duguoutput.html" , "w") as debug_file:
 #         debug_file.write(html_message)
@@ -170,6 +167,16 @@ def discussion_email_updates(discussion, subject, logged_in_user, details = None
     for user in mailing_list:
         if user != logged_in_user:
             if user.email and user.userprofile.recieve_updates:
+                html_message = render_to_string("coplay/email_discussion_update.html", 
+                                     {
+                                    'username': user.username,
+                                    'ROOT_URL': settings.SITE_URL,
+                                    'discussion': discussion,
+                                    'html_title': string_to_email_subject(subject),
+                                    'details': details,
+                                    'id': url_id,
+                                    'logged_in_user': logged_in_user})
+
                 send_html_message(subject, html_message,
                               settings.DEFAULT_FROM_EMAIL,
                               [user.email])
@@ -191,14 +198,7 @@ def discussion_email_updates_personal(discussion, subject, logged_in_user, detai
         if discussion.can_user_access_discussion( user):
             allowed_users_list.append(user)
          
-    html_message = render_to_string("coplay/email_discussion_update.html",
-                                    {'ROOT_URL': settings.SITE_URL,
-                                     'discussion': discussion,
-                                     'html_title': string_to_email_subject(subject),
-#                                     'subject_debug':string_to_email_subject(subject),
-                                     'details': details,
-                                     'id': url_id,
-                                     'logged_in_user': logged_in_user})
+    
     
 
     with open( "duguoutput.html" , "w") as debug_file:
@@ -207,6 +207,16 @@ def discussion_email_updates_personal(discussion, subject, logged_in_user, detai
     for attensdent in allowed_users_list:
         if attensdent != logged_in_user:
             if attensdent.email and attensdent.userprofile.recieve_updates:
+                html_message = render_to_string("coplay/email_discussion_update.html",
+                                    {
+                                        'username': attensdent.username,
+                                        'ROOT_URL': settings.SITE_URL,
+                                     'discussion': discussion,
+                                     'html_title': string_to_email_subject(subject),
+#                                     'subject_debug':string_to_email_subject(subject),
+                                     'details': details,
+                                     'id': url_id,
+                                     'logged_in_user': logged_in_user})
                 send_html_message(subject, html_message,
                               settings.DEFAULT_FROM_EMAIL,
                               [attensdent.email])
@@ -229,12 +239,7 @@ def discussion_task_email_updates(task, subject, logged_in_user, details = None)
         if task.parent.can_user_access_discussion( user):
             allowed_users_list.append(user)
 
-    html_message = render_to_string("coplay/email_task_update.html",
-                                    {'ROOT_URL': settings.SITE_URL,
-                                     'task': task,
-                                     'html_title': string_to_email_subject(subject),
-#                                     'subject_debug':string_to_email_subject(subject),
-                                     'details': details})
+    
     
 #    with open( "output.html" , "w") as debug_file:
 #        debug_file.write(html_message)
@@ -242,6 +247,13 @@ def discussion_task_email_updates(task, subject, logged_in_user, details = None)
     for attensdent in allowed_users_list:
         if attensdent != logged_in_user:
             if attensdent.email and attensdent.userprofile.recieve_updates:
+                html_message = render_to_string("coplay/email_task_update.html",
+                                    {'username': attensdent.username,
+                                     'ROOT_URL': settings.SITE_URL,
+                                     'task': task,
+                                     'html_title': string_to_email_subject(subject),
+#                                     'subject_debug':string_to_email_subject(subject),
+                                     'details': details})
                 send_html_message(subject, html_message,
                               settings.DEFAULT_FROM_EMAIL,
                               [attensdent.email])

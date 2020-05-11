@@ -20,7 +20,7 @@ from admin_scripts import new_user_actions
 
 
 def about(request):
-    return HttpResponseRedirect('/media/content/About Coronavirus Hachathon.html')
+    return HttpResponseRedirect('/media/content/About.html')
 
     text_block_0 = ''
     return render(request, 'public_fulfillment/root.html', {
@@ -336,6 +336,27 @@ def update_profile(request):
 def stop_email(request):
     if request.user.is_authenticated:
         user = request.user
+        username = user.username
+    else:
+        username = request.GET.get('username')
+        if username:
+            user = User.objects.get(username=username)
+        else:
+            return render(request, 'coplay/message.html', 
+                      {  'message'      :  'unknown user',
+                       'rtl': 'dir="rtl"'})
+     
+
+
+    return render(request, 'coplay/message.html', 
+                      {  'message'      :  'You had asked that username:'+username+' will be removed from our mailing list. Are you sure?',
+                       'next_url' : reverse('public_fulfillment:stop_email_confirmed')+'?username='+ username,
+                       'next_text' : 'Yes',
+                       'rtl': 'dir="rtl"'})
+    
+def stop_email_confirmed(request):
+    if request.user.is_authenticated:
+        user = request.user
     else:
         username = request.GET.get('username')
         if username:
@@ -350,9 +371,8 @@ def stop_email(request):
     user.save()
 
     return render(request, 'coplay/message.html', 
-                      {  'message'      :  user.get_full_name()+' had been removed from our mailing list',
+                      {  'message'      :  user.get_full_name()+' had been successfully removed from our mailing list. You can always login and check for notificatiions',
                        'rtl': 'dir="rtl"'})
-    
 
     
     

@@ -10,15 +10,13 @@
 
   <p>
   	
-      <a href="{{ROOT_URL}}{{discussion.get_absolute_url}}{{id}}">Project's homepage</a>
+      <a href="{{ROOT_URL}}{{discussion.get_absolute_url}}{{id}}">See {{discussion.title}} homepage</a>
       <br>
       <br>
-      {% if logged_in_user %}
-      <a href="{{ROOT_URL}}{% url 'coplay:user_coplay_report'  logged_in_user %}"> profile {{ logged_in_user.get_full_name|default:logged_in_user.username }}</a>
+      
       <br>
       <br>
-      {% endif%}
-      <a href="{{ROOT_URL}}{% url 'coplay:stop_follow'  discussion.id %}">Stop updates for this project only</a>
+      
    </p>
       
 
