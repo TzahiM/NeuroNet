@@ -164,7 +164,14 @@ def discussion_details(request, pk):
         vote_form = VoteForm()
         feedback_form = AddFeedbackForm()
  
-    list_followers = discussion.get_followers_list()
+    is_segment_admin = ( request.user == request.user.userprofile.segment.shop_set.first().admin_user)
+    if is_segment_admin:
+        list_followers = discussion.get_followers_list()
+    else:
+        list_followers = []
+        for user in discussion.get_followers_list():
+            if user.userprofile.a_player:
+                list_followers.append(user)
     
     page_name = u'Supporting ' + discussion.title
     
