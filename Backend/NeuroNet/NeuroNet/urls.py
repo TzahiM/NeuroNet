@@ -74,13 +74,11 @@ urlpatterns = [
     #path('reset-password/confirm/<uidb64>[0-9A-Za-z]+)-<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),password_reset
     path('reset-password/complete/',
     PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),name='password_reset_complete'),
-    #path('CoronaVirusHackathon/', corona_hackathon_redirection, name="corona_hackathon_redirection"),
     path('CoronaVirusHackathon/', corona_hackathon_root, name="corona_hackathon_root"),
     path('CoronaVirusHackathon/about/', about, name="about"),
     path('CoronaVirusHackathon/coplay/extention_add_with_url/', extention_add_with_url, name="obsolete_extention_handler"),	
     #path('ntmu/', include(('nice_to_meet_you.urls', "nice_to_meet_you"), "nice_to_meet_you")),
-    #path('CoronaVirusHackathon/coplay/', include(('coplay.urls', 'coplay'), 'coplay')),
-    #path('CoronaVirusHackathon/coplay/', include(('coplay.urls', 'coplay'))),
-    #path('CoronaVirusHackathon/memecache/', include(('memecache.urls', "memecache"), "memecache")),
-    #path('CoronaVirusHackathon/site/', include(('public_fulfillment.urls', "public_fulfillment"), "public_fulfillment")),
+    path('CoronaVirusHackathon/coplay/', include(('coplay.urls', 'coplay'), 'coplay_hackathon')),
+    path('CoronaVirusHackathon/memecache/', include(('memecache.urls', "memecache"), "memecache_hackathon")),
+    path('CoronaVirusHackathon/site/', include(('public_fulfillment.urls', "public_fulfillment"), "public_fulfillment_hackathon")),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

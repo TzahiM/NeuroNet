@@ -80,7 +80,6 @@ def disclaimer(request):
     })
 
 def root(request):
-    print( 'root\n', request)
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
 
