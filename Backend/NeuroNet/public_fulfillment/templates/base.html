@@ -10,8 +10,8 @@
     {% if discussion %}
          {{ discussion.title }}
         {% else %}
-        "The Corona virus hackathon is a non-profit initiative, created by team of volunteers that wish to harness crowed wisdom for fighting the corona virus challenges. Sponsored by NeuroNet - Commited to your best ideas"
-        {% endif %}
+        '"Our vision is a world that reward creativity and cooperation. An open source algorithm, offering an alternative reward model. Suitable to Corona virus era. NeuroNet - Committed to your best ideas"'
+          {% endif %}
     >
     <meta property="og:image" content="/media/nano_hackcorona.png" />
     <meta name="author" content=
@@ -25,12 +25,13 @@
                 {% endif %}
             {% endif %}
             >
+    <link rel="shortcut icon" href="/favicon.ico">
     <link rel="icon" href="/media/NeuroNetLogo_symbol_only16x16.png" type="image/png">
     <title>
         {% if page_name %}
             {{ page_name }}
         {% else %}
-          Corona virus hackathon, sponsered by NeuroNet - committed to Your Best Ideas
+          NeuroNet - committed to Your Best Ideas
         {% endif %}
 
     </title>
@@ -164,14 +165,18 @@ src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Echo_bell.svg/102
                 <li class="dropdown">
                     <a href="{% url 'about' %}" class="dropdown-toggle"
                        data-toggle="dropdown">
-                         About
+                         <b>?</b>
                         <b class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu"
                         aria-labelledby="dLabel" text-align="center">
                         
                         
+                        <li>
+                            <a href="http://www.neuronetlabs.net"  target="_blank" >Help</a>
+                        </li>
+                        <li class="divider"></li>
                         <li><a href="{% url 'about' %}">
-                            Corona Virus Hackathon </a>
+                            About</a>
                         </li>
                         <li class="divider"></li>
 

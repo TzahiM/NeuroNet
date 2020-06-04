@@ -1,5 +1,5 @@
 {
-  "name": "Corona Virus Hackathon",
+  "name": "DebugCorona Virus Hackathon",
   "description": "Use current URL and make it into a project that shall solve the corona virus challenges",
   "version": "20.04.03.1",
   "background": {
@@ -13,7 +13,7 @@
   ],
   "browser_action": {
       "default_title": "Debug seed a project",
-      "default_icon": "corona_virus_hackathon.png"
+      "default_icon": "Debug.png"
   },
   "manifest_version": 2
 }

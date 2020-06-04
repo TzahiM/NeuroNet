@@ -24,22 +24,27 @@ from django.conf import settings
 from django.conf.urls.static import static
 from public_fulfillment.views import about, root, corona_hackathon_root
 from public_fulfillment.views import disclaimer, agreement, back_from_disclaimer
+from public_fulfillment.views import corona_hackathon_redirection
+from public_fulfillment.views import favicon
 from django.contrib.auth.views import LoginView, LogoutView
 from public_fulfillment import forms
+from coplay.views import extention_add_with_url
 from rest_framework.authtoken.views import obtain_auth_token
 from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 
 urlpatterns = [
     path('', root, name="home"),
+    path('favicon.ico/', favicon, name="favicon"),
+    #path('CoronaVirusHackathon/', corona_hackathon_redirection, name="corona_hackathon_redirection"),
     path('disclaimer/', disclaimer, name="disclaimer"),
     path('agreement/', agreement, name="agreement"),
+
     path('back_from_disclaimer/', back_from_disclaimer, name="back_from_disclaimer"),
-    path('CoronaVirusHackathon/', corona_hackathon_root, name="corona_hackathon_root"),
-    path('CoronaVirusHackathon/about/', about, name="about"),
+    path('about/', about, name="about"),
     #path('ntmu/', include(('nice_to_meet_you.urls', "nice_to_meet_you"), "nice_to_meet_you")),
-    path('CoronaVirusHackathon/coplay/', include(('coplay.urls', 'coplay'), 'coplay')),
-    path('CoronaVirusHackathon/memecache/', include(('memecache.urls', "memecache"), "memecache")),
-    path('CoronaVirusHackathon/site/', include(('public_fulfillment.urls', "public_fulfillment"), "public_fulfillment")),
+    path('coplay/', include(('coplay.urls', 'coplay'), 'coplay')),
+    path('memecache/', include(('memecache.urls', "memecache"), "memecache")),
+    path('site/', include(('public_fulfillment.urls', "public_fulfillment"), "public_fulfillment")),
     #path('labs/', labs_root, name="labs_root"),
     path('login/',
         LoginView.as_view
@@ -69,4 +74,13 @@ urlpatterns = [
     #path('reset-password/confirm/<uidb64>[0-9A-Za-z]+)-<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),password_reset
     path('reset-password/complete/',
     PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),name='password_reset_complete'),
+    #path('CoronaVirusHackathon/', corona_hackathon_redirection, name="corona_hackathon_redirection"),
+    path('CoronaVirusHackathon/', corona_hackathon_root, name="corona_hackathon_root"),
+    path('CoronaVirusHackathon/about/', about, name="about"),
+    path('CoronaVirusHackathon/coplay/extention_add_with_url/', extention_add_with_url, name="obsolete_extention_handler"),	
+    #path('ntmu/', include(('nice_to_meet_you.urls', "nice_to_meet_you"), "nice_to_meet_you")),
+    #path('CoronaVirusHackathon/coplay/', include(('coplay.urls', 'coplay'), 'coplay')),
+    #path('CoronaVirusHackathon/coplay/', include(('coplay.urls', 'coplay'))),
+    #path('CoronaVirusHackathon/memecache/', include(('memecache.urls', "memecache"), "memecache")),
+    #path('CoronaVirusHackathon/site/', include(('public_fulfillment.urls', "public_fulfillment"), "public_fulfillment")),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

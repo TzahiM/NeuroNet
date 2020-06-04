@@ -136,22 +136,15 @@ def users_list(request, pk = None):
                    'page_name': page_name})
 
 
-@login_required
 def instructions(request):
     if request.user.is_authenticated and  request.user.userprofile:
         segment_name = request.user.userprofile.get_segment_title()
         segment = request.user.userprofile.segment
+        currency_name = segment.shop.currency_name
     else:
         segment = None
-        segment_name = 'Public'
-    try:
-        shop = Shop.objects.get(segment = segment)
-    except Shop.DoesNotExist:
-        return render(request, 'memecache/message.html', 
-                      {  'message'      :  u'No shop defined',
-                       'rtl': 'dir="rtl"'})
-    
-  
+        segment_name = 'Default'
+        currency_name = 'MemeCash'
     
     instructions_text = """
 
@@ -167,7 +160,7 @@ def instructions(request):
     2  for every time you watched another one's (updated) project.    
     """
         
-    return render(request, 'memecache/instruction.html', {'shop':shop, 'instructions_text': instructions_text})
+    return render(request, 'memecache/instruction.html', {'shop_name':segment_name, 'instructions_text': instructions_text, 'currency_name': currency_name})
 
 
 
@@ -291,7 +284,8 @@ def product_details(request, pk):
                    'cart': cart,
                    'additional_items_to_select': additional_items_to_select,
                    'product_selection_form': product_selection_form,
-                   'shop': product.shop})
+                   'shop': product.shop,
+                   'page_name':product.title })
     
 
 

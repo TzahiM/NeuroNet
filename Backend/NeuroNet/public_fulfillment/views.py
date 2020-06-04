@@ -80,13 +80,28 @@ def disclaimer(request):
     })
 
 def root(request):
+    print( 'root\n', request)
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('coplay:user_coplay_report', kwargs={'username': request.user.username}))
-    return HttpResponseRedirect(reverse('corona_hackathon_root'))
+
+    return render(request, 'public_fulfillment/root.html', {
+    'next': next,
+    'rtl': 'dir="rtl"',
+    })
+
 
     
 
+def favicon(request):
+    return HttpResponseRedirect(settings.SITE_URL + settings.MEDIA_URL + 'Logo-NeuroNet-favicon32x32.png')
 
+def corona_hackathon_redirection(request, internal_url = ''):
+    urls = {
+        'ABSOLUTE_ROOT': request.build_absolute_uri('/')[:-1].strip("/"),
+        'ABSOLUTE_ROOT_URL': request.build_absolute_uri('/').strip("/"),
+    }
+    print (urls)
+    return HttpResponseRedirect(internal_url)
 
 
 class CreateUserView(CreateView):

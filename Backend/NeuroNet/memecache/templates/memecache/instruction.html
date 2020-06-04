@@ -3,12 +3,15 @@
 {% block content %}
 	<br>
 	<br>
-<h1>How many {{shop.currency_name}} you can earn ?</h1>
+<h1>Scoring method for {{shop_name}} Community</h1>
+<h4>How many {{currency_name}} you can earn ?</h4>
+	<br>
+	<br>
 	<br>
 	<p>{{instructions_text |urlize|linebreaks}}</p>
 	<br>
 	<br>
-	<a class="btn btn-success"  href="{% url 'home' %}">Home</a>
+	<a class="btn btn-success"  href="{% url 'memcache:root' %}">Back to awards</a>
 
 {% endblock %}
 
