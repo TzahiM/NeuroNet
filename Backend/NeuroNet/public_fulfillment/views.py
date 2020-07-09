@@ -181,6 +181,11 @@ def sign_up(request):
         return render(request, 'coplay/message.html', 
                       {  'message'      :  'Already logged in',
                        'rtl': 'dir="rtl"'})
+    return render(request, 'coplay/message.html', 
+                      {  'message'      :  'Registration is now restrictred to NeuroNetLab, "Tzahi and the inventors" community only.\n\nSorry...',
+                       'next_url': 'https://www.neuronetlabs.net',
+                       'next_text': "For visit NeuroNet's Labs (On your own responsibility)",
+                       'rtl': 'dir="rtl"'})
     return HttpResponseRedirect("https://forms.gle/c723wnVe3rWrnkdH9")
     
     redirect_to = request.GET.get('next')

@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if message %}<p><strong>{{ message }}</strong>
+	<br>
+	<br>
+{% if message %}<p><strong>{{ message|urlize|linebreaks }}</strong>
+	<br>
+	<br>
 	<br>
 	<br>
 	{% if next_url and next_text %}
