@@ -188,10 +188,10 @@ But considering that filling the form is an evidence for your commitment.       
                                                                                                                      \n
 The important thing is that we need new ideas/projects and cooperation.                                              \n
                                                                                                                      \n
-Feel free to be one of the first to connect into our system at  http://www.neuronetlabs.org/CoronaVirusHackathon/    \n
+Feel free to be one of the first to connect into our system at  https://www.neuronetlabs.org/CoronaVirusHackathon/    \n
 1) Your account info:                                                                                                \n
 username: {{username}}                                                                                                        \n
-This is a link for reset your password: http://www.neuronetlabs.org/reset-password                                   \n
+This is a link for reset your password: https://www.neuronetlabs.org/reset-password                                   \n
  Once you're in, I'll be notified for any of your projects (idea/ask for support and help)                           \n
                                                                                                                      \n
 2) If you are using chrome, I would highly recommend on installing our chrome extension from store:                  \n
@@ -216,7 +216,7 @@ def send_registration_confirmed_email_message_to_user_fix(user):
 This is Tzahi Manistersky, the organizer of corona virus hackathon.                                                  \n
 We had encountered a bug in reset password.\n
 So if is fails, use password:incorrect                                                                                                                     \n
-Feel free to be one of the first to connect into our system at  http://www.neuronetlabs.org/CoronaVirusHackathon/    \n                                                                                               \n
+Feel free to be one of the first to connect into our system at  https://www.neuronetlabs.org/CoronaVirusHackathon/    \n                                                                                               \n
 username: {{username}}                                                                                                        \n
 password: incorrect                                   \n
                                                                                                                      \n
