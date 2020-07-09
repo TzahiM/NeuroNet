@@ -43,7 +43,7 @@ urlpatterns = [
     path('about/', about, name="about"),
     #path('ntmu/', include(('nice_to_meet_you.urls', "nice_to_meet_you"), "nice_to_meet_you")),
     path('coplay/', include(('coplay.urls', 'coplay'), 'coplay')),
-    path('memecache/', include(('memecache.urls', "memecache"), "memecache")),
+    path('memecache/', include(('memecache.urls', 'memecache'), 'memecache')),
     path('site/', include(('public_fulfillment.urls', "public_fulfillment"), "public_fulfillment")),
     #path('labs/', labs_root, name="labs_root"),
     path('login/',

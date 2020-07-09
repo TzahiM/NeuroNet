@@ -136,19 +136,19 @@ def users_list(request, pk = None):
                    'page_name': page_name})
 
 
+@login_required
 def instructions(request):
     if request.user.is_authenticated and  request.user.userprofile:
         segment_name = request.user.userprofile.get_segment_title()
         segment = request.user.userprofile.segment
-        currency_name = segment.shop.currency_name
+        currency_name = segment.shop_set.first().currency_name
     else:
         segment = None
         segment_name = 'Default'
         currency_name = 'MemeCash'
     
     instructions_text = """
-
-    27 for each new project
+    27 for each new idea/project that you share
     23 every time that you completion of a task for other's community member project
     19 for any cancel (on time) your task for other's community member project
     17 every time that you had completed a task for your own project
