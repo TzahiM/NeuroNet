@@ -351,6 +351,7 @@
     <Content Include="coplay\templates\coplay\user_follow_email_update.html" />
     <Content Include="coplay\templates\coplay\user_follow_tag_email_update.html" />
     <Content Include="coplay\templates\coplay\user_update_detailes.html" />
+    <Content Include="coplay\templates\coplay\email_base_hebrew.html" />
     <Content Include="coplay\templates\coplay\_messages.html" />
     <Content Include="coplay\templates\floppyforms\attrs.html" />
     <Content Include="coplay\templates\floppyforms\errors.html" />
@@ -409,6 +410,7 @@
     <Content Include="nice_to_meet_you\templates\nice_to_meet_you\view_cards.html" />
     <Content Include="public_fulfillment\templates\add_on_base.html" />
     <Content Include="public_fulfillment\templates\base.html" />
+    <Content Include="public_fulfillment\templates\email_message_to_user_hebrew.html" />
     <Content Include="public_fulfillment\templates\login.html" />
     <Content Include="public_fulfillment\templates\password_reset_complete.html" />
     <Content Include="public_fulfillment\templates\password_reset_confirm.html" />

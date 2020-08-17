@@ -49,10 +49,17 @@ def simple_auth_token( key):
         
     
 def send_email_message_to_user(user, subject, message):
+    email_template = "email_message_to_user.html"
+    lang_direction = "rtl"
 
+    if settings.LANGUAGE_CODE is 'he':
+        lang_direction = 'ltr'
+        email_template =  "email_message_to_user_hebrew.html"
     
-    html_message = render_to_string("email_message_to_user.html",
+    html_message = render_to_string(email_template,
                                     {'ROOT_URL': settings.SITE_URL,
+                                     'page_lang': settings.LANGUAGE_CODE,
+                                     'lang_direction': lang_direction,
                                      'username': user.username,
                                      'first_name': user.first_name,
                                      'html_title': string_to_email_subject(subject),
