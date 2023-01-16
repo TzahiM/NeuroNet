@@ -7,7 +7,7 @@ certifi==2019.11.28
 chardet==3.0.4
 colorama==0.4.1
 decorator==4.4.1
-Django==2.2.7
+Django==2.2.10
 django-amazon-ses==3.0.2
 django-classy-tags==1.0.0
 django-extensions==2.2.5
